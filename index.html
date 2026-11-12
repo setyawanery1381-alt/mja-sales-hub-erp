@@ -1872,9 +1872,17 @@
 
                 <!-- Camera Viewport Box -->
                 <div
-                  class="relative bg-slate-950 rounded-md overflow-hidden border border-[#E8E2D9] aspect-[4/3] flex flex-col items-center justify-center text-center shadow-inner">
+                  class="relative bg-slate-950 rounded-md overflow-hidden border border-[#E8E2D9] aspect-[4/3] flex flex-col items-center justify-center text-center shadow-inner cursor-pointer"
+                  onclick="if (!window.attCameraStream) window.startAttendanceCamera();">
                   <!-- Live Video Stream -->
-                  <video id="att-camera-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+                  <video id="att-camera-video" autoplay playsinline webkit-playsinline muted class="w-full h-full object-cover bg-black"></video>
+
+                  <!-- Live Camera Active Badge -->
+                  <div id="att-camera-status-badge"
+                    class="hidden absolute top-2 left-2 z-20 bg-slate-950/80 text-emerald-400 text-[10px] font-mono font-bold px-2 py-1 rounded border border-emerald-500/40 flex items-center space-x-1.5 backdrop-blur-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="att-camera-status-text">KAMERA SELFIE AKTIF</span>
+                  </div>
 
                   <!-- Hidden Snapshot Canvas -->
                   <canvas id="att-camera-canvas" class="hidden"></canvas>
@@ -4077,12 +4085,19 @@
       // Update mobile bottom nav active state via renderer
       window.renderMobileBottomNav(role, sectionId);
 
-      // Auto-start live camera when entering attendance, and stop when leaving
+      // Auto-start live camera IMMEDIATELY when entering attendance, and stop when leaving
       if (sectionId === 'section-attendance') {
         if (typeof window.startAttendanceCamera === 'function') {
-          setTimeout(function () { window.startAttendanceCamera(); }, 150);
+          window.startAttendanceCamera();
+          setTimeout(function () {
+            if (!window.attCameraStream) window.startAttendanceCamera();
+          }, 300);
         }
       } else {
+        if (window.attWatermarkTimer) {
+          clearInterval(window.attWatermarkTimer);
+          window.attWatermarkTimer = null;
+        }
         if (window.attCameraStream) {
           try {
             window.attCameraStream.getTracks().forEach(function (track) { track.stop(); });
@@ -5688,11 +5703,14 @@
     };
 
     // Start Live Stream with Multi-level Fallbacks for Mobile Browsers
+    // Start Live Stream with Guaranteed Auto-Start on Mobile (Chrome, Safari, WebView)
     window.startAttendanceCamera = function () {
       var video = document.getElementById('att-camera-video');
       var preview = document.getElementById('att-camera-preview');
       var placeholder = document.getElementById('att-camera-placeholder');
       var watermark = document.getElementById('att-camera-watermark');
+      var statusBadge = document.getElementById('att-camera-status-badge');
+      var statusText = document.getElementById('att-camera-status-text');
       var btnSnap = document.getElementById('btn-snap-photo');
       var btnRetake = document.getElementById('btn-retake-photo');
 
@@ -5727,16 +5745,30 @@
         return;
       }
 
-      var facing = window.attCameraFacingMode || 'user';
+      var facingMode = window.attCameraFacingMode || 'user';
+      // Priority 1: Ideal facingMode (non-blocking for mobile cameras)
       var tryConstraints = [
-        { video: { facingMode: facing }, audio: false },
-        { video: { facingMode: { ideal: facing } }, audio: false },
-        { video: true, audio: false }
+        {
+          video: {
+            facingMode: { ideal: facingMode },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        },
+        {
+          video: { facingMode: { ideal: facingMode } },
+          audio: false
+        },
+        {
+          video: true,
+          audio: false
+        }
       ];
 
       function tryStream(idx) {
         if (idx >= tryConstraints.length) {
-          window.showCameraPlaceholder('Akses kamera live terblokir atau ditolak browser. Klik tombol di bawah untuk izinkan atau gunakan Kamera Bawaan HP.', true);
+          window.showCameraPlaceholder('Akses kamera belum aktif atau diblokir browser. Klik tombol di bawah untuk izinkan atau gunakan Kamera Bawaan HP.', true);
           return;
         }
 
@@ -5745,19 +5777,35 @@
             window.attCameraStream = stream;
             if (video) {
               video.srcObject = stream;
+
+              // CRITICAL: Call video.play() immediately and handle both resolved promise and onloadedmetadata
+              var playPromise = video.play();
+              if (playPromise !== undefined) {
+                playPromise.then(function () {
+                  if (statusBadge) statusBadge.classList.remove('hidden');
+                  if (statusText) statusText.textContent = (facingMode === 'user') ? 'KAMERA SELFIE AKTIF' : 'KAMERA BELAKANG AKTIF';
+                }).catch(function (err) {
+                  console.warn('Autoplay error on mobile:', err);
+                });
+              }
+
               video.onloadedmetadata = function () {
                 var p = video.play();
                 if (p !== undefined) {
-                  p.catch(function (err) {
-                    console.warn('Autoplay gesture needed on mobile:', err);
-                    window.showCameraPlaceholder('Sentuh tombol "Buka Kamera Selfie" untuk mengaktifkan tampilan layar kamera', false);
-                  });
+                  p.catch(function (e) { console.warn('Metadata play catch:', e); });
                 }
+                if (statusBadge) statusBadge.classList.remove('hidden');
+                if (statusText) statusText.textContent = (facingMode === 'user') ? 'KAMERA SELFIE AKTIF' : 'KAMERA BELAKANG AKTIF';
               };
             }
+
             if (placeholder) placeholder.classList.add('hidden');
             if (watermark) watermark.classList.remove('hidden');
             window.updateAttendanceWatermark();
+
+            // Start live clock ticking for watermark
+            if (window.attWatermarkTimer) clearInterval(window.attWatermarkTimer);
+            window.attWatermarkTimer = setInterval(window.updateAttendanceWatermark, 1000);
           })
           .catch(function (err) {
             console.warn('Constraint ' + idx + ' failed:', err);
