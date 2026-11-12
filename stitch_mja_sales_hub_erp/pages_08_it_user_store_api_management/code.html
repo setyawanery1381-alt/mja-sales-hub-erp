@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-variant":"#e0e3e5","error-container":"#ffdad6","tertiary-container":"#002113","surface-tint":"#565e74","surface-container-high":"#e6e8ea","surface-container":"#eceef0","on-tertiary-container":"#009668","surface-dim":"#d8dadc","on-primary-fixed":"#131b2e","on-tertiary-fixed-variant":"#005236","on-error-container":"#93000a","tertiary":"#000000","on-surface-variant":"#45464d","on-secondary-fixed":"#1a1c1c","on-background":"#191c1e","surface-container-highest":"#e0e3e5","primary-container":"#131b2e","surface-container-lowest":"#ffffff","tertiary-fixed-dim":"#4edea3","on-secondary-fixed-variant":"#454747","inverse-surface":"#2d3133","inverse-primary":"#bec6e0","on-primary-container":"#7c839b","surface":"#f7f9fb","secondary":"#5d5f5f","on-primary-fixed-variant":"#3f465c","secondary-fixed":"#e2e2e2","tertiary-fixed":"#6ffbbe","on-tertiary":"#ffffff","on-secondary-container":"#616363","error":"#ba1a1a","primary-fixed":"#dae2fd","background":"#f7f9fb","on-primary":"#ffffff","surface-bright":"#f7f9fb","primary":"#000000","outline-variant":"#c6c6cd","on-error":"#ffffff","secondary-fixed-dim":"#c6c6c7","primary-fixed-dim":"#bec6e0","inverse-on-surface":"#eff1f3","on-secondary":"#ffffff","surface-container-low":"#f2f4f6","on-tertiary-fixed":"#002113","secondary-container":"#dfe0e0","on-surface":"#191c1e","outline":"#76777d"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-md":"1.5rem","space-sm":"0.5rem","space-lg":"1.25rem","gutter-md":"1.5rem","space-xl":"2rem","gutter-lg":"2rem","margin-lg":"2rem","space-xs":"0.25rem","gutter":"1rem","space-md":"0.75rem","margin":"1rem"},"fontFamily":{"headline-xl-mobile":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"body-lg":["Inter"],"body-sm":["Inter"],"code-tabular":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Inter"],"label-sm":["Inter"],"metric-display":["Plus Jakarta Sans"]},"fontSize":{"headline-xl-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.025em","fontWeight":"700"}],"headline-sm":["1.125rem",{"lineHeight":"1.625rem","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["1rem",{"lineHeight":"1.5rem","letterSpacing":"-0.011em","fontWeight":"400"}],"body-sm":["0.75rem",{"lineHeight":"1.125rem","letterSpacing":"0em","fontWeight":"400"}],"code-tabular":["0.8125rem",{"lineHeight":"1.125rem","letterSpacing":"-0.01em","fontWeight":"500"}],"headline-lg":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.02em","fontWeight":"600"}],"label-md":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"-0.005em","fontWeight":"500"}],"body-md":["0.875rem",{"lineHeight":"1.375rem","letterSpacing":"-0.006em","fontWeight":"400"}],"label-sm":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.025em","fontWeight":"600"}],"metric-display":["1.875rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"700"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-60 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between bg-primary-container"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center"><div class="w-3.5 h-3.5 rounded-full bg-on-tertiary-container ring-2 ring-tertiary-fixed-dim/30"></div></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none">MJA Hub</span><span class="font-label-sm text-label-sm text-on-primary-container tracking-wider uppercase mt-space-xs">ERP Enterprise</span></div></div><button class="text-on-primary-container hover:text-surface-container-lowest transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">dock_to_right</span></button></div><div class="px-space-md py-space-sm"><span class="font-label-sm text-label-sm text-on-primary-container uppercase px-space-sm tracking-wider">Operations Core</span></div><nav class="px-space-md flex flex-col gap-space-xs" data-active-classes="bg-surface-container-lowest text-primary font-label-md rounded-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="executive-dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span>Executive Dashboard</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="rekap-sesi-live" href="#"><span class="material-symbols-outlined text-[20px]">live_tv</span>Rekap Sesi Live</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="order-dan-cetak-resi" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span>Order &amp; Cetak Resi</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="smart-retur-paket" href="#"><span class="material-symbols-outlined text-[20px]">assignment_return</span>Smart Retur Paket</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="manajemen-stok" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span>Manajemen Stok</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="laporan-laba-rugi" href="#"><span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>Laporan Laba Rugi</a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm transition-colors bg-surface-container-lowest text-primary font-label-md rounded-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="it-dan-store-settings" href="#"><span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>IT &amp; Store Settings</a></nav></div><div class="p-space-md bg-surface-container-highest/5 m-space-md rounded-lg flex flex-col gap-space-md"><div class="flex items-center gap-space-md"><div class="relative flex-shrink-0"><div class="w-9 h-9 rounded-full bg-surface-container-highest/20 flex items-center justify-center font-label-md text-surface-container-lowest font-bold">AF</div><div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-tertiary-fixed-dim rounded-full ring-2 ring-primary-container"></div></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-surface-container-lowest font-semibold truncate">Ahmad Fauzi</span><span class="font-body-sm text-body-sm text-on-primary-container truncate">Super Admin IT</span></div></div><div class="flex items-center justify-between pt-space-xs"><div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[11px] font-medium font-code-tabular"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-pulse"></span>Online</div><a class="flex items-center gap-1 text-on-primary-container hover:text-error transition-colors font-label-sm text-label-sm" data-path="logout" href="#"><span class="material-symbols-outlined text-[16px]">logout</span>Logout</a></div></div></aside><div class="pl-60"><header class="fixed top-0 left-60 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="text-on-surface-variant">MJA Hub</span><span class="text-outline-variant font-code-tabular text-code-tabular">/</span><span class="text-on-surface font-semibold">ERP Workspace</span></div><div class="hidden lg:flex items-center gap-space-sm pl-space-lg"><div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-on-tertiary-container opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-on-tertiary-container"></span></span>Online - Connected to Supabase Cloud</div></div></div><div class="flex items-center gap-space-md"><div class="flex items-center bg-surface-container-low px-space-md py-1.5 rounded-lg gap-space-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">storefront</span><select class="bg-transparent font-label-sm text-label-sm text-on-surface focus:outline-none cursor-pointer pr-space-sm"><option value="all">All Channels &amp; Stores</option><option value="tiktok-live">TikTok Live Official</option><option value="shopee-mall">Shopee Mall Center</option><option value="tokopedia-store">Tokopedia Official</option></select></div><div class="hidden sm:flex items-center bg-surface-container-low px-space-md py-1.5 rounded-lg text-on-surface-variant gap-space-sm"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-body-sm text-body-sm text-on-surface-variant pr-space-lg">Search orders, SKUs...</span><kbd class="bg-surface-container-lowest px-1.5 py-0.5 rounded text-[11px] font-code-tabular text-secondary shadow-[0_1px_8px_rgba(0,0,0,0.04)]">⌘K</kbd></div><div class="flex items-center gap-space-xs"><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span></button><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">sync</span></button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-surface px-gutter-lg pb-margin-lg"><div class="flex flex-col w-full">
+<!-- Top Command & Executive Action Area -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md py-space-lg">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm flex-wrap">
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">IT System Settings &amp; Access Control</h2>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+          Super Admin Only
+        </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-code-tabular text-body-sm shadow-sm">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+          RLS Enforced (Supabase v2.4)
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+        Pusat kendali hak otorisasi pengguna enterprise, alokasi role privilege, token sinkronisasi multikanal, dan audit keamanan database PostgreSQL.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm flex-shrink-0">
+<button class="inline-flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">sync_lock</span>
+        Rotasi API Keys
+      </button>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2 rounded-lg bg-primary-container text-surface-container-lowest font-label-md text-label-md shadow-md hover:bg-primary transition-all" id="btn-add-user" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+        + Tambah Pengguna Baru
+      </button>
+</div>
+</div>
+<!-- Operational Telemetry Bar -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md mb-space-lg">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total Operator</span>
+<span class="font-metric-display text-metric-display text-on-surface mt-1">24 User</span>
+<span class="font-code-tabular text-body-sm text-on-tertiary-container mt-0.5">5 Peran Aktif</span>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">badge</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Koneksi Marketplace</span>
+<span class="font-metric-display text-metric-display text-on-surface mt-1">6 / 6 Node</span>
+<span class="font-code-tabular text-body-sm text-on-tertiary-container mt-0.5">100% Uptime API</span>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">lan</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status Webhook</span>
+<span class="font-metric-display text-metric-display text-on-surface mt-1">Realtime</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant mt-0.5">Latency ~42ms</span>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">bolt</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Audit Security Alert</span>
+<span class="font-metric-display text-metric-display text-on-surface mt-1">0 Breach</span>
+<span class="font-code-tabular text-body-sm text-on-tertiary-container mt-0.5">MFA Enforced</span>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">gshield</span>
+</div>
+</div>
+</div>
+<!-- Sub-Navigation Master Tabs -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-xs mb-space-lg flex items-center gap-space-xs overflow-x-auto">
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary-container text-surface-container-lowest font-label-md text-label-md shadow-sm transition-all whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+      Manajemen Pengguna &amp; Password (Aktif)
+    </button>
+<a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md whitespace-nowrap" href="#marketplace-api-section">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+      Konfigurasi API Toko Marketplace
+    </a>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">security</span>
+      Audit Log Keamanan &amp; RLS
+    </button>
+<div class="ml-auto pr-space-md hidden md:flex items-center gap-space-xs text-on-surface-variant font-code-tabular text-body-sm">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+      Token Expire: 18h 42m
+    </div>
+</div>
+<!-- Section 1: User Management Table Module -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden mb-space-xl">
+<!-- Table Controls Header -->
+<div class="p-space-lg bg-surface-container-lowest flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Direktori Karyawan &amp; Hak Otorisasi Sistem</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Kelola kredensial login, enkripsi hash, sesi multi-device, dan isolasi role database PostgreSQL</span>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">search</span>
+<input class="bg-surface-container-low pl-9 pr-8 py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:bg-surface-container w-64 shadow-sm" id="user-filter-input" placeholder="Cari nama, email, role..." type="text"/>
+<kbd class="absolute right-2.5 top-2 px-1.5 py-0.5 bg-surface-container-lowest text-[10px] font-code-tabular text-on-surface-variant rounded shadow-sm">⌘K</kbd>
+</div>
+<select class="bg-surface-container-low text-on-surface font-label-sm text-label-sm px-space-md py-2 rounded-lg focus:outline-none cursor-pointer shadow-sm">
+<option value="all">Semua Peran (Roles)</option>
+<option value="it-admin">IT Admin</option>
+<option value="owner">Owner</option>
+<option value="finance">Finance</option>
+<option value="live-host">Live Host</option>
+<option value="warehouse">Warehouse</option>
+</select>
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container shadow-sm transition-all" title="Refresh Table" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-md text-body-md">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-space-lg">Nama Lengkap</th>
+<th class="py-3 px-space-md">Email / Username</th>
+<th class="py-3 px-space-md">Peran (Role)</th>
+<th class="py-3 px-space-md">Status Akun</th>
+<th class="py-3 px-space-md">Sesi Terakhir</th>
+<th class="py-3 px-space-lg">Hak Akses Fitur</th>
+<th class="py-3 px-space-lg text-right">Aksi Manajemen</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high/50 font-body-sm text-body-sm">
+<!-- Row 1: Ahmad Fauzi -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3.5 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-surface-container-lowest flex items-center justify-center font-semibold text-xs shadow-sm">
+                  AF
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Ahmad Fauzi</span>
+<span class="text-on-surface-variant text-[11px] font-code-tabular">ID: EMP-0091</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+              ahmad.fauzi@mja-commerce.id
+            </td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                IT Admin
+              </span>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Aktif
+              </span>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+<span class="inline-flex items-center gap-1 text-on-tertiary-container font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-ping"></span>
+                5 menit lalu
+              </span>
+</td>
+<td class="py-3.5 px-space-lg text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-tabular text-[11px] text-on-surface-variant">Akses Penuh Sistem &amp; RLS</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" title="Root DB Bypass">key</span>
+</div>
+</td>
+<td class="py-3.5 px-space-lg text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" onclick="alert('Buka dialog reset password untuk Ahmad Fauzi')" type="button">
+                  Reset Password
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" type="button">
+                  Ubah Role
+                </button>
+<button class="p-1 rounded bg-surface-container hover:bg-error hover:text-on-error text-error transition-all" title="Nonaktifkan User" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Hendra Wijaya -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3.5 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface flex items-center justify-center font-semibold text-xs shadow-sm">
+                  HW
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Hendra Wijaya</span>
+<span class="text-on-surface-variant text-[11px] font-code-tabular">ID: EMP-0001</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+              hendra.owner@mja-commerce.id
+            </td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface"></span>
+                Owner
+              </span>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Aktif
+              </span>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface-variant">
+              1 jam lalu
+            </td>
+<td class="py-3.5 px-space-lg text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-tabular text-[11px] text-on-surface-variant">Read-Only Dashboard &amp; Sheets</span>
+</td>
+<td class="py-3.5 px-space-lg text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" onclick="alert('Buka dialog reset password untuk Hendra Wijaya')" type="button">
+                  Reset Password
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" type="button">
+                  Ubah Role
+                </button>
+<button class="p-1 rounded bg-surface-container hover:bg-error hover:text-on-error text-error transition-all" title="Nonaktifkan User" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Siti Rahmawati -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3.5 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-tint text-surface-container-lowest flex items-center justify-center font-semibold text-xs shadow-sm">
+                  SR
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Siti Rahmawati</span>
+<span class="text-on-surface-variant text-[11px] font-code-tabular">ID: EMP-0042</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+              siti.finance@mja-commerce.id
+            </td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-primary-fixed font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                Finance
+              </span>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Aktif
+              </span>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+              Hari ini, 09:12
+            </td>
+<td class="py-3.5 px-space-lg text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-tabular text-[11px] text-on-surface-variant">Rekap, Pembukuan, Mutasi</span>
+</td>
+<td class="py-3.5 px-space-lg text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" onclick="alert('Buka dialog reset password untuk Siti Rahmawati')" type="button">
+                  Reset Password
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" type="button">
+                  Ubah Role
+                </button>
+<button class="p-1 rounded bg-surface-container hover:bg-error hover:text-on-error text-error transition-all" title="Nonaktifkan User" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Rina Savira -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3.5 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-semibold text-xs shadow-sm">
+                  RS
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Rina Savira</span>
+<span class="text-on-surface-variant text-[11px] font-code-tabular">ID: EMP-0108</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+              rina.host@mja-commerce.id
+            </td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Live Host
+              </span>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Aktif
+              </span>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface-variant">
+              Kemarin, 21:40
+            </td>
+<td class="py-3.5 px-space-lg text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-tabular text-[11px] text-on-surface-variant">Input Sesi Live Mobile</span>
+</td>
+<td class="py-3.5 px-space-lg text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" onclick="alert('Buka dialog reset password untuk Rina Savira')" type="button">
+                  Reset Password
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" type="button">
+                  Ubah Role
+                </button>
+<button class="p-1 rounded bg-surface-container hover:bg-error hover:text-on-error text-error transition-all" title="Nonaktifkan User" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Budi Santoso -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3.5 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-on-tertiary-fixed-variant text-surface-container-lowest flex items-center justify-center font-semibold text-xs shadow-sm">
+                  BS
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Budi Santoso</span>
+<span class="text-on-surface-variant text-[11px] font-code-tabular">ID: EMP-0055</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-surface">
+              budi.warehouse@mja-commerce.id
+            </td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Warehouse
+              </span>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Aktif
+              </span>
+</td>
+<td class="py-3.5 px-space-md font-code-tabular text-body-sm text-on-tertiary-container font-medium">
+<span class="inline-flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+                Sedang Scan
+              </span>
+</td>
+<td class="py-3.5 px-space-lg text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-tabular text-[11px] text-on-surface-variant">Scanner Retur, Mutasi Stok</span>
+</td>
+<td class="py-3.5 px-space-lg text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" onclick="alert('Buka dialog reset password untuk Budi Santoso')" type="button">
+                  Reset Password
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all" type="button">
+                  Ubah Role
+                </button>
+<button class="p-1 rounded bg-surface-container hover:bg-error hover:text-on-error text-error transition-all" title="Nonaktifkan User" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="p-space-md bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+        Menampilkan <span class="font-semibold text-on-surface font-code-tabular">5</span> dari <span class="font-semibold text-on-surface font-code-tabular">24</span> entitas staf aktif terdaftar
+      </div>
+<div class="flex items-center gap-space-xs">
+<button class="px-3 py-1 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm shadow-sm hover:bg-surface-container" disabled="" type="button">Sebelumnya</button>
+<span class="px-2.5 py-1 rounded bg-primary-container text-surface-container-lowest font-label-sm text-label-sm font-code-tabular">1</span>
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest text-on-surface font-label-sm text-label-sm font-code-tabular hover:bg-surface-container" type="button">2</button>
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest text-on-surface font-label-sm text-label-sm font-code-tabular hover:bg-surface-container" type="button">3</button>
+<button class="px-3 py-1 rounded bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm hover:bg-surface-container" type="button">Selanjutnya</button>
+</div>
+</div>
+</div>
+<!-- Section 2: Store API & Account Configuration Cards -->
+<div class="flex flex-col gap-space-md mb-space-xl" id="marketplace-api-section">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<h3 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Koneksi API &amp; Kredensial Toko Marketplace</h3>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-code-tabular text-label-sm">6 Channel Online</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">Manajemen Open Platform credentials, Webhook endpoints, partner ID, dan kalkulasi komisi otomatis</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">rule</span>
+          Skema Potongan Global
+        </button>
+<button class="inline-flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-primary-container text-surface-container-lowest font-label-md text-label-md shadow-sm hover:bg-primary transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">add_link</span>
+          Integrasikan Toko Baru
+        </button>
+</div>
+</div>
+<!-- 6 Store Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-lg">
+<!-- Card 1: Shopee Toko 1 (Official) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex flex-col">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container font-headline-sm font-bold shadow-sm">
+                S1
+              </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">Shopee Toko 1</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant">ID: SHOP-ID-882910</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm uppercase font-semibold">Official</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Status Endpoint:</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-ping"></span>
+                Terhubung (API V2)
+              </span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Default Marketplace Fee:</span>
+<span class="font-code-tabular text-on-surface font-bold text-body-md">8.0%</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Sinkronisasi Terakhir:</span>
+<span class="font-code-tabular text-on-surface-variant">2 mnt lalu (Order &amp; Stok)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Partner Key Expiry:</span>
+<span class="font-code-tabular text-on-surface">31 Des 2025</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm transition-all" onclick="alert('Koneksi Shopee Toko 1 Valid: Latency 82ms, Token Berfungsi Normal.')" type="button">
+<span class="material-symbols-outlined text-[16px]">wifi_tethering</span>
+            Test Koneksi
+          </button>
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+            Edit Kredensial
+          </button>
+</div>
+</div>
+<!-- Card 2: Shopee Toko 2 (Hijab) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex flex-col">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container font-headline-sm font-bold shadow-sm">
+                S2
+              </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">Shopee Toko 2</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant">ID: SHOP-ID-772109</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm uppercase font-semibold">Hijab</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Status Endpoint:</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Terhubung (API V2)
+              </span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Default Marketplace Fee:</span>
+<span class="font-code-tabular text-on-surface font-bold text-body-md">7.5%</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Sinkronisasi Terakhir:</span>
+<span class="font-code-tabular text-on-surface-variant">5 mnt lalu</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Partner Key Expiry:</span>
+<span class="font-code-tabular text-on-surface">15 Nov 2025</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm transition-all" onclick="alert('Koneksi Shopee Toko 2 Hijab Valid: Latency 94ms.')" type="button">
+<span class="material-symbols-outlined text-[16px]">wifi_tethering</span>
+            Test Koneksi
+          </button>
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+            Edit Kredensial
+          </button>
+</div>
+</div>
+<!-- Card 3: Shopee Toko 3 (Gamis) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex flex-col">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container font-headline-sm font-bold shadow-sm">
+                S3
+              </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">Shopee Toko 3</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant">ID: SHOP-ID-334188</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm uppercase font-semibold">Gamis</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Status Endpoint:</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Terhubung (API V2)
+              </span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Default Marketplace Fee:</span>
+<span class="font-code-tabular text-on-surface font-bold text-body-md">8.0%</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Sinkronisasi Terakhir:</span>
+<span class="font-code-tabular text-on-surface-variant">1 mnt lalu</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Partner Key Expiry:</span>
+<span class="font-code-tabular text-on-surface">20 Jan 2026</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm transition-all" onclick="alert('Koneksi Shopee Toko 3 Gamis Valid: Latency 75ms.')" type="button">
+<span class="material-symbols-outlined text-[16px]">wifi_tethering</span>
+            Test Koneksi
+          </button>
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+            Edit Kredensial
+          </button>
+</div>
+</div>
+<!-- Card 4: Shopee Toko 4 (Kids) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex flex-col">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container font-headline-sm font-bold shadow-sm">
+                S4
+              </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">Shopee Toko 4</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant">ID: SHOP-ID-551920</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm uppercase font-semibold">Kids</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Status Endpoint:</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Terhubung (API V2)
+              </span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Default Marketplace Fee:</span>
+<span class="font-code-tabular text-on-surface font-bold text-body-md">7.5%</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Sinkronisasi Terakhir:</span>
+<span class="font-code-tabular text-on-surface-variant">12 mnt lalu</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Partner Key Expiry:</span>
+<span class="font-code-tabular text-on-surface">18 Okt 2025</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm transition-all" onclick="alert('Koneksi Shopee Toko 4 Kids Valid: Latency 89ms.')" type="button">
+<span class="material-symbols-outlined text-[16px]">wifi_tethering</span>
+            Test Koneksi
+          </button>
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+            Edit Kredensial
+          </button>
+</div>
+</div>
+<!-- Card 5: Shopee Toko 5 (Grosir) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex flex-col">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container font-headline-sm font-bold shadow-sm">
+                S5
+              </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">Shopee Toko 5</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant">ID: SHOP-ID-990142</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm uppercase font-semibold">Grosir</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Status Endpoint:</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                Terhubung (API V2)
+              </span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Default Marketplace Fee:</span>
+<span class="font-code-tabular text-on-surface font-bold text-body-md">6.0%</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Sinkronisasi Terakhir:</span>
+<span class="font-code-tabular text-on-surface-variant">30 mnt lalu</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Partner Key Expiry:</span>
+<span class="font-code-tabular text-on-surface">14 Feb 2026</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm transition-all" onclick="alert('Koneksi Shopee Toko 5 Grosir Valid: Latency 105ms.')" type="button">
+<span class="material-symbols-outlined text-[16px]">wifi_tethering</span>
+            Test Koneksi
+          </button>
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+            Edit Kredensial
+          </button>
+</div>
+</div>
+<!-- Card 6: TikTok Shop Official -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex flex-col">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center font-headline-sm font-bold shadow-sm">
+                TK
+              </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">TikTok Shop Official</span>
+<span class="font-code-tabular text-body-sm text-on-surface-variant">ID: TTS-GLOBAL-01</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-surface-container-lowest font-label-sm text-label-sm uppercase font-semibold">Live Core</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Status Endpoint:</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-on-tertiary-container font-semibold">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+                Terhubung (Webhook Live)
+              </span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Default Marketplace Fee:</span>
+<span class="font-code-tabular text-on-surface font-bold text-body-md">15.6%</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Sinkronisasi Terakhir:</span>
+<span class="font-code-tabular text-on-tertiary-container font-semibold">Realtime Stream (~0s)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">App Secret State:</span>
+<span class="font-code-tabular text-on-surface">Active (OAuth Valid)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-sm transition-all" onclick="alert('Koneksi TikTok Shop Webhook Valid: Ping Ack 32ms.')" type="button">
+<span class="material-symbols-outlined text-[16px]">sensors</span>
+            Test Koneksi
+          </button>
+<button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">key</span>
+            Edit Kredensial
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- IT Security & Database Isolation Blueprint Container (Visual Technical Anchor) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-space-xl flex flex-col md:flex-row items-center justify-between gap-space-lg">
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary-container flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[28px]">lock_reset</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Row-Level Security (RLS) &amp; PostgreSQL Tenant Integrity</h4>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-0.5">
+          Semua query dari modul mobile scanning gudang dan host live diisolasi menggunakan kebijakan <code class="font-code-tabular text-body-sm bg-surface-container px-1.5 py-0.5 rounded text-on-surface">auth.uid() = user_id</code>. Super Admin dapat memverifikasi integrity trace setiap 15 menit melalui cron pipeline.
+        </p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm flex-shrink-0 w-full sm:w-auto justify-end">
+<div class="flex flex-col text-right pr-space-sm hidden sm:flex font-code-tabular text-body-sm">
+<span class="text-on-surface font-semibold">Postgres RLS: Active</span>
+<span class="text-on-tertiary-container font-medium">Policy 14 of 14 Passed</span>
+</div>
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm" type="button">
+        Lihat Log Enkripsi
+      </button>
+</div>
+</div>
+<!-- User Creation Drawer / Modal (Hidden by default, opened via JS) -->
+<div class="fixed inset-0 bg-primary-container/60 backdrop-blur-sm z-50 hidden items-center justify-center p-gutter" id="modal-backdrop">
+<div class="bg-surface-container-lowest rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
+<!-- Modal Header -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tambah Pengguna Baru</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Buat kredensial akun dan tetapkan hak akses modul</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-lg" id="btn-close-modal" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<form class="p-space-lg flex flex-col gap-space-md" id="form-create-user" onsubmit="event.preventDefault(); alert('User baru berhasil ditambahkan dan email aktivasi dikirim!'); document.getElementById('modal-backdrop').classList.add('hidden'); document.getElementById('modal-backdrop').classList.remove('flex');">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Nama Lengkap</label>
+<input class="bg-surface-container-low px-space-md py-2 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:bg-surface-container shadow-sm" placeholder="Contoh: Dimas Aditya" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Username / ID Karyawan</label>
+<input class="bg-surface-container-low px-space-md py-2 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:bg-surface-container shadow-sm" placeholder="Contoh: dimas.wh" required="" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Email Perusahaan</label>
+<input class="bg-surface-container-low px-space-md py-2 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:bg-surface-container shadow-sm" placeholder="nama@mja-commerce.id" required="" type="email"/>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Peran (Role Sistem)</label>
+<select class="bg-surface-container-low px-space-md py-2 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer shadow-sm">
+<option value="Warehouse">Warehouse (Scan &amp; Stok)</option>
+<option value="Live Host">Live Host (Mobile Input)</option>
+<option value="Finance">Finance (Rekap &amp; Laporan)</option>
+<option value="Owner">Owner (Read-Only Total)</option>
+<option value="IT Admin">IT Admin (Full Access)</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Password Sementara</label>
+<input class="bg-surface-container-low px-space-md py-2 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:bg-surface-container font-code-tabular shadow-sm" required="" type="password" value="Temporary@2025!"/>
+</div>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex items-start gap-space-sm">
+<input checked="" class="mt-1 cursor-pointer" id="mfa-enforce" type="checkbox"/>
+<label class="font-body-sm text-body-sm text-on-surface cursor-pointer" for="mfa-enforce">
+<span class="font-semibold block">Wajibkan Verifikasi Multi-Faktor (MFA / Google Authenticator)</span>
+<span class="text-on-surface-variant text-[11px]">Pengguna akan diarahkan melakukan konfigurasi TOTP saat sesi login pertama kali.</span>
+</label>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-md">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" id="btn-cancel-modal" type="button">
+            Batal
+          </button>
+<button class="px-space-lg py-2 rounded-lg bg-primary-container text-surface-container-lowest font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" type="submit">
+            Simpan &amp; Generate Akses
+          </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<script>
+  // Simple Micro-interaction Script for IT Admin Dashboard
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const btnAddUser = document.getElementById('btn-add-user');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+  const btnCancelModal = document.getElementById('btn-cancel-modal');
+
+  if (btnAddUser && modalBackdrop) {
+    btnAddUser.addEventListener('click', () => {
+      modalBackdrop.classList.remove('hidden');
+      modalBackdrop.classList.add('flex');
+    });
+  }
+
+  const closeModal = () => {
+    if (modalBackdrop) {
+      modalBackdrop.classList.add('hidden');
+      modalBackdrop.classList.remove('flex');
+    }
+  };
+
+  if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
+  if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
+
+  // Close when clicking outer backdrop
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+  }
+
+  // Keyboard shortcut listener (CMD+K or ESC)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modalBackdrop.classList.contains('hidden')) {
+      closeModal();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      const searchInput = document.getElementById('user-filter-input');
+      if (searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    }
+  });
+</script></main></div></body></html>

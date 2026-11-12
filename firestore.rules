@@ -1,0 +1,672 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model & Architecture Specification
+// ===============================================================
+//
+// System: ERP MJA Sales Hub
+// Modules: Multi-Store Sales, Live Streaming Analytics, Warehouse Inventory Spion
+//          Mobil & Motor By Group, Outbound QC Scan, Smart Returns, GPS Geolocation
+//          Attendance with Live Camera Selfie, and Role-Based Access Control.
+//
+// User Roles:
+//   - admin     : Full access to manage all operational, user, and financial data.
+//   - owner     : Read-only access across all operational, financial, and analytics collections.
+//   - finance   : Read & manage liveSessions, orders, returns, and financial metrics.
+//   - host      : Read & manage assigned/owned live streaming sessions and personal attendance.
+//   - warehouse : Read & manage inventory items, groups, outbound QC scans, returns receipt,
+//                 and personal attendance. (STRICTLY PROHIBITED from accessing liveSessions,
+//                 omset, fees, ads, margins, and financial reports).
+//
+// Collections Covered:
+//   1.  /users/{uid}             : User profiles, system role, assigned branch, and status.
+//   2.  /system/bootstrap        : Single-document system bootstrap initializer.
+//   3.  /meta/{id}               : System configuration and seeded metadata.
+//   4.  /counters/{name}         : Sequential document numbering counters.
+//   5.  /logs/{id}               : Append-only system audit trails.
+//   6.  /stores/{id}             : Multi-channel sales stores (Shopee 1-5, TikTok Shop, etc.).
+//   7.  /liveSessions/{id}       : Live streaming sales sessions, fees, ads, margins, & performance.
+//   8.  /orders/{id}             : Marketplace sales orders, resi, packing status & logistics.
+//   9.  /inventoryGroups/{id}    : Spion categories/groups (Spion Mobil, Spion Motor, etc.).
+//   10. /inventory/{id}          : Master spion SKU catalog, stock levels, safety stock, HPP, & retail price.
+//   11. /returns/{id}            : Barcode return processing, physical condition grading & claims.
+//   12. /qcLogs/{id}             : Outbound QC double-print and cancellation prevention scan logs.
+//   13. /attendance/{id}         : GPS Geolocation & live camera selfie tamper-evident attendance logs.
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Global Helper & Authentication Functions
+    // ===============================================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function profilePath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function hasProfile() {
+      return signedIn() && exists(profilePath());
+    }
+
+    function profile() {
+      return get(profilePath()).data;
+    }
+
+    function isActive() {
+      return hasProfile() && profile().aktif == true;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        (hasProfile() && profile().role == 'admin' && profile().aktif == true) ||
+        ('role' in request.auth.token && request.auth.token.role == 'admin') ||
+        ('admin' in request.auth.token && request.auth.token.admin == true)
+      );
+    }
+
+    function hasRole(roles) {
+      return signedIn() && (
+        isAdmin() ||
+        (hasProfile() && profile().aktif == true && profile().role in roles) ||
+        ('role' in request.auth.token && request.auth.token.role in roles)
+      );
+    }
+
+    function bootstrapDone() {
+      return exists(/databases/$(database)/documents/system/bootstrap);
+    }
+
+    function ownsNew() {
+      return request.resource.data.uid == request.auth.uid;
+    }
+
+    function ownsDoc() {
+      return resource.data.uid == request.auth.uid;
+    }
+
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.size() >= 5 && email.size() <= 120 &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && url.size() <= 1000 &&
+        (url.matches("^https://.*") || url.matches("^http://.*") || url.matches("^gs://.*") || url.matches("^data:image/.*"));
+    }
+
+    function isRecent(ts) {
+      return ts is timestamp &&
+        ts > request.time - duration.value(10, 'm') &&
+        ts <= request.time + duration.value(5, 'm');
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    // 1. User Profile Validator
+    function isValidUser(data) {
+      return data.keys().hasOnly(['uid', 'email', 'nama', 'role', 'branch', 'aktif', 'createdAt', 'updatedAt', 'phone', 'photoUrl']) &&
+        data.keys().hasAll(['uid', 'email', 'nama', 'role', 'branch', 'aktif', 'createdAt', 'updatedAt']) &&
+        data.uid is string && data.uid.size() > 0 && data.uid.size() <= 128 &&
+        data.email is string && isValidEmail(data.email) &&
+        data.nama is string && data.nama.size() >= 2 && data.nama.size() <= 100 &&
+        data.role in ['admin', 'owner', 'finance', 'host', 'warehouse'] &&
+        data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'] &&
+        data.aktif is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 25)) &&
+        (!('photoUrl' in data) || isValidUrl(data.photoUrl));
+    }
+
+    // 2. Store Validator
+    function isValidStore(data) {
+      return data.keys().hasOnly(['id', 'storeName', 'platform', 'branch', 'isActive', 'accountUsername', 'description', 'createdAt', 'updatedAt']) &&
+        data.keys().hasAll(['id', 'storeName', 'platform', 'branch', 'isActive', 'createdAt', 'updatedAt']) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.storeName is string && data.storeName.size() >= 2 && data.storeName.size() <= 100 &&
+        data.platform in ['Shopee', 'TikTok', 'Tokopedia', 'Lazada', 'Offline', 'Other'] &&
+        data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'] &&
+        data.isActive is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('accountUsername' in data) || (data.accountUsername is string && data.accountUsername.size() <= 100)) &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 500));
+    }
+
+    // 3. Live Streaming Session Validator
+    function isValidLiveSession(data) {
+      return data.keys().hasOnly([
+          'id', 'storeId', 'storeName', 'platform', 'hostUid', 'hostName', 'branch',
+          'sessionDate', 'startTime', 'endTime', 'durationMinutes',
+          'omset', 'fee', 'ads', 'voucher', 'cogs', 'nettSales', 'margin', 'grossProfit',
+          'itemCount', 'status', 'notes', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'storeId', 'storeName', 'platform', 'hostUid', 'hostName', 'branch',
+          'sessionDate', 'omset', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.storeId is string && data.storeId.size() > 0 && data.storeId.size() <= 64 &&
+        data.storeName is string && data.storeName.size() <= 100 &&
+        data.platform in ['Shopee', 'TikTok', 'Tokopedia', 'Lazada', 'Other'] &&
+        data.hostUid is string && data.hostUid.size() > 0 && data.hostUid.size() <= 128 &&
+        data.hostName is string && data.hostName.size() <= 100 &&
+        data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'] &&
+        data.sessionDate is string && data.sessionDate.size() <= 20 &&
+        data.omset is number && data.omset >= 0 &&
+        data.status in ['draft', 'pending', 'verified', 'finalized', 'cancelled'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('startTime' in data) || (data.startTime is string && data.startTime.size() <= 30)) &&
+        (!('endTime' in data) || (data.endTime is string && data.endTime.size() <= 30)) &&
+        (!('durationMinutes' in data) || (data.durationMinutes is number && data.durationMinutes >= 0)) &&
+        (!('fee' in data) || (data.fee is number && data.fee >= 0)) &&
+        (!('ads' in data) || (data.ads is number && data.ads >= 0)) &&
+        (!('voucher' in data) || (data.voucher is number && data.voucher >= 0)) &&
+        (!('cogs' in data) || (data.cogs is number && data.cogs >= 0)) &&
+        (!('nettSales' in data) || (data.nettSales is number)) &&
+        (!('margin' in data) || (data.margin is number)) &&
+        (!('grossProfit' in data) || (data.grossProfit is number)) &&
+        (!('itemCount' in data) || (data.itemCount is number && data.itemCount >= 0)) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000));
+    }
+
+    // 4. Order Validator
+    function isValidOrder(data) {
+      return data.keys().hasOnly([
+          'id', 'orderNo', 'storeId', 'storeName', 'platform', 'resi', 'courierType',
+          'courierName', 'customerName', 'items', 'totalAmount', 'packingStatus',
+          'packedBy', 'packedByName', 'packedAt', 'branch', 'notes', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'orderNo', 'storeId', 'storeName', 'platform', 'resi', 'courierType',
+          'items', 'totalAmount', 'packingStatus', 'createdAt', 'updatedAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.orderNo is string && data.orderNo.size() > 0 && data.orderNo.size() <= 80 &&
+        data.storeId is string && data.storeId.size() > 0 && data.storeId.size() <= 64 &&
+        data.storeName is string && data.storeName.size() <= 100 &&
+        data.platform in ['Shopee', 'TikTok', 'Tokopedia', 'Lazada', 'Offline', 'Other'] &&
+        data.resi is string && data.resi.size() > 0 && data.resi.size() <= 80 &&
+        data.courierType in ['kilat', 'reguler', 'sameday', 'instant', 'cargo', 'hemat'] &&
+        data.items is list && data.items.size() > 0 && data.items.size() <= 100 &&
+        data.totalAmount is number && data.totalAmount >= 0 &&
+        data.packingStatus in ['pending', 'packing', 'ready_to_ship', 'shipped', 'cancelled', 'returned'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('courierName' in data) || (data.courierName is string && data.courierName.size() <= 80)) &&
+        (!('customerName' in data) || (data.customerName is string && data.customerName.size() <= 120)) &&
+        (!('packedBy' in data) || (data.packedBy is string && data.packedBy.size() <= 128)) &&
+        (!('packedByName' in data) || (data.packedByName is string && data.packedByName.size() <= 100)) &&
+        (!('packedAt' in data) || (data.packedAt is timestamp)) &&
+        (!('branch' in data) || (data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'])) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000));
+    }
+
+    // 5. Inventory Group Validator
+    function isValidInventoryGroup(data) {
+      return data.keys().hasOnly(['id', 'groupName', 'vehicleType', 'description', 'isActive', 'createdAt', 'updatedAt']) &&
+        data.keys().hasAll(['id', 'groupName', 'vehicleType', 'isActive', 'createdAt', 'updatedAt']) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.groupName is string && data.groupName.size() >= 2 && data.groupName.size() <= 100 &&
+        data.vehicleType in ['mobil', 'motor', 'universal', 'lainnya'] &&
+        data.isActive is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 500));
+    }
+
+    // 6. Inventory Item Validator
+    function isValidInventory(data) {
+      return data.keys().hasOnly([
+          'id', 'sku', 'name', 'groupId', 'groupName', 'vehicleType', 'stock',
+          'safetyStock', 'hpp', 'price', 'location', 'barcode', 'unit', 'isActive',
+          'notes', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'sku', 'name', 'groupId', 'vehicleType', 'stock', 'safetyStock',
+          'hpp', 'price', 'isActive', 'createdAt', 'updatedAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.sku is string && data.sku.size() >= 2 && data.sku.size() <= 64 &&
+        data.name is string && data.name.size() >= 2 && data.name.size() <= 150 &&
+        data.groupId is string && data.groupId.size() > 0 && data.groupId.size() <= 64 &&
+        data.vehicleType in ['mobil', 'motor', 'universal', 'lainnya'] &&
+        data.stock is number &&
+        data.safetyStock is number && data.safetyStock >= 0 &&
+        data.hpp is number && data.hpp >= 0 &&
+        data.price is number && data.price >= 0 &&
+        data.isActive is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('groupName' in data) || (data.groupName is string && data.groupName.size() <= 100)) &&
+        (!('location' in data) || (data.location is string && data.location.size() <= 100)) &&
+        (!('barcode' in data) || (data.barcode is string && data.barcode.size() <= 80)) &&
+        (!('unit' in data) || (data.unit is string && data.unit.size() <= 30)) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000));
+    }
+
+    // 7. Returns Validator
+    function isValidReturn(data) {
+      return data.keys().hasOnly([
+          'id', 'returnNo', 'orderId', 'storeId', 'storeName', 'resi', 'barcode',
+          'sku', 'productName', 'qty', 'reason', 'condition', 'claimStatus',
+          'receivedBy', 'receivedByName', 'receivedAt', 'branch', 'notes', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'returnNo', 'resi', 'sku', 'qty', 'condition', 'claimStatus',
+          'branch', 'createdAt', 'updatedAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.returnNo is string && data.returnNo.size() > 0 && data.returnNo.size() <= 80 &&
+        data.resi is string && data.resi.size() > 0 && data.resi.size() <= 80 &&
+        data.sku is string && data.sku.size() > 0 && data.sku.size() <= 64 &&
+        data.qty is number && data.qty > 0 && data.qty <= 10000 &&
+        data.condition in ['bagus', 'restock', 'rusak', 'reject', 'pending_check'] &&
+        data.claimStatus in ['pending', 'approved', 'rejected', 'claimed', 'in_process'] &&
+        data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('orderId' in data) || (data.orderId is string && data.orderId.size() <= 64)) &&
+        (!('storeId' in data) || (data.storeId is string && data.storeId.size() <= 64)) &&
+        (!('storeName' in data) || (data.storeName is string && data.storeName.size() <= 100)) &&
+        (!('barcode' in data) || (data.barcode is string && data.barcode.size() <= 80)) &&
+        (!('productName' in data) || (data.productName is string && data.productName.size() <= 150)) &&
+        (!('reason' in data) || (data.reason is string && data.reason.size() <= 300)) &&
+        (!('receivedBy' in data) || (data.receivedBy is string && data.receivedBy.size() <= 128)) &&
+        (!('receivedByName' in data) || (data.receivedByName is string && data.receivedByName.size() <= 100)) &&
+        (!('receivedAt' in data) || (data.receivedAt is timestamp)) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000));
+    }
+
+    // 8. Outbound QC Log Validator
+    function isValidQcLog(data) {
+      return data.keys().hasOnly([
+          'id', 'orderId', 'orderNo', 'resi', 'barcode', 'sku', 'productName',
+          'scannedBy', 'scannedByName', 'branch', 'scanStatus', 'notes', 'createdAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'resi', 'scannedBy', 'branch', 'scanStatus', 'createdAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.resi is string && data.resi.size() > 0 && data.resi.size() <= 80 &&
+        data.scannedBy is string && data.scannedBy.size() > 0 && data.scannedBy.size() <= 128 &&
+        data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'] &&
+        data.scanStatus in ['pass', 'double_scan', 'cancelled_order', 'sku_mismatch', 'invalid_resi'] &&
+        data.createdAt is timestamp &&
+        (!('orderId' in data) || (data.orderId is string && data.orderId.size() <= 64)) &&
+        (!('orderNo' in data) || (data.orderNo is string && data.orderNo.size() <= 80)) &&
+        (!('barcode' in data) || (data.barcode is string && data.barcode.size() <= 80)) &&
+        (!('sku' in data) || (data.sku is string && data.sku.size() <= 64)) &&
+        (!('productName' in data) || (data.productName is string && data.productName.size() <= 150)) &&
+        (!('scannedByName' in data) || (data.scannedByName is string && data.scannedByName.size() <= 100)) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000));
+    }
+
+    // 9. Attendance Validator (GPS + Live Selfie)
+    function isValidAttendance(data) {
+      return data.keys().hasOnly([
+          'id', 'uid', 'userName', 'role', 'branch', 'type', 'timestamp',
+          'latitude', 'longitude', 'accuracyMeters', 'photoUrl', 'selfieVerified',
+          'notes', 'createdAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'uid', 'branch', 'type', 'timestamp', 'latitude', 'longitude',
+          'photoUrl', 'createdAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.uid is string && data.uid.size() > 0 && data.uid.size() <= 128 &&
+        data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang'] &&
+        data.type in ['check_in', 'check_out'] &&
+        data.timestamp is timestamp &&
+        data.latitude is number && data.latitude >= -90.0 && data.latitude <= 90.0 &&
+        data.longitude is number && data.longitude >= -180.0 && data.longitude <= 180.0 &&
+        isValidUrl(data.photoUrl) &&
+        data.createdAt is timestamp &&
+        (!('userName' in data) || (data.userName is string && data.userName.size() <= 100)) &&
+        (!('role' in data) || (data.role in ['admin', 'owner', 'finance', 'host', 'warehouse'])) &&
+        (!('accuracyMeters' in data) || (data.accuracyMeters is number && data.accuracyMeters >= 0)) &&
+        (!('selfieVerified' in data) || (data.selfieVerified is bool)) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 500));
+    }
+
+    // 10. Audit Log Validator
+    function isValidLog(data) {
+      return data.keys().hasOnly([
+          'id', 'action', 'collection', 'docId', 'authorUid', 'authorName',
+          'details', 'branch', 'createdAt'
+        ]) &&
+        data.keys().hasAll([
+          'id', 'action', 'collection', 'authorUid', 'createdAt'
+        ]) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+        data.action is string && data.action.size() > 0 && data.action.size() <= 80 &&
+        data.collection is string && data.collection.size() > 0 && data.collection.size() <= 80 &&
+        data.authorUid is string && data.authorUid.size() > 0 && data.authorUid.size() <= 128 &&
+        data.createdAt is timestamp &&
+        (!('docId' in data) || (data.docId is string && data.docId.size() <= 128)) &&
+        (!('authorName' in data) || (data.authorName is string && data.authorName.size() <= 100)) &&
+        (!('details' in data) || (data.details is string && data.details.size() <= 2000)) &&
+        (!('branch' in data) || (data.branch in ['Cabang 1', 'Cabang 2', 'Pusat', 'Semua Cabang']));
+    }
+
+    // 11. Sequential Counter Validator
+    function isValidCounter(data) {
+      return data.keys().hasOnly(['name', 'current', 'prefix', 'updatedAt', 'updatedBy']) &&
+        data.keys().hasAll(['name', 'current', 'updatedAt']) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 64 &&
+        data.current is int && data.current >= 0 &&
+        data.updatedAt is timestamp &&
+        (!('prefix' in data) || (data.prefix is string && data.prefix.size() <= 20)) &&
+        (!('updatedBy' in data) || (data.updatedBy is string && data.updatedBy.size() <= 128));
+    }
+
+    // ===============================================================
+    // Rules Collections
+    // ===============================================================
+
+    // ---------------------------------------------------------------
+    // 1. Users Collection
+    // ---------------------------------------------------------------
+    match /users/{userId} {
+      // PII Protection: Users can read their own profile; Admin and Owner can view company directory
+      allow read: if signedIn() && (
+        isOwner(userId) ||
+        isAdmin() ||
+        (hasRole(['owner']) && isActive())
+      );
+
+      // System Bootstrap: Initial administrator creation when system is unbootstrapped
+      // Once bootstrapped, only administrators can register or provision user accounts
+      allow create: if signedIn() &&
+        isValidUser(request.resource.data) &&
+        request.resource.data.uid == userId &&
+        (
+          (!bootstrapDone() && isOwner(userId) && request.resource.data.role == 'admin' && request.resource.data.aktif == true) ||
+          isAdmin()
+        );
+
+      // Updates: Admins have full editing rights. Users can edit non-sensitive fields on their own profile
+      // Non-admins CANNOT self-escalate roles, activate disabled accounts, change branch, or modify UID/email
+      allow update: if signedIn() &&
+        isValidUser(request.resource.data) &&
+        (
+          isAdmin() ||
+          (
+            isOwner(userId) &&
+            isActive() &&
+            areImmutableFieldsUnchanged(['uid', 'email', 'role', 'aktif', 'branch', 'createdAt']) &&
+            request.resource.data.uid == userId
+          )
+        );
+
+      // Deletions: Strictly reserved for Admins; cannot delete own account to prevent lockout
+      allow delete: if isAdmin() && !isOwner(userId);
+    }
+
+    // ---------------------------------------------------------------
+    // 2. System Bootstrap Marker
+    // ---------------------------------------------------------------
+    match /system/bootstrap {
+      allow read: if signedIn();
+
+      // Can only be initialized once by authenticated initial admin during first setup
+      allow create: if signedIn() &&
+        !bootstrapDone() &&
+        request.resource.data.keys().hasOnly(['bootstrapped', 'bootstrappedBy', 'createdAt']) &&
+        request.resource.data.bootstrapped == true &&
+        request.resource.data.bootstrappedBy == request.auth.uid &&
+        request.resource.data.createdAt is timestamp;
+
+      // Bootstrap document cannot be altered or removed once initialized, except by admin
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------
+    // 3. Meta & Seeded Data
+    // ---------------------------------------------------------------
+    match /meta/{metaId} {
+      // Configuration & seed data can be read by active team members
+      allow read: if signedIn() && isActive();
+      allow write: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 4. Sequential Number Counters
+    // ---------------------------------------------------------------
+    match /counters/{counterName} {
+      allow read: if signedIn() && isActive();
+
+      allow create: if signedIn() && isActive() &&
+        isValidCounter(request.resource.data) &&
+        (isAdmin() || hasRole(['finance', 'warehouse']));
+
+      allow update: if signedIn() && isActive() &&
+        isValidCounter(request.resource.data) &&
+        request.resource.data.name == resource.data.name &&
+        request.resource.data.current >= resource.data.current &&
+        (isAdmin() || hasRole(['finance', 'warehouse']));
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 5. Audit Trail Logs (Append-Only)
+    // ---------------------------------------------------------------
+    match /logs/{logId} {
+      // Audit records visible to Admin & Owner for oversight
+      allow read: if isAdmin() || (hasRole(['owner']) && isActive());
+
+      // Any active user can append an audit entry for their own action
+      allow create: if signedIn() && isActive() &&
+        isValidLog(request.resource.data) &&
+        request.resource.data.authorUid == request.auth.uid;
+
+      // Tamper-proof: logs cannot be modified or updated
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 6. Stores (Multi-Channel Platforms)
+    // ---------------------------------------------------------------
+    match /stores/{storeId} {
+      // Warehouse and Host do not have access to sales channel/platform configs
+      allow read: if isAdmin() || (hasRole(['owner', 'finance']) && isActive());
+
+      allow create: if (isAdmin() || (hasRole(['finance']) && isActive())) &&
+        isValidStore(request.resource.data);
+
+      allow update: if (isAdmin() || (hasRole(['finance']) && isActive())) &&
+        isValidStore(request.resource.data) &&
+        areImmutableFieldsUnchanged(['id', 'createdAt']);
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 7. Live Sessions (Streaming Recap & Financial Analytics)
+    // ---------------------------------------------------------------
+    match /liveSessions/{sessionId} {
+      // Read access:
+      // - Admin, Owner, Finance: full access for analytics & reports
+      // - Host: strictly restricted to their own hosted sessions
+      // - Warehouse: EXPLICITLY DENIED (NO access to omset/keuangan/margin)
+      allow read: if signedIn() && isActive() && (
+        isAdmin() ||
+        hasRole(['owner', 'finance']) ||
+        (hasRole(['host']) && resource.data.hostUid == request.auth.uid)
+      );
+
+      // Create access:
+      // - Admin & Finance can create any session
+      // - Host can submit their own session draft
+      allow create: if signedIn() && isActive() && isValidLiveSession(request.resource.data) && (
+        isAdmin() ||
+        hasRole(['finance']) ||
+        (hasRole(['host']) && request.resource.data.hostUid == request.auth.uid)
+      );
+
+      // Update access:
+      // - Admin & Finance have full modification access
+      // - Host can only update draft/pending sessions that belong to them
+      allow update: if signedIn() && isActive() && isValidLiveSession(request.resource.data) && (
+        isAdmin() ||
+        (hasRole(['finance']) && areImmutableFieldsUnchanged(['id', 'createdAt'])) ||
+        (
+          hasRole(['host']) &&
+          resource.data.hostUid == request.auth.uid &&
+          request.resource.data.hostUid == request.auth.uid &&
+          resource.data.status in ['draft', 'pending'] &&
+          areImmutableFieldsUnchanged(['id', 'createdAt', 'hostUid'])
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 8. Orders (Marketplace Sales, Packing & Dispatch)
+    // ---------------------------------------------------------------
+    match /orders/{orderId} {
+      // Read access:
+      // - Admin, Owner, Finance
+      // - Warehouse needs order details to verify items, pack, and scan outbound QC
+      // - Host is excluded from order management
+      allow read: if isAdmin() || (hasRole(['owner', 'finance', 'warehouse']) && isActive());
+
+      allow create: if (isAdmin() || (hasRole(['finance']) && isActive())) &&
+        isValidOrder(request.resource.data);
+
+      allow update: if signedIn() && isActive() && isValidOrder(request.resource.data) && (
+        isAdmin() ||
+        (hasRole(['finance']) && areImmutableFieldsUnchanged(['id', 'createdAt'])) ||
+        // Warehouse can update packing status, packedBy, packedAt, notes without altering financial/order totals
+        (
+          hasRole(['warehouse']) &&
+          areImmutableFieldsUnchanged(['id', 'orderNo', 'storeId', 'storeName', 'platform', 'items', 'totalAmount', 'createdAt']) &&
+          request.resource.data.packingStatus in ['pending', 'packing', 'ready_to_ship', 'shipped', 'cancelled', 'returned']
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 9. Inventory Groups (Spion Mobil, Spion Motor, etc.)
+    // ---------------------------------------------------------------
+    match /inventoryGroups/{groupId} {
+      allow read: if isAdmin() || (hasRole(['owner', 'finance', 'warehouse']) && isActive());
+
+      allow create: if (isAdmin() || (hasRole(['warehouse']) && isActive())) &&
+        isValidInventoryGroup(request.resource.data);
+
+      allow update: if (isAdmin() || (hasRole(['warehouse']) && isActive())) &&
+        isValidInventoryGroup(request.resource.data) &&
+        areImmutableFieldsUnchanged(['id', 'createdAt']);
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 10. Inventory (Master Spion Catalog & Stock)
+    // ---------------------------------------------------------------
+    match /inventory/{itemId} {
+      // Warehouse needs access to inventory items to manage physical stock in/out
+      allow read: if isAdmin() || (hasRole(['owner', 'finance', 'warehouse']) && isActive());
+
+      allow create: if (isAdmin() || (hasRole(['warehouse', 'finance']) && isActive())) &&
+        isValidInventory(request.resource.data);
+
+      allow update: if signedIn() && isActive() && isValidInventory(request.resource.data) && (
+        isAdmin() ||
+        (hasRole(['finance']) && areImmutableFieldsUnchanged(['id', 'sku', 'createdAt'])) ||
+        // Warehouse cannot tamper with financial pricing (HPP / retail price) or SKU identity
+        (
+          hasRole(['warehouse']) &&
+          areImmutableFieldsUnchanged(['id', 'sku', 'hpp', 'price', 'createdAt'])
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 11. Returns (Barcode Intake & Condition Grading)
+    // ---------------------------------------------------------------
+    match /returns/{returnId} {
+      allow read: if isAdmin() || (hasRole(['owner', 'finance', 'warehouse']) && isActive());
+
+      allow create: if (isAdmin() || (hasRole(['finance', 'warehouse']) && isActive())) &&
+        isValidReturn(request.resource.data);
+
+      allow update: if (isAdmin() || (hasRole(['finance', 'warehouse']) && isActive())) &&
+        isValidReturn(request.resource.data) &&
+        areImmutableFieldsUnchanged(['id', 'createdAt']);
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 12. Outbound QC Logs (Scan Validation & Anti-Double Dispatch)
+    // ---------------------------------------------------------------
+    match /qcLogs/{logId} {
+      allow read: if isAdmin() || (hasRole(['owner', 'finance', 'warehouse']) && isActive());
+
+      allow create: if (isAdmin() || (hasRole(['warehouse']) && isActive())) &&
+        isValidQcLog(request.resource.data) &&
+        request.resource.data.scannedBy == request.auth.uid;
+
+      // Scanned QC validation entries are immutable audit records
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // 13. Attendance (GPS Geolocation & Live Camera Selfie Proof)
+    // ---------------------------------------------------------------
+    match /attendance/{attendanceId} {
+      // Read access:
+      // - Admin & Owner can review company-wide attendance
+      // - Host, Warehouse, Finance can review their own personal check-ins
+      allow read: if signedIn() && isActive() && (
+        isAdmin() ||
+        hasRole(['owner']) ||
+        resource.data.uid == request.auth.uid
+      );
+
+      // Any active authenticated user can submit their own check-in/check-out with GPS & selfie proof
+      allow create: if signedIn() && isActive() &&
+        isValidAttendance(request.resource.data) &&
+        request.resource.data.uid == request.auth.uid;
+
+      // Tamper-proof: Employees cannot edit or forge attendance logs once recorded
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // Default Fallback: Deny all unmatched paths
+    // ---------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

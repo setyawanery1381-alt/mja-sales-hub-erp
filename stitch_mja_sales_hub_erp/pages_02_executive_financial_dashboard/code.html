@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-variant":"#e0e3e5","error-container":"#ffdad6","tertiary-container":"#002113","surface-tint":"#565e74","surface-container-high":"#e6e8ea","surface-container":"#eceef0","on-tertiary-container":"#009668","surface-dim":"#d8dadc","on-primary-fixed":"#131b2e","on-tertiary-fixed-variant":"#005236","on-error-container":"#93000a","tertiary":"#000000","on-surface-variant":"#45464d","on-secondary-fixed":"#1a1c1c","on-background":"#191c1e","surface-container-highest":"#e0e3e5","primary-container":"#131b2e","surface-container-lowest":"#ffffff","tertiary-fixed-dim":"#4edea3","on-secondary-fixed-variant":"#454747","inverse-surface":"#2d3133","inverse-primary":"#bec6e0","on-primary-container":"#7c839b","surface":"#f7f9fb","secondary":"#5d5f5f","on-primary-fixed-variant":"#3f465c","secondary-fixed":"#e2e2e2","tertiary-fixed":"#6ffbbe","on-tertiary":"#ffffff","on-secondary-container":"#616363","error":"#ba1a1a","primary-fixed":"#dae2fd","background":"#f7f9fb","on-primary":"#ffffff","surface-bright":"#f7f9fb","primary":"#000000","outline-variant":"#c6c6cd","on-error":"#ffffff","secondary-fixed-dim":"#c6c6c7","primary-fixed-dim":"#bec6e0","inverse-on-surface":"#eff1f3","on-secondary":"#ffffff","surface-container-low":"#f2f4f6","on-tertiary-fixed":"#002113","secondary-container":"#dfe0e0","on-surface":"#191c1e","outline":"#76777d"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-md":"1.5rem","space-sm":"0.5rem","space-lg":"1.25rem","gutter-md":"1.5rem","space-xl":"2rem","gutter-lg":"2rem","margin-lg":"2rem","space-xs":"0.25rem","gutter":"1rem","space-md":"0.75rem","margin":"1rem"},"fontFamily":{"headline-xl-mobile":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"body-lg":["Inter"],"body-sm":["Inter"],"code-tabular":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Inter"],"label-sm":["Inter"],"metric-display":["Plus Jakarta Sans"]},"fontSize":{"headline-xl-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.025em","fontWeight":"700"}],"headline-sm":["1.125rem",{"lineHeight":"1.625rem","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["1rem",{"lineHeight":"1.5rem","letterSpacing":"-0.011em","fontWeight":"400"}],"body-sm":["0.75rem",{"lineHeight":"1.125rem","letterSpacing":"0em","fontWeight":"400"}],"code-tabular":["0.8125rem",{"lineHeight":"1.125rem","letterSpacing":"-0.01em","fontWeight":"500"}],"headline-lg":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.02em","fontWeight":"600"}],"label-md":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"-0.005em","fontWeight":"500"}],"body-md":["0.875rem",{"lineHeight":"1.375rem","letterSpacing":"-0.006em","fontWeight":"400"}],"label-sm":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.025em","fontWeight":"600"}],"metric-display":["1.875rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"700"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-60 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between bg-primary-container"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center"><div class="w-3.5 h-3.5 rounded-full bg-on-tertiary-container ring-2 ring-tertiary-fixed-dim/30"></div></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none">MJA Hub</span><span class="font-label-sm text-label-sm text-on-primary-container tracking-wider uppercase mt-space-xs">ERP Enterprise</span></div></div><button class="text-on-primary-container hover:text-surface-container-lowest transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">dock_to_right</span></button></div><div class="px-space-md py-space-sm"><span class="font-label-sm text-label-sm text-on-primary-container uppercase px-space-sm tracking-wider">Operations Core</span></div><nav class="px-space-md flex flex-col gap-space-xs" data-active-classes="bg-surface-container-lowest text-primary font-label-md rounded-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm transition-colors bg-surface-container-lowest text-primary font-label-md rounded-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="executive-dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span>Executive Dashboard</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="rekap-sesi-live" href="#"><span class="material-symbols-outlined text-[20px]">live_tv</span>Rekap Sesi Live</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="order-dan-cetak-resi" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span>Order &amp; Cetak Resi</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="smart-retur-paket" href="#"><span class="material-symbols-outlined text-[20px]">assignment_return</span>Smart Retur Paket</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="manajemen-stok" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span>Manajemen Stok</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="laporan-laba-rugi" href="#"><span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>Laporan Laba Rugi</a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-primary-container hover:bg-surface-container-lowest/10 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="it-dan-store-settings" href="#"><span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>IT &amp; Store Settings</a></nav></div><div class="p-space-md bg-surface-container-highest/5 m-space-md rounded-lg flex flex-col gap-space-md"><div class="flex items-center gap-space-md"><div class="relative flex-shrink-0"><div class="w-9 h-9 rounded-full bg-surface-container-highest/20 flex items-center justify-center font-label-md text-surface-container-lowest font-bold">AF</div><div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-tertiary-fixed-dim rounded-full ring-2 ring-primary-container"></div></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-surface-container-lowest font-semibold truncate">Ahmad Fauzi</span><span class="font-body-sm text-body-sm text-on-primary-container truncate">Super Admin IT</span></div></div><div class="flex items-center justify-between pt-space-xs"><div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[11px] font-medium font-code-tabular"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-pulse"></span>Online</div><a class="flex items-center gap-1 text-on-primary-container hover:text-error transition-colors font-label-sm text-label-sm" data-path="logout" href="#"><span class="material-symbols-outlined text-[16px]">logout</span>Logout</a></div></div></aside><div class="pl-60"><header class="fixed top-0 left-60 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="text-on-surface-variant">MJA Hub</span><span class="text-outline-variant font-code-tabular text-code-tabular">/</span><span class="text-on-surface font-semibold">ERP Workspace</span></div><div class="hidden lg:flex items-center gap-space-sm pl-space-lg"><div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-on-tertiary-container opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-on-tertiary-container"></span></span>Online - Connected to Supabase Cloud</div></div></div><div class="flex items-center gap-space-md"><div class="flex items-center bg-surface-container-low px-space-md py-1.5 rounded-lg gap-space-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">storefront</span><select class="bg-transparent font-label-sm text-label-sm text-on-surface focus:outline-none cursor-pointer pr-space-sm"><option value="all">All Channels &amp; Stores</option><option value="tiktok-live">TikTok Live Official</option><option value="shopee-mall">Shopee Mall Center</option><option value="tokopedia-store">Tokopedia Official</option></select></div><div class="hidden sm:flex items-center bg-surface-container-low px-space-md py-1.5 rounded-lg text-on-surface-variant gap-space-sm"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-body-sm text-body-sm text-on-surface-variant pr-space-lg">Search orders, SKUs...</span><kbd class="bg-surface-container-lowest px-1.5 py-0.5 rounded text-[11px] font-code-tabular text-secondary shadow-[0_1px_8px_rgba(0,0,0,0.04)]">⌘K</kbd></div><div class="flex items-center gap-space-xs"><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span></button><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">sync</span></button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-surface px-gutter-lg pb-margin-lg"><div class="flex flex-col w-full gap-space-lg">
+<!-- Top Command & Filter Deck -->
+<section class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Fiskal • Telemetri Multi-Channel</span>
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+<span class="font-code-tabular text-code-tabular text-on-tertiary-container font-medium">Reconciled Live</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Executive Financial Overview</h1>
+</div>
+<!-- Right Controls: Date, Store Filter Pills & Sheet Sync Action -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Date Presets -->
+<div class="inline-flex bg-surface-container-low p-1 rounded-lg">
+<button class="px-space-md py-1.5 rounded font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" type="button">Hari Ini</button>
+<button class="px-space-md py-1.5 rounded font-label-sm text-label-sm bg-surface-container-lowest text-primary shadow-sm font-semibold" type="button">7 Hari Terakhir</button>
+<button class="px-space-md py-1.5 rounded font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" type="button">Bulan Ini</button>
+<button class="px-space-md py-1.5 rounded font-label-sm text-label-sm text-secondary hover:text-primary transition-colors flex items-center gap-1" type="button">
+<span>Kustom</span>
+<span class="material-symbols-outlined text-[14px]">calendar_month</span>
+</button>
+</div>
+<!-- Quick Action: Sync to Google Sheets -->
+<button class="inline-flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white px-space-md py-2 rounded-lg font-label-md text-label-md font-semibold transition-all shadow-sm group" id="sheetsSyncBtn" type="button">
+<span class="material-symbols-outlined text-[18px] transition-transform group-hover:rotate-180">table_chart</span>
+<span>Sync to Google Sheets</span>
+<span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+</button>
+</div>
+</section>
+<!-- Store Filter Secondary Rail -->
+<section class="flex items-center justify-between overflow-x-auto pb-1">
+<div class="flex items-center gap-space-xs min-w-max">
+<span class="font-label-sm text-label-sm text-secondary pr-space-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">filter_alt</span> Scope:
+      </span>
+<button class="px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-semibold shadow-sm" type="button">
+        Semua Toko (5 Shopee + TikTok)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-primary hover:bg-surface-container font-label-sm text-label-sm transition-colors shadow-sm" type="button">
+        Shopee Toko 1 (Official)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-primary hover:bg-surface-container font-label-sm text-label-sm transition-colors shadow-sm" type="button">
+        Shopee Toko 2 (Hijab)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-primary hover:bg-surface-container font-label-sm text-label-sm transition-colors shadow-sm" type="button">
+        Shopee Toko 3 s/d 5
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-primary hover:bg-surface-container font-label-sm text-label-sm transition-colors shadow-sm" type="button">
+        TikTok Shop Live
+      </button>
+</div>
+<div class="hidden xl:flex items-center gap-2 font-code-tabular text-body-sm text-secondary">
+<span class="material-symbols-outlined text-[15px] text-on-tertiary-container">cloud_done</span>
+<span>Sync Terakhir: 13:42:08 WIB</span>
+</div>
+</section>
+<!-- Row 1: KPI Summary Cards (4 Cards with Top Accent Trims) -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-lg">
+<!-- Card 1: Gross Revenue -->
+<div class="relative bg-surface-container-lowest rounded-xl p-space-lg shadow-sm overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-[#10B981]"></div>
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary tracking-wide">OMSET KOTOR (GROSS REVENUE)</span>
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-on-tertiary-container">payments</span>
+</div>
+</div>
+<div class="font-metric-display text-metric-display text-primary tracking-tight font-headline-xl">
+          Rp 142.850.000
+        </div>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-on-tertiary-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +18.4% vs pekan lalu
+        </span>
+<span class="font-code-tabular text-body-sm text-secondary">6 Saluran Aktif</span>
+</div>
+</div>
+<!-- Card 2: Total Deductions -->
+<div class="relative bg-surface-container-lowest rounded-xl p-space-lg shadow-sm overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-error"></div>
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary tracking-wide">POTONGAN &amp; BIAYA PLATFORM</span>
+<div class="w-8 h-8 rounded-lg bg-error-container/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-error">receipt</span>
+</div>
+</div>
+<div class="font-metric-display text-metric-display text-error tracking-tight font-headline-xl">
+          Rp 24.320.000
+        </div>
+</div>
+<!-- Mini Visual Breakdown Bar -->
+<div class="pt-space-md mt-space-md flex flex-col gap-1.5">
+<div class="w-full h-2 rounded-full bg-surface-container flex overflow-hidden">
+<div class="h-full bg-error" style="width: 52%;" title="Admin Fee 52%"></div>
+<div class="h-full bg-on-surface-variant" style="width: 31%;" title="Ads Spend 31%"></div>
+<div class="h-full bg-surface-tint" style="width: 17%;" title="Voucher 17%"></div>
+</div>
+<div class="flex items-center justify-between font-code-tabular text-body-sm text-on-surface-variant">
+<span>Admin 52%</span>
+<span>Ads 31%</span>
+<span>Voucher 17%</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Real Net Margin -->
+<div class="relative bg-surface-container-lowest rounded-xl p-space-lg shadow-sm overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-on-tertiary-container"></div>
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary tracking-wide">LABA BERSIH RIIL (NET MARGIN)</span>
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-on-tertiary-container">account_balance</span>
+</div>
+</div>
+<div class="font-metric-display text-metric-display text-[#10B981] tracking-tight font-headline-xl">
+          Rp 48.710.000
+        </div>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span> 34.1% Net Margin
+        </span>
+<span class="font-code-tabular text-body-sm text-secondary">HPP &amp; Opex Clear</span>
+</div>
+</div>
+<!-- Card 4: Orders & Return Rate -->
+<div class="relative bg-surface-container-lowest rounded-xl p-space-lg shadow-sm overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-[#F59E0B]"></div>
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary tracking-wide">TOTAL ORDER &amp; RTS STATUS</span>
+<div class="w-8 h-8 rounded-lg bg-[#FEF3C7] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-[#B45309]">local_shipping</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-display text-metric-display text-primary tracking-tight font-headline-xl">2.410</span>
+<span class="font-body-md text-body-md text-secondary">pesanan</span>
+</div>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFFBEB] text-[#92400E] font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span> Status Sehat (&lt;3%)
+        </span>
+<span class="font-code-tabular text-body-sm text-secondary font-medium">Retur: 2.8% (68 pkt)</span>
+</div>
+</div>
+</section>
+<!-- Row 2: Analytical Visualizations (65% / 35% Grid) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Left Panel (65%): Multi-Store Sales Trend SVG Graph -->
+<div class="lg:col-span-8 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm mb-space-md">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Tren Penjualan Harian: Omset Kotor vs Margin Bersih</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Komparasi gap performa multi-toko Shopee vs TikTok Live (7 Hari Terakhir)</p>
+</div>
+<!-- Chart Legend Items -->
+<div class="flex flex-wrap items-center gap-space-sm font-code-tabular text-body-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-primary"></span>
+<span class="text-on-surface">Shopee (5 Toko)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-[#10B981]"></span>
+<span class="text-on-surface">TikTok Live</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-0.5 bg-error"></span>
+<span class="text-on-surface">Margin Gap Threshold</span>
+</div>
+</div>
+</div>
+<!-- High-Fidelity Inline SVG Multi-Line Trend Chart -->
+<div class="w-full h-72 relative">
+<svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 740 260">
+<defs>
+<lineargradient id="shopeeArea" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#131B2E" stop-opacity="0.12"></stop>
+<stop offset="100%" stop-color="#131B2E" stop-opacity="0.0"></stop>
+</lineargradient>
+<lineargradient id="tiktokArea" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#10B981" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#10B981" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Horizontal Grid Lines -->
+<line stroke="#ECEEF0" stroke-dasharray="4 4" stroke-width="1" x1="40" x2="720" y1="20" y2="20"></line>
+<line stroke="#ECEEF0" stroke-dasharray="4 4" stroke-width="1" x1="40" x2="720" y1="75" y2="75"></line>
+<line stroke="#ECEEF0" stroke-dasharray="4 4" stroke-width="1" x1="40" x2="720" y1="130" y2="130"></line>
+<line stroke="#ECEEF0" stroke-dasharray="4 4" stroke-width="1" x1="40" x2="720" y1="185" y2="185"></line>
+<line stroke="#E2E8F0" stroke-width="1" x1="40" x2="720" y1="230" y2="230"></line>
+<!-- Left Axis Numerical Labels -->
+<text class="text-[10px] fill-[#76777D] font-code-tabular" text-anchor="end" x="32" y="24">Rp 30M</text>
+<text class="text-[10px] fill-[#76777D] font-code-tabular" text-anchor="end" x="32" y="79">Rp 22M</text>
+<text class="text-[10px] fill-[#76777D] font-code-tabular" text-anchor="end" x="32" y="134">Rp 15M</text>
+<text class="text-[10px] fill-[#76777D] font-code-tabular" text-anchor="end" x="32" y="189">Rp 7M</text>
+<!-- Area Fills -->
+<polygon fill="url(#shopeeArea)" points="60,160 160,110 260,140 370,60 480,95 590,40 700,55 700,230 60,230"></polygon>
+<polygon fill="url(#tiktokArea)" points="60,200 160,170 260,130 370,120 480,70 590,85 700,45 700,230 60,230"></polygon>
+<!-- Shopee Line (Primary Dark Navy) -->
+<polyline fill="none" points="60,160 160,110 260,140 370,60 480,95 590,40 700,55" stroke="#131B2E" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></polyline>
+<!-- TikTok Shop Line (Emerald Green) -->
+<polyline fill="none" points="60,200 160,170 260,130 370,120 480,70 590,85 700,45" stroke="#10B981" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></polyline>
+<!-- Margin Gap Reference Line -->
+<line opacity="0.6" stroke="#BA1A1A" stroke-dasharray="6 4" stroke-width="1.5" x1="60" x2="700" y1="180" y2="180"></line>
+<!-- Data Points on TikTok Flash-Sales Peak -->
+<circle cx="590" cy="40" fill="#131B2E" r="4.5" stroke="#FFFFFF" stroke-width="2"></circle>
+<circle cx="700" cy="45" fill="#10B981" r="5" stroke="#FFFFFF" stroke-width="2"></circle>
+<!-- Peak Callout Card on Day 6 -->
+<g transform="translate(530, 10)">
+<rect fill="#131B2E" height="24" rx="4" width="115"></rect>
+<text class="text-[10px] font-code-tabular font-medium" fill="#FFFFFF" text-anchor="middle" x="57" y="16">Flash Sale Rp 28.4M</text>
+</g>
+<!-- Day Labels -->
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="60" y="248">Sen (14)</text>
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="160" y="248">Sel (15)</text>
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="260" y="248">Rab (16)</text>
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="370" y="248">Kam (17)</text>
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="480" y="248">Jum (18)</text>
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="590" y="248">Sab (19)</text>
+<text class="text-[11px] fill-[#76777D] font-code-tabular" text-anchor="middle" x="700" y="248">Min (20)</text>
+</svg>
+</div>
+<div class="mt-space-sm pt-space-sm flex flex-wrap items-center justify-between text-body-sm text-secondary bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container">info</span>
+<span>Puncak penjualan tertinggi diraih saat Sesi TikTok Live Sabtu malam (Flash Sale Season 9.9).</span>
+</div>
+<span class="font-code-tabular font-medium text-primary">Rasio Margin Bersih Gabungan: 34.1%</span>
+</div>
+</div>
+<!-- Right Panel (35%): Donut Cost Breakdown Visualizer -->
+<div class="lg:col-span-4 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Struktur Distribusi Biaya</h2>
+<span class="material-symbols-outlined text-[18px] text-secondary">pie_chart</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mb-space-md">Alokasi HPP, fee marketplace, iklan &amp; margin riil</p>
+<!-- Donut Visual (Inline SVG) -->
+<div class="flex items-center justify-center my-space-md">
+<div class="relative w-44 h-44 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<!-- Background Ring -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#ECEEF0" stroke-width="14"></circle>
+<!-- COGS/HPP (42%) -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#131B2E" stroke-dasharray="238.7" stroke-dashoffset="0" stroke-width="14"></circle>
+<!-- Net Profit (30%) -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#10B981" stroke-dasharray="238.7" stroke-dashoffset="100.25" stroke-width="14"></circle>
+<!-- Marketplace Fee (17%) -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#BA1A1A" stroke-dasharray="238.7" stroke-dashoffset="171.86" stroke-width="14"></circle>
+<!-- Ads Spend (11%) -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#76777D" stroke-dasharray="238.7" stroke-dashoffset="212.44" stroke-width="14"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Laba Bersih</span>
+<span class="font-headline-lg text-headline-lg font-bold text-[#10B981]">30%</span>
+<span class="font-code-tabular text-[10px] text-secondary">Rp 48.7M</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Segment Legends Table -->
+<div class="flex flex-col gap-2 pt-space-xs">
+<div class="flex items-center justify-between text-body-sm py-1 bg-surface-container-low px-2 rounded">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-[#131B2E]"></span>
+<span class="font-medium text-primary">COGS / HPP Barang</span>
+</div>
+<span class="font-code-tabular font-semibold text-primary">42% (Rp 60.0M)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 px-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+<span class="font-medium text-primary">Net Profit Bersih</span>
+</div>
+<span class="font-code-tabular font-semibold text-[#10B981]">30% (Rp 48.7M)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 bg-surface-container-low px-2 rounded">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-[#BA1A1A]"></span>
+<span class="font-medium text-primary">Marketplace &amp; Fee Admin</span>
+</div>
+<span class="font-code-tabular font-semibold text-error">17% (Rp 24.3M)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 px-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-[#76777D]"></span>
+<span class="font-medium text-primary">Biaya Iklan (CPAS/Ads)</span>
+</div>
+<span class="font-code-tabular font-semibold text-secondary">11% (Rp 15.7M)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Row 3: Multi-Store Leaderboard Table -->
+<section class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Header of the Table Container -->
+<div class="p-space-lg flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm bg-surface-container-lowest">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-primary">Store Performance Leaderboard</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-secondary font-code-tabular text-body-sm">6 Toko Aktif</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Audit neraca transaksi riil, potongan logistik/admin, dan margin per toko</p>
+</div>
+<!-- Quick Export Utility -->
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span> Unduh CSV
+        </button>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span> Kolom Audit
+        </button>
+</div>
+</div>
+<!-- Responsive High-Density Data Grid -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left font-body-md text-body-md">
+<thead class="bg-surface-container-low text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+<tr>
+<th class="py-3 px-4">Nama Toko</th>
+<th class="py-3 px-4">Platform</th>
+<th class="py-3 px-4 text-right">Omset Kotor</th>
+<th class="py-3 px-4 text-right">Potongan Admin</th>
+<th class="py-3 px-4 text-right">Biaya Iklan</th>
+<th class="py-3 px-4 text-center">Retur (RTS)</th>
+<th class="py-3 px-4 text-right">Laba Bersih Riil</th>
+<th class="py-3 px-4 text-center">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-none font-code-tabular">
+<!-- Row 1: Shopee Toko 1 (Top Performer) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-surface-container-low/20">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md font-bold text-primary">Shopee Toko 1 (Official Store)</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px] text-[#10B981]">workspace_premium</span> Top Performer
+                </span>
+</div>
+<span class="text-[11px] text-secondary font-sans">ID: SHP-MJA-001 • Kategori: Fashion Muslim</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#FFF7ED] text-[#EA580C] font-semibold text-[11px]">
+<span class="material-symbols-outlined text-[14px]">shopping_bag</span> Shopee
+              </span>
+</td>
+<td class="py-3 px-4 text-right font-bold text-primary">Rp 48.650.000</td>
+<td class="py-3 px-4 text-right text-error font-medium">-Rp 7.820.000</td>
+<td class="py-3 px-4 text-right text-secondary font-medium">-Rp 4.900.000</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-semibold">
+                1.9% (14 pkt)
+              </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="font-bold text-[#10B981] text-[15px]">Rp 18.240.000</div>
+<div class="w-24 ml-auto h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+<div class="bg-[#10B981] h-full" style="width: 78%;"></div>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                Detail
+              </button>
+</td>
+</tr>
+<!-- Row 2: TikTok Shop Live -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md font-bold text-primary">TikTok Shop Live Studio</span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-ping"></span> Live Broadcast
+                </span>
+</div>
+<span class="text-[11px] text-secondary font-sans">ID: TTK-MJA-091 • 3 Sesi Host/Hari</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#131B2E] text-white font-semibold text-[11px]">
+<span class="material-symbols-outlined text-[14px]">videocam</span> TikTok Shop
+              </span>
+</td>
+<td class="py-3 px-4 text-right font-bold text-primary">Rp 42.100.000</td>
+<td class="py-3 px-4 text-right text-error font-medium">-Rp 6.315.000</td>
+<td class="py-3 px-4 text-right text-secondary font-medium">-Rp 5.250.000</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#FFFBEB] text-[#92400E] font-semibold">
+                3.2% (26 pkt)
+              </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="font-bold text-[#10B981] text-[15px]">Rp 14.820.000</div>
+<div class="w-24 ml-auto h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+<div class="bg-[#10B981] h-full" style="width: 65%;"></div>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                Detail
+              </button>
+</td>
+</tr>
+<!-- Row 3: Shopee Toko 2 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4">
+<div class="font-label-md text-label-md font-bold text-primary">Shopee Toko 2 (Hijab &amp; Scarf)</div>
+<span class="text-[11px] text-secondary font-sans">ID: SHP-MJA-002 • Kategori: Aksesoris</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#FFF7ED] text-[#EA580C] font-semibold text-[11px]">
+<span class="material-symbols-outlined text-[14px]">shopping_bag</span> Shopee
+              </span>
+</td>
+<td class="py-3 px-4 text-right font-bold text-primary">Rp 23.400.000</td>
+<td class="py-3 px-4 text-right text-error font-medium">-Rp 4.210.000</td>
+<td class="py-3 px-4 text-right text-secondary font-medium">-Rp 2.100.000</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-semibold">
+                2.1% (11 pkt)
+              </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="font-bold text-[#10B981] text-[15px]">Rp 7.840.000</div>
+<div class="w-24 ml-auto h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+<div class="bg-[#10B981] h-full" style="width: 42%;"></div>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                Detail
+              </button>
+</td>
+</tr>
+<!-- Row 4: Shopee Toko 3 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4">
+<div class="font-label-md text-label-md font-bold text-primary">Shopee Toko 3 (Gamis Clearance)</div>
+<span class="text-[11px] text-secondary font-sans">ID: SHP-MJA-003 • Kategori: Outlet / Promo</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#FFF7ED] text-[#EA580C] font-semibold text-[11px]">
+<span class="material-symbols-outlined text-[14px]">shopping_bag</span> Shopee
+              </span>
+</td>
+<td class="py-3 px-4 text-right font-bold text-primary">Rp 12.800.000</td>
+<td class="py-3 px-4 text-right text-error font-medium">-Rp 2.450.000</td>
+<td class="py-3 px-4 text-right text-secondary font-medium">-Rp 1.400.000</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-semibold">
+                2.4% (8 pkt)
+              </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="font-bold text-[#10B981] text-[15px]">Rp 3.910.000</div>
+<div class="w-24 ml-auto h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+<div class="bg-[#10B981] h-full" style="width: 25%;"></div>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                Detail
+              </button>
+</td>
+</tr>
+<!-- Row 5: Shopee Toko 4 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4">
+<div class="font-label-md text-label-md font-bold text-primary">Shopee Toko 4 (Kids Moslem Wear)</div>
+<span class="text-[11px] text-secondary font-sans">ID: SHP-MJA-004 • Kategori: Anak</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#FFF7ED] text-[#EA580C] font-semibold text-[11px]">
+<span class="material-symbols-outlined text-[14px]">shopping_bag</span> Shopee
+              </span>
+</td>
+<td class="py-3 px-4 text-right font-bold text-primary">Rp 9.500.000</td>
+<td class="py-3 px-4 text-right text-error font-medium">-Rp 1.950.000</td>
+<td class="py-3 px-4 text-right text-secondary font-medium">-Rp 1.100.000</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-semibold">
+                1.7% (5 pkt)
+              </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="font-bold text-[#10B981] text-[15px]">Rp 2.450.000</div>
+<div class="w-24 ml-auto h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+<div class="bg-[#10B981] h-full" style="width: 18%;"></div>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                Detail
+              </button>
+</td>
+</tr>
+<!-- Row 6: Shopee Toko 5 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4">
+<div class="font-label-md text-label-md font-bold text-primary">Shopee Toko 5 (Grosir Reseller B2B)</div>
+<span class="text-[11px] text-secondary font-sans">ID: SHP-MJA-005 • Kategori: Grosir Partai</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#FFF7ED] text-[#EA580C] font-semibold text-[11px]">
+<span class="material-symbols-outlined text-[14px]">shopping_bag</span> Shopee
+              </span>
+</td>
+<td class="py-3 px-4 text-right font-bold text-primary">Rp 6.400.000</td>
+<td class="py-3 px-4 text-right text-error font-medium">-Rp 1.575.000</td>
+<td class="py-3 px-4 text-right text-secondary font-medium">-Rp 900.000</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-semibold">
+                1.4% (4 pkt)
+              </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="font-bold text-[#10B981] text-[15px]">Rp 1.450.000</div>
+<div class="w-24 ml-auto h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+<div class="bg-[#10B981] h-full" style="width: 12%;"></div>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                Detail
+              </button>
+</td>
+</tr>
+</tbody>
+<!-- Table Consolidated Totals Summary Footer -->
+<tfoot class="bg-surface-container text-primary font-bold border-t-0 font-code-tabular">
+<tr>
+<td class="py-3.5 px-4 font-label-md text-label-md" colspan="2">KONSOLIDASI FINANSIAL TOTAL (6 TOKO)</td>
+<td class="py-3.5 px-4 text-right text-[15px]">Rp 142.850.000</td>
+<td class="py-3.5 px-4 text-right text-error text-[15px]">-Rp 24.320.000</td>
+<td class="py-3.5 px-4 text-right text-secondary text-[15px]">-Rp 15.650.000</td>
+<td class="py-3.5 px-4 text-center font-sans">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-[#92400E] text-[11px] font-semibold">Avg 2.8%</span>
+</td>
+<td class="py-3.5 px-4 text-right text-[#10B981] text-[16px]">Rp 48.710.000</td>
+<td class="py-3.5 px-4 text-center">
+<span class="material-symbols-outlined text-[20px] text-on-tertiary-container">verified</span>
+</td>
+</tr>
+</tfoot>
+</table>
+</div>
+<!-- Table Bottom Status Bar -->
+<div class="p-space-md bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-sm text-body-sm text-secondary">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+<span>Auto-rekonsiliasi mutasi bank &amp; penarikan saldo marketplace via webhook escrow aktif.</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span>Menampilkan 6 dari 6 entitas toko</span>
+<button class="text-primary hover:underline font-semibold font-label-sm text-label-sm" type="button">Kelola API Toko →</button>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Sync to Google Sheets Micro-interaction
+  const syncBtn = document.getElementById('sheetsSyncBtn');
+  if (syncBtn) {
+    syncBtn.addEventListener('click', function() {
+      const originalHtml = this.innerHTML;
+      this.classList.add('opacity-80', 'pointer-events-none');
+      this.innerHTML = `
+        <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+        <span>Syncing 2.410 baris ke Drive...</span>
+      `;
+      setTimeout(() => {
+        this.innerHTML = `
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+          <span>Tersinkronisasi ke Google Sheets!</span>
+        `;
+        setTimeout(() => {
+          this.innerHTML = originalHtml;
+          this.classList.remove('opacity-80', 'pointer-events-none');
+        }, 2500);
+      }, 1500);
+    });
+  }
+</script></main></div></body></html>
