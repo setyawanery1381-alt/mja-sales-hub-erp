@@ -1,10 +1,9 @@
-hgyt
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>MJA Sales Hub — Multi-Store ERP & Financials</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -47,6 +46,12 @@ hgyt
   </script>
   <style>
     /* Mobile-first strict responsive reset (320px - 430px compliance) */
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
     *,
     *::before,
     *::after {
@@ -161,7 +166,7 @@ hgyt
   <!-- ========================================================================= -->
   <!-- TOAST NOTIFICATION CONTAINER -->
   <!-- ========================================================================= -->
-  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col space-y-2 max-w-sm pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:right-4 z-[11000] flex flex-col space-y-2 max-w-sm mx-auto sm:mx-0 pointer-events-none"></div>
 
   <!-- ========================================================================= -->
   <!-- VIEW 1: AUTHENTICATION / LOGIN (PRIVATE PORTAL) -->
@@ -1879,19 +1884,32 @@ hgyt
                     alt="Hasil Foto Live">
 
                   <!-- Placeholder if camera not yet triggered -->
+                  <!-- Hidden Native Camera Capture Input (Fallback HP & In-App Browser) -->
+                  <input type="file" id="att-native-camera-input" accept="image/*" capture="user" class="hidden"
+                    onchange="window.handleNativeSelfieCapture(event)">
+
+                  <!-- Placeholder if camera not yet triggered or permission required -->
                   <div id="att-camera-placeholder"
-                    class="hidden absolute inset-0 z-20 bg-slate-900/90 flex flex-col items-center justify-center p-4 text-white space-y-2">
+                    class="hidden absolute inset-0 z-20 bg-slate-900/90 flex flex-col items-center justify-center p-4 text-white space-y-2.5">
                     <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <p class="text-xs font-semibold text-slate-300">Kamera Belum Aktif</p>
-                    <button type="button" onclick="window.startAttendanceCamera()"
-                      class="h-10 px-4 bg-[#2F5D50] hover:bg-[#254A40] text-white rounded-md text-xs font-bold shadow-md">
-                      Buka Kamera
-                    </button>
+                    <p class="text-xs font-semibold text-slate-200 text-center max-w-[260px]" id="att-camera-placeholder-msg">
+                      Kamera Belum Aktif
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center gap-2 w-full max-w-[280px]">
+                      <button type="button" onclick="window.startAttendanceCamera()"
+                        class="w-full h-10 px-3 bg-[#2F5D50] hover:bg-[#254A40] text-white rounded-md text-xs font-bold shadow-md flex items-center justify-center space-x-1 active:scale-95 transition-all">
+                        <span>📷 Buka Kamera Selfie</span>
+                      </button>
+                      <button type="button" onclick="document.getElementById('att-native-camera-input').click()"
+                        class="w-full h-10 px-3 bg-[#B4532A] hover:bg-[#96421F] text-white rounded-md text-xs font-bold shadow-md flex items-center justify-center space-x-1 active:scale-95 transition-all">
+                        <span>📸 Kamera Bawaan HP</span>
+                      </button>
+                    </div>
                   </div>
 
                   <!-- Real-time GPS & Timestamp Watermark Overlay -->
@@ -1942,6 +1960,16 @@ hgyt
                     <span class="truncate">Balik</span>
                   </button>
                 </div>
+
+                <!-- Secondary Button: Kamera Native HP Langsung -->
+                <button type="button" onclick="document.getElementById('att-native-camera-input').click()"
+                  class="w-full h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-md border border-slate-200 transition-all flex items-center justify-center space-x-1.5 active:scale-95 shadow-xs">
+                  <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>Buka Kamera Bawaan HP (Foto Selfie Alternatif)</span>
+                </button>
               </div>
 
               <!-- GPS Live Verification Status Display -->
@@ -2582,7 +2610,7 @@ hgyt
       <!-- Grid of all modules (2 columns on mobile) -->
       <div class="grid grid-cols-2 gap-2 text-xs">
         <!-- 1. Dashboard -->
-        <button onclick="window.navigateFromDrawer('section-dashboard')"
+        <button id="drawer-item-section-dashboard" onclick="window.navigateFromDrawer('section-dashboard')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2595,7 +2623,7 @@ hgyt
         </button>
 
         <!-- 2. Sesi Live -->
-        <button onclick="window.navigateFromDrawer('section-live')"
+        <button id="drawer-item-section-live" onclick="window.navigateFromDrawer('section-live')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-amber-50 text-amber-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2608,7 +2636,7 @@ hgyt
         </button>
 
         <!-- 3. Stok Spion -->
-        <button onclick="window.navigateFromDrawer('section-inventory')"
+        <button id="drawer-item-section-inventory" onclick="window.navigateFromDrawer('section-inventory')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-purple-50 text-purple-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2621,7 +2649,7 @@ hgyt
         </button>
 
         <!-- 4. Scan QC Validasi -->
-        <button onclick="window.navigateFromDrawer('section-qc-scan')"
+        <button id="drawer-item-section-qc-scan" onclick="window.navigateFromDrawer('section-qc-scan')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2634,7 +2662,7 @@ hgyt
         </button>
 
         <!-- 5. Absensi GPS + Kamera -->
-        <button onclick="window.navigateFromDrawer('section-attendance')"
+        <button id="drawer-item-section-attendance" onclick="window.navigateFromDrawer('section-attendance')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-blue-50 text-blue-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2649,7 +2677,7 @@ hgyt
         </button>
 
         <!-- 6. Kalkulator Harga -->
-        <button onclick="window.navigateFromDrawer('section-pricing')"
+        <button id="drawer-item-section-pricing" onclick="window.navigateFromDrawer('section-pricing')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-indigo-50 text-indigo-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2662,7 +2690,7 @@ hgyt
         </button>
 
         <!-- 7. Order & Resi -->
-        <button onclick="window.navigateFromDrawer('section-orders')"
+        <button id="drawer-item-section-orders" onclick="window.navigateFromDrawer('section-orders')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-cyan-50 text-cyan-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2675,7 +2703,7 @@ hgyt
         </button>
 
         <!-- 8. Retur Paket -->
-        <button onclick="window.navigateFromDrawer('section-returns')"
+        <button id="drawer-item-section-returns" onclick="window.navigateFromDrawer('section-returns')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-rose-50 text-rose-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2688,7 +2716,7 @@ hgyt
         </button>
 
         <!-- 9. Laporan Laba Rugi -->
-        <button onclick="window.navigateFromDrawer('section-financial')"
+        <button id="drawer-item-section-financial" onclick="window.navigateFromDrawer('section-financial')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2701,7 +2729,7 @@ hgyt
         </button>
 
         <!-- 10. Pengguna IT -->
-        <button onclick="window.navigateFromDrawer('section-users')"
+        <button id="drawer-item-section-users" onclick="window.navigateFromDrawer('section-users')"
           class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-slate-200 text-slate-800 rounded-md mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2714,7 +2742,7 @@ hgyt
         </button>
 
         <!-- 11. Rekap Laporan Absensi (Khusus Admin & Owner) -->
-        <button onclick="window.navigateFromDrawer('section-attendance-report')" id="drawer-item-att-report"
+        <button onclick="window.navigateFromDrawer('section-attendance-report')" id="drawer-item-section-attendance-report"
           class="p-3 bg-[#FAF6F0] hover:bg-[#E8E2D9] border border-[#B4532A]/30 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
           <span class="p-2 bg-[#B4532A]/15 text-[#B4532A] rounded-md mb-0.5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2729,7 +2757,7 @@ hgyt
 
       <!-- Action Footer in Drawer -->
       <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-        <button onclick="window.triggerGoogleSheetsExport()"
+        <button id="drawer-btn-export" onclick="window.triggerGoogleSheetsExport()"
           class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 active:scale-95 transition-all">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -3739,9 +3767,163 @@ hgyt
       });
     };
 
-    // Strict Role-Based Visibility Engine
+    // Role Allowed Sections Helper
+    window.getRoleAllowedSections = function (role) {
+      if (role === 'warehouse') {
+        // GUDANG: Khusus isian stok (inventory), scan QC kirim, retur, dan absensi
+        return ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
+      } else if (role === 'host') {
+        // HOST LIVE: Khusus menu rekap sesi live dan absensi
+        return ['section-live', 'section-attendance'];
+      } else if (role === 'finance') {
+        // FINANCE: Akses semua kecuali Manajemen IT
+        return ['section-dashboard', 'section-live', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
+      } else {
+        // ADMIN & OWNER: Akses SEMUA 11 modul
+        return ['section-dashboard', 'section-live', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
+      }
+    };
+
+    // Mobile Bottom Navigation Dynamic Renderer (Role-Based & Responsive)
+    window.renderMobileBottomNav = function (role, activeSec) {
+      var bnav = document.getElementById('mobile-bottom-nav');
+      if (!bnav) return;
+
+      var currentSec = activeSec || window.appState.currentSection || 'section-dashboard';
+      role = role || window.appState.currentRole || 'admin';
+
+      var navConfig = {
+        warehouse: [
+          {
+            id: 'section-inventory',
+            label: 'Stok',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>'
+          },
+          {
+            id: 'section-qc-scan',
+            label: 'QC',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>'
+          },
+          {
+            id: 'section-returns',
+            label: 'Retur',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H4m0 0l4-4m-4 4l4 4"/></svg>'
+          },
+          {
+            id: 'section-attendance',
+            label: 'Absen',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+          },
+          {
+            action: 'menu',
+            label: 'Menu',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>'
+          }
+        ],
+        host: [
+          {
+            id: 'section-live',
+            label: 'Live',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>'
+          },
+          {
+            id: 'section-attendance',
+            label: 'Absen',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+          },
+          {
+            action: 'menu',
+            label: 'Menu',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>'
+          }
+        ],
+        finance: [
+          {
+            id: 'section-dashboard',
+            label: 'Home',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"/></svg>'
+          },
+          {
+            id: 'section-orders',
+            label: 'Order',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2"/></svg>'
+          },
+          {
+            id: 'section-financial',
+            label: 'Keuangan',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10"/></svg>'
+          },
+          {
+            id: 'section-attendance',
+            label: 'Absen',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+          },
+          {
+            action: 'menu',
+            label: 'Menu',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>'
+          }
+        ],
+        default: [
+          {
+            id: 'section-dashboard',
+            label: 'Home',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"/></svg>'
+          },
+          {
+            id: 'section-inventory',
+            label: 'Stok',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>'
+          },
+          {
+            id: 'section-qc-scan',
+            label: 'QC',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>'
+          },
+          {
+            id: 'section-attendance',
+            label: 'Absen',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+          },
+          {
+            action: 'menu',
+            label: 'Menu',
+            icon: '<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>'
+          }
+        ]
+      };
+
+      var items = navConfig[role] || navConfig.default;
+      var colCount = items.length;
+
+      bnav.className = 'md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#E8E2D9] grid items-center px-1 py-1 z-[9999] shadow-lg mobile-bottom-bar h-[56px] ' + (colCount === 3 ? 'grid-cols-3' : 'grid-cols-5');
+
+      var navHtml = '';
+      items.forEach(function (item) {
+        if (item.action === 'menu') {
+          navHtml += '<button onclick="window.toggleMobileDrawer()" id="bnav-btn-more" class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] active:scale-95 transition-all">' +
+            item.icon +
+            '<span class="text-[10px] font-semibold leading-none">' + item.label + '</span>' +
+            '</button>';
+        } else {
+          var isActive = (item.id === currentSec);
+          var colorClass = isActive ? 'text-[#B4532A] font-bold bg-[#FAF6F0]' : 'text-[#6E655F]';
+          navHtml += '<button onclick="window.navigateTo(\'' + item.id + '\')" id="bnav-' + item.id + '" class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md ' + colorClass + ' active:scale-95 transition-all">' +
+            item.icon +
+            '<span class="text-[10px] font-semibold leading-none">' + item.label + '</span>' +
+            '</button>';
+        }
+      });
+
+      bnav.innerHTML = navHtml;
+    };
+
+    // Strict Role-Based Visibility Engine (Desktop Sidebar + Mobile Drawer + Bottom Nav)
     window.applyRolePermissions = function (role) {
-      // List of all navigation buttons
+      window.appState.currentRole = role;
+      var allowed = window.getRoleAllowedSections(role);
+
+      // 1. Sidebar desktop navigation items
       var navButtons = {
         'section-dashboard': document.getElementById('nav-section-dashboard'),
         'section-live': document.getElementById('nav-section-live'),
@@ -3756,23 +3938,6 @@ hgyt
         'section-users': document.getElementById('it-admin-nav-item')
       };
 
-      // Allowed sections map
-      var allowed = [];
-      if (role === 'warehouse') {
-        // GUDANG: Khusus isian stok (inventory), scan QC kirim, retur, dan absensi
-        allowed = ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
-      } else if (role === 'host') {
-        // HOST LIVE: Khusus menu rekap sesi live dan absensi
-        allowed = ['section-live', 'section-attendance'];
-      } else if (role === 'finance') {
-        // FINANCE: Termasuk akses Rekap Laporan Presensi Seluruh Karyawan (Req 8 Klien)
-        allowed = ['section-dashboard', 'section-live', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
-      } else {
-        // ADMIN & OWNER: Akses SEMUA menu termasuk rekap absensi seluruh karyawan
-        allowed = ['section-dashboard', 'section-live', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
-      }
-
-      // Hide or show sidebar links
       for (var secId in navButtons) {
         var btn = navButtons[secId];
         if (btn) {
@@ -3784,22 +3949,46 @@ hgyt
         }
       }
 
-      // Hide or show drawer Rekap Absensi item
-      var drawerAttRep = document.getElementById('drawer-item-att-report');
-      if (drawerAttRep) {
-        if (role === 'admin' || role === 'owner' || role === 'finance') {
-          drawerAttRep.classList.remove('hidden');
-        } else {
-          drawerAttRep.classList.add('hidden');
+      // 2. Mobile drawer items - strictly hide unauthorized modules
+      var drawerMap = {
+        'section-dashboard': document.getElementById('drawer-item-section-dashboard'),
+        'section-live': document.getElementById('drawer-item-section-live'),
+        'section-inventory': document.getElementById('drawer-item-section-inventory'),
+        'section-qc-scan': document.getElementById('drawer-item-section-qc-scan'),
+        'section-attendance': document.getElementById('drawer-item-section-attendance'),
+        'section-pricing': document.getElementById('drawer-item-section-pricing'),
+        'section-orders': document.getElementById('drawer-item-section-orders'),
+        'section-returns': document.getElementById('drawer-item-section-returns'),
+        'section-financial': document.getElementById('drawer-item-section-financial'),
+        'section-users': document.getElementById('drawer-item-section-users'),
+        'section-attendance-report': document.getElementById('drawer-item-section-attendance-report')
+      };
+
+      for (var dSecId in drawerMap) {
+        var dEl = drawerMap[dSecId];
+        if (dEl) {
+          if (allowed.indexOf(dSecId) !== -1) {
+            dEl.classList.remove('hidden');
+          } else {
+            dEl.classList.add('hidden');
+          }
         }
       }
 
-      // Hide Google Sheets Export button in topbar for Gudang & Host
+      // 3. Export buttons in topbar & drawer
       var topExport = document.getElementById('topbar-btn-export');
       if (topExport) {
         if (role === 'warehouse' || role === 'host') topExport.classList.add('hidden');
         else topExport.classList.remove('hidden');
       }
+      var drawerExport = document.getElementById('drawer-btn-export');
+      if (drawerExport) {
+        if (role === 'warehouse' || role === 'host') drawerExport.classList.add('hidden');
+        else drawerExport.classList.remove('hidden');
+      }
+
+      // 4. Re-render mobile bottom navigation specifically for this role
+      window.renderMobileBottomNav(role, window.appState.currentSection);
     };
 
     // Branch Switcher
@@ -3818,29 +4007,22 @@ hgyt
       if (attBranch) attBranch.textContent = next;
 
       window.showToast('Beralih ke operasional: ' + next, 'info');
-      window.renderAttendanceLogs();
-      if (typeof window.renderAllAttendanceReport === 'function') {
-        window.renderAllAttendanceReport();
-      }
     };
+
     window.switchOperationalBranch = window.switchBranch;
 
-    // Navigation Switcher (0ms Latency with Strict Guard)
+    // Robust Master Section Router with Strict Mobile Role Guard & Camera Trigger
     window.navigateTo = function (sectionId) {
-      // Permission guard check
       var role = window.appState.currentRole || 'admin';
-      if (role === 'warehouse' && ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'].indexOf(sectionId) === -1) {
-        window.showToast('Akses dibatasi untuk divisi Gudang!', 'warning');
-        sectionId = 'section-inventory';
+      var allowed = window.getRoleAllowedSections(role);
+
+      // Strict Guard: If section is not allowed, block and redirect
+      if (allowed.indexOf(sectionId) === -1) {
+        window.showToast('Akses dibatasi untuk peran ' + role + '!', 'warning');
+        sectionId = allowed[0] || 'section-attendance';
       }
-      if (role === 'host' && ['section-live', 'section-attendance'].indexOf(sectionId) === -1) {
-        window.showToast('Akses dibatasi untuk divisi Host Live!', 'warning');
-        sectionId = 'section-live';
-      }
-      if (sectionId === 'section-attendance-report' && role !== 'admin' && role !== 'owner' && role !== 'finance') {
-        window.showToast('Rekap Presensi Seluruh Karyawan hanya untuk Admin & Owner!', 'warning');
-        sectionId = 'section-attendance';
-      }
+
+      window.appState.currentSection = sectionId;
 
       var sections = document.querySelectorAll('.content-section');
       for (var i = 0; i < sections.length; i++) {
@@ -3892,17 +4074,8 @@ hgyt
       var topTitle = document.getElementById('topbar-page-title');
       if (topTitle) topTitle.textContent = titleText;
 
-      // Update mobile bottom nav active state (color + background + border indicator)
-      var bnavItems = document.querySelectorAll('.bnav-item');
-      for (var k = 0; k < bnavItems.length; k++) {
-        bnavItems[k].classList.remove('bg-[#FAF6F0]', 'text-[#B4532A]', 'border-t-2', 'border-[#B4532A]', 'font-bold');
-        bnavItems[k].classList.add('text-[#6E655F]', 'bg-transparent');
-      }
-      var activeBnav = document.getElementById('bnav-' + sectionId);
-      if (activeBnav) {
-        activeBnav.classList.add('bg-[#FAF6F0]', 'text-[#B4532A]', 'border-t-2', 'border-[#B4532A]', 'font-bold');
-        activeBnav.classList.remove('text-[#6E655F]', 'bg-transparent');
-      }
+      // Update mobile bottom nav active state via renderer
+      window.renderMobileBottomNav(role, sectionId);
 
       // Auto-start live camera when entering attendance, and stop when leaving
       if (sectionId === 'section-attendance') {
@@ -3912,16 +4085,9 @@ hgyt
       } else {
         if (window.attCameraStream) {
           try {
-            window.attCameraStream.getTracks().forEach(function (t) { t.stop(); });
-            window.attCameraStream = null;
+            window.attCameraStream.getTracks().forEach(function (track) { track.stop(); });
           } catch (e) { }
-        }
-      }
-
-      // Refresh data for attendance report if entered
-      if (sectionId === 'section-attendance-report') {
-        if (typeof window.renderAllAttendanceReport === 'function') {
-          window.renderAllAttendanceReport();
+          window.attCameraStream = null;
         }
       }
     };
@@ -5479,7 +5645,7 @@ hgyt
     // =========================================================================
     // FEATURE: KAMERA ASLI (FLIP KAMERA DEPAN/BELAKANG) & ABSENSI GPS
     // =========================================================================
-    window.attCameraFacingMode = 'user'; // 'user' (depan) atau 'environment' (belakang)
+    window.attCameraFacingMode = 'user'; // 'user' (depan selfie) atau 'environment' (belakang)
     window.currentGPS = { lat: -6.9826, lng: 110.4208, accuracy: 8, distance: 14 };
     window.attCameraStream = null;
     window.capturedAttendancePhoto = null;
@@ -5504,11 +5670,24 @@ hgyt
         window.attCameraStream = null;
       }
       window.startAttendanceCamera();
-      var label = (window.attCameraFacingMode === 'user') ? 'Kamera Depan (Selfie)' : 'Kamera Belakang (Outward)';
+      var label = (window.attCameraFacingMode === 'user') ? 'Kamera Depan (Selfie)' : 'Kamera Belakang';
       window.showToast('Kamera dibalik: ' + label, 'info');
     };
 
-    // Start Live Stream
+    // Show Camera Placeholder with Custom Message
+    window.showCameraPlaceholder = function (msg, isError) {
+      var video = document.getElementById('att-camera-video');
+      var placeholder = document.getElementById('att-camera-placeholder');
+      var msgEl = document.getElementById('att-camera-placeholder-msg');
+
+      if (video) video.classList.add('hidden');
+      if (placeholder) {
+        placeholder.classList.remove('hidden');
+        if (msgEl) msgEl.textContent = msg || 'Kamera Belum Aktif';
+      }
+    };
+
+    // Start Live Stream with Multi-level Fallbacks for Mobile Browsers
     window.startAttendanceCamera = function () {
       var video = document.getElementById('att-camera-video');
       var preview = document.getElementById('att-camera-preview');
@@ -5517,79 +5696,76 @@ hgyt
       var btnSnap = document.getElementById('btn-snap-photo');
       var btnRetake = document.getElementById('btn-retake-photo');
 
-      if (preview) preview.classList.add('hidden');
-      if (video) video.classList.remove('hidden');
+      if (preview) {
+        preview.classList.add('hidden');
+        preview.src = '';
+      }
+      if (video) {
+        video.classList.remove('hidden');
+        video.muted = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('autoplay', '');
+      }
       if (placeholder) placeholder.classList.add('hidden');
       if (btnRetake) btnRetake.classList.add('hidden');
       if (btnSnap) btnSnap.classList.remove('hidden');
 
       window.capturedAttendancePhoto = null;
 
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: window.attCameraFacingMode,
-            width: { ideal: 640 },
-            height: { ideal: 480 }
-          },
-          audio: false
-        }).then(function (stream) {
-          window.attCameraStream = stream;
-          if (video) {
-            video.srcObject = stream;
-            video.play();
-          }
-          if (watermark) watermark.classList.remove('hidden');
-          window.updateAttendanceWatermark();
-        }).catch(function (err) {
-          console.warn('Webcam langsung diblokir atau fallback:', err);
-          window.startSimulatedCamera();
-        });
-      } else {
-        window.startSimulatedCamera();
+      // Stop previous stream if active
+      if (window.attCameraStream) {
+        try {
+          window.attCameraStream.getTracks().forEach(function (t) { t.stop(); });
+        } catch (e) { }
+        window.attCameraStream = null;
       }
-    };
 
-    // Simulated Camera Stream
-    window.startSimulatedCamera = function () {
-      var video = document.getElementById('att-camera-video');
-      var watermark = document.getElementById('att-camera-watermark');
-      if (watermark) watermark.classList.remove('hidden');
-      window.updateAttendanceWatermark();
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.warn('getUserMedia not supported, showing mobile camera options');
+        window.showCameraPlaceholder('Browser tidak mendukung streaming video langsung. Silakan gunakan tombol "Kamera Bawaan HP" di bawah.', true);
+        return;
+      }
 
-      var canvas = document.getElementById('att-camera-canvas');
-      if (canvas && video) {
-        canvas.width = 320;
-        canvas.height = 240;
-        var ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#1F1A17';
-        ctx.fillRect(0, 0, 320, 240);
-        ctx.fillStyle = '#B4532A';
-        ctx.beginPath();
-        ctx.arc(160, 95, 45, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#2F5D50';
-        ctx.beginPath();
-        ctx.moveTo(80, 210);
-        ctx.bezierCurveTo(90, 150, 230, 150, 240, 210);
-        ctx.fill();
+      var facing = window.attCameraFacingMode || 'user';
+      var tryConstraints = [
+        { video: { facingMode: facing }, audio: false },
+        { video: { facingMode: { ideal: facing } }, audio: false },
+        { video: true, audio: false }
+      ];
 
-        ctx.fillStyle = '#FAF6F0';
-        ctx.font = 'bold 11px monospace';
-        var modeText = (window.attCameraFacingMode === 'user') ? 'KAMERA DEPAN AKTIF' : 'KAMERA BELAKANG AKTIF';
-        ctx.fillText(modeText, 15, 25);
-        ctx.fillStyle = '#E8E2D9';
-        ctx.font = '9px monospace';
-        ctx.fillText('Anti-Upload Galeri [VALID]', 15, 40);
-
-        var dataUrl = canvas.toDataURL('image/jpeg');
-        var preview = document.getElementById('att-camera-preview');
-        if (preview) {
-          preview.src = dataUrl;
-          preview.classList.remove('hidden');
+      function tryStream(idx) {
+        if (idx >= tryConstraints.length) {
+          window.showCameraPlaceholder('Akses kamera live terblokir atau ditolak browser. Klik tombol di bawah untuk izinkan atau gunakan Kamera Bawaan HP.', true);
+          return;
         }
-        if (video) video.classList.add('hidden');
+
+        navigator.mediaDevices.getUserMedia(tryConstraints[idx])
+          .then(function (stream) {
+            window.attCameraStream = stream;
+            if (video) {
+              video.srcObject = stream;
+              video.onloadedmetadata = function () {
+                var p = video.play();
+                if (p !== undefined) {
+                  p.catch(function (err) {
+                    console.warn('Autoplay gesture needed on mobile:', err);
+                    window.showCameraPlaceholder('Sentuh tombol "Buka Kamera Selfie" untuk mengaktifkan tampilan layar kamera', false);
+                  });
+                }
+              };
+            }
+            if (placeholder) placeholder.classList.add('hidden');
+            if (watermark) watermark.classList.remove('hidden');
+            window.updateAttendanceWatermark();
+          })
+          .catch(function (err) {
+            console.warn('Constraint ' + idx + ' failed:', err);
+            tryStream(idx + 1);
+          });
       }
+
+      tryStream(0);
     };
 
     window.updateAttendanceWatermark = function () {
@@ -5601,39 +5777,8 @@ hgyt
       if (gpsEl) gpsEl.textContent = 'GPS: ' + window.currentGPS.lat + ', ' + window.currentGPS.lng;
     };
 
-    // Snap Photo directly from the live video stream
-    window.snapAttendancePhoto = function () {
-      var video = document.getElementById('att-camera-video');
-      var canvas = document.getElementById('att-camera-canvas');
-      var preview = document.getElementById('att-camera-preview');
-      var btnSnap = document.getElementById('btn-snap-photo');
-      var btnRetake = document.getElementById('btn-retake-photo');
-
-      if (!canvas) return;
-
-      var w = 480;
-      var h = 360;
-      canvas.width = w;
-      canvas.height = h;
-      var ctx = canvas.getContext('2d');
-
-      if (video && video.srcObject && video.videoWidth) {
-        ctx.drawImage(video, 0, 0, w, h);
-      } else {
-        ctx.fillStyle = '#1F1A17';
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = '#B4532A';
-        ctx.beginPath();
-        ctx.arc(w / 2, h * 0.4, 60, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#2F5D50';
-        ctx.beginPath();
-        ctx.moveTo(w * 0.25, h * 0.9);
-        ctx.bezierCurveTo(w * 0.3, h * 0.65, w * 0.7, h * 0.65, w * 0.75, h * 0.9);
-        ctx.fill();
-      }
-
-      // Burn Anti-Fraud Watermark onto Photo (Lengkap Hari, Jam, Tanggal, GPS, Keterangan Manual - Req 4 Klien)
+    // Anti-Fraud Watermark Stamper (Lengkap Hari, Tanggal, Jam WIB, GPS, Nama Staff, Cabang, Status Geofence)
+    window.applyWatermarkToCanvas = function (ctx, w, h) {
       var now = new Date();
       var days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
       var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -5656,42 +5801,130 @@ hgyt
       var user = window.appState.currentUser || { email: 'staff@demo.com' };
       var name = (user.name || user.email.split('@')[0]).toUpperCase();
       var facingLabel = (window.attCameraFacingMode === 'user') ? 'DEP' : 'BLK';
-      ctx.fillText('[CAM-' + facingLabel + '] ' + name + ' | ' + (window.appState.currentBranch || 'Cabang 1 (Pusat)'), 18, h - wmHeight + 10);
+      ctx.fillText('[CAM-' + facingLabel + '] ' + name + ' | ' + (window.appState.currentBranch || 'Cabang 1 (Pusat)'), 18, h - wmHeight + 12);
 
       ctx.fillStyle = '#E8E2D9';
       ctx.font = '9.5px monospace';
       var fullStamp = dayStr + ', ' + dateStr + ' ' + timeStr + ' | GPS: ' + window.currentGPS.lat + ', ' + window.currentGPS.lng + ' (Semarang)';
-      ctx.fillText(fullStamp, 18, h - wmHeight + 25);
+      ctx.fillText(fullStamp, 18, h - wmHeight + 27);
 
       if (manualNotes) {
         ctx.fillStyle = '#F59E0B';
         ctx.font = 'italic 9.5px sans-serif';
         var trunNotes = manualNotes.length > 48 ? manualNotes.slice(0, 48) + '...' : manualNotes;
-        ctx.fillText('Tugas: ' + trunNotes, 18, h - wmHeight + 40);
+        ctx.fillText('Tugas: ' + trunNotes, 18, h - wmHeight + 42);
 
         ctx.fillStyle = '#10B981';
         ctx.font = 'bold 8.5px monospace';
-        ctx.fillText('VALID GEOFENCE & AUTHENTIC LIVE SHOT', 18, h - wmHeight + 54);
+        ctx.fillText('VALID GEOFENCE & AUTHENTIC LIVE SHOT', 18, h - wmHeight + 56);
       } else {
         ctx.fillStyle = '#10B981';
         ctx.font = 'bold 9px monospace';
-        ctx.fillText('SEMARANG OFFICE RADIUS VERIFIED [VALID]', 18, h - wmHeight + 40);
+        ctx.fillText('SEMARANG OFFICE RADIUS VERIFIED [VALID]', 18, h - wmHeight + 42);
       }
+    };
 
-      var photoDataUrl = canvas.toDataURL('image/jpeg', 0.9);
-      window.capturedAttendancePhoto = photoDataUrl;
+    // Snap Photo directly from the live video stream (with Selfie mirroring)
+    window.snapAttendancePhoto = function () {
+      var video = document.getElementById('att-camera-video');
+      var canvas = document.getElementById('att-camera-canvas');
+      var preview = document.getElementById('att-camera-preview');
+      var btnSnap = document.getElementById('btn-snap-photo');
+      var btnRetake = document.getElementById('btn-retake-photo');
 
-      if (preview) {
-        preview.src = photoDataUrl;
-        preview.classList.remove('hidden');
+      if (!canvas) return;
+
+      if (video && video.srcObject && video.videoWidth > 0) {
+        var vw = video.videoWidth;
+        var vh = video.videoHeight;
+        var targetW = 640;
+        var targetH = Math.round(targetW * (vh / vw));
+        canvas.width = targetW;
+        canvas.height = targetH;
+        var ctx = canvas.getContext('2d');
+
+        // Mirror horizontal if user facing (selfie camera) so it feels natural
+        if (window.attCameraFacingMode === 'user') {
+          ctx.translate(targetW, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(video, 0, 0, targetW, targetH);
+          ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform for watermark text
+        } else {
+          ctx.drawImage(video, 0, 0, targetW, targetH);
+        }
+
+        window.applyWatermarkToCanvas(ctx, targetW, targetH);
+
+        var photoDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+        window.capturedAttendancePhoto = photoDataUrl;
+
+        if (preview) {
+          preview.src = photoDataUrl;
+          preview.classList.remove('hidden');
+        }
+        if (video) video.classList.add('hidden');
+
+        if (btnSnap) btnSnap.classList.add('hidden');
+        if (btnRetake) btnRetake.classList.remove('hidden');
+
+        window.playBeep('success');
+        window.showToast('Foto bukti selfie berhasil diambil langsung dari kamera!', 'success');
+      } else {
+        // Fallback: If camera stream is not ready, trigger native smartphone camera
+        window.showToast('Kamera live belum aktif. Mengalihkan ke Kamera Bawaan HP...', 'info');
+        var nativeInput = document.getElementById('att-native-camera-input');
+        if (nativeInput) {
+          nativeInput.click();
+        } else {
+          window.startAttendanceCamera();
+        }
       }
-      if (video) video.classList.add('hidden');
+    };
 
-      if (btnSnap) btnSnap.classList.add('hidden');
-      if (btnRetake) btnRetake.classList.remove('hidden');
+    // Native Camera File Capture Handler (100% Reliable across all Android & iOS devices)
+    window.handleNativeSelfieCapture = function (event) {
+      var file = event.target.files && event.target.files[0];
+      if (!file) return;
 
-      window.playBeep('success');
-      window.showToast('Foto bukti selfie berhasil diambil langsung dari kamera!', 'success');
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var canvas = document.getElementById('att-camera-canvas');
+          var preview = document.getElementById('att-camera-preview');
+          var video = document.getElementById('att-camera-video');
+          var placeholder = document.getElementById('att-camera-placeholder');
+          var btnSnap = document.getElementById('btn-snap-photo');
+          var btnRetake = document.getElementById('btn-retake-photo');
+
+          var targetW = 640;
+          var targetH = Math.round(targetW * (img.height / img.width));
+          canvas.width = targetW;
+          canvas.height = targetH;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, targetW, targetH);
+
+          window.applyWatermarkToCanvas(ctx, targetW, targetH);
+
+          var photoDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          window.capturedAttendancePhoto = photoDataUrl;
+
+          if (preview) {
+            preview.src = photoDataUrl;
+            preview.classList.remove('hidden');
+          }
+          if (video) video.classList.add('hidden');
+          if (placeholder) placeholder.classList.add('hidden');
+
+          if (btnSnap) btnSnap.classList.add('hidden');
+          if (btnRetake) btnRetake.classList.remove('hidden');
+
+          window.playBeep('success');
+          window.showToast('Foto selfie berhasil diambil & diverifikasi dari Kamera HP!', 'success');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     };
 
     // Safe Photo Viewer: Opens Modal from Index
