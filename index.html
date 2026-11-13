@@ -1872,34 +1872,46 @@
 
                 <!-- Camera Viewport Box -->
                 <div
-                  class="relative bg-slate-950 rounded-md overflow-hidden border border-[#E8E2D9] aspect-[4/3] flex flex-col items-center justify-center text-center shadow-inner cursor-pointer"
+                  class="relative bg-[#1F1A17] rounded-md overflow-hidden border-2 border-[#E8E2D9] aspect-[4/3] flex flex-col items-center justify-center text-center shadow-inner cursor-pointer"
                   onclick="if (!window.attCameraStream) window.startAttendanceCamera();">
                   <!-- Live Video Stream -->
-                  <video id="att-camera-video" autoplay playsinline webkit-playsinline muted class="w-full h-full object-cover bg-black"></video>
+                  <video id="att-camera-video" autoplay playsinline webkit-playsinline muted
+                    class="w-full h-full object-cover" style="transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
 
                   <!-- Live Camera Active Badge -->
                   <div id="att-camera-status-badge"
-                    class="hidden absolute top-2 left-2 z-20 bg-slate-950/80 text-emerald-400 text-[10px] font-mono font-bold px-2 py-1 rounded border border-emerald-500/40 flex items-center space-x-1.5 backdrop-blur-xs">
+                    class="absolute top-2 left-2 z-20 bg-slate-950/80 text-emerald-400 text-[10px] font-mono font-bold px-2 py-1 rounded border border-emerald-500/40 flex items-center space-x-1.5 backdrop-blur-xs">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span id="att-camera-status-text">KAMERA SELFIE AKTIF</span>
+                  </div>
+
+                  <!-- Face Viewfinder Guide Overlay -->
+                  <div id="att-camera-guide"
+                    class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-3 z-10">
+                    <div
+                      class="w-40 h-48 border-2 border-dashed border-[#B4532A]/70 rounded-full flex flex-col items-center justify-end pb-2 shadow-[0_0_20px_rgba(180,83,42,0.25)]">
+                      <span
+                        class="text-[9px] font-mono font-bold text-white bg-[#1F1A17]/85 px-2 py-0.5 rounded border border-[#E8E2D9]/30">
+                        POSISIKAN WAJAH ANDA
+                      </span>
+                    </div>
                   </div>
 
                   <!-- Hidden Snapshot Canvas -->
                   <canvas id="att-camera-canvas" class="hidden"></canvas>
 
                   <!-- Captured Photo Preview -->
-                  <img id="att-camera-preview" class="hidden w-full h-full object-cover absolute inset-0 z-10"
+                  <img id="att-camera-preview" class="hidden w-full h-full object-cover absolute inset-0 z-30"
                     alt="Hasil Foto Live">
 
-                  <!-- Placeholder if camera not yet triggered -->
                   <!-- Hidden Native Camera Capture Input (Fallback HP & In-App Browser) -->
                   <input type="file" id="att-native-camera-input" accept="image/*" capture="user" class="hidden"
                     onchange="window.handleNativeSelfieCapture(event)">
 
                   <!-- Placeholder if camera not yet triggered or permission required -->
                   <div id="att-camera-placeholder"
-                    class="hidden absolute inset-0 z-20 bg-slate-900/90 flex flex-col items-center justify-center p-4 text-white space-y-2.5">
-                    <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="hidden absolute inset-0 z-20 bg-slate-900/95 flex flex-col items-center justify-center p-4 text-white space-y-2.5">
+                    <svg class="w-10 h-10 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1922,9 +1934,9 @@
 
                   <!-- Real-time GPS & Timestamp Watermark Overlay -->
                   <div id="att-camera-watermark"
-                    class="hidden absolute bottom-2 left-2 right-2 z-20 bg-slate-950/85 text-white px-2.5 py-1.5 rounded-md text-[10px] font-mono flex items-center justify-between border border-slate-700">
+                    class="absolute bottom-2 left-2 right-2 z-20 bg-slate-950/85 text-white px-2.5 py-1.5 rounded-md text-[10px] font-mono flex items-center justify-between border border-slate-700">
                     <div>
-                      <span class="text-emerald-400 font-bold block" id="att-watermark-time">14:30:00 WIB</span>
+                      <span class="text-emerald-400 font-bold block" id="att-watermark-time">--:--:-- WIB</span>
                       <span class="text-slate-300 text-[9px]" id="att-watermark-gps">GPS: -6.9826, 110.4208</span>
                     </div>
                     <span
@@ -1934,50 +1946,54 @@
                 </div>
 
                 <!-- Shutter, Camera Flip & Retake Button Controls -->
-                <div class="grid grid-cols-12 gap-2 pt-1">
-                  <!-- Snap Button -->
-                  <button type="button" id="btn-snap-photo" onclick="window.snapAttendancePhoto()"
-                    class="col-span-8 h-11 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs rounded-md transition-all flex items-center justify-center space-x-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="space-y-2 pt-1">
+                  <div class="grid grid-cols-12 gap-2">
+                    <!-- Snap Button -->
+                    <button type="button" id="btn-snap-photo" onclick="window.snapAttendancePhoto()"
+                      class="col-span-8 h-12 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs sm:text-sm rounded-md transition-all flex items-center justify-center space-x-1.5 active:scale-95 shadow-md">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span>Ambil Foto Selfie</span>
+                    </button>
+
+                    <!-- Retake Button (shown after snap) -->
+                    <button type="button" id="btn-retake-photo" onclick="window.startAttendanceCamera()"
+                      class="hidden col-span-8 h-12 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] font-semibold text-xs rounded-md border border-[#E8E2D9] transition-all flex items-center justify-center space-x-1 active:scale-95 shadow-xs">
+                      <svg class="w-4 h-4 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Foto Ulang</span>
+                    </button>
+
+                    <!-- Flip Camera Button (Depan / Belakang) -->
+                    <button type="button" onclick="window.flipAttendanceCamera()"
+                      class="col-span-4 h-12 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center justify-center space-x-1 transition-all active:scale-95 shadow-xs"
+                      title="Balik Arah Kamera Depan / Belakang">
+                      <svg class="w-4 h-4 text-[#2F5D50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                      </svg>
+                      <span class="truncate">Balik</span>
+                    </button>
+                  </div>
+
+                  <!-- Direct Native Camera Button for HP -->
+                  <button type="button" onclick="document.getElementById('att-native-camera-input').click()"
+                    class="w-full h-11 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#B4532A] font-bold text-xs rounded-md border-2 border-[#B4532A]/50 transition-all flex items-center justify-center space-x-2 active:scale-95 shadow-xs">
+                    <svg class="w-4 h-4 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span>Ambil Foto Selfie</span>
-                  </button>
-
-                  <!-- Retake Button (shown after snap) -->
-                  <button type="button" id="btn-retake-photo" onclick="window.startAttendanceCamera()"
-                    class="hidden col-span-8 h-11 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] font-semibold text-xs rounded-md border border-[#E8E2D9] transition-all flex items-center justify-center space-x-1">
-                    <svg class="w-4 h-4 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span>Foto Ulang</span>
-                  </button>
-
-                  <!-- Flip Camera Button (Depan / Belakang) -->
-                  <button type="button" onclick="window.flipAttendanceCamera()"
-                    class="col-span-4 h-11 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center justify-center space-x-1 transition-all"
-                    title="Balik Arah Kamera Depan / Belakang">
-                    <svg class="w-4 h-4 text-[#2F5D50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    </svg>
-                    <span class="truncate">Balik</span>
+                    <span>📸 Buka Kamera HP Bawaan (Pasti Bisa)</span>
                   </button>
                 </div>
-
-                <!-- Secondary Button: Kamera Native HP Langsung -->
-                <button type="button" onclick="document.getElementById('att-native-camera-input').click()"
-                  class="w-full h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-md border border-slate-200 transition-all flex items-center justify-center space-x-1.5 active:scale-95 shadow-xs">
-                  <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>Buka Kamera Bawaan HP (Foto Selfie Alternatif)</span>
-                </button>
               </div>
 
               <!-- GPS Live Verification Status Display -->
@@ -5750,14 +5766,14 @@
       var tryConstraints = [
         {
           video: {
-            facingMode: { ideal: facingMode },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
+            facingMode: { ideal: facingMode }
           },
           audio: false
         },
         {
-          video: { facingMode: { ideal: facingMode } },
+          video: {
+            facingMode: facingMode
+          },
           audio: false
         },
         {
@@ -6057,13 +6073,21 @@
     };
 
     window.submitAttendance = function (inOut) {
+      var video = document.getElementById('att-camera-video');
+
+      // Seamless Auto-Capture: If user clicks Absen without snapping first
       if (!window.capturedAttendancePhoto) {
-        window.showToast('WAJIB ambil foto selfie langsung dari kamera sebelum submit absen!', 'error');
-        var camBox = document.getElementById('att-camera-preview');
-        if (camBox) {
-          camBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (video && video.srcObject && video.videoWidth > 0) {
+          window.snapAttendancePhoto();
+        } else {
+          // Open phone camera seamlessly
+          window.showToast('Membuka kamera HP untuk foto bukti kehadiran...', 'info');
+          var nativeInput = document.getElementById('att-native-camera-input');
+          if (nativeInput) {
+            nativeInput.click();
+          }
+          return;
         }
-        return;
       }
 
       var typeEl = document.querySelector('input[name="att-type"]:checked');
