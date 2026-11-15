@@ -171,6 +171,46 @@ function doPost(e) {
       });
     }
 
+    // 3. DELETE ATTENDANCE: Hapus satu baris presensi tertentu
+    if (action === 'deleteAttendance') {
+      var sheet = ss.getSheetByName('Presensi');
+      if (!sheet) {
+        return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
+      }
+
+      var idToDelete = String(payload.id);
+      var data = sheet.getDataRange().getValues();
+      var deleted = false;
+
+      for (var r = 1; r < data.length; r++) {
+        if (String(data[r][0]) === idToDelete) {
+          sheet.deleteRow(r + 1); // 1-indexed baris di Spreadsheet
+          deleted = true;
+          break;
+        }
+      }
+
+      return jsonResponse_({
+        success: deleted,
+        message: deleted ? 'Presensi ' + idToDelete + ' berhasil dihapus dari Google Sheets' : 'ID presensi tidak ditemukan'
+      });
+    }
+
+    // 4. RESET ATTENDANCE: Kosongkan seluruh riwayat presensi demo untuk persiapan demo klien
+    if (action === 'resetAttendance') {
+      var sheet = ss.getSheetByName('Presensi');
+      if (sheet) {
+        var lastRow = sheet.getLastRow();
+        if (lastRow > 1) {
+          sheet.deleteRows(2, lastRow - 1);
+        }
+      }
+      return jsonResponse_({
+        success: true,
+        message: 'Seluruh riwayat presensi di Google Sheets berhasil direset bersih untuk persiapan demo klien'
+      });
+    }
+
     return jsonResponse_({ success: false, message: 'Action tidak dikenali: ' + action });
   } catch (err) {
     return jsonResponse_({ success: false, error: err.toString() });
