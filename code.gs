@@ -134,11 +134,73 @@ function doGet(e) {
     });
   }
 
-  // 5. PING / STATUS
+  // 5. GET LIVE SESSIONS
+  if (action === 'getLiveSessions') {
+    var sheet = ss.getSheetByName('Live_Sessions');
+    var sessions = [];
+    if (sheet && sheet.getLastRow() > 1) {
+      var data = sheet.getDataRange().getValues();
+      for (var r = 1; r < data.length; r++) {
+        sessions.push({
+          id: String(data[r][0] || ''),
+          date: String(data[r][1] || ''),
+          store: String(data[r][2] || ''),
+          host: String(data[r][3] || ''),
+          omset: Number(data[r][4] || 0),
+          fee: Number(data[r][5] || 0),
+          ads: Number(data[r][6] || 0),
+          cogs: Number(data[r][7] || 0),
+          margin: Number(data[r][8] || 0),
+          items: Number(data[r][9] || 0),
+          duration: String(data[r][10] || ''),
+          viewers: Number(data[r][11] || 0),
+          notes: String(data[r][12] || '')
+        });
+      }
+    }
+    return jsonResponse_({ success: true, sessions: sessions });
+  }
+
+  // 6. SAVE LIVE SESSION via GET (Dukungan CORS penuh dari browser)
+  if (action === 'saveLiveSession') {
+    var sheet = ss.getSheetByName('Live_Sessions');
+    if (!sheet) {
+      sheet = ss.insertSheet('Live_Sessions');
+      sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
+    } else if (sheet.getLastColumn() < 13) {
+      sheet.getRange(1, 11).setValue('Durasi');
+      sheet.getRange(1, 12).setValue('Puncak Viewers');
+      sheet.getRange(1, 13).setValue('Catatan');
+    }
+
+    var id = String(e.parameter.id || ('LS-' + Date.now()));
+    var date = String(e.parameter.date || Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jakarta', 'yyyy-MM-dd'));
+    var store = String(e.parameter.store || 'TikTok Shop Live Official');
+    var host = String(e.parameter.host || 'Host Live');
+    var omset = Number(e.parameter.omset || 0);
+    var fee = Number(e.parameter.fee || 0);
+    var ads = Number(e.parameter.ads || 0);
+    var cogs = Number(e.parameter.cogs || 0);
+    var margin = Number(e.parameter.margin || 0);
+    var items = Number(e.parameter.items || 0);
+    var duration = String(e.parameter.duration || '');
+    var viewers = Number(e.parameter.viewers || 0);
+    var notes = String(e.parameter.notes || '');
+
+    sheet.appendRow([id, date, store, host, omset, fee, ads, cogs, margin, items, duration, viewers, notes]);
+
+    return jsonResponse_({
+      success: true,
+      id: id,
+      message: 'Rekap sesi live ' + id + ' (' + store + ') berhasil disimpan ke Google Sheets'
+    });
+  }
+
+  // 7. PING / STATUS
   return jsonResponse_({
     status: 'ONLINE',
     service: 'MJA Sales Hub ERP — Google Sheets Live Gateway',
-    version: '2.4-clean-reset-ready',
+    version: '2.5-live-sessions-ready',
     timestamp: new Date().toISOString()
   });
 }
@@ -294,21 +356,25 @@ function doPost(e) {
       if (!sheet) {
         sheet = ss.insertSheet('Live_Sessions');
         sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
+      } else if (sheet.getLastColumn() < 13) {
+        sheet.getRange(1, 11).setValue('Durasi');
+        sheet.getRange(1, 12).setValue('Puncak Viewers');
+        sheet.getRange(1, 13).setValue('Catatan');
       }
       sheet.appendRow([
         payload.id || ('LS-' + Date.now()),
         payload.date || Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jakarta', 'yyyy-MM-dd'),
         payload.store || 'TikTok Shop Live',
         payload.host || 'Host Live',
-        payload.omset || 0,
-        payload.fee || 0,
-        payload.ads || 0,
-        payload.cogs || 0,
-        payload.margin || 0,
-        payload.items || 0,
-        payload.duration || '',
-        payload.viewers || 0,
-        payload.notes || ''
+        Number(payload.omset || 0),
+        Number(payload.fee || 0),
+        Number(payload.ads || 0),
+        Number(payload.cogs || 0),
+        Number(payload.margin || 0),
+        Number(payload.items || 0),
+        String(payload.duration || ''),
+        Number(payload.viewers || 0),
+        String(payload.notes || '')
       ]);
       return jsonResponse_({
         success: true,
