@@ -2387,7 +2387,7 @@
                 </p>
               </div>
               <div class="flex items-center space-x-2">
-                <button type="button" onclick="window.renderAllAttendanceReport()"
+                <button type="button" onclick="window.fetchRemoteAttendance(false)"
                   class="h-11 px-4 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] font-bold text-xs rounded-md transition-all flex items-center space-x-1.5">
                   <svg class="w-4 h-4 text-[#2F5D50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -4478,6 +4478,60 @@
       }
     };
 
+    // Google Apps Script Live Gateway for Multi-Device Real-time Database (Google Sheets)
+    window.GAS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyYsAdWrghBnmrr-m4_s88Ixfj-o9V_n97x15shaJgwoVaQhRLKD98r3lqofrVm3bfg/exec";
+
+    // Fungsi Sinkronisasi Data Presensi Realtime dari Google Sheets
+    window.fetchRemoteAttendance = function (silent) {
+      if (!window.GAS_ENDPOINT_URL) return;
+      var fetchUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=getAttendance&t=' + Date.now();
+
+      fetch(fetchUrl)
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.success && Array.isArray(data.logs) && data.logs.length > 0) {
+            var currentLogs = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
+            var existingIds = {};
+            data.logs.forEach(function (l) { if (l.id) existingIds[l.id] = true; });
+
+            var merged = data.logs.slice();
+            currentLogs.forEach(function (localLog) {
+              if (localLog.id && !existingIds[localLog.id]) {
+                merged.unshift(localLog);
+                existingIds[localLog.id] = true;
+              }
+            });
+
+            if (window.appState && window.appState.data) {
+              window.appState.data.attendanceLogs = merged;
+            }
+            try {
+              localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(merged.slice(0, 150)));
+            } catch (e) { }
+
+            if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
+            if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+            if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+
+            if (!silent) {
+              window.showToast('Data presensi berhasil disinkronkan dari Google Sheets (' + merged.length + ' log)', 'success');
+            }
+          }
+        })
+        .catch(function (err) {
+          if (!silent) console.warn('Gagal sinkronisasi presensi remote:', err);
+        });
+    };
+
+    // Auto-sync polling dari Google Sheets setiap 7 detik saat membuka menu presensi
+    setInterval(function () {
+      if (window.appState && window.appState.isAuth && (window.appState.currentSection === 'section-attendance-report' || window.appState.currentSection === 'section-attendance')) {
+        if (typeof window.fetchRemoteAttendance === 'function') {
+          window.fetchRemoteAttendance(true);
+        }
+      }
+    }, 7000);
+
     // Auto-Restore Persistent Attendance Logs from LocalStorage (Permanent History)
     try {
       var savedAtt = localStorage.getItem('mja_persistent_attendanceLogs');
@@ -4649,6 +4703,7 @@
       try { if (typeof window.renderMissingQC2Resi === 'function') window.renderMissingQC2Resi(); } catch (e5) { console.error(e5); }
       try { if (typeof window.renderStoreRecap === 'function') window.renderStoreRecap(); } catch (e6) { console.error(e6); }
       try { if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs(); } catch (e7) { console.error(e7); }
+      try { if (typeof window.fetchRemoteAttendance === 'function') window.fetchRemoteAttendance(true); } catch (e8) { }
     };
 
     window.handleLogout = function () {
@@ -7189,6 +7244,39 @@
         } catch (e) { }
       }
 
+      // Sinkronisasi real-time multi-perangkat ke Google Sheets Database via GAS Gateway
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'saveAttendance',
+              id: newLog.id,
+              date: newLog.date,
+              time: newLog.time,
+              name: newLog.name,
+              email: newLog.email,
+              role: newLog.role,
+              branch: newLog.branch,
+              type: newLog.type,
+              inOut: newLog.inOut,
+              coords: newLog.coords,
+              distance: newLog.distance,
+              status: newLog.status,
+              notes: newLog.notes,
+              photo: newLog.photo
+            })
+          }).then(function () {
+            console.log('Presensi selfie berhasil dikirim ke Google Sheets');
+          }).catch(function (err) {
+            console.warn('Gagal kirim ke GAS:', err);
+          });
+        } catch (eGas) {
+          console.warn('GAS fetch dispatch error:', eGas);
+        }
+      }
       // Reset camera
       window.capturedAttendancePhoto = null;
       var preview = document.getElementById('att-camera-preview');
