@@ -261,7 +261,7 @@
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </span>
-            <input type="password" id="login-password" required placeholder="******" value="das12345"
+            <input type="password" id="login-password" required placeholder="******" value="123456"
               class="w-full pl-9 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none">
             <button type="button" onclick="window.togglePasswordVisibility('login-password', 'eye-icon-login')"
               class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
@@ -332,6 +332,12 @@
           <p class="text-[10px] text-slate-400 mt-0.5">Email ini akan digunakan untuk login presensi &amp; operasional
             (bisa diubah nanti).</p>
         </div>
+        <div>
+          <label class="block font-semibold uppercase text-slate-500 mb-1">NIK Karyawan (Nomor Induk Karyawan)</label>
+          <input type="text" id="reg-nik" required placeholder="Contoh: MJA-2026-088"
+            class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-mono">
+          <p class="text-[10px] text-slate-400 mt-0.5">Nomor NIK resmi dari HRD &amp; Manajemen.</p>
+        </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -357,7 +363,7 @@
         <div>
           <label class="block font-semibold uppercase text-slate-500 mb-1">Kata Sandi Awal</label>
           <div class="relative">
-            <input type="password" id="reg-password" required minlength="6" placeholder="Minimal 6 karakter"
+            <input type="password" id="reg-password" required minlength="6" placeholder="Standar: 123456 (bisa diubah nanti)" value="123456"
               class="w-full pl-3 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
             <button type="button" onclick="window.togglePasswordVisibility('reg-password', 'eye-icon-reg')"
               class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
@@ -592,11 +598,22 @@
           </div>
 
           <!-- Elemen 2: [Judul Halaman] (Satu Baris, Singkat, Maks 20 Karakter di HP) -->
-          <h2
-            class="flex-1 min-w-0 text-center md:text-left font-heading text-sm sm:text-base font-bold text-[#1F1A17] truncate leading-tight tracking-tight px-1"
-            id="topbar-page-title">
-            Dashboard
-          </h2>
+          <div class="flex-1 min-w-0 flex items-center justify-between gap-2 px-1">
+            <h2 class="font-heading text-sm sm:text-base font-bold text-[#1F1A17] truncate leading-tight tracking-tight" id="topbar-page-title">
+              Dashboard
+            </h2>
+            <!-- USER BADGE ATAS (Muncul Nama Lengkap Pengguna & Role) -->
+            <div id="topbar-user-badge" onclick="window.openChangePasswordModal()"
+              class="inline-flex items-center space-x-2 bg-white/90 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl px-2.5 py-1 text-xs cursor-pointer shadow-2xs transition-all flex-shrink-0"
+              title="Klik untuk Ganti Kata Sandi">
+              <span id="topbar-user-avatar" class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px] flex-shrink-0">A</span>
+              <div class="flex flex-col text-left leading-tight">
+                <span id="topbar-user-fullname" class="font-bold text-slate-800 text-[11px] sm:text-xs truncate max-w-[120px] sm:max-w-[200px]">Ahmad Fauzi</span>
+                <span id="topbar-user-role-badge" class="text-[9px] text-slate-500 font-semibold truncate max-w-[120px] sm:max-w-[200px]">Administrator • Cabang 1</span>
+              </div>
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
 
           <!-- Elemen 3: [1 Tombol Aksi] (Ikon Saja di HP, Area Sentuh >= 44px) -->
           <div class="flex items-center space-x-1.5 flex-shrink-0">
@@ -980,6 +997,27 @@
           <!-- KARTU STATUS KEPATUHAN INPUT HARI INI -->
           <div id="live-today-compliance-card" class="p-4 rounded-xl border transition-all">
             <!-- Di-render dinamis oleh renderLiveComplianceStatus() -->
+          </div>
+
+          <!-- FILTER KUMULATIF & HARIAN HOST LIVE -->
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold text-slate-700 flex items-center space-x-1">
+                <span>📊</span>
+                <span>Mode Rekap Laporan:</span>
+              </span>
+              <select id="host-filter-date" onchange="window.onHostFilterDateChange()"
+                class="h-8 px-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="all">Kumulatif (Semua Riwayat Sesi Live)</option>
+                <option value="today">Hari Ini Saja</option>
+                <option value="custom">Pilih Tanggal Tertentu...</option>
+              </select>
+              <input type="date" id="host-filter-custom-date" onchange="window.renderLiveSessions()"
+                class="hidden h-8 px-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none">
+            </div>
+            <div id="host-filter-summary-text" class="text-[11px] text-slate-500 font-medium">
+              Menampilkan seluruh rekaman sesi live secara kumulatif
+            </div>
           </div>
 
           <!-- SUMMARY METRICS HOST -->
@@ -3395,7 +3433,7 @@
           </div>
 
           <!-- 5 KPI SUMMARY CARDS -->
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Omset Kotor</span>
               <div class="text-base sm:text-lg font-black text-slate-900 truncate" id="sd-kpi-omset">Rp 0</div>
@@ -3411,11 +3449,7 @@
               <div class="text-base sm:text-lg font-black text-slate-900 truncate" id="sd-kpi-count">0 Baris</div>
               <span class="text-[10px] text-slate-500">Rincian terdata</span>
             </div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Margin Bersih</span>
-              <div class="text-base sm:text-lg font-black text-emerald-600 truncate" id="sd-kpi-margin">Rp 0</div>
-              <span class="text-[10px] font-bold text-emerald-700 truncate block" id="sd-kpi-margin-pct">0% margin</span>
-            </div>
+            
             <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 col-span-2 sm:col-span-1">
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rata-rata Order (AOV)</span>
               <div class="text-base sm:text-lg font-black text-amber-700 truncate" id="sd-kpi-aov">Rp 0</div>
@@ -3464,8 +3498,7 @@
                     <th class="p-3 text-center">Qty</th>
                     <th class="p-3 text-right">Harga Satuan</th>
                     <th class="p-3 text-right">Total Omset</th>
-                    <th class="p-3 text-right">Total HPP</th>
-                    <th class="p-3 text-right">Margin Bersih</th>
+                    
                   </tr>
                 </thead>
                 <tbody id="sd-table-body" class="divide-y divide-slate-100">
@@ -12987,5 +13020,955 @@
 
 </script>
 
+  <!-- ========================================================================= -->
+  <!-- MODAL: GANTI KATA SANDI PENGGUNA -->
+  <!-- ========================================================================= -->
+  <div id="modal-change-password"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 my-auto flex flex-col">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-heading font-bold text-sm text-white">Ganti Kata Sandi Akun</h4>
+            <p class="text-[11px] text-slate-400" id="cp-user-email-display">user@demo.com</p>
+          </div>
+        </div>
+        <button onclick="window.closeModal('modal-change-password')"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">&times;</button>
+      </div>
+
+      <form onsubmit="window.handleChangePassword(event)" class="p-5 space-y-3.5 text-xs">
+        <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-amber-900 text-[11px]">
+          <p class="font-bold flex items-center space-x-1">
+            <span>ℹ️</span>
+            <span>Kata sandi standar awal adalah: <strong>123456</strong></span>
+          </p>
+          <p class="text-slate-600 mt-0.5">Masukkan kata sandi lama Anda, lalu buat kata sandi baru untuk login berikutnya.</p>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Kata Sandi Lama / Saat Ini <span class="text-rose-600">*</span></label>
+          <input type="password" id="cp-old-password" required placeholder="Masukkan kata sandi lama"
+            class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-slate-800 font-semibold focus:outline-none focus:border-emerald-600">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Kata Sandi Baru <span class="text-rose-600">*</span></label>
+          <input type="password" id="cp-new-password" required minlength="6" placeholder="Minimal 6 karakter"
+            class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-slate-800 font-semibold focus:outline-none focus:border-emerald-600">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Konfirmasi Kata Sandi Baru <span class="text-rose-600">*</span></label>
+          <input type="password" id="cp-confirm-password" required minlength="6" placeholder="Ulangi kata sandi baru"
+            class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-slate-800 font-semibold focus:outline-none focus:border-emerald-600">
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+          <button type="button" onclick="window.closeModal('modal-change-password')"
+            class="h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-all cursor-pointer">
+            Batal
+          </button>
+          <button type="submit"
+            class="h-10 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg shadow-md transition-all flex items-center space-x-1.5 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Simpan Kata Sandi Baru</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+<script id="engine-mja-v8">
+
+// =============================================================================
+// MJA SALES HUB ERP - CORE BUSINESS LOGIC & ENHANCED ENGINE
+// Features:
+// 1. Indonesian Date & Time with seconds (YYYY-MM-DD HH:mm:ss WIB), eliminates GMT INDOCHINA string
+// 2. User Authentication: Register with NIK, Email, Name, Divisi, Cabang, initial password 123456
+// 3. Login with Email & verified Password (default 123456)
+// 4. Change Password modal for any user
+// 5. Topbar Full Name & Role Display for all users (Admin, Owner, Finance, Host, Warehouse)
+// 6. Host Live Dashboard: Cumulative stats + Filter per hari / per tanggal
+// 7. Penjualan Detail: Pure itemized product sales without HPP / Net Margin
+// 8. Privacy: Host Live only sees their own sessions & sales; Admin/Owner/Finance see all
+// 9. Export CSV & Printable PDF with WIB timestamps
+// =============================================================================
+
+(function () {
+  // Helper: Format Tanggal & Jam Indonesia (WIB) dengan Detik
+  window.formatWibDateTime = function (dateVal, timeVal) {
+    if (!dateVal) return '-';
+    var dStr = String(dateVal).trim();
+
+    // Deteksi jika dStr mengandung kata-kata zona waktu seperti GMT+0700 atau WAKTU INDOCHINA
+    if (dStr.indexOf('GMT') !== -1 || dStr.indexOf('INDOCHINA') !== -1 || dStr.length > 25) {
+      try {
+        var parsedDate = new Date(dStr);
+        if (!isNaN(parsedDate.getTime())) {
+          var y = parsedDate.getFullYear();
+          var m = String(parsedDate.getMonth() + 1).padStart(2, '0');
+          var d = String(parsedDate.getDate()).padStart(2, '0');
+          var hh = String(parsedDate.getHours()).padStart(2, '0');
+          var mm = String(parsedDate.getMinutes()).padStart(2, '0');
+          var ss = String(parsedDate.getSeconds()).padStart(2, '0');
+          dStr = y + '-' + m + '-' + d;
+          if (!timeVal || timeVal === '10:00 WIB' || timeVal === '-') {
+            timeVal = hh + ':' + mm + ':' + ss;
+          }
+        }
+      } catch (err) {
+        dStr = dStr.slice(0, 10);
+      }
+    }
+
+    // Ekstrak bagian YYYY-MM-DD jika format ISO
+    if (dStr.length >= 10 && dStr.indexOf('T') !== -1) {
+      dStr = dStr.slice(0, 10);
+    }
+
+    var cleanTime = timeVal ? String(timeVal).replace('WIB', '').trim() : '00:00:00';
+    if (cleanTime.indexOf(':') === -1) cleanTime = '00:00:00';
+    var parts = cleanTime.split(':');
+    var hh = String(parts[0] || '00').padStart(2, '0');
+    var mm = String(parts[1] || '00').padStart(2, '0');
+    var ss = String(parts[2] || '00').padStart(2, '0');
+
+    return dStr + ' ' + hh + ':' + mm + ':' + ss + ' WIB';
+  };
+
+  // Helper: Format tanggal bersih YYYY-MM-DD
+  window.cleanWibDate = function (dateVal) {
+    if (!dateVal) return new Date().toISOString().slice(0, 10);
+    var s = String(dateVal).trim();
+    if (s.indexOf('GMT') !== -1 || s.indexOf('INDOCHINA') !== -1 || s.length > 25) {
+      try {
+        var d = new Date(s);
+        if (!isNaN(d.getTime())) {
+          var y = d.getFullYear();
+          var m = String(d.getMonth() + 1).padStart(2, '0');
+          var day = String(d.getDate()).padStart(2, '0');
+          return y + '-' + m + '-' + day;
+        }
+      } catch (e) {}
+    }
+    return s.slice(0, 10);
+  };
+
+  // 1. SISTEM PENGGUNA & AUTENTIKASI DENGAN NIK DAN PASSWORD STANDAR 123456
+  window.initUserDatabase = function () {
+    var defaultUsers = [
+      { email: 'admin@demo.com', name: 'Ahmad Fauzi (IT Admin)', role: 'admin', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-ADM01' },
+      { email: 'owner@demo.com', name: 'H. Sudirman (Owner)', role: 'owner', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-OWN01' },
+      { email: 'finance@demo.com', name: 'Dewi Anggraini (Finance)', role: 'finance', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-FIN01' },
+      { email: 'bambang@demo.com', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
+      { email: 'host@demo.com', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
+      { email: 'warehouse@demo.com', name: 'Budi Santoso (Gudang)', role: 'warehouse', branch: 'Cabang 2 (Gudang Hub Ekspedisi)', password: '123456', nik: 'MJA-2026-GDG01' }
+    ];
+
+    var saved = localStorage.getItem('mja_registered_users');
+    if (saved) {
+      try {
+        var parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          defaultUsers.forEach(function (defU) {
+            var exist = parsed.find(function (u) { return (u.email || '').toLowerCase() === defU.email.toLowerCase(); });
+            if (!exist) parsed.push(defU);
+          });
+          window.appState.data.users = parsed;
+          localStorage.setItem('mja_registered_users', JSON.stringify(parsed));
+          return;
+        }
+      } catch (err) {}
+    }
+    window.appState.data.users = defaultUsers;
+    localStorage.setItem('mja_registered_users', JSON.stringify(defaultUsers));
+  };
+
+  // Handler: Registrasi User Baru dengan NIK, Email, Nama, Divisi, Cabang, Password
+  window.handleRegisterUser = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var name = (document.getElementById('reg-name') ? document.getElementById('reg-name').value : '').trim();
+    var email = (document.getElementById('reg-email') ? document.getElementById('reg-email').value : '').trim().toLowerCase();
+    var nik = (document.getElementById('reg-nik') ? document.getElementById('reg-nik').value : '').trim();
+    var role = document.getElementById('reg-role') ? document.getElementById('reg-role').value : 'warehouse';
+    var branch = document.getElementById('reg-branch') ? document.getElementById('reg-branch').value : 'Cabang 1 (Pusat & Gudang Utama)';
+    var password = (document.getElementById('reg-password') ? document.getElementById('reg-password').value : '').trim() || '123456';
+
+    if (!name || !email || !nik) {
+      window.showToast('Harap lengkapi Nama, Email, dan NIK Karyawan!', 'error');
+      return;
+    }
+    if (password.length < 6) {
+      window.showToast('Kata sandi minimal 6 karakter! (Standar: 123456)', 'warning');
+      return;
+    }
+
+    var users = window.appState.data.users || [];
+    var existing = users.find(function (u) { return (u.email || '').toLowerCase() === email; });
+    if (existing) {
+      window.showToast('Email ini sudah terdaftar! Silakan login di tab Masuk Portal.', 'warning');
+      window.switchAuthTab('login');
+      if (document.getElementById('login-email')) document.getElementById('login-email').value = email;
+      return;
+    }
+
+    var newUser = {
+      email: email,
+      name: name,
+      nik: nik,
+      role: role,
+      branch: branch,
+      password: password,
+      registeredAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    window.appState.data.users = users;
+    localStorage.setItem('mja_registered_users', JSON.stringify(users));
+
+    // Bersihkan form
+    if (document.getElementById('form-register')) document.getElementById('form-register').reset();
+
+    window.showToast('Registrasi berhasil! Selamat datang, ' + name + ' (Sandi: ' + password + ')', 'success');
+    window.authenticateSuccess(newUser);
+  };
+
+  // Handler: Login dengan Email & Password
+  window.handleLogin = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var email = (document.getElementById('login-email') ? document.getElementById('login-email').value : '').trim().toLowerCase();
+    var password = (document.getElementById('login-password') ? document.getElementById('login-password').value : '').trim();
+    var branch = document.getElementById('login-branch') ? document.getElementById('login-branch').value : 'Cabang 1 (Pusat & Gudang Utama)';
+
+    if (!email) {
+      window.showToast('Masukkan alamat email Anda!', 'warning');
+      return;
+    }
+
+    var users = window.appState.data.users || [];
+    var matchedUser = users.find(function (u) { return (u.email || '').toLowerCase() === email; });
+
+    // Fallback jika belum terdaftar, izinkan login demo
+    if (!matchedUser) {
+      var fallbackRole = 'warehouse';
+      if (email.indexOf('admin') !== -1) fallbackRole = 'admin';
+      else if (email.indexOf('owner') !== -1) fallbackRole = 'owner';
+      else if (email.indexOf('finance') !== -1) fallbackRole = 'finance';
+      else if (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) fallbackRole = 'host';
+
+      matchedUser = {
+        email: email,
+        name: email.split('@')[0].toUpperCase(),
+        nik: 'NIK-' + Math.floor(100000 + Math.random() * 900000),
+        role: fallbackRole,
+        branch: branch,
+        password: password || '123456'
+      };
+      users.push(matchedUser);
+      window.appState.data.users = users;
+      localStorage.setItem('mja_registered_users', JSON.stringify(users));
+    }
+
+    // Validasi Password
+    if (matchedUser.password && password && matchedUser.password !== password) {
+      window.showToast('Kata sandi salah! Cek kembali atau gunakan sandi default 123456.', 'error');
+      return;
+    }
+
+    window.authenticateSuccess(matchedUser);
+  };
+
+  // Handler: Keberhasilan Autentikasi & Update Header Nama Lengkap
+  window.authenticateSuccess = function (userOrEmail, fallbackRole) {
+    window.appState.isAuth = true;
+
+    var userObj = null;
+    if (typeof userOrEmail === 'object' && userOrEmail !== null) {
+      userObj = userOrEmail;
+    } else {
+      var email = String(userOrEmail).toLowerCase().trim();
+      var matched = (window.appState.data.users || []).find(function (u) { return (u.email || '').toLowerCase() === email; });
+      if (matched) {
+        userObj = matched;
+      } else {
+        userObj = {
+          email: email,
+          name: email.indexOf('admin') !== -1 ? 'Ahmad Fauzi (IT Admin)' :
+                email.indexOf('owner') !== -1 ? 'H. Sudirman (Owner)' :
+                email.indexOf('finance') !== -1 ? 'Dewi Anggraini (Finance)' :
+                (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) ? 'Bambang Santoso (Host Live)' : 'Budi Santoso',
+          role: fallbackRole || 'admin',
+          branch: 'Cabang 1 (Pusat & Gudang Utama)',
+          nik: 'MJA-2026-001',
+          password: '123456'
+        };
+      }
+    }
+
+    window.appState.currentUser = userObj;
+    window.appState.currentRole = userObj.role;
+    window.appState.currentBranch = userObj.branch || 'Cabang 1 (Pusat & Gudang Utama)';
+
+    // Update Header Atas (Topbar Nama Lengkap & Role Pengguna)
+    var topbarFullname = document.getElementById('topbar-user-fullname');
+    var topbarRoleBadge = document.getElementById('topbar-user-role-badge');
+    var topbarAvatar = document.getElementById('topbar-user-avatar');
+    var roleLabelMap = {
+      'admin': 'Administrator',
+      'owner': 'Owner / Manajemen',
+      'finance': 'Finance & Akuntansi',
+      'host': 'Host Live Shopping',
+      'warehouse': 'Gudang & QC Spion'
+    };
+    var roleDisplay = roleLabelMap[userObj.role] || userObj.role.toUpperCase();
+
+    if (topbarFullname) topbarFullname.textContent = userObj.name || userObj.email;
+    if (topbarRoleBadge) topbarRoleBadge.textContent = roleDisplay + ' • ' + (userObj.branch ? userObj.branch.split(' ')[0] : 'Cabang 1');
+    if (topbarAvatar) topbarAvatar.textContent = (userObj.name || userObj.email).charAt(0).toUpperCase();
+
+    // Sembunyikan Login View & Tampilkan Main View
+    if (document.getElementById('login-view')) document.getElementById('login-view').classList.add('hidden');
+    if (document.getElementById('main-view')) document.getElementById('main-view').classList.remove('hidden');
+
+    window.applyRolePermissions(userObj.role);
+    window.showToast('Selamat datang, ' + (userObj.name || userObj.email) + ' (' + roleDisplay + ')', 'success');
+
+    // Navigasi ke menu default role
+    if (userObj.role === 'host') {
+      window.navigateTo('section-live');
+    } else if (userObj.role === 'warehouse') {
+      window.navigateTo('section-inventory');
+    } else {
+      window.navigateTo('section-dashboard');
+    }
+  };
+
+  // 2. MODAL & FITUR GANTI KATA SANDI
+  window.openChangePasswordModal = function () {
+    var user = window.appState.currentUser || {};
+    if (document.getElementById('cp-user-name')) document.getElementById('cp-user-name').textContent = user.name || user.email || 'Pengguna';
+    if (document.getElementById('cp-user-email')) document.getElementById('cp-user-email').textContent = user.email || '';
+    if (document.getElementById('cp-user-nik')) document.getElementById('cp-user-nik').textContent = user.nik || '-';
+    if (document.getElementById('form-change-password')) document.getElementById('form-change-password').reset();
+    window.openModal('modal-change-password');
+  };
+
+  window.handleChangePassword = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var user = window.appState.currentUser;
+    if (!user) {
+      window.showToast('Sesi user tidak aktif! Silakan login kembali.', 'error');
+      return;
+    }
+
+    var oldPass = (document.getElementById('cp-old-password') ? document.getElementById('cp-old-password').value : '').trim();
+    var newPass = (document.getElementById('cp-new-password') ? document.getElementById('cp-new-password').value : '').trim();
+    var confPass = (document.getElementById('cp-confirm-password') ? document.getElementById('cp-confirm-password').value : '').trim();
+
+    var currentSavedPass = user.password || '123456';
+    if (oldPass !== currentSavedPass) {
+      window.showToast('Kata sandi lama salah! Kata sandi default awal adalah 123456.', 'error');
+      return;
+    }
+
+    if (newPass.length < 6) {
+      window.showToast('Kata sandi baru minimal 6 karakter!', 'warning');
+      return;
+    }
+
+    if (newPass !== confPass) {
+      window.showToast('Konfirmasi kata sandi baru tidak cocok!', 'error');
+      return;
+    }
+
+    // Update password di memori dan storage
+    user.password = newPass;
+    var users = window.appState.data.users || [];
+    var found = users.find(function (u) { return (u.email || '').toLowerCase() === user.email.toLowerCase(); });
+    if (found) {
+      found.password = newPass;
+    } else {
+      users.push(user);
+    }
+    window.appState.data.users = users;
+    localStorage.setItem('mja_registered_users', JSON.stringify(users));
+
+    window.closeModal('modal-change-password');
+    window.showToast('✅ Kata sandi berhasil diperbarui! Gunakan sandi baru saat login selanjutnya.', 'success');
+  };
+
+  // Quick Demo account switcher helper
+  window.fillDemo = function (email, role) {
+    if (document.getElementById('login-email')) document.getElementById('login-email').value = email;
+    if (document.getElementById('login-password')) document.getElementById('login-password').value = '123456';
+    window.showToast('Akun demo dipilih: ' + email + ' (Password default: 123456)', 'info');
+  };
+
+  // 3. DASHBOARD HOST LIVE: REKAP KUMULATIF & FILTER PER HARI/TANGGAL + FORMAT WIB LENGKAP
+  window.onHostFilterDateChange = function () {
+    var mode = document.getElementById('host-filter-date') ? document.getElementById('host-filter-date').value : 'all';
+    var customInput = document.getElementById('host-filter-custom-date');
+    var summaryText = document.getElementById('host-filter-summary-text');
+
+    if (customInput) {
+      if (mode === 'custom') {
+        customInput.classList.remove('hidden');
+        if (!customInput.value) {
+          customInput.value = new Date().toISOString().slice(0, 10);
+        }
+      } else {
+        customInput.classList.add('hidden');
+      }
+    }
+
+    if (summaryText) {
+      if (mode === 'today') {
+        summaryText.textContent = 'Menampilkan rekaman sesi live hari ini (' + new Date().toISOString().slice(0, 10) + ')';
+      } else if (mode === 'custom') {
+        summaryText.textContent = 'Menampilkan rekaman sesi live pada tanggal pilihan Anda';
+      } else {
+        summaryText.textContent = 'Menampilkan seluruh rekaman sesi live secara kumulatif';
+      }
+    }
+
+    window.renderLiveSessions();
+  };
+
+  window.renderLiveSessions = function () {
+    var container = document.getElementById('cards-live-sessions');
+    var rawSessions = window.appState.data.liveSessions || [];
+    var currentUser = window.appState.currentUser || { name: 'Host Live', role: 'host' };
+    var currentRole = window.appState.currentRole || 'host';
+
+    // PRIVASI DATA: Host hanya melihat sesi miliknya sendiri
+    var hostSessions = rawSessions;
+    if (currentRole === 'host') {
+      var myName = (currentUser.name || '').toLowerCase().trim();
+      hostSessions = rawSessions.filter(function (s) {
+        var hName = (s.host || '').toLowerCase().trim();
+        return hName === myName || (myName.indexOf('bambang') !== -1 && hName.indexOf('bambang') !== -1);
+      });
+    }
+
+    // Filter Kalender Harian Host
+    var dateFilterEl = document.getElementById('host-filter-date');
+    var customDateInput = document.getElementById('host-filter-custom-date');
+    var selectedDateMode = dateFilterEl ? dateFilterEl.value : 'all';
+    var todayStr = new Date().toISOString().slice(0, 10);
+
+    var filteredSessions = hostSessions.slice();
+
+    if (selectedDateMode === 'today') {
+      filteredSessions = hostSessions.filter(function (s) {
+        var sDate = window.cleanWibDate(s.date);
+        return sDate === todayStr;
+      });
+    } else if (selectedDateMode === 'custom') {
+      if (customDateInput && customDateInput.value) {
+        filteredSessions = hostSessions.filter(function (s) {
+          var sDate = window.cleanWibDate(s.date);
+          return sDate === customDateInput.value;
+        });
+      }
+    }
+
+    // Update KPI Kumulatif Host Ini (dihitung dari seluruh sesi miliknya)
+    var totalSessions = hostSessions.length;
+    var totalOmset = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.omset) || 0); }, 0);
+    var totalItems = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.items) || 0); }, 0);
+    var totalMargin = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.margin) || 0); }, 0);
+    var avgMargin = totalOmset > 0 ? ((totalMargin / totalOmset) * 100).toFixed(1) : '0';
+
+    var elTot = document.getElementById('host-stat-total-sessions');
+    var elOmset = document.getElementById('host-stat-total-omset');
+    var elItems = document.getElementById('host-stat-total-items');
+    var elMargin = document.getElementById('host-stat-avg-margin');
+    var elBadge = document.getElementById('host-live-badge-count');
+
+    if (elTot) elTot.textContent = totalSessions + ' Sesi';
+    if (elOmset) elOmset.textContent = window.formatRupiah(totalOmset);
+    if (elItems) elItems.textContent = totalItems + ' pcs';
+    if (elMargin) elMargin.textContent = avgMargin + '%';
+    if (elBadge) elBadge.textContent = filteredSessions.length;
+
+    // Update Kepatuhan SOP Input Pasca-Live Hari Ini
+    var compCard = document.getElementById('live-today-compliance-card');
+    if (compCard) {
+      var hasSubmittedToday = hostSessions.some(function (ls) {
+        return window.cleanWibDate(ls.date) === todayStr;
+      });
+
+      if (hasSubmittedToday) {
+        compCard.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs';
+        compCard.innerHTML = '<div class="flex items-center space-x-3">' +
+          '<div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0">✓</div>' +
+          '<div>' +
+          '<div class="flex items-center space-x-2">' +
+          '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-700 text-white uppercase tracking-wider">STATUS SOP HARI INI: LENGKAP</span>' +
+          '<span class="text-xs font-bold text-emerald-900">Rekap Pasca-Live Selesai Diinput</span>' +
+          '</div>' +
+          '<p class="text-xs text-emerald-800 mt-0.5">Terima kasih! Laporan live hari ini telah mengunci omset dan memotong stok gudang spion secara otomatis.</p>' +
+          '</div>' +
+          '</div>' +
+          '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg transition-all flex items-center space-x-1 flex-shrink-0 cursor-pointer">' +
+          '<span>+ Input Sesi Tambahan</span>' +
+          '</button>';
+      } else {
+        compCard.className = 'p-4 rounded-xl border-2 bg-amber-50 border-amber-400 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm';
+        compCard.innerHTML = '<div class="flex items-center space-x-3">' +
+          '<div class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0 animate-bounce">!</div>' +
+          '<div>' +
+          '<div class="flex items-center space-x-2">' +
+          '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white uppercase tracking-wider">SOP WAJIB PASCA-LIVE</span>' +
+          '<span class="text-xs font-bold text-rose-900">Belum Ada Rekap Live Hari Ini</span>' +
+          '</div>' +
+          '<p class="text-xs text-amber-900 mt-0.5">Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
+          '</div>' +
+          '</div>' +
+          '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl transition-all shadow-md flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">' +
+          '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>' +
+          '<span>🔴 Input Rekap Pasca-Live Sekarang</span>' +
+          '</button>';
+      }
+    }
+
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (filteredSessions.length === 0) {
+      container.innerHTML = '<div class="col-span-full p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">' +
+        '<p class="font-bold text-slate-600 mb-1">Belum ada data sesi live pada filter ini.</p>' +
+        '<p>Silakan ubah filter tanggal atau klik tombol "+ Input Rekap Pasca-Live" untuk menambahkan sesi.</p>' +
+        '</div>';
+      return;
+    }
+
+    filteredSessions.forEach(function (ls, idx) {
+      var card = document.createElement('div');
+      card.className = 'bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5 hover:shadow-md transition-shadow';
+
+      var formattedWibTime = window.formatWibDateTime(ls.date, ls.startTime);
+      var timeRange = ls.startTime ? (ls.startTime + ' - ' + (ls.endTime || '') + ' WIB') : '';
+      var durBadge = ls.duration ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">' + ls.duration + '</span>' : '';
+      var viewersBadge = ls.viewers ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1">👁️ ' + Number(ls.viewers).toLocaleString('id-ID') + ' Puncak</span>' : '';
+
+      // Rincian produk terjual
+      var productsHtml = '';
+      if (Array.isArray(ls.soldProducts) && ls.soldProducts.length > 0) {
+        productsHtml = '<div class="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[11px]">' +
+          '<span class="text-[10px] font-bold text-slate-500 block uppercase tracking-wider">Potong Stok Gudang:</span>';
+        ls.soldProducts.forEach(function (sp) {
+          productsHtml += '<div class="flex justify-between items-center text-slate-700">' +
+            '<span><strong>' + sp.sku + '</strong> x ' + sp.qty + ' pcs</span>' +
+            '<span class="font-semibold text-emerald-700">' + window.formatRupiah(sp.subtotal || 0) + '</span>' +
+            '</div>';
+        });
+        productsHtml += '</div>';
+      }
+
+      // Catatan evaluasi manajemen
+      var mgmtNotesHtml = '';
+      if (Array.isArray(ls.managementNotes) && ls.managementNotes.length > 0) {
+        var lastNote = ls.managementNotes[ls.managementNotes.length - 1];
+        mgmtNotesHtml = '<div class="bg-amber-50 border border-amber-300 p-2.5 rounded-xl space-y-1">' +
+          '<div class="flex items-center justify-between text-[10px] font-bold text-amber-950">' +
+            '<span>💬 Evaluasi Manajemen (' + (lastNote.author || 'Admin') + '):</span>' +
+            '<span class="text-amber-700 font-normal">' + (lastNote.timeStr || '') + '</span>' +
+          '</div>' +
+          '<p class="text-xs text-slate-800 font-medium italic">"' + lastNote.text + '"</p>' +
+        '</div>';
+      }
+
+      // Kendala
+      var obstacleHtml = '';
+      if (ls.obstacles && ls.obstacles !== 'none' && ls.obstacles !== 'Lancar Sesuai Target') {
+        obstacleHtml = '<p class="text-[11px] text-amber-800 bg-amber-50/60 p-2 rounded-lg border border-amber-200/50 italic font-medium">⚠️ "' + ls.obstacles + '"</p>';
+      }
+
+      // Tombol Bukti Screenshot
+      var proofBtn = '';
+      if (ls.proofPhoto) {
+        proofBtn = '<button type="button" onclick="window.viewLiveProofPhoto(' + idx + ')" class="w-full py-1.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center justify-center space-x-1.5 cursor-pointer">' +
+          '<svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>' +
+          '<span>Lihat Bukti Analitik Siaran</span>' +
+          '</button>';
+      }
+
+      card.innerHTML = '<div class="flex justify-between items-start gap-2">' +
+        '<div>' +
+        '<div class="flex items-center space-x-1.5 mb-1">' +
+        '<span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">' + formattedWibTime + '</span>' +
+        durBadge +
+        '</div>' +
+        '<h4 class="font-bold text-sm text-slate-900 leading-snug">' + ls.store + '</h4>' +
+        '<p class="text-xs text-slate-500 font-medium mt-0.5">Host: <strong>' + ls.host + '</strong> ' + (timeRange ? '<span class="text-slate-400">(' + timeRange + ')</span>' : '') + '</p>' +
+        '</div>' +
+        '<div class="flex flex-col items-end space-y-1">' +
+        '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">✓ SOP Valid</span>' +
+        viewersBadge +
+        '<button type="button" onclick="window.deleteLiveSession(\'' + ls.id + '\')" class="text-rose-500 hover:text-rose-700 text-[10px] font-bold flex items-center space-x-0.5 mt-1 cursor-pointer" title="Hapus sesi ini"><span>🗑️ Hapus Sesi</span></button>' +
+        '</div>' +
+        '</div>' +
+        '<div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100 font-mono bg-slate-50/50 p-2 rounded-lg">' +
+        '<div><span class="text-slate-400 block text-[10px]">TOTAL OMSET</span><span class="font-bold text-slate-900 text-sm">' + window.formatRupiah(ls.omset) + '</span></div>' +
+        '<div><span class="text-slate-400 block text-[10px]">MARGIN BERSIH</span><span class="font-bold text-emerald-600 text-sm">' + window.formatRupiah(ls.margin) + '</span></div>' +
+        '</div>' +
+        productsHtml +
+        mgmtNotesHtml +
+        '<div class="flex justify-between items-center text-xs text-slate-500 pt-1">' +
+        '<span>Total Spion: <strong>' + ls.items + ' pcs</strong></span>' +
+        '<span>Iklan: ' + (ls.adSpend > 0 ? window.formatRupiah(ls.adSpend) : 'Rp 0') + '</span>' +
+        '</div>' +
+        obstacleHtml +
+        proofBtn;
+
+      container.appendChild(card);
+    });
+  };
+
+  // 4. LAPORAN PENJUALAN DETAIL (ITEMIZED): TANPA HPP & MARGIN, FOKUS PRODUK TERJUAL
+  window.renderSalesDetailReport = function () {
+    var rawItems = window.getAllItemizedSales();
+    var currentUser = window.appState.currentUser || {};
+    var currentRole = window.appState.currentRole || 'host';
+
+    // PRIVASI DATA: Host hanya melihat penjualan miliknya sendiri
+    if (currentRole === 'host') {
+      var myName = (currentUser.name || '').toLowerCase().trim();
+      rawItems = rawItems.filter(function (it) {
+        var op = (it.operator || '').toLowerCase().trim();
+        return op === myName || (myName.indexOf('bambang') !== -1 && op.indexOf('bambang') !== -1);
+      });
+    }
+
+    var period = document.getElementById('sd-filter-period') ? document.getElementById('sd-filter-period').value : 'month';
+    var channel = document.getElementById('sd-filter-channel') ? document.getElementById('sd-filter-channel').value : 'all';
+    var store = document.getElementById('sd-filter-store') ? document.getElementById('sd-filter-store').value : 'all';
+    var host = document.getElementById('sd-filter-host') ? document.getElementById('sd-filter-host').value : 'all';
+    var sku = document.getElementById('sd-filter-sku') ? document.getElementById('sd-filter-sku').value : 'all';
+    var search = document.getElementById('sd-search-input') ? document.getElementById('sd-search-input').value.toLowerCase().trim() : '';
+
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var filtered = rawItems.filter(function (it) {
+      if (period === 'today') {
+        if (window.cleanWibDate(it.date) !== todayStr) return false;
+      } else if (period === '7days') {
+        var d = new Date(window.cleanWibDate(it.date));
+        var diffDays = (new Date() - d) / (1000 * 60 * 60 * 24);
+        if (diffDays > 7 || diffDays < 0) return false;
+      }
+      if (channel !== 'all' && it.source !== channel) return false;
+      if (store !== 'all' && it.store !== store) return false;
+      if (host !== 'all' && it.operator !== host) return false;
+      if (sku !== 'all' && it.sku !== sku) return false;
+      if (search) {
+        var q = search;
+        var match = (it.sku || '').toLowerCase().indexOf(q) !== -1 ||
+                    (it.name || '').toLowerCase().indexOf(q) !== -1 ||
+                    (it.refId || '').toLowerCase().indexOf(q) !== -1 ||
+                    (it.operator || '').toLowerCase().indexOf(q) !== -1 ||
+                    (it.store || '').toLowerCase().indexOf(q) !== -1;
+        if (!match) return false;
+      }
+      return true;
+    });
+
+    // Urutkan tanggal terbaru
+    filtered.sort(function (a, b) {
+      var dA = (a.date || '') + ' ' + (a.time || '');
+      var dB = (b.date || '') + ' ' + (b.time || '');
+      return dB.localeCompare(dA);
+    });
+
+    // Update 4 KPI Cards (Tanpa Margin / HPP)
+    var totalOmset = filtered.reduce(function (s, i) { return s + (i.omset || 0); }, 0);
+    var totalPcs = filtered.reduce(function (s, i) { return s + (i.qty || 0); }, 0);
+    var totalRows = filtered.length;
+    var aov = totalRows > 0 ? Math.round(totalOmset / totalRows) : 0;
+
+    if (document.getElementById('sd-kpi-omset')) document.getElementById('sd-kpi-omset').textContent = window.formatRupiah(totalOmset);
+    if (document.getElementById('sd-kpi-pcs')) document.getElementById('sd-kpi-pcs').textContent = totalPcs + ' pcs';
+    if (document.getElementById('sd-kpi-count')) document.getElementById('sd-kpi-count').textContent = totalRows + ' Baris';
+    if (document.getElementById('sd-kpi-aov')) document.getElementById('sd-kpi-aov').textContent = window.formatRupiah(aov);
+
+    var tbody = document.getElementById('sd-table-body');
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" class="p-8 text-center text-slate-400 italic">' +
+        'Tidak ada data penjualan yang cocok dengan filter.' +
+        '</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(function (it) {
+      var wibFormatted = window.formatWibDateTime(it.date, it.time);
+      var channelBadge = it.source === 'live'
+        ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">📹 Live Sesi</span>'
+        : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">🛒 Order</span>';
+
+      return '<tr class="hover:bg-slate-50 transition-colors">' +
+        '<td class="p-3 font-mono text-[11px] text-slate-700 whitespace-nowrap">' + wibFormatted + '</td>' +
+        '<td class="p-3 font-mono font-bold text-slate-800 whitespace-nowrap">' + it.refId + '</td>' +
+        '<td class="p-3 whitespace-nowrap">' + channelBadge + '</td>' +
+        '<td class="p-3 text-slate-700 font-medium whitespace-nowrap">' + it.store + '</td>' +
+        '<td class="p-3 font-bold text-slate-800 whitespace-nowrap">' + it.operator + '</td>' +
+        '<td class="p-3 text-slate-800">' +
+          '<div class="font-bold text-slate-900">' + it.sku + '</div>' +
+          '<div class="text-[11px] text-slate-500 leading-tight">' + (it.name || '-') + '</div>' +
+        '</td>' +
+        '<td class="p-3 text-center font-bold text-slate-900 whitespace-nowrap">' + it.qty + ' pcs</td>' +
+        '<td class="p-3 text-right text-slate-600 whitespace-nowrap">' + window.formatRupiah(it.price) + '</td>' +
+        '<td class="p-3 text-right font-black text-emerald-700 whitespace-nowrap">' + window.formatRupiah(it.omset) + '</td>' +
+        '</tr>';
+    }).join('');
+  };
+
+  // 5. EKSPOR CSV LAPORAN PENJUALAN DETAIL (WIB + PRIVASI HOST + TANPA HPP)
+  window.exportSalesDetailCSV = function () {
+    var rawItems = window.getAllItemizedSales();
+    var currentUser = window.appState.currentUser || {};
+    if (window.appState.currentRole === 'host') {
+      var myName = (currentUser.name || '').toLowerCase().trim();
+      rawItems = rawItems.filter(function (it) {
+        var op = (it.operator || '').toLowerCase().trim();
+        return op === myName || (myName.indexOf('bambang') !== -1 && op.indexOf('bambang') !== -1);
+      });
+    }
+
+    if (rawItems.length === 0) {
+      window.showToast('Tidak ada data transaksi untuk diekspor!', 'warning');
+      return;
+    }
+
+    var csvRows = [];
+    csvRows.push([
+      'WAKTU INDONESIA (WIB)',
+      'NO REFERENSI TRANSAKSI',
+      'SALURAN',
+      'AKUN TOKO',
+      'HOST / OPERATOR',
+      'SKU SPION',
+      'NAMA PRODUK',
+      'QTY TERJUAL',
+      'HARGA SATUAN (RP)',
+      'TOTAL OMSET / SUBTOTAL (RP)',
+      'STATUS'
+    ].map(function (c) { return '"' + c + '"'; }).join(','));
+
+    rawItems.forEach(function (it) {
+      csvRows.push([
+        window.formatWibDateTime(it.date, it.time),
+        it.refId,
+        it.sourceLabel,
+        it.store,
+        it.operator,
+        it.sku,
+        (it.name || '').replace(/"/g, '""'),
+        it.qty,
+        it.price,
+        it.omset,
+        it.status
+      ].map(function (c) { return '"' + c + '"'; }).join(','));
+    });
+
+    var csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csvRows.join('\n'));
+    var link = document.createElement('a');
+    link.setAttribute('href', csvContent);
+    link.setAttribute('download', 'Laporan_Penjualan_Detail_MJA_' + new Date().toISOString().slice(0, 10) + '.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.showToast('✅ Berhasil mengunduh Laporan Penjualan Detail (CSV)!', 'success');
+  };
+
+  // 6. CETAK PDF LAPORAN PENJUALAN DETAIL BERSIH & PROFESIONAL
+  window.exportSalesDetailPDF = function () {
+    var rawItems = window.getAllItemizedSales();
+    var currentUser = window.appState.currentUser || {};
+    if (window.appState.currentRole === 'host') {
+      var myName = (currentUser.name || '').toLowerCase().trim();
+      rawItems = rawItems.filter(function (it) {
+        var op = (it.operator || '').toLowerCase().trim();
+        return op === myName || (myName.indexOf('bambang') !== -1 && op.indexOf('bambang') !== -1);
+      });
+    }
+
+    var period = document.getElementById('sd-filter-period') ? document.getElementById('sd-filter-period').value : 'month';
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var filtered = rawItems.filter(function (it) {
+      if (period === 'today' && window.cleanWibDate(it.date) !== todayStr) return false;
+      return true;
+    });
+
+    var totalOmset = filtered.reduce(function (s, i) { return s + (i.omset || 0); }, 0);
+    var totalPcs = filtered.reduce(function (s, i) { return s + (i.qty || 0); }, 0);
+
+    var printWin = window.open('', '_blank', 'width=900,height=700');
+    if (!printWin) {
+      window.print();
+      return;
+    }
+    var doc = printWin.document;
+    doc.open();
+    doc.write('<!DOCTYPE html><html><head><title>Laporan Penjualan Detail MJA Sales Hub</title>');
+    doc.write('<style>');
+    doc.write('body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; color: #1e293b; }');
+    doc.write('h1 { font-size: 16px; margin: 0 0 4px; color: #0f172a; }');
+    doc.write('.sub { font-size: 11px; color: #64748b; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }');
+    doc.write('.kpi { display: flex; gap: 12px; margin-bottom: 16px; }');
+    doc.write('.kpi-box { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; }');
+    doc.write('.kpi-box span { font-size: 9px; text-transform: uppercase; color: #64748b; display: block; font-weight: bold; }');
+    doc.write('.kpi-box strong { font-size: 13px; color: #0f172a; }');
+    doc.write('table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 10px; }');
+    doc.write('th, td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }');
+    doc.write('th { background: #f1f5f9; font-weight: bold; text-transform: uppercase; font-size: 9px; }');
+    doc.write('.text-right { text-align: right; }');
+    doc.write('.text-center { text-align: center; }');
+    doc.write('</style></head><body>');
+    doc.write('<h1>MJA SALES HUB &mdash; LAPORAN PENJUALAN DETAIL PASCA-LIVE</h1>');
+    doc.write('<div class="sub">Dicetak pada: ' + new Date().toLocaleString('id-ID') + ' WIB | Operator: ' + (currentUser.name || 'Admin') + ' (' + (window.appState.currentRole || 'All') + ') | Total Data: ' + filtered.length + ' Baris</div>');
+    doc.write('<div class="kpi">');
+    doc.write('<div class="kpi-box"><span>Total Omset Kotor</span><strong>' + window.formatRupiah(totalOmset) + '</strong></div>');
+    doc.write('<div class="kpi-box"><span>Pcs Terjual</span><strong>' + totalPcs + ' pcs</strong></div>');
+    doc.write('<div class="kpi-box"><span>Total Transaksi</span><strong>' + filtered.length + ' Baris</strong></div>');
+    doc.write('</div>');
+    doc.write('<table><thead><tr>');
+    doc.write('<th>No</th><th>Tanggal & Waktu (WIB)</th><th>No Ref</th><th>Saluran</th><th>Akun Toko</th><th>Host / Operator</th><th>SKU & Nama Spion</th><th class="text-center">Qty</th><th class="text-right">Harga</th><th class="text-right">Subtotal Omset</th>');
+    doc.write('</tr></thead><tbody>');
+    filtered.forEach(function (it, idx) {
+      doc.write('<tr>');
+      doc.write('<td>' + (idx + 1) + '</td>');
+      doc.write('<td>' + window.formatWibDateTime(it.date, it.time) + '</td>');
+      doc.write('<td>' + it.refId + '</td>');
+      doc.write('<td>' + it.sourceLabel + '</td>');
+      doc.write('<td>' + it.store + '</td>');
+      doc.write('<td>' + it.operator + '</td>');
+      doc.write('<td><strong>' + it.sku + '</strong> - ' + (it.name || '') + '</td>');
+      doc.write('<td class="text-center">' + it.qty + '</td>');
+      doc.write('<td class="text-right">' + window.formatRupiah(it.price) + '</td>');
+      doc.write('<td class="text-right"><strong>' + window.formatRupiah(it.omset) + '</strong></td>');
+      doc.write('</tr>');
+    });
+    doc.write('</tbody></table>');
+    doc.write('<script>window.onload = function() { window.print(); }<\/script>');
+    doc.write('</body></html>');
+    doc.close();
+  };
+
+  // Helper untuk mengekstrak seluruh item penjualan
+  window.getAllItemizedSales = function () {
+    var items = [];
+    var sessions = window.appState.data.liveSessions || [];
+    var orders = window.appState.data.orders || [];
+
+    // Ekstrak dari Sesi Live
+    sessions.forEach(function (s) {
+      var sDate = window.cleanWibDate(s.date);
+      var sTime = s.startTime ? (s.startTime + ' WIB') : '10:00:00 WIB';
+
+      if (Array.isArray(s.soldProducts) && s.soldProducts.length > 0) {
+        s.soldProducts.forEach(function (sp, spIdx) {
+          items.push({
+            id: (s.id || 'LIVE') + '-' + (sp.sku || spIdx),
+            refId: s.id || ('SESI-LIVE-' + sDate),
+            source: 'live',
+            sourceLabel: 'Live Shopping',
+            date: sDate,
+            time: sTime,
+            store: s.store || 'TikTok / Shopee Live',
+            operator: s.host || 'Bambang Santoso',
+            sku: sp.sku || 'SPN-MBL-001',
+            name: sp.name || (sp.sku ? 'Spion ' + sp.sku : 'Spion Mobil Retract'),
+            qty: Number(sp.qty) || 1,
+            price: Number(sp.price) || (sp.qty ? Math.round((sp.subtotal || 0) / sp.qty) : 0),
+            omset: Number(sp.subtotal) || (Number(sp.qty) * Number(sp.price)) || 0,
+            status: 'Selesai (Live)'
+          });
+        });
+      } else {
+        items.push({
+          id: s.id || ('LIVE-' + sDate),
+          refId: s.id || ('SESI-LIVE-' + sDate),
+          source: 'live',
+          sourceLabel: 'Live Shopping',
+          date: sDate,
+          time: sTime,
+          store: s.store || 'TikTok / Shopee Live',
+          operator: s.host || 'Bambang Santoso',
+          sku: 'SPN-PAKET-LIVE',
+          name: 'Paket Spion Live Streaming (' + (s.items || 1) + ' pcs)',
+          qty: Number(s.items) || 1,
+          price: s.items ? Math.round((s.omset || 0) / s.items) : (s.omset || 0),
+          omset: Number(s.omset) || 0,
+          status: 'Selesai (Live)'
+        });
+      }
+    });
+
+    // Ekstrak dari Marketplace Orders
+    orders.forEach(function (o) {
+      var oDate = window.cleanWibDate(o.date);
+      var oTime = o.time || '14:30:00 WIB';
+
+      if (Array.isArray(o.items) && o.items.length > 0) {
+        o.items.forEach(function (oi, oiIdx) {
+          items.push({
+            id: (o.id || 'ORD') + '-' + oiIdx,
+            refId: o.id || o.resi || 'ORD-REGULER',
+            source: 'marketplace',
+            sourceLabel: 'Marketplace ' + (o.channel || 'Reguler'),
+            date: oDate,
+            time: oTime,
+            store: o.channel || 'Shopee Official Store A',
+            operator: o.picker || 'Admin Toko',
+            sku: oi.sku || 'SPN-001',
+            name: oi.name || ('Spion ' + oi.sku),
+            qty: Number(oi.qty) || 1,
+            price: Number(oi.price) || 0,
+            omset: (Number(oi.qty) || 1) * (Number(oi.price) || 0),
+            status: o.status || 'Terkirim'
+          });
+        });
+      } else {
+        items.push({
+          id: o.id || o.resi || ('ORD-' + oDate),
+          refId: o.resi || o.id || 'ORD-REGULER',
+          source: 'marketplace',
+          sourceLabel: 'Marketplace ' + (o.channel || 'Reguler'),
+          date: oDate,
+          time: oTime,
+          store: o.channel || 'Shopee Official Store A',
+          operator: o.picker || 'Admin Toko',
+          sku: o.sku || 'SPN-MBL-001',
+          name: o.productName || 'Spion Retract All New Avanza / Xenia',
+          qty: Number(o.qty) || 1,
+          price: o.price || o.total || 0,
+          omset: Number(o.total) || (Number(o.qty || 1) * Number(o.price || 0)) || 0,
+          status: o.status || 'Terkirim'
+        });
+      }
+    });
+
+    return items;
+  };
+
+  // Inisialisasi Database User saat pertama kali dimuat
+  window.initUserDatabase();
+
+})();
+
+</script><!-- END ENGINE-MJA-V8 -->
 </body>
 </html>

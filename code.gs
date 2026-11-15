@@ -143,7 +143,19 @@ function doGet(e) {
       for (var r = 1; r < data.length; r++) {
         sessions.push({
           id: String(data[r][0] || ''),
-          date: String(data[r][1] || ''),
+          date: (function() {
+            var raw = data[r][1];
+            if (raw instanceof Date) {
+              return Utilities.formatDate(raw, 'GMT+7', 'yyyy-MM-dd');
+            }
+            var s = String(raw || '').trim();
+            if (s.indexOf('GMT') !== -1 || s.indexOf('T') !== -1) {
+              try {
+                return Utilities.formatDate(new Date(s), 'GMT+7', 'yyyy-MM-dd');
+              } catch (e) { return s; }
+            }
+            return s;
+          })(),
           store: String(data[r][2] || ''),
           host: String(data[r][3] || ''),
           omset: Number(data[r][4] || 0),
