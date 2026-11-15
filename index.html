@@ -577,11 +577,10 @@
     </aside>
 
     <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 pb-28 md:pb-8">
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 pb-36 md:pb-8">
 
       <!-- TOP NAVBAR (STRICT MOBILE 3-ELEMENT ROW 1 + SECONDARY ROW 2) -->
-      <header
-        class="bg-white border-b border-[#E8E2D9] sticky top-0 z-30 px-4 py-2.5 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-xs">
+      <header class="bg-white border-b border-[#E8E2D9] sticky top-0 z-30 px-4 py-2.5 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-xs" style="padding-top: max(env(safe-area-inset-top, 0px), 10px);">
         <!-- ROW 1 (Maksimal 3 Elemen di Layar HP: [Logo/Menu] [Judul Singkat] [1 Tombol Aksi]) -->
         <div class="flex items-center justify-between w-full md:w-auto min-w-0 gap-2">
           <!-- Elemen 1: [Logo / Menu Drawer Button] (Area sentuh >= 44px) -->
@@ -676,7 +675,7 @@
       </header>
 
       <!-- SCROLLABLE CONTENT BODY -->
-      <div class="flex-1 p-4 pb-24 md:p-6 md:pb-8 overflow-y-auto overflow-x-hidden w-full max-w-full min-w-0">
+      <div class="flex-1 p-4 pb-36 md:p-6 md:pb-8 overflow-y-auto overflow-x-hidden w-full max-w-full min-w-0">
 
         <!-- =================================================================== -->
         <!-- SECTION 1: DASHBOARD EKSEKUTIF -->
@@ -3772,7 +3771,8 @@
 
     <!-- MOBILE BOTTOM NAVIGATION (5-ITEM FIXED GRID, MIN AREA 44PX, NO OVERFLOW) -->
     <nav id="mobile-bottom-nav"
-      class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#E8E2D9] grid grid-cols-5 items-center px-1 py-1 z-[9999] shadow-lg mobile-bottom-bar h-[56px]">
+      class="md:hidden fixed bottom-0 inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#E8E2D9] grid grid-cols-5 items-center px-1 pt-1.5 z-[9999] shadow-[0_-4px_24px_rgba(0,0,0,0.14)] mobile-bottom-bar"
+      style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 30px); min-height: 76px;">
       <!-- 1. Home (4 karakter) -->
       <button onclick="window.navigateTo('section-dashboard')" id="bnav-section-dashboard"
         class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] transition-all">
@@ -8979,12 +8979,8 @@
         if (video && video.srcObject && video.videoWidth > 0) {
           window.snapAttendancePhoto();
         } else {
-          // Open phone camera seamlessly
-          window.showToast('Membuka kamera HP untuk foto bukti kehadiran...', 'info');
-          var nativeInput = document.getElementById('att-native-camera-input');
-          if (nativeInput) {
-            nativeInput.click();
-          }
+          window.startAttendanceCamera();
+          window.showToast('📷 Menyiapkan kamera selfie live... Posisikan wajah Anda pada lingkaran panduan dan tekan "Ambil Foto Selfie".', 'info');
           return;
         }
       }
@@ -13633,6 +13629,13 @@
     var target = document.getElementById(sectionId);
     if (target) target.classList.remove('hidden');
 
+    if (sectionId !== 'section-attendance' && window.attCameraStream) {
+      try {
+        window.attCameraStream.getTracks().forEach(function (t) { t.stop(); });
+      } catch (eStop) { }
+      window.attCameraStream = null;
+    }
+
     if (sectionId === 'section-dashboard') {
       setTimeout(function () {
         if (typeof window.initCharts === 'function') window.initCharts();
@@ -13651,6 +13654,15 @@
       setTimeout(function () {
         window.populateSalesDetailFilterOptions();
         window.renderSalesDetailReport();
+      }, 80);
+    } else if (sectionId === 'section-attendance') {
+      setTimeout(function () {
+        if (typeof window.startAttendanceCamera === 'function') {
+          window.startAttendanceCamera();
+        }
+        if (typeof window.renderAttendanceLogs === 'function') {
+          window.renderAttendanceLogs();
+        }
       }, 80);
     } else if (sectionId === 'section-users') {
       if (typeof window.updateResetStats === 'function') {
@@ -15205,6 +15217,8 @@ window.handleSaveLiveSession = function (e) {
       if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = 'Rp 0';
       if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = 'Rp 0';
       if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = '0.0%';
+      if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = '0 Order';
+      if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = '0.0% (0 Paket)';
       if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = 'Rp 0';
       if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = 'Rp 0 (0.0%)';
 
@@ -15214,11 +15228,47 @@ window.handleSaveLiveSession = function (e) {
           'Data metrik telah direset bersih ke 0. Menunggu transaksi penjualan baru.' +
           '</td></tr>';
       }
+
+      // Reset grafik Chart.js ke 0 jika aktif
+      try {
+        if (window.trendChartInstance && window.trendChartInstance.data) {
+          window.trendChartInstance.data.datasets.forEach(function (ds) {
+            ds.data = [0, 0, 0, 0, 0, 0, 0];
+          });
+          window.trendChartInstance.update();
+        }
+        if (window.costChartInstance && window.costChartInstance.data) {
+          window.costChartInstance.data.datasets[0].data = [0, 0, 0, 0];
+          window.costChartInstance.update();
+        }
+        var donutLabel = document.getElementById('donut-center-label');
+        if (donutLabel) {
+          donutLabel.innerHTML = '<span class="text-xl font-bold text-slate-800">0.0%</span><br><span class="text-[10px] text-slate-400">LABA BERSIH</span>';
+        }
+      } catch (eChart) { }
+
       return;
     }
 
     if (typeof originalRenderDashboardMetrics === 'function') {
       originalRenderDashboardMetrics();
+    }
+
+    // Dynamic calculation of Orders & Returns for KPI card
+    var ordersList = (window.appState && window.appState.data && window.appState.data.orders) || [];
+    var returnsList = (window.appState && window.appState.data && window.appState.data.returns) || [];
+    var ordCount = ordersList.length;
+    var retCount = returnsList.length;
+    var retRate = ordCount > 0 ? ((retCount / ordCount) * 100).toFixed(1) : '0.0';
+
+    var ordCountEl = document.getElementById('kpi-orders-count');
+    var retRateEl = document.getElementById('kpi-return-rate');
+    if (ordCountEl) ordCountEl.textContent = ordCount > 0 ? (ordCount.toLocaleString('id-ID') + ' Order') : '0 Order';
+    if (retRateEl) retRateEl.textContent = retRate + '% (' + retCount + ' Paket)';
+
+    var netPctEl = document.getElementById('kpi-net-percent');
+    if (netPctEl && (netPctEl.textContent.indexOf('NaN') !== -1 || !netPctEl.textContent)) {
+      netPctEl.textContent = '0.0%';
     }
   };
 
