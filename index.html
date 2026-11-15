@@ -7700,6 +7700,211 @@
       });
     };
 
+    // =========================================================================
+    // FITUR REVISI PRESENSI OLEH ADMIN IT (URGENT REVISION)
+    // =========================================================================
+    window.openRevisionModal = function (logId) {
+      if (window.appState.currentRole !== 'admin' && window.appState.currentRole !== 'owner') {
+        window.showToast('Akses ditolak: Hanya Admin IT yang berwenang merevisi data presensi!', 'error');
+        return;
+      }
+
+      var logs = window.appState.data.attendanceLogs || [];
+      var log = logs.find(function (l) { return String(l.id) === String(logId); });
+      if (!log) {
+        window.showToast('Data presensi tidak ditemukan!', 'error');
+        return;
+      }
+
+      var elId = document.getElementById('rev-log-id');
+      var elName = document.getElementById('rev-log-name');
+      var elRole = document.getElementById('rev-log-role');
+      var elDate = document.getElementById('rev-log-date');
+      var elTime = document.getElementById('rev-log-time');
+      var elInOut = document.getElementById('rev-log-inout');
+      var elStatus = document.getElementById('rev-log-status');
+      var elNotes = document.getElementById('rev-log-notes');
+      var elReason = document.getElementById('rev-log-reason');
+
+      if (elId) elId.value = log.id;
+      if (elName) elName.value = log.name || '';
+      if (elRole) elRole.value = (log.role || '').toUpperCase();
+      if (elDate) elDate.value = log.date || '';
+      if (elTime) elTime.value = log.time || '';
+      if (elInOut) elInOut.value = log.inOut || 'Masuk';
+      if (elStatus) elStatus.value = log.status || 'valid';
+      if (elNotes) elNotes.value = log.notes || '';
+      if (elReason) elReason.value = '';
+
+      var modal = document.getElementById('modal-revision-attendance');
+      if (modal) {
+        modal.classList.remove('hidden');
+      }
+    };
+
+    window.saveAttendanceRevision = function () {
+      if (window.appState.currentRole !== 'admin' && window.appState.currentRole !== 'owner') {
+        window.showToast('Akses ditolak: Hanya Admin IT yang berwenang merevisi absensi!', 'error');
+        return;
+      }
+
+      var id = document.getElementById('rev-log-id').value;
+      var newDate = document.getElementById('rev-log-date').value.trim();
+      var newTime = document.getElementById('rev-log-time').value.trim();
+      var newInOut = document.getElementById('rev-log-inout').value;
+      var newStatus = document.getElementById('rev-log-status').value;
+      var newNotes = document.getElementById('rev-log-notes').value.trim();
+      var reason = document.getElementById('rev-log-reason').value.trim();
+
+      if (!newDate || !newTime) {
+        window.showToast('Tanggal dan Jam presensi harus diisi lengkap!', 'warning');
+        return;
+      }
+      if (!reason) {
+        window.showToast('Alasan revisi urgent wajib diisi oleh Admin IT sebagai jejak audit!', 'error');
+        return;
+      }
+
+      var logs = window.appState.data.attendanceLogs || [];
+      var log = logs.find(function (l) { return String(l.id) === String(id); });
+      if (!log) {
+        window.showToast('Log presensi tidak ditemukan!', 'error');
+        return;
+      }
+
+      var adminUser = window.appState.currentUser || { email: 'admin@demo.com', name: 'Admin IT' };
+
+      log.date = newDate;
+      log.time = newTime;
+      log.inOut = newInOut;
+      log.status = newStatus;
+      log.notes = newNotes + ' [REVISI IT: ' + reason + ']';
+      log.isRevised = true;
+      log.revisedBy = adminUser.name || adminUser.email;
+      log.revisionReason = reason;
+
+      try {
+        localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(logs.slice(0, 150)));
+      } catch (e) { }
+
+      // Kirim real-time update ke Google Sheets via GAS Gateway
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'updateAttendance',
+              id: id,
+              date: newDate,
+              time: newTime,
+              inOut: newInOut,
+              status: newStatus,
+              notes: newNotes,
+              revisionReason: reason,
+              revisedBy: adminUser.name || adminUser.email
+            })
+          }).then(function () {
+            console.log('Revisi presensi berhasil disinkronkan ke Google Sheets');
+          }).catch(function (err) {
+            console.warn('Gagal kirim revisi ke GAS:', err);
+          });
+        } catch (eGas) { }
+      }
+
+      window.closeModal('modal-revision-attendance');
+      if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+      if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
+      if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus();
+      if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+      window.showToast('Presensi ' + log.name + ' berhasil direvisi oleh Admin IT!', 'success');
+    };
+
+    // =========================================================================
+    // FITUR STATUS ABSENSI HARI INI & VALIDASI 1x MASUK PER HARI
+    // =========================================================================
+    window.updateTodayAttendanceStatus = function () {
+      var user = window.appState.currentUser || { email: 'gudang@demo.com', role: 'warehouse', name: 'Ahmad Fauzi' };
+      var now = new Date();
+      var yyyy = now.getFullYear();
+      var mm = String(now.getMonth() + 1).padStart(2, '0');
+      var dd = String(now.getDate()).padStart(2, '0');
+      var todayStr = yyyy + '-' + mm + '-' + dd;
+
+      var logs = window.appState.data.attendanceLogs || [];
+      var todayIn = logs.find(function (l) {
+        var isSame = (l.email === user.email || (user.name && l.name === user.name));
+        return isSame && l.date === todayStr && l.inOut === 'Masuk';
+      });
+      var todayOut = logs.find(function (l) {
+        var isSame = (l.email === user.email || (user.name && l.name === user.name));
+        return isSame && l.date === todayStr && l.inOut === 'Pulang';
+      });
+
+      var btnIn = document.getElementById('btn-att-checkin');
+      var btnOut = document.getElementById('btn-att-checkout');
+      var card = document.getElementById('att-today-status-card');
+      var text = document.getElementById('att-today-status-text');
+      var dot = document.getElementById('att-today-status-dot');
+      var shiftRules = document.getElementById('att-today-shift-rules');
+
+      var office = window.appState.officeSettings || { maxCheckInTime: '08:30', minCheckOutTime: '17:00' };
+      if (shiftRules) {
+        shiftRules.textContent = 'Batas Masuk: ' + (office.maxCheckInTime || '08:30') + ' | Min Pulang: ' + (office.minCheckOutTime || '17:00');
+      }
+
+      if (todayIn && todayOut) {
+        if (btnIn) {
+          btnIn.disabled = true;
+          btnIn.className = 'h-11 bg-stone-300 text-stone-500 font-bold text-xs rounded-md shadow-xs opacity-60 cursor-not-allowed flex items-center justify-center space-x-1.5';
+          btnIn.innerHTML = '<span>Sudah Masuk (' + todayIn.time.slice(0, 5) + ')</span>';
+        }
+        if (btnOut) {
+          btnOut.disabled = true;
+          btnOut.className = 'h-11 bg-stone-300 text-stone-500 font-bold text-xs rounded-md shadow-xs opacity-60 cursor-not-allowed flex items-center justify-center space-x-1.5';
+          btnOut.innerHTML = '<span>Sudah Pulang (' + todayOut.time.slice(0, 5) + ')</span>';
+        }
+        if (card) {
+          card.className = 'p-2.5 rounded-md border text-xs font-semibold bg-emerald-50 border-emerald-300 text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5';
+        }
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+        if (text) text.innerHTML = '✅ Presensi hari ini <b>LENGKAP</b> (Masuk: ' + todayIn.time.slice(0, 5) + ' | Pulang: ' + todayOut.time.slice(0, 5) + ')';
+      } else if (todayIn) {
+        if (btnIn) {
+          btnIn.disabled = true;
+          btnIn.className = 'h-11 bg-stone-300 text-stone-500 font-bold text-xs rounded-md shadow-xs opacity-60 cursor-not-allowed flex items-center justify-center space-x-1.5';
+          btnIn.innerHTML = '<span>Sudah Masuk (' + todayIn.time.slice(0, 5) + ')</span>';
+        }
+        if (btnOut) {
+          btnOut.disabled = false;
+          btnOut.className = 'h-11 bg-[#1F1A17] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer ring-2 ring-[#B4532A]/30';
+          btnOut.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span>Absen Pulang</span>';
+        }
+        if (card) {
+          card.className = 'p-2.5 rounded-md border text-xs font-semibold bg-blue-50 border-blue-300 text-blue-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5';
+        }
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse';
+        if (text) text.innerHTML = '🕒 Anda sudah Absen Masuk (' + todayIn.time.slice(0, 5) + ' WIB). Silakan klik <b>Absen Pulang</b> saat selesai kerja.';
+      } else {
+        if (btnIn) {
+          btnIn.disabled = false;
+          btnIn.className = 'h-11 bg-[#2F5D50] hover:bg-[#254A40] text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer';
+          btnIn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg><span>Absen Masuk (1x Sehari)</span>';
+        }
+        if (btnOut) {
+          btnOut.disabled = false;
+          btnOut.className = 'h-11 bg-[#1F1A17] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer';
+          btnOut.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span>Absen Pulang</span>';
+        }
+        if (card) {
+          card.className = 'p-2.5 rounded-md border text-xs font-semibold bg-[#FAF6F0] border-[#E8E2D9] text-[#1F1A17] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5';
+        }
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+        if (text) text.innerHTML = '📍 Anda belum Absen Masuk hari ini. Batas waktu masuk: <b>' + (office.maxCheckInTime || '08:30') + ' WIB</b>';
+      }
+    };
+
     // Export Attendance Report to CSV
     window.exportAttendanceReportCSV = function () {
       var logs = window.currentRenderedAllLogs || window.appState.data.attendanceLogs || [];
