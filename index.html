@@ -715,6 +715,11 @@
                 <option value="shopee">Khusus Shopee (5 Akun)</option>
                 <option value="tiktok">Khusus TikTok Live</option>
               </select>
+              <button type="button" onclick="window.openLiveTargetModal()"
+                class="h-9 px-3 bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold rounded-lg border border-amber-300 transition-colors flex items-center space-x-1 text-xs cursor-pointer"
+                title="Ubah Target Omset">
+                <span>🎯 Ubah Target</span>
+              </button>
               <select id="dashboard-period-filter"
                 class="text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium">
                 <option value="today">Hari Ini</option>
@@ -2837,8 +2842,8 @@
               </div>
               <div class="flex items-center space-x-2 text-xs">
                 <span class="text-slate-400 text-[11px]" id="lr-last-sync-time">Sinkronisasi Realtime</span>
-                <button type="button" onclick="window.openLiveTargetModal()" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg font-bold flex items-center space-x-1 cursor-pointer" title="Pengaturan Target Omset">
-                  <span>🎯 Target</span>
+                <button type="button" onclick="window.openLiveTargetModal()" class="h-8 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg shadow-2xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95" title="Ubah Pengaturan Target Omset Live">
+                  <span>🎯 Ubah Target Omset</span>
                 </button>
                 <button type="button" onclick="window.exportLiveReportExcel()" class="px-2.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Unduh File CSV / Excel">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -2937,6 +2942,11 @@
                   <span class="text-xs font-semibold text-slate-400">/</span>
                   <span class="text-xs font-bold text-amber-900" id="lr-target-target-val">Rp 150.000.000</span>
                   <span class="px-2 py-0.5 rounded font-black text-xs" id="lr-target-pct-badge">0%</span>
+                  <button type="button" onclick="window.openLiveTargetModal()"
+                    class="ml-1 sm:ml-2 px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-black shadow-xs transition-all flex items-center space-x-1 cursor-pointer active:scale-95"
+                    title="Klik untuk mengubah nominal target omset live">
+                    <span>✏️ Ubah Target Omset</span>
+                  </button>
                 </div>
               </div>
               <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
@@ -3385,6 +3395,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                   <span>Segarkan Data</span>
+                </button>
+                <button type="button" onclick="window.openLiveTargetModal()"
+                  class="h-8 px-2.5 bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold rounded-lg border border-amber-300 transition-colors flex items-center space-x-1 cursor-pointer"
+                  title="Ubah Target Omset Penjualan Live">
+                  <span>🎯 Ubah Target</span>
                 </button>
                 <button type="button" onclick="window.syncLiveSessionsFromGAS(true)"
                   class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg border border-slate-300 transition-colors flex items-center space-x-1 cursor-pointer">
@@ -13677,6 +13692,15 @@
   };
 
   // 5. CARA UBAH TARGET OMSET 150.000.000 (MODAL & REALTIME UPDATE)
+  window.openModal = function (id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('hidden');
+  };
+  window.closeModal = function (id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  };
+
   window.openLiveTargetModal = function () {
     var saved = {};
     try {
@@ -13692,7 +13716,8 @@
     if (document.getElementById('lr-target-daily-val')) {
       document.getElementById('lr-target-daily-val').value = dVal;
     }
-    window.openModal('modal-lr-targets');
+    var modal = document.getElementById('modal-lr-targets');
+    if (modal) modal.classList.remove('hidden');
   };
 
   window.saveLiveTargets = function (e) {
