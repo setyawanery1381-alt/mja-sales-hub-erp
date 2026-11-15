@@ -728,21 +728,134 @@
             </div>
           </div>
 
-          <!-- Charts Grid -->
+          <!-- Charts Grid (PRD Bab 4.1: Tren Harian & Komposisi Keuangan) -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Line Chart (Omset vs Margin) -->
-            <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-              <h4 class="text-sm font-bold text-slate-800 mb-4">Tren Omset Harian vs Margin Bersih</h4>
-              <div class="h-64 relative">
-                <canvas id="chart-sales-trend"></canvas>
+            <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-3">
+                <div>
+                  <h4 class="text-sm font-bold text-stone-900">Tren Omset Harian vs Margin Bersih</h4>
+                  <p class="text-[11px] text-stone-500">Performa 7 hari terakhir (Shopee + TikTok Shop Cabang A &amp; B)</p>
+                </div>
+                <div class="flex items-center space-x-3 text-xs font-semibold">
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#B4532A]"></span><span class="text-stone-700">Omset Kotor</span></span>
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#2F5D50]"></span><span class="text-stone-700">Margin Bersih</span></span>
+                </div>
+              </div>
+
+              <!-- High-Precision Responsive SVG Chart (Always Visible, 0ms Load, Offline & Online) -->
+              <div class="relative w-full h-64 overflow-hidden flex flex-col justify-between pt-2" id="wrapper-chart-trend">
+                <canvas id="chart-sales-trend" class="absolute inset-0 w-full h-full"></canvas>
+                
+                <!-- Fallback & Instant Vector Display -->
+                <svg viewBox="0 0 540 180" class="w-full h-full select-none" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="omsetGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#B4532A" stop-opacity="0.18"/>
+                      <stop offset="100%" stop-color="#B4532A" stop-opacity="0.0"/>
+                    </linearGradient>
+                    <linearGradient id="marginGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#2F5D50" stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color="#2F5D50" stop-opacity="0.0"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Horizontal Guide Lines -->
+                  <line x1="35" y1="150" x2="520" y2="150" stroke="#E8E2D9" stroke-width="1"/>
+                  <line x1="35" y1="105" x2="520" y2="105" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>
+                  <line x1="35" y1="60" x2="520" y2="60" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>
+                  <line x1="35" y1="15" x2="520" y2="15" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>
+
+                  <!-- Y-Axis Ticks -->
+                  <text x="28" y="153" font-family="DM Sans" font-size="9" fill="#9CA3AF" text-anchor="end">0</text>
+                  <text x="28" y="108" font-family="DM Sans" font-size="9" fill="#9CA3AF" text-anchor="end">15 Jt</text>
+                  <text x="28" y="63" font-family="DM Sans" font-size="9" fill="#9CA3AF" text-anchor="end">30 Jt</text>
+                  <text x="28" y="18" font-family="DM Sans" font-size="9" fill="#9CA3AF" text-anchor="end">45 Jt</text>
+
+                  <!-- Omset Area Fill -->
+                  <polygon fill="url(#omsetGradient)" points="50,150 50,105 125,88 200,98 275,65 350,42 425,22 500,32 500,150"/>
+                  <!-- Margin Area Fill -->
+                  <polygon fill="url(#marginGradient)" points="50,150 50,128 125,122 200,126 275,110 350,92 425,74 500,82 500,150"/>
+
+                  <!-- Omset Polyline (#B4532A Terracotta) -->
+                  <polyline fill="none" stroke="#B4532A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                    points="50,105 125,88 200,98 275,65 350,42 425,22 500,32"/>
+                  <!-- Margin Polyline (#2F5D50 Forest Emerald) -->
+                  <polyline fill="none" stroke="#2F5D50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                    points="50,128 125,122 200,126 275,110 350,92 425,74 500,82"/>
+
+                  <!-- Interactive Dots -->
+                  <circle cx="50" cy="105" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+                  <circle cx="125" cy="88" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+                  <circle cx="200" cy="98" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+                  <circle cx="275" cy="65" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+                  <circle cx="350" cy="42" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+                  <circle cx="425" cy="22" r="5" fill="#B4532A" stroke="#FFFFFF" stroke-width="2"/>
+                  <circle cx="500" cy="32" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+
+                  <circle cx="50" cy="128" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
+                  <circle cx="125" cy="122" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
+                  <circle cx="200" cy="126" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
+                  <circle cx="275" cy="110" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
+                  <circle cx="350" cy="92" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
+                  <circle cx="425" cy="74" r="5" fill="#2F5D50" stroke="#FFFFFF" stroke-width="2"/>
+                  <circle cx="500" cy="82" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
+
+                  <!-- High Peak Callout -->
+                  <rect x="395" y="4" width="60" height="15" rx="3" fill="#1F1A17" opacity="0.9"/>
+                  <text x="425" y="14" font-family="DM Sans" font-size="8.5" font-weight="bold" fill="#FAF6F0" text-anchor="middle">Rp 42.1 Jt</text>
+                  <rect x="395" y="58" width="60" height="15" rx="3" fill="#2F5D50" opacity="0.9"/>
+                  <text x="425" y="68" font-family="DM Sans" font-size="8.5" font-weight="bold" fill="#FAF6F0" text-anchor="middle">Rp 16.5 Jt</text>
+
+                  <!-- X-Axis Labels -->
+                  <text x="50" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Sen</text>
+                  <text x="125" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Sel</text>
+                  <text x="200" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Rab</text>
+                  <text x="275" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Kam</text>
+                  <text x="350" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Jum</text>
+                  <text x="425" y="166" font-family="DM Sans" font-size="10" font-weight="bold" fill="#B4532A" text-anchor="middle">Sab</text>
+                  <text x="500" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Min</text>
+                </svg>
               </div>
             </div>
 
             <!-- Cost Distribution Donut -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-              <h4 class="text-sm font-bold text-slate-800 mb-4">Komposisi Pengeluaran & Laba</h4>
-              <div class="h-64 relative flex items-center justify-center">
-                <canvas id="chart-cost-breakdown"></canvas>
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-stone-900">Komposisi Pengeluaran &amp; Laba</h4>
+                <p class="text-[11px] text-stone-500">Distribusi alokasi dari total omzet penjualan</p>
+              </div>
+
+              <!-- High-Precision Responsive SVG Donut (Always Visible, 0ms Load) -->
+              <div class="relative w-full h-48 flex items-center justify-center my-2" id="wrapper-chart-cost">
+                <canvas id="chart-cost-breakdown" class="absolute inset-0 w-full h-full"></canvas>
+                
+                <svg viewBox="0 0 160 160" class="w-40 h-40">
+                  <!-- Segments (circumference = 2 * PI * 55 = 345.57) -->
+                  <!-- Margin: 35.2% -> 121.6 -->
+                  <circle cx="80" cy="80" r="55" fill="none" stroke="#2F5D50" stroke-width="22"
+                    stroke-dasharray="121.6 345.57" stroke-dashoffset="0"/>
+                  <!-- HPP Spion: 43.1% -> 148.9 -->
+                  <circle cx="80" cy="80" r="55" fill="none" stroke="#B4532A" stroke-width="22"
+                    stroke-dasharray="148.9 345.57" stroke-dashoffset="-121.6"/>
+                  <!-- Fee Admin: 11.8% -> 40.8 -->
+                  <circle cx="80" cy="80" r="55" fill="none" stroke="#D97706" stroke-width="22"
+                    stroke-dasharray="40.8 345.57" stroke-dashoffset="-270.5"/>
+                  <!-- Ads/Ops: 9.9% -> 34.2 -->
+                  <circle cx="80" cy="80" r="55" fill="none" stroke="#64748B" stroke-width="22"
+                    stroke-dasharray="34.2 345.57" stroke-dashoffset="-311.3"/>
+                  
+                  <text x="80" y="76" font-family="Fraunces" font-size="18" font-weight="bold" fill="#1F1A17" text-anchor="middle">35.2%</text>
+                  <text x="80" y="92" font-family="DM Sans" font-size="9" font-weight="bold" fill="#2F5D50" text-anchor="middle">LABA BERSIH</text>
+                </svg>
+              </div>
+
+              <!-- Donut Legend Pills -->
+              <div class="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[10px] font-medium border-t border-stone-100 pt-2.5 text-stone-600">
+                <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#2F5D50]"></span><span>Margin (35.2%)</span></span>
+                <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#B4532A]"></span><span>HPP Modal (43.1%)</span></span>
+                <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#D97706]"></span><span>Fee Platform (11.8%)</span></span>
+                <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#64748B]"></span><span>Iklan &amp; Ops (9.9%)</span></span>
               </div>
             </div>
           </div>
@@ -3460,6 +3573,83 @@
       }
     }
 
+    // Chart Instances & Bulletproof Initializer (Global Early Definition)
+    window.trendChartInstance = null;
+    window.costChartInstance = null;
+
+    window.initCharts = function () {
+      if (typeof Chart === 'undefined') {
+        // SVG Vector charts already cleanly rendered by default in HTML!
+        return;
+      }
+      try {
+        var canvasTrend = document.getElementById('chart-sales-trend');
+        var canvasCost = document.getElementById('chart-cost-breakdown');
+        if (!canvasTrend || !canvasCost) return;
+
+        if (window.trendChartInstance) {
+          try { window.trendChartInstance.destroy(); } catch (e) {}
+          window.trendChartInstance = null;
+        }
+        if (window.costChartInstance) {
+          try { window.costChartInstance.destroy(); } catch (e) {}
+          window.costChartInstance = null;
+        }
+
+        var ctxTrend = canvasTrend.getContext('2d');
+        window.trendChartInstance = new Chart(ctxTrend, {
+          type: 'line',
+          data: {
+            labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+            datasets: [
+              {
+                label: 'Omset Kotor',
+                data: [18.5, 22.4, 19.8, 28.2, 35.6, 42.1, 38.4],
+                borderColor: '#B4532A',
+                backgroundColor: 'rgba(180, 83, 42, 0.08)',
+                tension: 0.35,
+                fill: true,
+                pointBackgroundColor: '#B4532A'
+              },
+              {
+                label: 'Margin Bersih',
+                data: [6.8, 8.2, 7.1, 10.4, 13.8, 16.5, 14.2],
+                borderColor: '#2F5D50',
+                backgroundColor: 'transparent',
+                tension: 0.35,
+                pointBackgroundColor: '#2F5D50'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+          }
+        });
+
+        var ctxCost = canvasCost.getContext('2d');
+        window.costChartInstance = new Chart(ctxCost, {
+          type: 'doughnut',
+          data: {
+            labels: ['Margin Bersih', 'HPP Spion', 'Fee Platform', 'Iklan/Ops'],
+            datasets: [{
+              data: [35.2, 43.1, 11.8, 9.9],
+              backgroundColor: ['#2F5D50', '#B4532A', '#D97706', '#64748B']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            cutout: '65%'
+          }
+        });
+      } catch (err) {
+        console.warn('Chart.js init fallback:', err);
+      }
+    };
+
     // Unified Data & Auth Layer (DASarsitek Instant UX Architecture)
     window.Auth = {
       login: function (email, password) {
@@ -4110,7 +4300,6 @@
 
       // Apply Strict Role Permissions (Permintaan Klien: Gudang & Host diperketat)
       window.applyRolePermissions(role);
-
       window.showToast('Selamat datang, ' + email + ' (' + branch + ')', 'success');
 
       // Determine default landing page strictly by role
@@ -4119,16 +4308,17 @@
       else if (role === 'host') defaultPage = 'section-live';
 
       window.navigateTo(defaultPage);
-      window.initCharts();
-      window.renderAllData();
-      window.calculateOnlinePrice();
-      window.renderQCStats();
-      if (window.renderMissingQC2Resi) window.renderMissingQC2Resi();
-      if (window.renderStoreRecap) window.renderStoreRecap();
-      window.renderAttendanceLogs();
+
+      // Safe Initializers (Never Crash)
+      try { if (typeof window.renderAllData === 'function') window.renderAllData(); } catch (e1) { console.error(e1); }
+      try { if (typeof window.initCharts === 'function') window.initCharts(); } catch (e2) { console.error(e2); }
+      try { if (typeof window.calculateOnlinePrice === 'function') window.calculateOnlinePrice(); } catch (e3) { console.error(e3); }
+      try { if (typeof window.renderQCStats === 'function') window.renderQCStats(); } catch (e4) { console.error(e4); }
+      try { if (typeof window.renderMissingQC2Resi === 'function') window.renderMissingQC2Resi(); } catch (e5) { console.error(e5); }
+      try { if (typeof window.renderStoreRecap === 'function') window.renderStoreRecap(); } catch (e6) { console.error(e6); }
+      try { if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs(); } catch (e7) { console.error(e7); }
     };
 
-    // Logout Handler (Clean Session & Camera Release)
     window.handleLogout = function () {
       if (window.attCameraStream) {
         try {
@@ -7779,190 +7969,6 @@
     // Chart.js Initializer
     window.trendChartInstance = null;
     window.costChartInstance = null;
-
-    window.initCharts = function () {
-      var containerTrend = document.getElementById('chart-sales-trend');
-      var containerCost = document.getElementById('chart-cost-breakdown');
-      if (!containerTrend || !containerCost) return;
-
-      // Clean up previous Chart.js instances if already created
-      if (window.trendChartInstance) {
-        try { window.trendChartInstance.destroy(); } catch (e) {}
-        window.trendChartInstance = null;
-      }
-      if (window.costChartInstance) {
-        try { window.costChartInstance.destroy(); } catch (e) {}
-        window.costChartInstance = null;
-      }
-
-      // 1. Try Native Chart.js if loaded from CDN
-      if (typeof Chart !== 'undefined') {
-        try {
-          var ctxTrend = containerTrend.getContext('2d');
-          window.trendChartInstance = new Chart(ctxTrend, {
-            type: 'line',
-            data: {
-              labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-              datasets: [
-                {
-                  label: 'Omset Kotor (Juta Rp)',
-                  data: [18.5, 22.4, 19.8, 28.2, 35.6, 42.1, 38.4],
-                  borderColor: '#B4532A',
-                  backgroundColor: 'rgba(180, 83, 42, 0.08)',
-                  tension: 0.35,
-                  fill: true,
-                  borderWidth: 2.5,
-                  pointBackgroundColor: '#B4532A',
-                  pointRadius: 4
-                },
-                {
-                  label: 'Margin Bersih (Juta Rp)',
-                  data: [6.8, 8.2, 7.1, 10.4, 13.8, 16.5, 14.2],
-                  borderColor: '#2F5D50',
-                  backgroundColor: 'rgba(47, 93, 80, 0.05)',
-                  tension: 0.35,
-                  fill: true,
-                  borderWidth: 2.5,
-                  pointBackgroundColor: '#2F5D50',
-                  pointRadius: 4
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              interaction: {
-                intersect: false,
-                mode: 'index'
-              },
-              plugins: {
-                legend: {
-                  position: 'top',
-                  labels: {
-                    font: { family: 'DM Sans', weight: 'bold', size: 11 },
-                    boxWidth: 12
-                  }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function (ctx) {
-                      return ctx.dataset.label + ': Rp ' + ctx.parsed.y.toLocaleString('id-ID') + '.000.000';
-                    }
-                  }
-                }
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  grid: { color: 'rgba(0,0,0,0.04)' },
-                  ticks: {
-                    font: { family: 'DM Sans', size: 10 },
-                    callback: function (val) { return val + ' Jt'; }
-                  }
-                },
-                x: {
-                  grid: { display: false },
-                  ticks: { font: { family: 'DM Sans', size: 11, weight: 'bold' } }
-                }
-              }
-            }
-          });
-
-          var ctxCost = containerCost.getContext('2d');
-          window.costChartInstance = new Chart(ctxCost, {
-            type: 'doughnut',
-            data: {
-              labels: ['Margin Bersih Riil (35.2%)', 'HPP Spion (43.1%)', 'Biaya Admin Marketplace (11.8%)', 'Biaya Iklan & Ops (9.9%)'],
-              datasets: [{
-                data: [35.2, 43.1, 11.8, 9.9],
-                backgroundColor: ['#2F5D50', '#B4532A', '#D97706', '#64748B'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    font: { family: 'DM Sans', size: 10, weight: '500' },
-                    boxWidth: 10,
-                    padding: 8
-                  }
-                }
-              },
-              cutout: '65%'
-            }
-          });
-          return;
-        } catch (chartErr) {
-          console.warn('Chart.js render error, fallback to SVG:', chartErr);
-        }
-      }
-
-      // 2. High-Aesthetic Bespoke SVG Fallback if Chart.js is delayed or blocked
-      var parentTrend = containerTrend.parentElement;
-      if (parentTrend) {
-        parentTrend.innerHTML = '<div class="w-full h-full flex flex-col justify-between py-2">' +
-          '<div class="flex items-center justify-between text-[11px] font-bold text-stone-500 mb-2">' +
-          '<span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-[#B4532A]"></span><span>Omset Kotor</span></span>' +
-          '<span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-[#2F5D50]"></span><span>Margin Bersih</span></span>' +
-          '</div>' +
-          '<svg viewBox="0 0 500 160" class="w-full h-44 overflow-visible">' +
-          '<line x1="0" y1="140" x2="500" y2="140" stroke="#E8E2D9" stroke-width="1"/>' +
-          '<line x1="0" y1="90" x2="500" y2="90" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>' +
-          '<line x1="0" y1="40" x2="500" y2="40" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>' +
-          '<!-- Omset line -->' +
-          '<polyline fill="none" stroke="#B4532A" stroke-width="3" points="30,95 100,75 170,88 240,55 310,32 380,18 450,25"/>' +
-          '<!-- Margin line -->' +
-          '<polyline fill="none" stroke="#2F5D50" stroke-width="3" points="30,122 100,115 170,120 240,102 310,85 380,68 450,75"/>' +
-          '<!-- Data points -->' +
-          '<circle cx="380" cy="18" r="5" fill="#B4532A"/>' +
-          '<circle cx="380" cy="68" r="5" fill="#2F5D50"/>' +
-          '<text x="380" y="10" font-family="DM Sans" font-size="10" font-weight="bold" fill="#B4532A" text-anchor="middle">Rp 42.1 Jt</text>' +
-          '<text x="380" y="62" font-family="DM Sans" font-size="10" font-weight="bold" fill="#2F5D50" text-anchor="middle">Rp 16.5 Jt</text>' +
-          '</svg>' +
-          '<div class="flex justify-between text-[11px] font-bold text-stone-600 px-4 mt-1">' +
-          '<span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span class="text-[#B4532A]">Sab</span><span>Min</span>' +
-          '</div>' +
-          '</div>';
-      }
-
-      var parentCost = containerCost.parentElement;
-      if (parentCost) {
-        parentCost.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center p-2">' +
-          '<svg viewBox="0 0 120 120" class="w-36 h-36">' +
-          '<circle cx="60" cy="60" r="45" fill="none" stroke="#B4532A" stroke-width="18" stroke-dasharray="122 283" stroke-dashoffset="0"/>' +
-          '<circle cx="60" cy="60" r="45" fill="none" stroke="#2F5D50" stroke-width="18" stroke-dasharray="100 283" stroke-dashoffset="-122"/>' +
-          '<circle cx="60" cy="60" r="45" fill="none" stroke="#D97706" stroke-width="18" stroke-dasharray="33 283" stroke-dashoffset="-222"/>' +
-          '<circle cx="60" cy="60" r="45" fill="none" stroke="#64748B" stroke-width="18" stroke-dasharray="28 283" stroke-dashoffset="-255"/>' +
-          '<text x="60" y="58" font-family="Fraunces" font-size="14" font-weight="bold" fill="#1F1A17" text-anchor="middle">35.2%</text>' +
-          '<text x="60" y="72" font-family="DM Sans" font-size="8" font-weight="bold" fill="#2F5D50" text-anchor="middle">MARGIN</text>' +
-          '</svg>' +
-          '<div class="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] font-medium text-stone-600 mt-2">' +
-          '<span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-[#2F5D50]"></span><span>Margin (35%)</span></span>' +
-          '<span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-[#B4532A]"></span><span>HPP (43%)</span></span>' +
-          '<span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-[#D97706]"></span><span>Fee Admin (12%)</span></span>' +
-          '<span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-[#64748B]"></span><span>Iklan (10%)</span></span>' +
-          '</div>' +
-          '</div>';
-      }
-    };
-    
-    // Auto-init charts on document ready or window load
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      setTimeout(function () {
-        if (typeof window.initCharts === 'function') window.initCharts();
-      }, 250);
-    } else {
-      document.addEventListener('DOMContentLoaded', function () {
-        setTimeout(function () {
-          if (typeof window.initCharts === 'function') window.initCharts();
-        }, 250);
-      });
-    }
 
     window.toggleStoreRecapPanel = function () {
       var panel = document.getElementById('store-recap-panel');
