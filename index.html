@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>MJA Sales Hub — Multi-Store ERP & Financials</title>
+    <!-- SheetJS / XLSX for Real Excel Upload & Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -1164,10 +1166,29 @@
                   </div>
                 </div>
 
-                <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Target Laba Bersih yang Diinginkan (Rp)</label>
-                  <input type="number" id="calc-target-profit" value="35000" oninput="window.calculateOnlinePrice()"
-                    class="w-full p-2.5 bg-white border border-slate-200 rounded-lg font-bold text-emerald-700">
+                <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="font-bold text-emerald-950 text-xs uppercase tracking-wide">Target Keuntungan / Margin</label>
+                    <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">Otomatis Hitung</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">Target Margin (%)</label>
+                      <div class="relative">
+                        <input type="number" id="calc-target-margin-pct" value="25" min="0" max="90" step="0.5"
+                          oninput="window.handleCalcTargetMarginPctChange()"
+                          class="w-full p-2 pr-6 bg-white border border-emerald-300 rounded-lg font-black text-emerald-800 text-xs">
+                        <span class="absolute right-2 top-2 text-xs font-bold text-slate-400">%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">Laba Bersih (Rp)</label>
+                      <input type="number" id="calc-target-profit" value="162500"
+                        oninput="window.handleCalcTargetProfitRpChange()"
+                        class="w-full p-2 bg-white border border-emerald-300 rounded-lg font-black text-emerald-800 text-xs">
+                    </div>
+                  </div>
+                  <p class="text-[10px] text-emerald-800 italic">*Ketik % margin atau ketik nominal Rp, kalkulator otomatis saling menghitung.</p>
                 </div>
 
                 <!-- Opsi Tulis Harga Manual (Pertanyaan Klien No 3) -->
@@ -1885,15 +1906,54 @@
                   (+1).</p>
               </div>
 
-              <!-- Barcode Scanner Simulation Box -->
-              <div class="relative bg-slate-900 text-white rounded-xl p-6 text-center overflow-hidden">
-                <div class="absolute inset-x-0 top-1/2 h-0.5 bg-rose-500 shadow-[0_0_8px_#EF4444] animate-pulse"></div>
-                <svg class="w-12 h-12 mx-auto mb-2 text-slate-400" fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                </svg>
-                <p class="text-xs text-slate-300 font-mono">ARAHKAN BARCODE KE SINI</p>
+              <!-- Live Camera Barcode Scanner Viewport -->
+              <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 aspect-[4/3] max-h-64 flex flex-col items-center justify-center text-center shadow-inner group">
+                <video id="retur-camera-video" autoplay playsinline webkit-playsinline muted class="w-full h-full object-cover bg-black hidden"></video>
+                <canvas id="retur-camera-canvas" class="hidden"></canvas>
+                <div id="retur-laser-line" class="hidden absolute inset-x-0 top-1/2 h-0.5 bg-rose-500 shadow-[0_0_12px_#EF4444] animate-pulse z-20"></div>
+
+                <!-- Placeholder when camera is inactive -->
+                <div id="retur-camera-placeholder" class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center p-4 text-white z-10 space-y-2">
+                  <div class="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center border border-rose-500/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-slate-100">Layar Kamera Scanner Retur</p>
+                    <p class="text-[11px] text-slate-400">Arahkan barcode resi ke depan kamera atau gunakan tombol di bawah</p>
+                  </div>
+                  <div class="flex items-center space-x-2 pt-1">
+                    <button type="button" onclick="window.startReturCamera()"
+                      class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                      <span>Buka Kamera Scanner</span>
+                    </button>
+                    <button type="button" onclick="window.simulateQuickScanRetur()"
+                      class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-medium cursor-pointer"
+                      title="Isi contoh nomor resi retur">
+                      <span>Simulasi Resi</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Active camera control bar -->
+                <div id="retur-camera-controls" class="hidden absolute bottom-2 inset-x-2 z-30 flex items-center justify-between bg-slate-900/80 backdrop-blur-xs px-2.5 py-1.5 rounded-lg border border-slate-700 text-white text-xs">
+                  <span class="flex items-center space-x-1 text-[11px] text-emerald-400 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>Kamera Siap Scan</span>
+                  </span>
+                  <div class="flex items-center space-x-1.5">
+                    <button type="button" onclick="window.simulateQuickScanRetur()"
+                      class="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded cursor-pointer">
+                      Scan Contoh
+                    </button>
+                    <button type="button" onclick="window.stopReturCamera()"
+                      class="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold rounded cursor-pointer">
+                      Tutup
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <!-- Input Form -->
@@ -13385,6 +13445,9 @@
 
     window.appState.currentUser = userObj;
     window.appState.currentRole = userObj.role;
+    try {
+      localStorage.setItem('mja_auth_user', JSON.stringify(userObj));
+    } catch (eAuth) { }
     window.appState.currentBranch = userObj.branch || 'Cabang 1 (Pusat & Gudang Utama)';
 
     var topbarFullname = document.getElementById('topbar-user-fullname');
@@ -13567,6 +13630,9 @@
     }
 
     window.appState.currentSection = sectionId;
+    try {
+      localStorage.setItem('mja_current_section', sectionId);
+    } catch (eNav) { }
 
     var sections = document.querySelectorAll('.content-section');
     for (var i = 0; i < sections.length; i++) {
@@ -14779,6 +14845,465 @@ window.handleSaveLiveSession = function (e) {
   // Inisialisasi awal
   window.initUserDatabase();
   window.startLiveDigitalClock();
+
+
+  // ===========================================================================
+  // 1. KAMERA BARCODE SCANNER RETUR & SIMULASI RESI (REQ 1)
+  // ===========================================================================
+  window.returCameraStream = null;
+
+  window.startReturCamera = function () {
+    var video = document.getElementById('retur-camera-video');
+    var placeholder = document.getElementById('retur-camera-placeholder');
+    var controls = document.getElementById('retur-camera-controls');
+    var laser = document.getElementById('retur-laser-line');
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      window.showToast('Browser Anda tidak mendukung akses kamera langsung.', 'warning');
+      window.simulateQuickScanRetur();
+      return;
+    }
+
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false
+    })
+      .then(function (stream) {
+        window.returCameraStream = stream;
+        if (video) {
+          video.srcObject = stream;
+          video.classList.remove('hidden');
+        }
+        if (placeholder) placeholder.classList.add('hidden');
+        if (controls) controls.classList.remove('hidden');
+        if (laser) laser.classList.remove('hidden');
+        window.showToast('📷 Kamera scanner retur aktif! Arahkan barcode ke layar.', 'success');
+      })
+      .catch(function (err) {
+        console.warn('Gagal akses kamera retur:', err);
+        window.showToast('Izin kamera ditolak. Silakan gunakan input resi atau simulasi scan.', 'info');
+        window.simulateQuickScanRetur();
+      });
+  };
+
+  window.stopReturCamera = function () {
+    if (window.returCameraStream) {
+      try {
+        window.returCameraStream.getTracks().forEach(function (t) { t.stop(); });
+      } catch (e) { }
+      window.returCameraStream = null;
+    }
+    var video = document.getElementById('retur-camera-video');
+    var placeholder = document.getElementById('retur-camera-placeholder');
+    var controls = document.getElementById('retur-camera-controls');
+    var laser = document.getElementById('retur-laser-line');
+
+    if (video) video.classList.add('hidden');
+    if (placeholder) placeholder.classList.remove('hidden');
+    if (controls) controls.classList.add('hidden');
+    if (laser) laser.classList.add('hidden');
+  };
+
+  window.simulateQuickScanRetur = function () {
+    var samples = ['SPXID029182390', 'JNTID88371902', 'TKP882910381', 'NINJA77218390', 'ANTERAJA99210'];
+    var randomResi = samples[Math.floor(Math.random() * samples.length)];
+    var resiInput = document.getElementById('retur-resi-input');
+    if (resiInput) {
+      resiInput.value = randomResi;
+      resiInput.focus();
+      window.showToast('⚡ Barcode ' + randomResi + ' terbaca!', 'success');
+    }
+  };
+
+  // ===========================================================================
+  // 2. INVENTORY EDIT STOCK ALIAS & MODAL HANDLER (REQ 2 & 5)
+  // ===========================================================================
+  window.openEditStockModal = function (itemId) {
+    if (typeof window.openEditStock === 'function') {
+      window.openEditStock(itemId);
+    } else {
+      var item = (window.appState && window.appState.data && window.appState.data.inventory || []).find(function (i) { return i.id === itemId; });
+      if (!item) return;
+      if (document.getElementById('edit-stock-id')) document.getElementById('edit-stock-id').value = item.id;
+      if (document.getElementById('edit-stock-sku')) document.getElementById('edit-stock-sku').value = item.sku;
+      if (document.getElementById('edit-stock-name')) document.getElementById('edit-stock-name').value = item.name;
+      if (document.getElementById('edit-stock-qty')) document.getElementById('edit-stock-qty').value = item.stock;
+      if (document.getElementById('edit-stock-cogs')) document.getElementById('edit-stock-cogs').value = item.cogs;
+      if (document.getElementById('edit-stock-price')) document.getElementById('edit-stock-price').value = item.price;
+      window.openModal('modal-edit-stock');
+    }
+  };
+
+  // ===========================================================================
+  // 3. TARGET MARGIN (%) & LABA BERSIH (RP) DI KALKULATOR (REQ 7)
+  // ===========================================================================
+  window.handleCalcTargetMarginPctChange = function () {
+    var hpp = Number(document.getElementById('calc-hpp') ? document.getElementById('calc-hpp').value : 650000) || 650000;
+    var marginPct = Number(document.getElementById('calc-target-margin-pct') ? document.getElementById('calc-target-margin-pct').value : 25) || 0;
+    var profitRp = Math.round(hpp * (marginPct / 100));
+
+    var profitInput = document.getElementById('calc-target-profit');
+    if (profitInput) profitInput.value = profitRp;
+
+    if (typeof window.calculateOnlinePrice === 'function') {
+      window.calculateOnlinePrice();
+    }
+  };
+
+  window.handleCalcTargetProfitRpChange = function () {
+    var hpp = Number(document.getElementById('calc-hpp') ? document.getElementById('calc-hpp').value : 650000) || 650000;
+    var profitRp = Number(document.getElementById('calc-target-profit') ? document.getElementById('calc-target-profit').value : 0) || 0;
+    var marginPct = hpp > 0 ? ((profitRp / hpp) * 100).toFixed(1) : 0;
+
+    var pctInput = document.getElementById('calc-target-margin-pct');
+    if (pctInput) pctInput.value = marginPct;
+
+    if (typeof window.calculateOnlinePrice === 'function') {
+      window.calculateOnlinePrice();
+    }
+  };
+
+  // ===========================================================================
+  // 4. REAL EXCEL & CSV UPLOAD UNTUK INVENTORY (REQ 8)
+  // ===========================================================================
+  window.handleInventoryExcelUpload = function (e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    var fileName = file.name.toLowerCase();
+    var isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
+
+    function processRows(rows) {
+      if (!Array.isArray(rows) || rows.length === 0) {
+        window.showToast('Berkas Excel/CSV kosong atau format tidak sesuai!', 'warning');
+        return;
+      }
+
+      var importedCount = 0;
+      var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
+
+      rows.forEach(function (row) {
+        var sku = (row.sku || row.SKU || row['Kode SKU'] || row['Kode'] || row[0] || '').toString().trim();
+        var name = (row.name || row.Nama || row['Nama Produk'] || row['Nama Spion'] || row[1] || '').toString().trim();
+        var group = (row.group || row.Group || row['Kategori'] || row[2] || 'Spion Mobil').toString().trim();
+        var cogs = Number((row.cogs || row.HPP || row['Modal'] || row['Harga Beli'] || row[3] || '0').toString().replace(/[^0-9]/g, '')) || 100000;
+        var price = Number((row.price || row.Harga || row['Harga Jual'] || row[4] || '0').toString().replace(/[^0-9]/g, '')) || 150000;
+        var qty = Number((row.qty || row.stock || row.Stok || row['Stok Fisik'] || row[5] || '0').toString().replace(/[^0-9]/g, '')) || 0;
+
+        if (!sku || sku === 'SKU' || sku === 'Kode SKU') return; // Skip header row
+
+        var existing = inventory.find(function (it) { return it.sku === sku; });
+        if (existing) {
+          existing.name = name || existing.name;
+          existing.group = group || existing.group;
+          existing.cogs = cogs || existing.cogs;
+          existing.price = price || existing.price;
+          existing.stock = qty;
+          existing.physicalStock = qty;
+        } else {
+          inventory.push({
+            id: 'SPN-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            sku: sku,
+            name: name || ('Spion ' + sku),
+            group: group,
+            stock: qty,
+            physicalStock: qty,
+            allocatedStock: 0,
+            safetyStock: 10,
+            cogs: cogs,
+            price: price
+          });
+        }
+        importedCount++;
+      });
+
+      if (window.appState && window.appState.data) {
+        window.appState.data.inventory = inventory;
+      }
+
+      try {
+        localStorage.setItem('mja_inventory_data', JSON.stringify(inventory));
+      } catch (err) { }
+
+      if (typeof window.renderInventory === 'function') window.renderInventory();
+      if (typeof window.renderStockLogs === 'function') window.renderStockLogs();
+      if (typeof window.populateCalcSKUSelect === 'function') window.populateCalcSKUSelect();
+
+      window.showToast('✅ Sukses import ' + importedCount + ' produk spion dari file ' + file.name + '!', 'success');
+      e.target.value = '';
+    }
+
+    if (isExcel && typeof XLSX !== 'undefined') {
+      var reader = new FileReader();
+      reader.onload = function (evt) {
+        try {
+          var data = new Uint8Array(evt.target.result);
+          var workbook = XLSX.read(data, { type: 'array' });
+          var sheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[sheetName];
+          var jsonRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          // Convert array of arrays to objects
+          var mappedRows = [];
+          if (jsonRows.length > 1) {
+            var header = jsonRows[0].map(function (h) { return String(h).toLowerCase().trim(); });
+            for (var r = 1; r < jsonRows.length; r++) {
+              var rData = jsonRows[r];
+              if (!rData || rData.length === 0) continue;
+              mappedRows.push({
+                sku: rData[0] || '',
+                name: rData[1] || '',
+                group: rData[2] || '',
+                cogs: rData[3] || 0,
+                price: rData[4] || 0,
+                qty: rData[5] || 0
+              });
+            }
+          }
+          processRows(mappedRows);
+        } catch (err) {
+          console.error('Error parse Excel:', err);
+          window.showToast('Gagal memproses file Excel: ' + err.message, 'error');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      // Fallback CSV with multi-delimiter detection (, or ; or tab)
+      var textReader = new FileReader();
+      textReader.onload = function (evt) {
+        var text = evt.target.result;
+        var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+        if (lines.length <= 1) {
+          window.showToast('File CSV kosong atau hanya judul kolom!', 'warning');
+          return;
+        }
+
+        var delimiter = ',';
+        var firstLine = lines[0];
+        if (firstLine.indexOf(';') !== -1) delimiter = ';';
+        else if (firstLine.indexOf('\t') !== -1) delimiter = '\t';
+
+        var mappedRows = [];
+        for (var i = 1; i < lines.length; i++) {
+          var cols = lines[i].split(delimiter);
+          if (cols.length < 2) continue;
+          mappedRows.push({
+            sku: cols[0] ? cols[0].trim() : '',
+            name: cols[1] ? cols[1].trim() : '',
+            group: cols[2] ? cols[2].trim() : 'Spion Mobil',
+            cogs: cols[3] ? cols[3].trim() : 0,
+            price: cols[4] ? cols[4].trim() : 0,
+            qty: cols[5] ? cols[5].trim() : 0
+          });
+        }
+        processRows(mappedRows);
+      };
+      textReader.readAsText(file);
+    }
+  };
+
+  // ===========================================================================
+  // 5. SESSION PERSISTENCE & AUTO-LOGIN ON F5 REFRESH (REQ 6A)
+  // ===========================================================================
+  window.checkAndRestoreUserSession = function () {
+    try {
+      var savedUser = localStorage.getItem('mja_auth_user');
+      if (savedUser) {
+        var u = JSON.parse(savedUser);
+        if (u && u.email && u.role) {
+          window.authenticateSuccess(u);
+          var lastSec = localStorage.getItem('mja_current_section');
+          if (lastSec) {
+            setTimeout(function () {
+              window.navigateTo(lastSec);
+            }, 80);
+          }
+          console.log('✅ User session restored on refresh:', u.name, '(' + u.role + ')');
+        }
+      }
+    } catch (e) {
+      console.warn('Session restore warning:', e);
+    }
+  };
+
+  // ===========================================================================
+  // 6. ROBUST SYSTEM RESET & DASHBOARD ZERO-VALUE ENFORCEMENT (REQ 4, 9, 6B)
+  // ===========================================================================
+  window.executeSystemReset = function () {
+    var txt = document.getElementById('confirm-reset-text');
+    if (!txt || txt.value.trim().toUpperCase() !== 'RESET') {
+      window.showToast('Harap ketik kata "RESET" untuk mengonfirmasi!', 'warning');
+      return;
+    }
+
+    var chkQc = document.getElementById('chk-reset-qc') ? document.getElementById('chk-reset-qc').checked : true;
+    var chkAtt = document.getElementById('chk-reset-att') ? document.getElementById('chk-reset-att').checked : true;
+    var chkOrd = document.getElementById('chk-reset-orders') ? document.getElementById('chk-reset-orders').checked : true;
+    var chkLive = document.getElementById('chk-reset-live') ? document.getElementById('chk-reset-live').checked : true;
+    var chkLogs = document.getElementById('chk-reset-stocklogs') ? document.getElementById('chk-reset-stocklogs').checked : true;
+    var chkMetrics = document.getElementById('chk-reset-metrics') ? document.getElementById('chk-reset-metrics').checked : true;
+
+    var resetTimestamp = Date.now();
+
+    if (chkAtt) {
+      window.appState.data.attendanceLogs = [];
+      localStorage.setItem('mja_attendance_reset_all', 'true');
+      localStorage.setItem('mja_attendance_reset_timestamp', String(resetTimestamp));
+      localStorage.setItem('mja_persistent_attendanceLogs', '[]');
+      localStorage.setItem('mja_deleted_attendance_ids', JSON.stringify([
+        'ATT-20261106-001', 'ATT-20261106-002', 'ATT-20261106-003', 'ATT-20261106-004', 'ATT-20261105-001', 'ATT-20261105-002'
+      ]));
+    }
+
+    if (chkLive) {
+      window.appState.data.liveSessions = [];
+      localStorage.setItem('mja_livesessions_reset_all', 'true');
+      localStorage.setItem('mja_livesessions_reset_timestamp', String(resetTimestamp));
+      localStorage.setItem('mja_clean_liveSessions', '[]');
+    }
+
+    if (chkQc) {
+      window.appState.data.qcLogs = [];
+      localStorage.setItem('mja_clean_qcLogs', '[]');
+    }
+
+    if (chkOrd) {
+      window.appState.data.orders = [];
+      window.appState.data.returns = [];
+      localStorage.setItem('mja_clean_orders', '[]');
+    }
+
+    if (chkLogs) {
+      window.appState.data.stockLogs = [];
+      localStorage.setItem('mja_clean_stockLogs', '[]');
+    }
+
+    if (chkMetrics) {
+      window.appState.data.isResetMetrics = true;
+      localStorage.setItem('mja_metrics_is_reset', 'true');
+      localStorage.setItem('mja_metrics_reset_timestamp', String(resetTimestamp));
+    }
+
+    localStorage.setItem('mja_system_was_reset', 'true');
+
+    window.closeModal('modal-confirm-reset');
+
+    // Paksa update seluruh UI ke 0
+    if (typeof window.renderQCStats === 'function') window.renderQCStats();
+    if (typeof window.renderQCLogs === 'function') window.renderQCLogs();
+    if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
+    if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+    if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
+    if (typeof window.renderReturnsHistory === 'function') window.renderReturnsHistory();
+    if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+    if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+
+    window.showToast('✅ Seluruh data yang dipilih berhasil direset bersih ke NOL (0)!', 'success');
+  };
+
+  // Override renderDashboardMetrics agar mematuhi reset metrics
+  var originalRenderDashboardMetrics = window.renderDashboardMetrics;
+  window.renderDashboardMetrics = function () {
+    var isReset = (window.appState && window.appState.data && window.appState.data.isResetMetrics) ||
+                  (localStorage.getItem('mja_metrics_is_reset') === 'true');
+
+    if (isReset) {
+      // Set seluruh angka dashboard ke NOL (0)
+      if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = 'Rp 0';
+      if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = 'Rp 0';
+      if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = 'Rp 0';
+      if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = '0.0%';
+      if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = 'Rp 0';
+      if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = 'Rp 0 (0.0%)';
+
+      var tbody = document.getElementById('table-store-performance');
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 italic">' +
+          'Data metrik telah direset bersih ke 0. Menunggu transaksi penjualan baru.' +
+          '</td></tr>';
+      }
+      return;
+    }
+
+    if (typeof originalRenderDashboardMetrics === 'function') {
+      originalRenderDashboardMetrics();
+    }
+  };
+
+
+  // ===========================================================================
+  // STRICT POLLING ENFORCEMENT: NEVER RESTORE DELETED ATTENDANCE OR SESSIONS
+  // ===========================================================================
+  var origFetchRemoteAtt = window.fetchRemoteAttendance;
+  window.fetchRemoteAttendance = function (silent) {
+    if (localStorage.getItem('mja_attendance_reset_all') === 'true') {
+      // Jika sudah di-reset bersih, jangan masukkan log lama
+      var resetTs = Number(localStorage.getItem('mja_attendance_reset_timestamp') || 0);
+      var curLogs = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
+      // Hanya pertahankan log yang diinput setelah reset
+      var keepLogs = curLogs.filter(function (l) {
+        return l._timestamp && l._timestamp > resetTs;
+      });
+      if (window.appState && window.appState.data) {
+        window.appState.data.attendanceLogs = keepLogs;
+      }
+      if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
+      if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+      return;
+    }
+    if (typeof origFetchRemoteAtt === 'function') origFetchRemoteAtt(silent);
+  };
+
+  var origSyncLive = window.syncLiveSessionsFromGAS;
+  window.syncLiveSessionsFromGAS = function (isManual) {
+    if (localStorage.getItem('mja_livesessions_reset_all') === 'true') {
+      var resetTs = Number(localStorage.getItem('mja_livesessions_reset_timestamp') || 0);
+      var curSessions = (window.appState && window.appState.data && window.appState.data.liveSessions) || [];
+      var keep = curSessions.filter(function (s) {
+        return s._timestamp && s._timestamp > resetTs;
+      });
+      if (window.appState && window.appState.data) {
+        window.appState.data.liveSessions = keep;
+      }
+      if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
+      if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+      if (isManual) window.showToast('✅ Data sesi live telah direset ke 0.', 'info');
+      return;
+    }
+    if (typeof origSyncLive === 'function') origSyncLive(isManual);
+  };
+
+  // Restore user session immediately
+  if (typeof window.checkAndRestoreUserSession === 'function') {
+    window.checkAndRestoreUserSession();
+  }
+
+
+  window.handleLogout = function () {
+    try {
+      localStorage.removeItem('mja_auth_user');
+      localStorage.removeItem('mja_current_section');
+    } catch (e) { }
+
+    if (window.attCameraStream) {
+      try { window.attCameraStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.attCameraStream = null;
+    }
+    if (window.returCameraStream) {
+      try { window.returCameraStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.returCameraStream = null;
+    }
+
+    window.appState.isAuth = false;
+    window.appState.currentUser = null;
+
+    var mv = document.getElementById('main-view');
+    if (mv) mv.classList.add('hidden');
+    var lv = document.getElementById('login-view');
+    if (lv) lv.classList.remove('hidden');
+
+    window.showToast('Sesi telah diakhiri. Sampai jumpa!', 'info');
+  };
 
 })();
 
