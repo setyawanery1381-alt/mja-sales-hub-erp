@@ -4273,6 +4273,19 @@
       }
     };
 
+    // Auto-Restore Persistent Attendance Logs from LocalStorage (Permanent History)
+    try {
+      var savedAtt = localStorage.getItem('mja_persistent_attendanceLogs');
+      if (savedAtt) {
+        var parsedAtt = JSON.parse(savedAtt);
+        if (Array.isArray(parsedAtt) && parsedAtt.length > 0) {
+          window.appState.data.attendanceLogs = parsedAtt;
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal membaca saved attendance logs:', e);
+    }
+
     // Helper: Number Formatter
     window.formatRupiah = function (num) {
       return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
@@ -5820,6 +5833,7 @@
         localStorage.removeItem('mja_system_was_reset');
         localStorage.removeItem('mja_clean_qcLogs');
         localStorage.removeItem('mja_clean_attendanceLogs');
+        localStorage.removeItem('mja_persistent_attendanceLogs');
         localStorage.removeItem('mja_clean_orders');
         localStorage.removeItem('mja_clean_liveSessions');
         localStorage.removeItem('mja_clean_stockLogs');
@@ -6950,6 +6964,25 @@
 
       if (!window.appState.data.attendanceLogs) window.appState.data.attendanceLogs = [];
       window.appState.data.attendanceLogs.unshift(newLog);
+
+      // Simpan permanen ke LocalStorage (Riwayat Karyawan & Admin IT tidak hilang saat reload)
+      try {
+        localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(window.appState.data.attendanceLogs.slice(0, 150)));
+      } catch (e) {
+        console.warn('LocalStorage quota or write error:', e);
+      }
+
+      // Sinkronisasi otomatis ke Cloud Firestore jika online
+      if (typeof isFirebaseLive !== 'undefined' && isFirebaseLive && fbDb) {
+        try {
+          fbDb.collection('attendance_logs').add({
+            ...newLog,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(function (err) {
+            console.warn('Firestore attendance log sync error:', err);
+          });
+        } catch (e) { }
+      }
 
       // Reset camera
       window.capturedAttendancePhoto = null;
