@@ -162,6 +162,44 @@ function doGet(e) {
   }
 
   // 6. SAVE LIVE SESSION via GET (Dukungan CORS penuh dari browser)
+  // 7. DELETE LIVE SESSION via GET
+  if (action === 'deleteLiveSession') {
+    var sheet = ss.getSheetByName('Live_Sessions');
+    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Live_Sessions tidak ditemukan' });
+
+    var idToDelete = String(e.parameter.id || '');
+    var data = sheet.getDataRange().getValues();
+    var deleted = false;
+
+    for (var r = 1; r < data.length; r++) {
+      if (String(data[r][0]) === idToDelete) {
+        sheet.deleteRow(r + 1);
+        deleted = true;
+        break;
+      }
+    }
+
+    return jsonResponse_({
+      success: deleted,
+      message: deleted ? 'Sesi Live ' + idToDelete + ' berhasil dihapus dari Google Sheets' : 'ID tidak ditemukan'
+    });
+  }
+
+  // 8. RESET ALL LIVE SESSIONS via GET
+  if (action === 'resetLiveSessions') {
+    var sheet = ss.getSheetByName('Live_Sessions');
+    var deletedCount = 0;
+    if (sheet && sheet.getLastRow() > 1) {
+      deletedCount = sheet.getLastRow() - 1;
+      sheet.deleteRows(2, deletedCount);
+    }
+    return jsonResponse_({
+      success: true,
+      message: 'Berhasil mengosongkan ' + deletedCount + ' data sesi live dari Google Sheets',
+      deletedCount: deletedCount
+    });
+  }
+
   if (action === 'saveLiveSession') {
     var sheet = ss.getSheetByName('Live_Sessions');
     if (!sheet) {
@@ -351,7 +389,33 @@ function doPost(e) {
     }
 
     // 5. SAVE LIVE SESSION: Simpan laporan rekap pasca-live dari Host Live
-    if (action === 'saveLiveSession') {
+    if (action === 'deleteLiveSession') {
+    var sheet = ss.getSheetByName('Live_Sessions');
+    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Live_Sessions tidak ditemukan' });
+    var idToDelete = String(payload.id || '');
+    var data = sheet.getDataRange().getValues();
+    var deleted = false;
+    for (var r = 1; r < data.length; r++) {
+      if (String(data[r][0]) === idToDelete) {
+        sheet.deleteRow(r + 1);
+        deleted = true;
+        break;
+      }
+    }
+    return jsonResponse_({ success: deleted, message: deleted ? 'Sesi live terhapus' : 'ID tidak ditemukan' });
+  }
+
+  if (action === 'resetLiveSessions') {
+    var sheet = ss.getSheetByName('Live_Sessions');
+    var deletedCount = 0;
+    if (sheet && sheet.getLastRow() > 1) {
+      deletedCount = sheet.getLastRow() - 1;
+      sheet.deleteRows(2, deletedCount);
+    }
+    return jsonResponse_({ success: true, message: 'Sesi live berhasil dikosongkan', deletedCount: deletedCount });
+  }
+
+  if (action === 'saveLiveSession') {
       var sheet = ss.getSheetByName('Live_Sessions');
       if (!sheet) {
         sheet = ss.insertSheet('Live_Sessions');

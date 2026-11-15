@@ -501,6 +501,28 @@
           <span class="px-1.5 py-0.2 bg-[#B4532A]/20 text-orange-300 text-[10px] font-bold rounded">Admin</span>
         </button>
 
+        <!-- LAPORAN PENJUALAN DETAIL (ADMIN, OWNER, FINANCE, HOST LIVE) -->
+        <button onclick="window.navigateTo('section-sales-detail')" id="nav-section-sales-detail"
+          class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="font-medium flex-1 text-left">Penjualan Detail</span>
+          <span class="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded">Semua Role</span>
+        </button>
+
+        <!-- KHUSUS MANAJEMEN, ADMIN & FINANCE: LAPORAN ANALITIK LIVE LENGKAP -->
+        <button onclick="window.navigateTo('section-live-reports')" id="nav-section-live-reports"
+          class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span class="font-medium flex-1 text-left">Laporan Live</span>
+          <span class="px-1.5 py-0.2 bg-amber-500/20 text-amber-300 text-[10px] font-bold rounded">Manajemen</span>
+        </button>
+
         <button onclick="window.navigateTo('section-financial')" id="nav-section-financial"
           class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
           <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3278,6 +3300,184 @@
         </div>
 `
 
+        <!-- =================================================================== -->
+        <!-- SECTION 2C: LAPORAN PENJUALAN DETAIL (ADMIN, OWNER, FINANCE, HOST) -->
+        <!-- =================================================================== -->
+        <div id="section-sales-detail" class="content-section hidden space-y-6">
+
+          <!-- STICKY FILTER TOOLBAR -->
+          <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <h3 class="font-heading font-black text-slate-900 text-sm sm:text-base">Laporan Penjualan Detail (Itemized)</h3>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">Semua Role</span>
+              </div>
+              <div class="flex items-center space-x-2 text-xs">
+                <button type="button" onclick="window.syncLiveSessionsFromGAS(true)"
+                  class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg border border-slate-300 transition-colors flex items-center space-x-1 cursor-pointer">
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Sinkronkan Spreadsheet</span>
+                </button>
+                <button type="button" onclick="window.exportSalesDetailCSV()"
+                  class="h-8 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Ekspor Excel (CSV)</span>
+                </button>
+                <button type="button" onclick="window.exportSalesDetailPDF()"
+                  class="h-8 px-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer">
+                  <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Cetak PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Periode</label>
+                <select id="sd-filter-period" onchange="window.renderSalesDetailReport()"
+                  class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800">
+                  <option value="today">Hari Ini</option>
+                  <option value="7days">7 Hari Terakhir</option>
+                  <option value="month" selected>Bulan Ini (November 2026)</option>
+                  <option value="last_month">Bulan Lalu (Oktober 2026)</option>
+                  <option value="custom">Pilih Tanggal Manual...</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Saluran</label>
+                <select id="sd-filter-channel" onchange="window.renderSalesDetailReport()"
+                  class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <option value="all">Semua Saluran</option>
+                  <option value="live">Live Streaming</option>
+                  <option value="marketplace">Marketplace Reguler</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Akun Toko</label>
+                <select id="sd-filter-store" onchange="window.renderSalesDetailReport()"
+                  class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Host / Operator</label>
+                <select id="sd-filter-host" onchange="window.renderSalesDetailReport()"
+                  class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Produk Spion</label>
+                <select id="sd-filter-sku" onchange="window.renderSalesDetailReport()"
+                  class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Custom Date Range Row -->
+            <div id="sd-custom-date-row" class="hidden flex items-center space-x-2 pt-1.5 border-t border-slate-100 text-xs">
+              <span class="text-slate-500 font-semibold text-[11px]">Rentang Tanggal:</span>
+              <input type="date" id="sd-custom-start" onchange="window.renderSalesDetailReport()" class="h-8 px-2 bg-slate-50 border border-slate-200 rounded-md font-semibold text-slate-800">
+              <span class="text-slate-400">&mdash;</span>
+              <input type="date" id="sd-custom-end" onchange="window.renderSalesDetailReport()" class="h-8 px-2 bg-slate-50 border border-slate-200 rounded-md font-semibold text-slate-800">
+            </div>
+          </div>
+
+          <!-- 5 KPI SUMMARY CARDS -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Omset Kotor</span>
+              <div class="text-base sm:text-lg font-black text-slate-900 truncate" id="sd-kpi-omset">Rp 0</div>
+              <span class="text-[10px] text-slate-500">Omset seluruh item</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Spion Terjual</span>
+              <div class="text-base sm:text-lg font-black text-indigo-700 truncate" id="sd-kpi-pcs">0 pcs</div>
+              <span class="text-[10px] text-slate-500">Volume fisik keluar</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Transaksi</span>
+              <div class="text-base sm:text-lg font-black text-slate-900 truncate" id="sd-kpi-count">0 Baris</div>
+              <span class="text-[10px] text-slate-500">Rincian terdata</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Margin Bersih</span>
+              <div class="text-base sm:text-lg font-black text-emerald-600 truncate" id="sd-kpi-margin">Rp 0</div>
+              <span class="text-[10px] font-bold text-emerald-700 truncate block" id="sd-kpi-margin-pct">0% margin</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 col-span-2 sm:col-span-1">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rata-rata Order (AOV)</span>
+              <div class="text-base sm:text-lg font-black text-amber-700 truncate" id="sd-kpi-aov">Rp 0</div>
+              <span class="text-[10px] text-slate-500">Nilai transaksi rata-rata</span>
+            </div>
+          </div>
+
+          <!-- TABLE CONTAINER -->
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center space-x-2 flex-1 max-w-md">
+                <div class="relative w-full">
+                  <input type="text" id="sd-search-input" oninput="window.renderSalesDetailReport()"
+                    placeholder="Cari SKU, nama spion, no referensi, toko, atau host..."
+                    class="w-full h-9 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600">
+                  <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 text-xs">
+                <span class="text-slate-400" id="sd-total-count-badge">0 Transaksi Ditemukan</span>
+                <select id="sd-sort-select" onchange="window.renderSalesDetailReport()"
+                  class="h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800">
+                  <option value="date-desc">Urutkan: Tanggal Terbaru</option>
+                  <option value="date-asc">Urutkan: Tanggal Terlama</option>
+                  <option value="omset-desc">Urutkan: Omset Tertinggi</option>
+                  <option value="omset-asc">Urutkan: Omset Terendah</option>
+                  <option value="margin-desc">Urutkan: Margin Tertinggi</option>
+                  <option value="qty-desc">Urutkan: Qty Terbanyak</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Detailed Table -->
+            <div class="border border-slate-200 rounded-xl overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px] tracking-wider whitespace-nowrap">
+                  <tr>
+                    <th class="p-3">Tanggal &amp; Waktu</th>
+                    <th class="p-3">No Ref Transaksi</th>
+                    <th class="p-3">Saluran</th>
+                    <th class="p-3">Akun Toko</th>
+                    <th class="p-3">Host / Operator</th>
+                    <th class="p-3">SKU &amp; Nama Spion</th>
+                    <th class="p-3 text-center">Qty</th>
+                    <th class="p-3 text-right">Harga Satuan</th>
+                    <th class="p-3 text-right">Total Omset</th>
+                    <th class="p-3 text-right">Total HPP</th>
+                    <th class="p-3 text-right">Margin Bersih</th>
+                  </tr>
+                </thead>
+                <tbody id="sd-table-body" class="divide-y divide-slate-100">
+                  <!-- Dynamically populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+
 <div id="section-users" class="content-section hidden space-y-6">
           <!-- IT Trial System Mode Toggle Card -->
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
@@ -3656,6 +3856,32 @@
           <span class="font-bold text-[#B4532A]">Rekap Absensi</span>
           <span class="text-[10px] text-[#6E655F]">Admin & Owner Saja</span>
         </button>
+
+        <!-- 13. Laporan Penjualan Detail (Semua Role) -->
+        <button onclick="window.navigateFromDrawer('section-sales-detail')" id="drawer-item-section-sales-detail"
+          class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
+          <span class="p-2 bg-emerald-200 text-emerald-900 rounded-md mb-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </span>
+          <span class="font-bold text-emerald-950">Penjualan Detail</span>
+          <span class="text-[10px] text-emerald-800">Admin, Owner, Host</span>
+        </button>
+
+        <!-- 12. Laporan Analitik Live (Khusus Manajemen, Admin, Finance) -->
+        <button onclick="window.navigateFromDrawer('section-live-reports')" id="drawer-item-section-live-reports"
+          class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
+          <span class="p-2 bg-amber-200 text-amber-900 rounded-md mb-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </span>
+          <span class="font-bold text-amber-950">Laporan Live</span>
+          <span class="text-[10px] text-amber-800">Khusus Manajemen</span>
+        </button>
       </div>
 
       <!-- Action Footer in Drawer -->
@@ -3726,8 +3952,8 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Nama Host Live <span class="text-rose-600">*</span></label>
-            <input type="text" id="modal-live-host" required placeholder="Nama Host Siaran"
-              class="w-full h-10 px-3 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-amber-500" readonly>
+            <input type="text" id="modal-live-host" required placeholder="Nama Host Siaran (Dapat Diketik Manual)"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-amber-500">
           </div>
         </div>
 
@@ -3814,10 +4040,9 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
+        <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="font-bold text-slate-700">Voucher / Diskon</label>
+              <label class="font-bold text-slate-700">Voucher / Diskon Siaran</label>
               <select id="modal-live-voucher-type" onchange="window.updateLiveHelper()"
                 class="text-[10px] bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 font-bold">
                 <option value="rp">Rp</option>
@@ -3826,13 +4051,11 @@
             </div>
             <input type="number" id="modal-live-voucher" value="500000"
               class="w-full h-9 px-3 bg-white border border-slate-300 rounded-lg text-slate-800">
+            <p class="text-[10px] text-emerald-700 font-semibold mt-1 flex items-center space-x-1">
+              <span>💡</span>
+              <span>Rekomendasi harga jual dan margin telah dikunci otomatis oleh Manajemen dari Master Produk Spion.</span>
+            </p>
           </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Target Margin Min (%)</label>
-            <input type="number" id="modal-live-target-margin" value="25" placeholder="25"
-              class="w-full h-9 px-3 bg-white border border-slate-300 rounded-lg font-bold text-emerald-700">
-          </div>
-        </div>
 
         <!-- Input Rincian Produk Spion Terjual Saat Live (Wajib untuk Potong Stok Fisik Gudang) -->
         <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-2">
@@ -4960,6 +5183,7 @@
 
 
   <script>
+
     // ====== [ISI DI SINI] FIREBASE CONFIG - salin dari Firebase Console > Project settings > Your apps ======
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
@@ -5793,12 +6017,24 @@
         if (typeof window.fetchRemoteAttendance === 'function') {
           window.fetchRemoteAttendance(true);
         }
+        if (typeof window.syncLiveSessionsFromGAS === 'function') {
+          window.syncLiveSessionsFromGAS(false);
+        }
       }
     }, 7000);
 
     // Auto-Restore Persistent Attendance Logs from LocalStorage (Permanent History)
     try {
       var savedAtt = localStorage.getItem('mja_persistent_attendanceLogs');
+      var savedLive = localStorage.getItem('mja_clean_liveSessions');
+      if (savedLive !== null) {
+        try {
+          var parsedLive = JSON.parse(savedLive);
+          if (Array.isArray(parsedLive)) {
+            window.appState.data.liveSessions = parsedLive;
+          }
+        } catch (eL) { }
+      }
       if (savedAtt !== null) {
         var parsedAtt = JSON.parse(savedAtt);
         if (Array.isArray(parsedAtt)) {
@@ -5968,6 +6204,7 @@
       try { if (typeof window.renderStoreRecap === 'function') window.renderStoreRecap(); } catch (e6) { console.error(e6); }
       try { if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs(); } catch (e7) { console.error(e7); }
       try { if (typeof window.fetchRemoteAttendance === 'function') window.fetchRemoteAttendance(true); } catch (e8) { }
+      try { if (typeof window.syncLiveSessionsFromGAS === 'function') window.syncLiveSessionsFromGAS(false); } catch (eLive) { }
       try { if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus(); } catch (e9) { }
     };
 
@@ -5996,7 +6233,7 @@
         return ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
       } else if (role === 'host') {
         // HOST LIVE: Khusus menu rekap sesi live dan absensi (Wajib diisi setelah melakukan live)
-        return ['section-live', 'section-attendance'];
+        return ['section-live', 'section-attendance', 'section-sales-detail'];
       } else if (role === 'finance') {
         // FINANCE: Akses semua kecuali Manajemen IT & Rekap Live (Khusus Host Live)
         return ['section-dashboard', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
@@ -7594,6 +7831,7 @@
           '<div class="flex flex-col items-end space-y-1">' +
           '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">✓ SOP Valid</span>' +
           viewersBadge +
+          '<button type="button" onclick="window.deleteLiveSession(\'' + ls.id + '\')" class="text-rose-500 hover:text-rose-700 text-[10px] font-bold flex items-center space-x-0.5 mt-1 cursor-pointer" title="Hapus sesi ini"><span>🗑️ Hapus Sesi</span></button>' +
           '</div>' +
           '</div>' +
           '<div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100 font-mono bg-slate-50/50 p-2 rounded-lg">' +
@@ -12272,6 +12510,480 @@
 
 })();
 
+
+
+
+// ============================================================================
+// MODULE: SINKRONISASI LIVE DARI GOOGLE SHEETS & LAPORAN PENJUALAN DETAIL
+// Mendukung Admin, Owner, Finance, dan Host Live
+// ============================================================================
+
+(function () {
+  'use strict';
+
+  // 1. SINKRONISASI DUA ARAH SESI LIVE DARI GOOGLE SPREADSHEET
+  window.syncLiveSessionsFromGAS = function (isManual) {
+    if (!window.GAS_ENDPOINT_URL) return;
+
+    if (isManual) {
+      window.showToast('Menghubungkan ke Google Spreadsheet...', 'info');
+    }
+
+    var fetchUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
+      'action=getLiveSessions&t=' + Date.now();
+
+    fetch(fetchUrl)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.success) {
+          var remoteSessions = data.sessions || [];
+
+          // PENTING: Jika spreadsheet telah dihapus/kosong di Google Sheets (0 baris),
+          // maka sinkronkan ke web agar data di web juga ikut kosong (tidak menampilkan data usang).
+          if (remoteSessions.length === 0) {
+            window.appState.data.liveSessions = [];
+            try {
+              localStorage.setItem('mja_clean_liveSessions', '[]');
+            } catch (eLs) { }
+            console.log('Google Sheets Live_Sessions kosong. Local live sessions dikosongkan.');
+          } else {
+            // Ada data dari Google Sheets, perbarui local state
+            window.appState.data.liveSessions = remoteSessions;
+            try {
+              localStorage.setItem('mja_clean_liveSessions', JSON.stringify(remoteSessions));
+            } catch (eLs) { }
+          }
+
+          // Refresh UI jika sedang di menu terkait
+          if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
+          if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
+          if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+
+          if (isManual) {
+            window.showToast('✅ Berhasil tersinkron dengan Google Spreadsheet (' + remoteSessions.length + ' Sesi Live)!', 'success');
+          }
+        }
+      })
+      .catch(function (err) {
+        console.warn('Sync live sessions error:', err);
+        if (isManual) {
+          window.showToast('Gagal terhubung ke Google Sheets: ' + err.message, 'error');
+        }
+      });
+  };
+
+  // 2. HAPUS SATUAN SESI LIVE
+  window.deleteLiveSession = function (sessionId) {
+    if (!confirm('Apakah Anda yakin ingin menghapus Sesi Live ' + sessionId + ' ini?')) return;
+
+    var raw = window.appState.data.liveSessions || [];
+    window.appState.data.liveSessions = raw.filter(function (s) { return s.id !== sessionId; });
+
+    try {
+      localStorage.setItem('mja_clean_liveSessions', JSON.stringify(window.appState.data.liveSessions));
+    } catch (eLs) { }
+
+    // Hapus di Google Sheets via GET
+    if (window.GAS_ENDPOINT_URL) {
+      fetch(window.GAS_ENDPOINT_URL + '?action=deleteLiveSession&id=' + encodeURIComponent(sessionId) + '&t=' + Date.now())
+        .then(function (res) { return res.json(); })
+        .then(function (resData) {
+          console.log('GAS deleteLiveSession response:', resData);
+        })
+        .catch(function (e) { console.warn('GAS delete error:', e); });
+    }
+
+    if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
+    if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
+    if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+
+    window.showToast('✅ Sesi Live ' + sessionId + ' berhasil dihapus!', 'success');
+  };
+
+  // 3. RESET SELURUH SESI LIVE (KOSONGKAN DATA)
+  window.resetAllLiveSessions = function () {
+    if (!confirm('⚠️ PERINGATAN:\n\nApakah Anda yakin ingin MENGHAPUS SEMUA riwayat rekap sesi live dari web dan Spreadsheet?\n\nTindakan ini tidak dapat dibatalkan.')) {
+      return;
+    }
+
+    window.appState.data.liveSessions = [];
+    try {
+      localStorage.setItem('mja_clean_liveSessions', '[]');
+    } catch (eLs) { }
+
+    if (window.GAS_ENDPOINT_URL) {
+      fetch(window.GAS_ENDPOINT_URL + '?action=resetLiveSessions&t=' + Date.now())
+        .then(function (res) { return res.json(); })
+        .then(function (resData) {
+          console.log('GAS resetLiveSessions response:', resData);
+        })
+        .catch(function (e) { console.warn('GAS reset error:', e); });
+    }
+
+    if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
+    if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
+    if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+
+    window.showToast('✅ Seluruh data Rekap Live berhasil dikosongkan!', 'success');
+  };
+
+  // ============================================================================
+  // 4. JAVASCRIPT ENGINE: LAPORAN PENJUALAN DETAIL (ITEMIZED SALES TRANSACTIONS)
+  // ============================================================================
+
+  window.initSalesDetailDashboard = function () {
+    window.populateSalesDetailFilterOptions();
+    window.renderSalesDetailReport();
+  };
+
+  window.populateSalesDetailFilterOptions = function () {
+    var sessions = window.appState.data.liveSessions || [];
+    var orders = window.appState.data.orders || [];
+    var inventory = window.appState.data.inventory || [];
+    var currentUser = window.appState.currentUser || {};
+
+    // Populate Host / Operator
+    var hostSelect = document.getElementById('sd-filter-host');
+    if (hostSelect) {
+      var currentHostVal = hostSelect.value || 'all';
+      var hosts = {};
+      sessions.forEach(function (s) { if (s.host) hosts[s.host] = true; });
+      (window.appState.data.users || []).forEach(function (u) { if (u.name) hosts[u.name] = true; });
+
+      var hostHtml = '<option value="all">Semua Host & Operator</option>';
+      Object.keys(hosts).sort().forEach(function (h) {
+        var isSelected = (currentHostVal === h) || (window.appState.currentRole === 'host' && currentUser.name === h);
+        hostHtml += '<option value="' + h + '"' + (isSelected ? ' selected' : '') + '>' + h + '</option>';
+      });
+      hostSelect.innerHTML = hostHtml;
+    }
+
+    // Populate Toko / Channel
+    var storeSelect = document.getElementById('sd-filter-store');
+    if (storeSelect) {
+      var currentStoreVal = storeSelect.value || 'all';
+      var stores = {};
+      sessions.forEach(function (s) { if (s.store) stores[s.store] = true; });
+      orders.forEach(function (o) { if (o.store) stores[o.store] = true; });
+
+      var storeHtml = '<option value="all">Semua Akun Toko</option>';
+      Object.keys(stores).sort().forEach(function (st) {
+        storeHtml += '<option value="' + st + '"' + (currentStoreVal === st ? ' selected' : '') + '>' + st + '</option>';
+      });
+      storeSelect.innerHTML = storeHtml;
+    }
+
+    // Populate SKU Produk
+    var skuSelect = document.getElementById('sd-filter-sku');
+    if (skuSelect) {
+      var currentSkuVal = skuSelect.value || 'all';
+      var skuHtml = '<option value="all">Semua Produk Spion</option>';
+      inventory.forEach(function (inv) {
+        skuHtml += '<option value="' + inv.sku + '"' + (currentSkuVal === inv.sku ? ' selected' : '') + '>' + inv.sku + ' - ' + inv.name + '</option>';
+      });
+      skuSelect.innerHTML = skuHtml;
+    }
+  };
+
+  // Helper untuk mengumpulkan seluruh item penjualan (Live + Marketplace)
+  window.getAllItemizedSales = function () {
+    var items = [];
+    var sessions = window.appState.data.liveSessions || [];
+    var orders = window.appState.data.orders || [];
+
+    // 1. Ekstrak dari Sesi Live
+    sessions.forEach(function (s) {
+      var sDate = s.date || '2026-11-01';
+      var sTime = s.startTime ? (s.startTime + ' WIB') : '10:00 WIB';
+
+      if (Array.isArray(s.soldProducts) && s.soldProducts.length > 0) {
+        s.soldProducts.forEach(function (sp) {
+          var qty = Number(sp.qty) || 1;
+          var hpp = Number(sp.cogs) || 0;
+          var price = Number(sp.price) || (hpp * 1.4);
+          var totalOmset = qty * price;
+          var totalCogs = qty * hpp;
+          var fee = Math.round(totalOmset * 0.095); // default fee
+          var margin = totalOmset - totalCogs - fee;
+
+          items.push({
+            id: s.id + '-' + sp.sku,
+            refId: s.id,
+            source: 'live',
+            sourceLabel: 'Live Streaming',
+            date: sDate,
+            time: sTime,
+            store: s.store || 'TikTok Shop Live',
+            operator: s.host || 'Host Live',
+            sku: sp.sku,
+            name: sp.name || sp.sku,
+            qty: qty,
+            price: price,
+            omset: totalOmset,
+            cogs: totalCogs,
+            margin: margin,
+            status: 'Selesai Live'
+          });
+        });
+      } else {
+        // Fallback row jika tidak ada rincian per SKU
+        var qtyFallback = Number(s.items) || 1;
+        var omsetFallback = Number(s.omset) || 0;
+        var cogsFallback = Number(s.cogs) || 0;
+        var marginFallback = Number(s.margin) || 0;
+        var priceFallback = qtyFallback > 0 ? Math.round(omsetFallback / qtyFallback) : omsetFallback;
+
+        items.push({
+          id: s.id + '-TOTAL',
+          refId: s.id,
+          source: 'live',
+          sourceLabel: 'Live Streaming',
+          date: sDate,
+          time: sTime,
+          store: s.store || 'Live Store',
+          operator: s.host || 'Host Live',
+          sku: 'LIVE-TOTAL',
+          name: 'Paket Spion Live (' + (s.store || '') + ')',
+          qty: qtyFallback,
+          price: priceFallback,
+          omset: omsetFallback,
+          cogs: cogsFallback,
+          margin: marginFallback,
+          status: 'Selesai Live'
+        });
+      }
+    });
+
+    // 2. Ekstrak dari Pesanan Marketplace (orders)
+    orders.forEach(function (o) {
+      var oDate = o.date || '2026-11-10';
+      var oTime = o.time || '14:30 WIB';
+      var qty = Number(o.qty) || 1;
+      var omset = Number(o.total) || 150000;
+      var cogs = Number(o.cogs) || Math.round(omset * 0.6);
+      var margin = omset - cogs - Math.round(omset * 0.08);
+
+      items.push({
+        id: o.id || ('ORD-' + Math.random()),
+        refId: o.orderNo || o.resi || o.id || 'ORD',
+        source: 'marketplace',
+        sourceLabel: (o.platform || 'shopee').toUpperCase() + ' Reguler',
+        date: oDate,
+        time: oTime,
+        store: o.store || 'Marketplace Store',
+        operator: o.buyer ? (o.buyer.split('(')[0].trim()) : 'Pelanggan Online',
+        sku: o.sku || 'SPN-MBL-001',
+        name: o.product || 'Spion Standar',
+        qty: qty,
+        price: Math.round(omset / qty),
+        omset: omset,
+        cogs: cogs,
+        margin: margin,
+        status: o.status === 'shipped' ? 'Terkirim' : (o.status === 'delivered' ? 'Diterima' : 'Diproses')
+      });
+    });
+
+    return items;
+  };
+
+  // Render Laporan Penjualan Detail
+  window.renderSalesDetailReport = function () {
+    var rawItems = window.getAllItemizedSales();
+
+    // Filters
+    var period = (document.getElementById('sd-filter-period') && document.getElementById('sd-filter-period').value) || 'month';
+    var channel = (document.getElementById('sd-filter-channel') && document.getElementById('sd-filter-channel').value) || 'all';
+    var store = (document.getElementById('sd-filter-store') && document.getElementById('sd-filter-store').value) || 'all';
+    var host = (document.getElementById('sd-filter-host') && document.getElementById('sd-filter-host').value) || 'all';
+    var sku = (document.getElementById('sd-filter-sku') && document.getElementById('sd-filter-sku').value) || 'all';
+    var searchVal = (document.getElementById('sd-search-input') ? document.getElementById('sd-search-input').value : '').toLowerCase().trim();
+    var sortVal = (document.getElementById('sd-sort-select') ? document.getElementById('sd-sort-select').value : 'date-desc');
+
+    // Date range calculation
+    var now = new Date();
+    var todayStr = now.toISOString().slice(0, 10);
+    var curStart = '2000-01-01';
+    var curEnd = '2099-12-31';
+
+    var customRow = document.getElementById('sd-custom-date-row');
+    if (customRow) {
+      if (period === 'custom') {
+        customRow.classList.remove('hidden');
+        var cStart = document.getElementById('sd-custom-start') ? document.getElementById('sd-custom-start').value : '';
+        var cEnd = document.getElementById('sd-custom-end') ? document.getElementById('sd-custom-end').value : '';
+        if (cStart) curStart = cStart;
+        if (cEnd) curEnd = cEnd;
+      } else {
+        customRow.classList.add('hidden');
+        if (period === 'today') {
+          curStart = todayStr;
+          curEnd = todayStr;
+        } else if (period === '7days') {
+          curStart = new Date(now.getTime() - 6 * 86400000).toISOString().slice(0, 10);
+          curEnd = todayStr;
+        } else if (period === 'month') {
+          var ym = todayStr.slice(0, 7);
+          curStart = ym + '-01';
+          curEnd = ym + '-31';
+        } else if (period === 'last_month') {
+          var pmDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          var pmYm = pmDate.toISOString().slice(0, 7);
+          curStart = pmYm + '-01';
+          curEnd = pmYm + '-31';
+        }
+      }
+    }
+
+    // Filter items
+    var filtered = rawItems.filter(function (it) {
+      if (it.date < curStart || it.date > curEnd) return false;
+      if (channel !== 'all' && it.source !== channel) return false;
+      if (store !== 'all' && it.store !== store) return false;
+      if (host !== 'all' && it.operator !== host) return false;
+      if (sku !== 'all' && it.sku !== sku) return false;
+
+      if (searchVal) {
+        var str = (it.sku + ' ' + it.name + ' ' + it.refId + ' ' + it.store + ' ' + it.operator).toLowerCase();
+        if (str.indexOf(searchVal) === -1) return false;
+      }
+
+      return true;
+    });
+
+    // Sorting
+    filtered.sort(function (a, b) {
+      if (sortVal === 'date-desc') return (b.date + b.time).localeCompare(a.date + a.time);
+      if (sortVal === 'date-asc') return (a.date + a.time).localeCompare(b.date + b.time);
+      if (sortVal === 'omset-desc') return b.omset - a.omset;
+      if (sortVal === 'omset-asc') return a.omset - b.omset;
+      if (sortVal === 'margin-desc') return b.margin - a.margin;
+      if (sortVal === 'qty-desc') return b.qty - a.qty;
+      return 0;
+    });
+
+    // KPI Cards
+    var totalOmset = filtered.reduce(function (s, i) { return s + i.omset; }, 0);
+    var totalPcs = filtered.reduce(function (s, i) { return s + i.qty; }, 0);
+    var totalMargin = filtered.reduce(function (s, i) { return s + i.margin; }, 0);
+    var count = filtered.length;
+    var aov = count > 0 ? Math.round(totalOmset / count) : 0;
+    var marginPct = totalOmset > 0 ? ((totalMargin / totalOmset) * 100).toFixed(1) : '0';
+
+    if (document.getElementById('sd-kpi-omset')) document.getElementById('sd-kpi-omset').textContent = window.formatRupiah(totalOmset);
+    if (document.getElementById('sd-kpi-pcs')) document.getElementById('sd-kpi-pcs').textContent = totalPcs + ' pcs';
+    if (document.getElementById('sd-kpi-count')) document.getElementById('sd-kpi-count').textContent = count + ' Baris';
+    if (document.getElementById('sd-kpi-margin')) document.getElementById('sd-kpi-margin').textContent = window.formatRupiah(totalMargin);
+    if (document.getElementById('sd-kpi-margin-pct')) document.getElementById('sd-kpi-margin-pct').textContent = marginPct + '% margin bersih';
+    if (document.getElementById('sd-kpi-aov')) document.getElementById('sd-kpi-aov').textContent = window.formatRupiah(aov);
+
+    var countBadge = document.getElementById('sd-total-count-badge');
+    if (countBadge) countBadge.textContent = count + ' Transaksi Ditemukan';
+
+    // Render Table
+    var tbody = document.getElementById('sd-table-body');
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-400 italic font-semibold">Tidak ada transaksi penjualan detail yang sesuai filter.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(function (it, idx) {
+      var mPct = it.omset > 0 ? ((it.margin / it.omset) * 100).toFixed(0) : '0';
+      var srcBadge = it.source === 'live'
+        ? '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-200">🔴 Live</span>'
+        : '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-indigo-100 text-indigo-800 border border-indigo-200">🛒 Order</span>';
+
+      return '<tr class="hover:bg-slate-50 transition-colors">' +
+        '<td class="p-3 text-slate-800 whitespace-nowrap">' +
+          '<div class="font-bold">' + it.date + '</div>' +
+          '<div class="text-[10px] text-slate-400">' + it.time + '</div>' +
+        '</td>' +
+        '<td class="p-3 whitespace-nowrap font-mono text-[11px] font-semibold text-slate-700">' + it.refId + '</td>' +
+        '<td class="p-3 whitespace-nowrap">' + srcBadge + '</td>' +
+        '<td class="p-3 text-slate-700 whitespace-nowrap truncate max-w-[140px]" title="' + it.store + '">' + it.store + '</td>' +
+        '<td class="p-3 font-bold text-slate-900 whitespace-nowrap">' + it.operator + '</td>' +
+        '<td class="p-3 text-slate-800">' +
+          '<div class="font-bold">' + it.sku + '</div>' +
+          '<div class="text-[11px] text-slate-500 truncate max-w-[180px]" title="' + it.name + '">' + it.name + '</div>' +
+        '</td>' +
+        '<td class="p-3 text-center font-black text-amber-900 whitespace-nowrap">' + it.qty + ' pcs</td>' +
+        '<td class="p-3 text-right text-slate-600 whitespace-nowrap">' + window.formatRupiah(it.price) + '</td>' +
+        '<td class="p-3 text-right font-black text-slate-900 whitespace-nowrap">' + window.formatRupiah(it.omset) + '</td>' +
+        '<td class="p-3 text-right text-slate-500 whitespace-nowrap">' + window.formatRupiah(it.cogs) + '</td>' +
+        '<td class="p-3 text-right font-black ' + (it.margin < 0 ? 'text-rose-600' : 'text-emerald-600') + ' whitespace-nowrap">' +
+          window.formatRupiah(it.margin) +
+          '<span class="block text-[10px] font-bold ' + (it.margin < 0 ? 'text-rose-700' : 'text-emerald-700') + '">' + mPct + '%</span>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  };
+
+  // Ekspor Excel (CSV) Laporan Penjualan Detail
+  window.exportSalesDetailCSV = function () {
+    var rawItems = window.getAllItemizedSales();
+    if (rawItems.length === 0) {
+      window.showToast('Tidak ada data transaksi untuk diekspor!', 'warning');
+      return;
+    }
+
+    var csvRows = [];
+    csvRows.push([
+      'Tanggal',
+      'Waktu',
+      'No Ref Transaksi',
+      'Sumber Saluran',
+      'Akun Toko',
+      'Host/Operator',
+      'SKU Produk',
+      'Nama Produk',
+      'Qty (pcs)',
+      'Harga Satuan (Rp)',
+      'Total Omset (Rp)',
+      'Total HPP (Rp)',
+      'Margin Bersih (Rp)',
+      'Status'
+    ].map(function (c) { return '"' + c + '"'; }).join(','));
+
+    rawItems.forEach(function (it) {
+      csvRows.push([
+        it.date,
+        it.time,
+        it.refId,
+        it.sourceLabel,
+        it.store,
+        it.operator,
+        it.sku,
+        (it.name || '').replace(/"/g, '""'),
+        it.qty,
+        it.price,
+        it.omset,
+        it.cogs,
+        it.margin,
+        it.status
+      ].map(function (c) { return '"' + c + '"'; }).join(','));
+    });
+
+    var csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csvRows.join('\n'));
+    var link = document.createElement('a');
+    link.setAttribute('href', csvContent);
+    link.setAttribute('download', 'Laporan_Penjualan_Detail_MJA_' + new Date().toISOString().slice(0, 10) + '.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.showToast('✅ Berhasil mengunduh Laporan Penjualan Detail format Excel (CSV)!', 'success');
+  };
+
+  // Ekspor / Cetak PDF Laporan Penjualan Detail
+  window.exportSalesDetailPDF = function () {
+    window.showToast('Membuka dialog cetak PDF...', 'info');
+    setTimeout(function () {
+      window.print();
+    }, 400);
+  };
+
+})();
 
 </script>
 
