@@ -631,6 +631,11 @@
         <div
           class="flex items-center justify-between w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-[#E8E2D9] gap-2 min-w-0">
           <!-- Pilihan Cabang (Truncated, Max Width Terjaga) -->
+          <!-- WIDGET JAM DIGITAL REALTIME (WIB DENGAN DETIK) -->
+          <div id="topbar-live-clock" class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-emerald-400 border border-slate-800 shadow-2xs whitespace-nowrap" title="Waktu Indonesia Barat (GMT+7)">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
+            <span class="font-mono font-bold text-white tracking-wider" id="clock-time-val">--:--:-- WIB</span>
+          </div>
           <button onclick="window.switchOperationalBranch()"
             class="h-9 px-2.5 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center space-x-1 min-w-0 max-w-[145px] sm:max-w-[200px] active:scale-95 transition-all"
             title="Ganti Cabang">
@@ -675,6 +680,27 @@
         <!-- SECTION 1: DASHBOARD EKSEKUTIF -->
         <!-- =================================================================== -->
         <div id="section-dashboard" class="content-section space-y-6">
+          <!-- WIDGET JAM DIGITAL EKSEKUTIF (WIB REALTIME) -->
+          <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400 block">WAKTU OPERASIONAL REALTIME</span>
+                <div class="font-mono text-xl sm:text-2xl font-black text-white tracking-tight flex items-center space-x-2" id="dashboard-clock-time">
+                  <span>00:00:00 WIB</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex sm:flex-col items-center sm:items-end justify-between border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800/80">
+              <span id="dashboard-clock-date" class="text-xs font-bold text-slate-300">Minggu, 15 November 2026</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 sm:mt-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span>
+                Zona Waktu Indonesia Barat (GMT+7)
+              </span>
+            </div>
+          </div>
           <!-- Filter Toolbar -->
           <div
             class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -1875,71 +1901,12 @@
 
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Kondisi Fisik Paket</label>
-                  <div class="grid grid-cols-2 gap-2">
-                    <label
-                      class="border-2 border-emerald-500 bg-emerald-50/70 p-2.5 rounded-lg flex flex-col cursor-pointer hover:bg-emerald-100/50">
-                      <div class="flex items-center space-x-2">
-                        <input type="radio" name="retur-condition" value="restock_good" checked
-                          class="text-emerald-600">
-                        <span class="text-xs font-bold text-emerald-800">Bagus (Layak Jual)</span>
-                      </div>
-                      <span class="text-[10px] text-emerald-700 mt-1">Otomatis RESTOCK (+1) ke stok aktif</span>
-                    </label>
-                    <label
-                      class="border-2 border-rose-300 bg-rose-50/50 p-2.5 rounded-lg flex flex-col cursor-pointer hover:bg-rose-100/50">
-                      <div class="flex items-center space-x-2">
-                        <input type="radio" name="retur-condition" value="damaged_reject" class="text-rose-600">
-                        <span class="text-xs font-bold text-rose-800">Rusak / Cacat</span>
-                      </div>
-                      <span class="text-[10px] text-rose-700 mt-1">Stok tidak bertambah, klaim rugi</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Tambahan (Opsional)</label>
-                  <textarea id="retur-notes-input" rows="2" placeholder="Kemasan robek, barang salah ukuran, dll..."
-                    class="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none"></textarea>
-                </div>
-
-                <button type="submit"
-                  class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center justify-center space-x-1.5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Proses Retur & Sesuaikan Stok</span>
-                </button>
-              </form>
-            </div>
-
-            <!-- Right: Returns History Table -->
-            <div
-              class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-              <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                  <h4 class="font-bold text-sm text-slate-800">Daftar Paket Retur Terbaru</h4>
-                  <span class="text-xs text-slate-400">Kondisi bagus otomatis mengoreksi stok gudang dan membatalkan
-                    omset di P&L</span>
-                </div>
-              </div>
-              <div class="overflow-x-auto flex-1 w-full">
-                <table class="w-full text-left text-xs min-w-[550px]">
-                  <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
-                    <tr>
-                      <th class="p-3">Waktu</th>
-                      <th class="p-3">No. Resi</th>
-                      <th class="p-3">Kondisi</th>
-                      <th class="p-3">Efek ke Stok & Omset</th>
-                      <th class="p-3">Catatan</th>
-                    </tr>
-                  </thead>
-                  <tbody id="table-returns-history" class="divide-y divide-slate-100 font-medium">
-                    <!-- Populated by JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+                  <div>
+          <label class="block font-bold text-slate-700 mb-1">Total Qty Terjual (pcs)</label>
+          <input type="number" id="modal-live-qty" required placeholder="0"
+            class="w-full h-10 px-3 bg-slate-100 border border-slate-200 rounded-lg font-black text-slate-800 text-sm" readonly>
+          <!-- Estimasi HPP disembunyikan dari Host Live (Hanya Admin, Owner, Finance yg berhak) -->
+          <input type="hidden" id="modal-live-cogs" value="0">
         </div>
 
         <!-- =================================================================== -->
@@ -3404,21 +3371,21 @@
                 <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Akun Toko</label>
                 <select id="sd-filter-store" onchange="window.renderSalesDetailReport()"
                   class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
-                  <!-- Populated by JS -->
+                  <option value="all">Semua Akun Toko</option>
                 </select>
               </div>
               <div>
                 <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Host / Operator</label>
                 <select id="sd-filter-host" onchange="window.renderSalesDetailReport()"
                   class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
-                  <!-- Populated by JS -->
+                  <option value="all">Semua Host & Operator</option>
                 </select>
               </div>
               <div>
                 <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Produk Spion</label>
                 <select id="sd-filter-sku" onchange="window.renderSalesDetailReport()"
                   class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
-                  <!-- Populated by JS -->
+                  <option value="all">Semua Produk Spion</option>
                 </select>
               </div>
             </div>

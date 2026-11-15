@@ -166,7 +166,8 @@ function doGet(e) {
           items: Number(data[r][9] || 0),
           duration: String(data[r][10] || ''),
           viewers: Number(data[r][11] || 0),
-          notes: String(data[r][12] || '')
+          notes: String(data[r][12] || ''),
+          liveTime: String(data[r][13] || '')
         });
       }
     }
@@ -216,11 +217,14 @@ function doGet(e) {
     var sheet = ss.getSheetByName('Live_Sessions');
     if (!sheet) {
       sheet = ss.insertSheet('Live_Sessions');
-      sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
-    } else if (sheet.getLastColumn() < 13) {
-      sheet.getRange(1, 11).setValue('Durasi');
-      sheet.getRange(1, 12).setValue('Puncak Viewers');
-      sheet.getRange(1, 13).setValue('Catatan');
+      sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan', 'Jam Live']);
+    } else {
+      if (sheet.getLastColumn() < 14) {
+        sheet.getRange(1, 11).setValue('Durasi');
+        sheet.getRange(1, 12).setValue('Puncak Viewers');
+        sheet.getRange(1, 13).setValue('Catatan');
+        sheet.getRange(1, 14).setValue('Jam Live');
+      }
     }
 
     var id = String(e.parameter.id || ('LS-' + Date.now()));
@@ -236,8 +240,9 @@ function doGet(e) {
     var duration = String(e.parameter.duration || '');
     var viewers = Number(e.parameter.viewers || 0);
     var notes = String(e.parameter.notes || '');
+    var liveTime = String(e.parameter.liveTime || '');
 
-    sheet.appendRow([id, date, store, host, omset, fee, ads, cogs, margin, items, duration, viewers, notes]);
+    sheet.appendRow([id, date, store, host, omset, fee, ads, cogs, margin, items, duration, viewers, notes, liveTime]);
 
     return jsonResponse_({
       success: true,
