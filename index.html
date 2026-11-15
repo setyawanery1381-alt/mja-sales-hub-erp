@@ -2735,7 +2735,550 @@
         <!-- =================================================================== -->
         <!-- SECTION 8: MANAJEMEN IT & USER (ADMIN ONLY) -->
         <!-- =================================================================== -->
-        <div id="section-users" class="content-section hidden space-y-6">
+        
+        <!-- =================================================================== -->
+        <!-- SECTION 2B: LAPORAN ANALITIK SESI LIVE (KHUSUS MANAJEMEN & ADMIN) -->
+        <!-- =================================================================== -->
+        <div id="section-live-reports" class="content-section hidden space-y-6">
+
+          <!-- FILTER GLOBAL STICKY BAR -->
+          <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <h3 class="font-heading font-black text-slate-900 text-sm sm:text-base">Pusat Analitik & Laporan Live Stream</h3>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">Khusus Manajemen</span>
+              </div>
+              <div class="flex items-center space-x-2 text-xs">
+                <span class="text-slate-400 text-[11px]" id="lr-last-sync-time">Sinkronisasi Realtime</span>
+                <button type="button" onclick="window.openLiveTargetModal()" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg font-bold flex items-center space-x-1 cursor-pointer" title="Pengaturan Target Omset">
+                  <span>🎯 Target</span>
+                </button>
+                <button type="button" onclick="window.exportLiveReportExcel()" class="px-2.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Unduh File CSV / Excel">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  <span>Excel</span>
+                </button>
+                <button type="button" onclick="window.exportLiveReportPDF()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Cetak / Simpan PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                  <span>PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 5 Dropdown Filter Global -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Periode</label>
+                <select id="lr-filter-period" onchange="window.handleLiveReportFilterChange()" class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800">
+                  <option value="today">Hari Ini</option>
+                  <option value="7days">7 Hari Terakhir</option>
+                  <option value="month" selected>Bulan Ini</option>
+                  <option value="last_month">Bulan Lalu</option>
+                  <option value="custom">Custom Range</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Cabang</label>
+                <select id="lr-filter-branch" onchange="window.handleLiveReportFilterChange()" class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <option value="all">Semua Cabang</option>
+                  <option value="Cabang 1 (Pusat & Gudang Utama)">Cabang 1 (Pusat)</option>
+                  <option value="Cabang 2 (Gudang Hub Ekspedisi)">Cabang 2 (Hub Solo)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Platform</label>
+                <select id="lr-filter-platform" onchange="window.handleLiveReportFilterChange()" class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <option value="all">Semua Platform</option>
+                  <option value="tiktok">TikTok Shop Live</option>
+                  <option value="shopee">Shopee Live</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Host Live</label>
+                <select id="lr-filter-host" onchange="window.handleLiveReportFilterChange()" class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <option value="all">Semua Host</option>
+                </select>
+              </div>
+              <div class="col-span-2 sm:col-span-1">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Akun Toko</label>
+                <select id="lr-filter-store" onchange="window.handleLiveReportFilterChange()" class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+                  <option value="all">Semua Toko</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Custom Date Range Row -->
+            <div id="lr-custom-date-row" class="hidden flex items-center space-x-2 pt-1.5 border-t border-slate-100 text-xs">
+              <span class="text-slate-500 font-semibold text-[11px]">Tanggal:</span>
+              <input type="date" id="lr-custom-start" onchange="window.handleLiveReportFilterChange()" class="h-8 px-2 bg-slate-50 border border-slate-200 rounded-md font-semibold text-slate-800">
+              <span class="text-slate-400">s/d</span>
+              <input type="date" id="lr-custom-end" onchange="window.handleLiveReportFilterChange()" class="h-8 px-2 bg-slate-50 border border-slate-200 rounded-md font-semibold text-slate-800">
+            </div>
+
+            <!-- Submenu Tabs Bar -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-none text-xs border-t border-slate-100 pt-2">
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-executive')" id="btn-tab-lr-executive" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-slate-900 text-white whitespace-nowrap shadow-xs cursor-pointer">
+                1. Ringkasan Eksekutif
+              </button>
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-sessions')" id="btn-tab-lr-sessions" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+                2. Laporan Per Sesi
+              </button>
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-hosts')" id="btn-tab-lr-hosts" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+                3. Performa Host
+              </button>
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-ads')" id="btn-tab-lr-ads" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+                4. Iklan &amp; Profitabilitas
+              </button>
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-products')" id="btn-tab-lr-products" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+                5. Produk Terjual
+              </button>
+            </div>
+          </div>
+
+          <!-- =================================================================== -->
+          <!-- SUBMENU 1: RINGKASAN EKSEKUTIF -->
+          <!-- =================================================================== -->
+          <div id="tab-lr-executive" class="lr-subtab-content space-y-6">
+            <!-- Target vs Realisasi Progress Bar Card -->
+            <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-l-4 border-amber-600 p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-amber-800">Target vs Realisasi Periode Ini</span>
+                  <h4 class="font-bold text-sm text-slate-900" id="lr-target-summary-title">Target Omset Bulan Ini</h4>
+                </div>
+                <div class="text-right flex items-center space-x-2">
+                  <span class="text-xs font-semibold text-slate-500">Realisasi: <strong class="text-slate-900" id="lr-target-actual-val">Rp 0</strong></span>
+                  <span class="text-xs font-semibold text-slate-400">/</span>
+                  <span class="text-xs font-bold text-amber-900" id="lr-target-target-val">Rp 150.000.000</span>
+                  <span class="px-2 py-0.5 rounded font-black text-xs" id="lr-target-pct-badge">0%</span>
+                </div>
+              </div>
+              <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                <div id="lr-target-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-emerald-600 transition-all duration-500 rounded-full" style="width: 0%"></div>
+              </div>
+              <div class="flex justify-between items-center text-[11px] text-slate-500">
+                <span id="lr-target-remaining-text">Sisa kekurangan: Rp 0</span>
+                <span id="lr-target-pace-status" class="font-bold text-slate-700">Status Pencapaian: Menghitung...</span>
+              </div>
+            </div>
+
+            <!-- 7 Kartu KPI Eksekutif -->
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
+              <!-- KPI 1: Omset -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Omset</span>
+                  <span id="lr-kpi-badge-omset" class="text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">+0%</span>
+                </div>
+                <div class="text-base font-black text-slate-900 truncate" id="lr-kpi-omset">Rp 0</div>
+                <p class="text-[10px] text-slate-400 truncate">vs periode lalu</p>
+              </div>
+
+              <!-- KPI 2: Total Sesi -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Sesi</span>
+                  <span id="lr-kpi-badge-sessions" class="text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">+0%</span>
+                </div>
+                <div class="text-base font-black text-slate-900 truncate" id="lr-kpi-sessions">0 Sesi</div>
+                <p class="text-[10px] text-slate-400 truncate">siaran live</p>
+              </div>
+
+              <!-- KPI 3: Pcs Terjual -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pcs Terjual</span>
+                  <span id="lr-kpi-badge-items" class="text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">+0%</span>
+                </div>
+                <div class="text-base font-black text-indigo-700 truncate" id="lr-kpi-items">0 pcs</div>
+                <p class="text-[10px] text-slate-400 truncate">spion gudang</p>
+              </div>
+
+              <!-- KPI 4: Jumlah Order -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Order</span>
+                  <span id="lr-kpi-badge-orders" class="text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">+0%</span>
+                </div>
+                <div class="text-base font-black text-slate-900 truncate" id="lr-kpi-orders">0 Order</div>
+                <p class="text-[10px] text-slate-400 truncate">pesanan masuk</p>
+              </div>
+
+              <!-- KPI 5: Margin Bersih -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Margin Bersih</span>
+                  <span id="lr-kpi-badge-margin" class="text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">+0%</span>
+                </div>
+                <div class="text-base font-black text-emerald-600 truncate" id="lr-kpi-margin">Rp 0</div>
+                <p class="text-[10px] font-bold text-emerald-700 truncate" id="lr-kpi-margin-pct">0% margin</p>
+              </div>
+
+              <!-- KPI 6: Biaya Iklan -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Iklan</span>
+                  <span id="lr-kpi-badge-ads" class="text-[9px] font-black px-1.5 py-0.2 rounded bg-rose-100 text-rose-800">Ads</span>
+                </div>
+                <div class="text-base font-black text-rose-600 truncate" id="lr-kpi-ads">Rp 0</div>
+                <p class="text-[10px] text-slate-400 truncate" id="lr-kpi-ads-ratio">0% dari omset</p>
+              </div>
+
+              <!-- KPI 7: ROAS -->
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-1 col-span-2 sm:col-span-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ROAS Live</span>
+                  <span class="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">Efisiensi</span>
+                </div>
+                <div class="text-base font-black text-amber-600 truncate" id="lr-kpi-roas">0.0x</div>
+                <p class="text-[10px] text-slate-400 truncate">omset ÷ iklan</p>
+              </div>
+            </div>
+
+            <!-- 2 Grafik: Trend Harian & Platform Breakdown -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <!-- Grafik Garis: Trend Omset & Margin Harian -->
+              <div class="lg:col-span-7 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900">Trend Omset &amp; Margin Bersih Harian</h4>
+                    <p class="text-[11px] text-slate-400">Dihitung otomatis dari log sesi live yang tersimpan</p>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">Harian</span>
+                </div>
+                <div class="h-64 relative w-full">
+                  <canvas id="lr-trend-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Grafik Batang: Omset per Platform (Shopee vs TikTok) -->
+              <div class="lg:col-span-5 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900">Distribusi Omset per Platform</h4>
+                    <p class="text-[11px] text-slate-400">Perbandingan performa Shopee Live vs TikTok Shop</p>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">Platform</span>
+                </div>
+                <div class="h-64 relative w-full">
+                  <canvas id="lr-platform-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top 5 Sesi Terbaik vs 5 Sesi Terburuk / Rugi -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Top 5 Terbaik -->
+              <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">🏆</span>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900">Top 5 Sesi Live Terbaik (Omset &amp; Margin)</h4>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
+                        <th class="pb-2">Toko &amp; Host</th>
+                        <th class="pb-2">Tanggal</th>
+                        <th class="pb-2 text-right">Omset</th>
+                        <th class="pb-2 text-right">Margin</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lr-table-top-sessions-body" class="divide-y divide-slate-100">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- 5 Sesi Terburuk / Margin Rendah -->
+              <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-md bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs">⚠️</span>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900">5 Sesi Terendah / Perlu Evaluasi</h4>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
+                        <th class="pb-2">Toko &amp; Host</th>
+                        <th class="pb-2">Tanggal</th>
+                        <th class="pb-2 text-right">Omset</th>
+                        <th class="pb-2 text-right">Margin</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lr-table-bottom-sessions-body" class="divide-y divide-slate-100">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel Perlu Perhatian (Anomali, Margin Negatif, Kepatuhan SOP) -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-md bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs">🚨</span>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900">Panel Audit &amp; Perhatian Khusus Manajemen</h4>
+                </div>
+                <span class="text-[11px] font-bold text-slate-400" id="lr-attention-count">0 Catatan</span>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="lr-attention-cards">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================================== -->
+          <!-- SUBMENU 2: LAPORAN PER SESI (TABEL LENGKAP & DETAIL KLIK) -->
+          <!-- =================================================================== -->
+          <div id="tab-lr-sessions" class="lr-subtab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <!-- Search & Sorter Toolbar -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="relative flex-1 max-w-sm">
+                  <input type="text" id="lr-sessions-search" oninput="window.renderSessionsReport()" placeholder="Cari sesi live (host, toko, ID)..."
+                    class="w-full h-9 pl-8 pr-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+                  <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <div class="flex items-center space-x-2 text-xs">
+                  <span class="text-slate-500 font-semibold">Urutkan:</span>
+                  <select id="lr-sessions-sort" onchange="window.renderSessionsReport()" class="h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800">
+                    <option value="date-desc">Tanggal Terbaru</option>
+                    <option value="omset-desc">Omset Tertinggi</option>
+                    <option value="margin-desc">Margin Tertinggi</option>
+                    <option value="roas-desc">ROAS Tertinggi</option>
+                    <option value="items-desc">Pcs Terbanyak</option>
+                  </select>
+                  <span class="text-slate-400 text-xs" id="lr-sessions-total-count">0 Sesi</span>
+                </div>
+              </div>
+
+              <!-- Tabel Sesi -->
+              <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                  <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+                    <tr>
+                      <th class="p-3">Tanggal &amp; Sesi</th>
+                      <th class="p-3">Platform &amp; Toko</th>
+                      <th class="p-3">Host</th>
+                      <th class="p-3 text-center">Durasi</th>
+                      <th class="p-3 text-right">Penonton (Peak / Avg)</th>
+                      <th class="p-3 text-right">Order</th>
+                      <th class="p-3 text-right">Omset</th>
+                      <th class="p-3 text-right">HPP</th>
+                      <th class="p-3 text-right">Iklan</th>
+                      <th class="p-3 text-right">Margin Bersih</th>
+                      <th class="p-3 text-right">Omset/Jam</th>
+                      <th class="p-3 text-center">ROAS</th>
+                      <th class="p-3 text-center">Status SOP</th>
+                      <th class="p-3 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lr-table-sessions-body" class="divide-y divide-slate-100">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================================== -->
+          <!-- SUBMENU 3: PERFORMA HOST -->
+          <!-- =================================================================== -->
+          <div id="tab-lr-hosts" class="lr-subtab-content hidden space-y-6">
+            <!-- Top Host Highlight Banner -->
+            <div id="lr-top-host-banner" class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Perbandingan Antar Host Chart -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900">Perbandingan Omset &amp; Margin Bersih per Host</h4>
+                  <p class="text-[11px] text-slate-400">Total pencapaian selama periode yang dipilih</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">Per Host</span>
+              </div>
+              <div class="h-64 relative w-full">
+                <canvas id="lr-host-chart"></canvas>
+              </div>
+            </div>
+
+            <!-- Tabel Performa Host -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <h4 class="font-bold text-xs sm:text-sm text-slate-900">Tabel Evaluasi &amp; Ranking Kinerja Host</h4>
+              <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                  <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+                    <tr>
+                      <th class="p-3 text-center">Rank</th>
+                      <th class="p-3">Nama Host</th>
+                      <th class="p-3 text-center">Jumlah Sesi</th>
+                      <th class="p-3 text-center">Total Jam</th>
+                      <th class="p-3 text-right">Total Omset</th>
+                      <th class="p-3 text-right">Margin Bersih</th>
+                      <th class="p-3 text-right">Omset/Jam</th>
+                      <th class="p-3 text-right">Avg Penonton</th>
+                      <th class="p-3 text-center">Konversi (Order/Viewer)</th>
+                      <th class="p-3 text-center">Kepatuhan SOP</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lr-table-hosts-body" class="divide-y divide-slate-100">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================================== -->
+          <!-- SUBMENU 4: IKLAN & PROFITABILITAS -->
+          <!-- =================================================================== -->
+          <div id="tab-lr-ads" class="lr-subtab-content hidden space-y-6">
+            <!-- 4 KPI Iklan -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Biaya Iklan</span>
+                <div class="text-lg font-black text-rose-600" id="lr-ads-total-cost">Rp 0</div>
+                <p class="text-[10px] text-slate-400">Total belanja promosi live</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rata-rata ROAS</span>
+                <div class="text-lg font-black text-amber-600" id="lr-ads-avg-roas">0.0x</div>
+                <p class="text-[10px] text-slate-400">Return on Ad Spend</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rasio Iklan / Omset</span>
+                <div class="text-lg font-black text-slate-900" id="lr-ads-ratio-pct">0%</div>
+                <p class="text-[10px] text-slate-400">Batas aman MJA: &le; 15%</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Margin Sblm vs Ssdh Iklan</span>
+                <div class="text-sm font-black text-emerald-700 truncate" id="lr-ads-pre-post-margin">Rp 0 &rarr; Rp 0</div>
+                <p class="text-[10px] text-slate-400">Dampak biaya iklan ke profit</p>
+              </div>
+            </div>
+
+            <!-- Formula Penjelasan Margin Bersih MJA -->
+            <div class="p-4 bg-emerald-50/60 border border-emerald-300 rounded-xl text-xs text-emerald-950 space-y-1">
+              <span class="font-extrabold text-[11px] uppercase tracking-wider text-emerald-800">&#x1F4D0; Rumus Perhitungan Margin Bersih Riil MJA ERP:</span>
+              <p class="font-mono text-emerald-900 text-xs">
+                Margin Bersih = Omset Kotor &minus; HPP Spion (Gudang) &minus; Biaya Iklan Live &minus; Komisi Platform Shopee/TikTok &minus; Biaya Lain (Voucher/Diskon/Subsidi)
+              </p>
+            </div>
+
+            <!-- Tabel Sesi dengan Iklan Tinggi / Margin Rendah -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <div class="flex items-center space-x-2">
+                <span class="w-6 h-6 rounded-md bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs">!</span>
+                <h4 class="font-bold text-xs sm:text-sm text-slate-900">Daftar Sesi dengan Rasio Iklan Tinggi / Margin di Bawah Target (&lt; 20%)</h4>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                  <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+                    <tr>
+                      <th class="p-3">Tanggal &amp; Sesi</th>
+                      <th class="p-3">Toko &amp; Host</th>
+                      <th class="p-3 text-right">Omset</th>
+                      <th class="p-3 text-right">Biaya Iklan</th>
+                      <th class="p-3 text-center">Rasio Iklan</th>
+                      <th class="p-3 text-center">ROAS</th>
+                      <th class="p-3 text-right">Margin Bersih</th>
+                      <th class="p-3 text-center">Status Profit</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lr-table-ads-body" class="divide-y divide-slate-100">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================================== -->
+          <!-- SUBMENU 5: PRODUK TERJUAL SAAT LIVE -->
+          <!-- =================================================================== -->
+          <div id="tab-lr-products" class="lr-subtab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Produk Terlaris -->
+              <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">🔥</span>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900">Produk Spion Paling Laris Terjual Saat Live</h4>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
+                        <th class="pb-2">Produk Spion</th>
+                        <th class="pb-2 text-center">Pcs Terjual</th>
+                        <th class="pb-2 text-right">Total Omset</th>
+                        <th class="pb-2 text-right">Margin Kotor</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lr-table-top-products-body" class="divide-y divide-slate-100">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Produk Margin Tertinggi & Terendah -->
+              <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-md bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">📈</span>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900">Peringkat Margin Produk (Profitabilitas)</h4>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
+                        <th class="pb-2">Produk SKU</th>
+                        <th class="pb-2 text-right">Harga Jual</th>
+                        <th class="pb-2 text-right">HPP</th>
+                        <th class="pb-2 text-right">Margin %</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lr-table-margin-products-body" class="divide-y divide-slate-100">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Produk Jarang Laku / Lambat Terjual -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <div class="flex items-center space-x-2">
+                <span class="w-6 h-6 rounded-md bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">⏳</span>
+                <h4 class="font-bold text-xs sm:text-sm text-slate-900">Produk Spion dengan Penjualan Live Terendah (Rekomendasi Flash Sale)</h4>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
+                      <th class="pb-2">Kode SKU</th>
+                      <th class="pb-2">Nama Produk Spion</th>
+                      <th class="pb-2 text-center">Stok Gudang</th>
+                      <th class="pb-2 text-center">Terjual Live</th>
+                      <th class="pb-2 text-slate-500">Saran Tindakan</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lr-table-slow-products-body" class="divide-y divide-slate-100">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+`
+
+<div id="section-users" class="content-section hidden space-y-6">
           <!-- IT Trial System Mode Toggle Card -->
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
             <h3 class="text-base font-bold text-slate-900">Konfigurasi Mode Sistem (Trial Kantor vs Offline)</h3>
@@ -3213,6 +3756,24 @@
                 class="w-full h-9 px-2 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 text-center" title="Puncak penonton / viewers tertinggi saat siaran">
             </div>
           </div>
+          <!-- Field Analitik Penonton: Avg, Unik, Followers Baru -->
+          <div class="grid grid-cols-3 gap-2 pt-1.5 border-t border-slate-200/70">
+            <div>
+              <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Avg Penonton</label>
+              <input type="number" id="modal-live-viewers-avg" value="520" placeholder="520" min="0"
+                class="w-full h-8 px-2 bg-white border border-slate-300 rounded-md font-semibold text-slate-800 text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Penonton Unik</label>
+              <input type="number" id="modal-live-viewers-unique" value="3800" placeholder="3800" min="0"
+                class="w-full h-8 px-2 bg-white border border-slate-300 rounded-md font-semibold text-slate-800 text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Followers Baru</label>
+              <input type="number" id="modal-live-followers-new" value="85" placeholder="85" min="0"
+                class="w-full h-8 px-2 bg-white border border-slate-300 rounded-md font-semibold text-slate-800 text-center">
+            </div>
+          </div>
         </div>
 
         <!-- Omset & Biaya Iklan -->
@@ -3221,6 +3782,23 @@
             <label class="block font-bold text-slate-700 mb-1">Total Omset Penjualan Live (Rp) <span class="text-rose-600">*</span></label>
             <input type="number" id="modal-live-omset" required placeholder="Contoh: 18500000" min="1"
               class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-black text-slate-900 text-sm focus:outline-none focus:border-emerald-600">
+          </div>
+          <div class="col-span-1 sm:col-span-2 grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-700 mb-0.5">Jumlah Order <span class="text-rose-600">*</span></label>
+              <input type="number" id="modal-live-orders-count" value="45" placeholder="45" min="0" required
+                class="w-full h-8 px-2 bg-white border border-slate-300 rounded-md font-bold text-slate-800 text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-rose-700 mb-0.5">Order Dibatalkan</label>
+              <input type="number" id="modal-live-orders-cancelled" value="2" placeholder="0" min="0"
+                class="w-full h-8 px-2 bg-white border border-slate-300 rounded-md font-semibold text-rose-800 text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-amber-900 mb-0.5">Target Omset Sesi (Rp)</label>
+              <input type="number" id="modal-live-target-session" value="15000000" placeholder="15000000" min="0"
+                class="w-full h-8 px-2 bg-white border border-slate-300 rounded-md font-bold text-amber-900 text-right">
+            </div>
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
@@ -3324,9 +3902,40 @@
           </div>
         </div>
 
+        <!-- Pilihan Kendala Siaran Live (Checklist SOP) -->
+        <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200 space-y-2">
+          <label class="block font-bold text-amber-950 text-xs">Pilihan Kendala Selama Live (Bila Ada):</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px] text-slate-700">
+            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
+              <input type="checkbox" name="live-obstacle" value="Sinyal / Internet Lemot" class="rounded text-amber-600">
+              <span>Sinyal Lemot</span>
+            </label>
+            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
+              <input type="checkbox" name="live-obstacle" value="Stok Spion Habis" class="rounded text-amber-600">
+              <span>Stok Spion Habis</span>
+            </label>
+            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
+              <input type="checkbox" name="live-obstacle" value="Masalah Audio / Lampu" class="rounded text-amber-600">
+              <span>Audio / Lighting</span>
+            </label>
+            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
+              <input type="checkbox" name="live-obstacle" value="Peringatan Platform" class="rounded text-amber-600">
+              <span>Peringatan Sistem</span>
+            </label>
+            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
+              <input type="checkbox" name="live-obstacle" value="Host Kurang Fit" class="rounded text-amber-600">
+              <span>Host Lelah / Kurang Fit</span>
+            </label>
+            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
+              <input type="checkbox" name="live-obstacle" value="Aplikasi Marketplace Lag" class="rounded text-amber-600">
+              <span>App Marketplace Lag</span>
+            </label>
+          </div>
+        </div>
+
         <!-- Catatan Evaluasi Host -->
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Catatan &amp; Evaluasi Siaran Live</label>
+          <label class="block font-bold text-slate-700 mb-1">Catatan Tambahan &amp; Evaluasi Siaran Live</label>
           <textarea id="modal-live-notes" rows="2" placeholder="Catatan kendala sinyal, produk spion paling banyak ditanyakan viewers, atau promo live berikutnya..."
             class="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 text-xs focus:outline-none focus:border-amber-500"></textarea>
         </div>
@@ -4087,6 +4696,268 @@
       </form>
     </div>
   </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: DETAIL SESI LIVE & FEEDBACK MANAJEMEN -->
+  <!-- ========================================================================= -->
+  <div id="modal-lr-session-detail"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden border border-slate-200 my-auto max-h-[92vh] flex flex-col">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between flex-shrink-0 border-b border-slate-800">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-heading font-bold text-sm text-white flex items-center space-x-2">
+              <span id="lr-detail-title">Detail Sesi Live</span>
+              <span id="lr-detail-sop-badge" class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500 text-white">SOP Valid</span>
+            </h4>
+            <p class="text-[11px] text-slate-400" id="lr-detail-subtitle">Audit performa sesi, log mutasi stok gudang, dan feedback manajemen</p>
+          </div>
+        </div>
+        <button onclick="window.closeModal('modal-lr-session-detail')"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">&times;</button>
+      </div>
+
+      <div class="p-4 sm:p-5 space-y-4 text-xs overflow-y-auto flex-1">
+        <!-- Header Info Bar -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <div>
+            <span class="text-[10px] text-slate-400 block font-semibold">Channel Toko</span>
+            <strong class="text-slate-900 font-bold block truncate" id="lr-detail-store">-</strong>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 block font-semibold">Host Siaran</span>
+            <strong class="text-slate-900 font-bold block truncate" id="lr-detail-host">-</strong>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 block font-semibold">Tanggal & Waktu</span>
+            <strong class="text-slate-900 font-bold block truncate" id="lr-detail-date">-</strong>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 block font-semibold">Durasi Siaran</span>
+            <strong class="text-amber-800 font-extrabold block truncate" id="lr-detail-duration">-</strong>
+          </div>
+        </div>
+
+        <!-- KPI Breakdown Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div class="bg-amber-50/60 p-2.5 rounded-xl border border-amber-200">
+            <span class="text-[10px] font-bold text-amber-900 uppercase">Omset Kotor</span>
+            <div class="text-sm font-black text-amber-950 mt-0.5" id="lr-detail-omset">Rp 0</div>
+            <span class="text-[10px] text-amber-700 font-semibold" id="lr-detail-orders-count">0 Order</span>
+          </div>
+          <div class="bg-emerald-50/60 p-2.5 rounded-xl border border-emerald-200">
+            <span class="text-[10px] font-bold text-emerald-900 uppercase">Margin Bersih</span>
+            <div class="text-sm font-black text-emerald-700 mt-0.5" id="lr-detail-margin">Rp 0</div>
+            <span class="text-[10px] text-emerald-800 font-semibold" id="lr-detail-margin-pct">0% margin</span>
+          </div>
+          <div class="bg-rose-50/60 p-2.5 rounded-xl border border-rose-200">
+            <span class="text-[10px] font-bold text-rose-900 uppercase">Biaya Iklan</span>
+            <div class="text-sm font-black text-rose-700 mt-0.5" id="lr-detail-ads">Rp 0</div>
+            <span class="text-[10px] text-rose-800 font-semibold" id="lr-detail-roas">ROAS: 0.0x</span>
+          </div>
+          <div class="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-200">
+            <span class="text-[10px] font-bold text-indigo-900 uppercase">Penonton</span>
+            <div class="text-sm font-black text-indigo-900 mt-0.5" id="lr-detail-viewers">0 Puncak</div>
+            <span class="text-[10px] text-indigo-700 font-semibold" id="lr-detail-viewers-avg">Avg: 0</span>
+          </div>
+        </div>
+
+        <!-- Rincian Biaya & Potongan Transparan -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-bold text-slate-700">Rincian Finansial Sesi:</span>
+            <span class="text-[10px] text-slate-400">Formula: Omset - HPP - Iklan - Fee - Lain</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-slate-200/60 text-[11px]">
+            <div><span class="text-slate-400 block">Total HPP Barang:</span><strong class="text-slate-800" id="lr-detail-cogs">Rp 0</strong></div>
+            <div><span class="text-slate-400 block">Fee Platform:</span><strong class="text-slate-800" id="lr-detail-fee">Rp 0</strong></div>
+            <div><span class="text-slate-400 block">Voucher/Lainnya:</span><strong class="text-slate-800" id="lr-detail-voucher">Rp 0</strong></div>
+            <div><span class="text-slate-400 block">Omset Per Jam:</span><strong class="text-amber-800 font-bold" id="lr-detail-rate-hour">Rp 0 / Jam</strong></div>
+          </div>
+        </div>
+
+        <!-- Daftar Produk Terjual & Potongan Stok Gudang -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h5 class="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
+              <span>Produk Spion Terjual</span>
+              <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">Stok Gudang Terpotong</span>
+            </h5>
+            <span class="text-slate-400 text-[11px]" id="lr-detail-total-pcs">Total: 0 pcs</span>
+          </div>
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-2.5">SKU & Nama Produk</th>
+                  <th class="p-2.5 text-center">Qty Terjual</th>
+                  <th class="p-2.5 text-right">HPP Satuan</th>
+                  <th class="p-2.5 text-right">Total Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="lr-detail-products-body" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Kendala Sesi & Catatan Host -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+          <h5 class="font-bold text-slate-900 text-xs">Kendala & Catatan Host Siaran:</h5>
+          <div id="lr-detail-obstacles-box" class="flex flex-wrap gap-1.5">
+            <!-- Obstacle badges -->
+          </div>
+          <p class="text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200 italic" id="lr-detail-notes">
+            Tidak ada catatan tambahan dari host.
+          </p>
+        </div>
+
+        <!-- Bukti Tangkapan Layar Analitik Live -->
+        <div class="space-y-2">
+          <h5 class="font-bold text-slate-900 text-xs">Bukti Screenshot Analitik Dashboard Live:</h5>
+          <div id="lr-detail-proof-box" class="rounded-xl border border-slate-200 overflow-hidden bg-slate-900 flex items-center justify-center p-2 max-h-64">
+            <img id="lr-detail-proof-img" src="" alt="Bukti Analitik Live" class="max-h-60 object-contain rounded cursor-pointer" onclick="window.openImageInNewTab(this.src)">
+          </div>
+        </div>
+
+        <!-- KOLOM CATATAN MANAJEMEN / FEEDBACK KE HOST -->
+        <div class="bg-amber-50/50 p-3.5 rounded-xl border border-amber-300 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h5 class="font-bold text-amber-950 text-xs flex items-center space-x-1.5">
+              <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+              <span>Catatan & Evaluasi Manajemen untuk Host</span>
+            </h5>
+            <span class="text-[10px] text-amber-800 font-semibold">Tersimpan Permanen & Dibaca Host</span>
+          </div>
+
+          <!-- History Catatan Manajemen yang Pernah Diberikan -->
+          <div id="lr-detail-mgmt-notes-history" class="space-y-2 max-h-36 overflow-y-auto">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Input Feedback Baru -->
+          <div class="pt-2 border-t border-amber-200/80 space-y-2">
+            <textarea id="lr-detail-new-mgmt-note" rows="2" placeholder="Tulis masukan manajemen untuk host (misal: tingkatkan durasi di jam malam, fokus flash sale SKU spion Avanza, perbaiki audio)..."
+              class="w-full p-2 bg-white border border-amber-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-amber-600"></textarea>
+            <div class="flex justify-end">
+              <button type="button" onclick="window.saveManagementNoteFromDetail()"
+                class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg shadow-sm flex items-center space-x-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Kirim Feedback ke Host</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
+        <span class="text-[11px] text-slate-400" id="lr-detail-footer-id">ID: -</span>
+        <button type="button" onclick="window.closeModal('modal-lr-session-detail')"
+          class="h-9 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs transition-colors cursor-pointer">
+          Tutup Detail
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: SETTING TARGET OMSET BULANAN & HARIAN -->
+  <!-- ========================================================================= -->
+  <div id="modal-lr-targets"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200 my-auto flex flex-col">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-heading font-bold text-sm text-white">Target Omset Live Streaming</h4>
+            <p class="text-[11px] text-slate-400">Pengaturan target bulanan & harian per cabang dan host</p>
+          </div>
+        </div>
+        <button onclick="window.closeModal('modal-lr-targets')"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">&times;</button>
+      </div>
+
+      <form onsubmit="window.saveLiveTargets(event)" class="p-4 sm:p-5 space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-800 mb-1">Bulan & Tahun Target</label>
+          <input type="month" id="lr-target-month" value="2026-11" required
+            class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Target Total Bulanan (Rp) <span class="text-rose-600">*</span></label>
+            <input type="number" id="lr-target-monthly-val" required value="150000000" min="1000000" step="500000"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-black text-amber-800 text-sm">
+            <span class="text-[10px] text-slate-400">Default: Rp 150 Juta / Bulan</span>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Target Harian Rata-rata (Rp)</label>
+            <input type="number" id="lr-target-daily-val" required value="5000000" min="100000" step="100000"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800">
+            <span class="text-[10px] text-slate-400">Default: Rp 5 Juta / Hari</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Target Cabang 1 (Pusat) Rp</label>
+            <input type="number" id="lr-target-branch-1" value="100000000"
+              class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Target Cabang 2 (Solo) Rp</label>
+            <input type="number" id="lr-target-branch-2" value="50000000"
+              class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
+          </div>
+        </div>
+
+        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900 space-y-1">
+          <div class="font-bold flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+            <span>Target Per Sesi Rekomendasi:</span>
+          </div>
+          <p class="text-[11px] text-amber-800">
+            Jika dalam 1 hari terdapat 3 sesi live, maka target minimum per sesi adalah sekitar <strong>Rp 1.666.000</strong> untuk mencapai target harian.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+          <button type="button" onclick="window.closeModal('modal-lr-targets')"
+            class="h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-all cursor-pointer">
+            Batal
+          </button>
+          <button type="submit"
+            class="h-10 px-5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-lg shadow-md transition-all flex items-center space-x-1.5 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Simpan Target Omset</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 
   <script>
     // ====== [ISI DI SINI] FIREBASE CONFIG - salin dari Firebase Console > Project settings > Your apps ======
@@ -6674,6 +7545,32 @@
               '</div>';
           });
           productsHtml += '</div>';
+        }
+
+        // Tampilkan Catatan Evaluasi Manajemen bila ada
+        var mgmtNotesHtml = '';
+        if (Array.isArray(ls.managementNotes) && ls.managementNotes.length > 0) {
+          var lastNote = ls.managementNotes[ls.managementNotes.length - 1];
+          mgmtNotesHtml = '<div class="bg-amber-50 border border-amber-300 p-2.5 rounded-xl space-y-1">' +
+            '<div class="flex items-center justify-between text-[10px] font-bold text-amber-950">' +
+              '<span>💬 Evaluasi Manajemen (' + (lastNote.author || 'Admin') + '):</span>' +
+              '<span class="text-amber-700 font-normal">' + (lastNote.timeStr || '') + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-slate-800 font-medium italic">"' + lastNote.text + '"</p>' +
+          '</div>';
+        }
+
+        // Tampilkan Catatan Evaluasi Manajemen bila ada
+        var mgmtNotesHtml = '';
+        if (Array.isArray(ls.managementNotes) && ls.managementNotes.length > 0) {
+          var lastNote = ls.managementNotes[ls.managementNotes.length - 1];
+          mgmtNotesHtml = '<div class="bg-amber-50 border border-amber-300 p-2.5 rounded-xl space-y-1">' +
+            '<div class="flex items-center justify-between text-[10px] font-bold text-amber-950">' +
+              '<span>💬 Evaluasi Manajemen (' + (lastNote.author || 'Admin') + '):</span>' +
+              '<span class="text-amber-700 font-normal">' + (lastNote.timeStr || '') + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-slate-800 font-medium italic">"' + lastNote.text + '"</p>' +
+          '</div>';
         }
 
         // Tombol Bukti Screenshot
@@ -9483,15 +10380,51 @@
         proofPhoto = window.createMockLiveAnalyticsSvg(store, host, new Date().toISOString().slice(0, 10), omset, viewers);
       }
 
+      // Capture field tambahan laporan analitik
+      var avgViewers = Number(document.getElementById('modal-live-viewers-avg') ? document.getElementById('modal-live-viewers-avg').value : Math.round(viewers * 0.45));
+      var uniqueViewers = Number(document.getElementById('modal-live-viewers-unique') ? document.getElementById('modal-live-viewers-unique').value : viewers * 3);
+      var newFollowers = Number(document.getElementById('modal-live-followers-new') ? document.getElementById('modal-live-followers-new').value : 0);
+      var ordersCount = Number(document.getElementById('modal-live-orders-count') ? document.getElementById('modal-live-orders-count').value : qty);
+      var ordersCancelled = Number(document.getElementById('modal-live-orders-cancelled') ? document.getElementById('modal-live-orders-cancelled').value : 0);
+      var targetSession = Number(document.getElementById('modal-live-target-session') ? document.getElementById('modal-live-target-session').value : 0);
+
+      var obstacles = [];
+      var obstEls = document.querySelectorAll('input[name="live-obstacle"]:checked');
+      for (var oIndex = 0; oIndex < obstEls.length; oIndex++) {
+        obstacles.push(obstEls[oIndex].value);
+      }
+
+      var nowTimestamp = new Date();
+      var inputIso = nowTimestamp.toISOString();
+
+      // Hitung kepatuhan SOP (Valid jika diinput <= 2 jam setelah sesi berakhir)
+      var sopStatus = 'valid';
+      try {
+        var endHourMin = endTime.split(':').map(Number);
+        var curHour = nowTimestamp.getHours();
+        var curMin = nowTimestamp.getMinutes();
+        var diffMinutesFromEnd = (curHour * 60 + curMin) - (endHourMin[0] * 60 + endHourMin[1]);
+        if (diffMinutesFromEnd > 120) {
+          sopStatus = 'late';
+        }
+      } catch (eSop) { sopStatus = 'valid'; }
+
       var newSession = {
         id: 'LS-0' + ((window.appState.data.liveSessions || []).length + 1),
         store: store,
         host: host,
+        branch: 'Cabang 1 (Pusat)',
         date: new Date().toISOString().slice(0, 10),
         startTime: startTime,
         endTime: endTime,
         duration: durationStr,
         viewers: viewers,
+        avgViewers: avgViewers,
+        uniqueViewers: uniqueViewers,
+        followersNew: newFollowers,
+        ordersCount: ordersCount,
+        ordersCancelled: ordersCancelled,
+        targetSession: targetSession,
         omset: omset,
         fee: fee,
         ads: ads + voucher,
@@ -9499,6 +10432,11 @@
         margin: margin,
         items: qty,
         notes: notes,
+        obstacles: obstacles,
+        sopStatus: sopStatus,
+        inputTimestamp: inputIso,
+        editLogs: [{ user: host, timestamp: inputIso, field: 'create', details: 'Input rekap sesi live pertama' }],
+        managementNotes: [],
         proofPhoto: proofPhoto,
         soldProducts: window.currentLiveSoldItems.slice()
       };
@@ -9975,7 +10913,1367 @@
       }
     };
 
-  </script>
+  
+
+// ===================================================================
+// JAVASCRIPT ENGINE: LAPORAN ANALITIK LIVE STREAMING (MANAJEMEN & ADMIN)
+// ===================================================================
+
+(function () {
+  'use strict';
+
+  window.activeLiveReportTab = 'lr-tab-executive';
+  window.currentSelectedLiveSessionId = null;
+
+  // Inisialisasi awal saat membuka menu Laporan Live
+  window.initLiveReportsDashboard = function () {
+    var user = window.appState.currentUser;
+    var role = user ? user.role : 'admin';
+
+    // Guard hak akses: Hanya Admin, Owner, & Finance
+    if (role === 'host' || role === 'warehouse') {
+      window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen & Admin!', 'warning');
+      window.navigateTo('section-dashboard');
+      return;
+    }
+
+    // Set filter default
+    var filterPeriod = document.getElementById('lr-filter-period');
+    if (filterPeriod && !filterPeriod.value) {
+      filterPeriod.value = 'month';
+    }
+
+    // Populate filter Host & Store secara dinamis
+    window.populateLiveReportFilterOptions();
+
+    // Jalankan kalkulasi dan filter
+    window.handleLiveReportFilterChange();
+  };
+
+  // Populate dynamic dropdown filter options
+  window.populateLiveReportFilterOptions = function () {
+    var sessions = window.appState.data.liveSessions || [];
+    var hostSelect = document.getElementById('lr-filter-host');
+    var storeSelect = document.getElementById('lr-filter-store');
+
+    if (hostSelect) {
+      var currentHost = hostSelect.value || 'all';
+      var hosts = {};
+      sessions.forEach(function (s) { if (s.host) hosts[s.host] = true; });
+      // Add known hosts from users
+      (window.appState.data.users || []).forEach(function (u) {
+        if (u.role === 'host') hosts[u.name] = true;
+      });
+
+      var hostHtml = '<option value="all">Semua Host Live</option>';
+      Object.keys(hosts).sort().forEach(function (h) {
+        hostHtml += '<option value="' + h + '"' + (currentHost === h ? ' selected' : '') + '>' + h + '</option>';
+      });
+      hostSelect.innerHTML = hostHtml;
+    }
+
+    if (storeSelect) {
+      var currentStore = storeSelect.value || 'all';
+      var stores = {
+        'TikTok Shop Live Official': true,
+        'Shopee Live Toko 1 (Official)': true,
+        'Shopee Live Toko 2 (Mall)': true,
+        'Shopee Live Toko 3 (Grosir)': true
+      };
+      sessions.forEach(function (s) { if (s.store) stores[s.store] = true; });
+
+      var storeHtml = '<option value="all">Semua Akun Toko</option>';
+      Object.keys(stores).sort().forEach(function (st) {
+        storeHtml += '<option value="' + st + '"' + (currentStore === st ? ' selected' : '') + '>' + st + '</option>';
+      });
+      storeSelect.innerHTML = storeHtml;
+    }
+  };
+
+  // Handler filter perubahan global
+  window.handleLiveReportFilterChange = function () {
+    var periodEl = document.getElementById('lr-filter-period');
+    var period = periodEl ? periodEl.value : 'month';
+
+    var customRow = document.getElementById('lr-custom-date-row');
+    if (customRow) {
+      if (period === 'custom') {
+        customRow.classList.remove('hidden');
+      } else {
+        customRow.classList.add('hidden');
+      }
+    }
+
+    var filteredData = window.getFilteredLiveSessions();
+
+    // Render active tab
+    window.switchLiveReportTab(window.activeLiveReportTab || 'lr-tab-executive');
+
+    // Update timestamp sync text
+    var syncEl = document.getElementById('lr-last-sync-time');
+    if (syncEl) {
+      var now = new Date();
+      syncEl.textContent = 'Data Update: ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0') + ' WIB (' + filteredData.current.length + ' Sesi)';
+    }
+  };
+
+  // Switcher Tab Submenu
+  window.switchLiveReportTab = function (tabId) {
+    window.activeLiveReportTab = tabId;
+
+    var tabs = ['lr-tab-executive', 'lr-tab-sessions', 'lr-tab-hosts', 'lr-tab-ads', 'lr-tab-products'];
+    tabs.forEach(function (t) {
+      var btn = document.getElementById('btn-' + t);
+      var content = document.getElementById('content-' + t);
+      if (btn) {
+        if (t === tabId) {
+          btn.className = 'px-3 py-2 text-xs font-bold border-b-2 border-amber-600 text-amber-700 cursor-pointer whitespace-nowrap transition-colors flex items-center space-x-1.5';
+        } else {
+          btn.className = 'px-3 py-2 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 cursor-pointer whitespace-nowrap transition-colors flex items-center space-x-1.5';
+        }
+      }
+      if (content) {
+        if (t === tabId) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      }
+    });
+
+    // Render specific tab content
+    if (tabId === 'lr-tab-executive') {
+      window.renderExecutiveSummary();
+    } else if (tabId === 'lr-tab-sessions') {
+      window.renderSessionsReport();
+    } else if (tabId === 'lr-tab-hosts') {
+      window.renderHostPerformance();
+    } else if (tabId === 'lr-tab-ads') {
+      window.renderAdsProfitability();
+    } else if (tabId === 'lr-tab-products') {
+      window.renderLiveProductsReport();
+    }
+  };
+
+  // Helper: Filter Sessions berdasarkan periode & dropdown
+  window.getFilteredLiveSessions = function () {
+    var raw = window.appState.data.liveSessions || [];
+    var period = (document.getElementById('lr-filter-period') && document.getElementById('lr-filter-period').value) || 'month';
+    var branch = (document.getElementById('lr-filter-branch') && document.getElementById('lr-filter-branch').value) || 'all';
+    var platform = (document.getElementById('lr-filter-platform') && document.getElementById('lr-filter-platform').value) || 'all';
+    var host = (document.getElementById('lr-filter-host') && document.getElementById('lr-filter-host').value) || 'all';
+    var store = (document.getElementById('lr-filter-store') && document.getElementById('lr-filter-store').value) || 'all';
+
+    var now = new Date();
+    var todayStr = now.toISOString().slice(0, 10);
+
+    var curStart, curEnd, prevStart, prevEnd;
+
+    if (period === 'today') {
+      curStart = todayStr;
+      curEnd = todayStr;
+      var yest = new Date(now.getTime() - 86400000).toISOString().slice(0, 10);
+      prevStart = yest;
+      prevEnd = yest;
+    } else if (period === '7days') {
+      var d7 = new Date(now.getTime() - 6 * 86400000).toISOString().slice(0, 10);
+      curStart = d7;
+      curEnd = todayStr;
+      var d14 = new Date(now.getTime() - 13 * 86400000).toISOString().slice(0, 10);
+      var d8 = new Date(now.getTime() - 7 * 86400000).toISOString().slice(0, 10);
+      prevStart = d14;
+      prevEnd = d8;
+    } else if (period === 'month') {
+      var ym = todayStr.slice(0, 7);
+      curStart = ym + '-01';
+      curEnd = ym + '-31';
+      // Previous month
+      var prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      var prevYm = prevMonthDate.toISOString().slice(0, 7);
+      prevStart = prevYm + '-01';
+      prevEnd = prevYm + '-31';
+    } else if (period === 'last_month') {
+      var pmDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      var pmYm = pmDate.toISOString().slice(0, 7);
+      curStart = pmYm + '-01';
+      curEnd = pmYm + '-31';
+      var pm2Date = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      var pm2Ym = pm2Date.toISOString().slice(0, 7);
+      prevStart = pm2Ym + '-01';
+      prevEnd = pm2Ym + '-31';
+    } else if (period === 'custom') {
+      var cStart = document.getElementById('lr-custom-start') ? document.getElementById('lr-custom-start').value : '';
+      var cEnd = document.getElementById('lr-custom-end') ? document.getElementById('lr-custom-end').value : '';
+      curStart = cStart || '2000-01-01';
+      curEnd = cEnd || '2099-12-31';
+      prevStart = '2000-01-01';
+      prevEnd = '2000-01-01';
+    } else {
+      curStart = '2000-01-01';
+      curEnd = '2099-12-31';
+      prevStart = '2000-01-01';
+      prevEnd = '2000-01-01';
+    }
+
+    var filterFunc = function (s, start, end) {
+      var d = s.date || '';
+      if (d < start || d > end) return false;
+
+      // Platform check
+      if (platform !== 'all') {
+        var sStore = (s.store || '').toLowerCase();
+        if (platform === 'shopee' && sStore.indexOf('shopee') === -1) return false;
+        if (platform === 'tiktok' && sStore.indexOf('tiktok') === -1) return false;
+      }
+
+      // Branch check (if session contains branch info, or default to all)
+      if (branch !== 'all' && s.branch && s.branch !== branch) return false;
+
+      // Host check
+      if (host !== 'all' && s.host !== host) return false;
+
+      // Store check
+      if (store !== 'all' && s.store !== store) return false;
+
+      return true;
+    };
+
+    var currentSessions = raw.filter(function (s) { return filterFunc(s, curStart, curEnd); });
+    var prevSessions = raw.filter(function (s) { return filterFunc(s, prevStart, prevEnd); });
+
+    return {
+      current: currentSessions,
+      previous: prevSessions,
+      curStart: curStart,
+      curEnd: curEnd
+    };
+  };
+
+  // Helper untuk format durasi jam
+  window.parseDurationHours = function (durStr) {
+    if (!durStr) return 2.0; // default 2 jam jika null
+    var hMatch = durStr.match(/(\d+)\s*Jam/i);
+    var mMatch = durStr.match(/(\d+)\s*Menit/i);
+    var h = hMatch ? Number(hMatch[1]) : 0;
+    var m = mMatch ? Number(mMatch[1]) : 0;
+    var total = h + (m / 60);
+    return total > 0 ? total : 2.0;
+  };
+
+  // ===================================================================
+  // SUBMENU 1: RINGKASAN EKSEKUTIF
+  // ===================================================================
+  window.renderExecutiveSummary = function () {
+    var data = window.getFilteredLiveSessions();
+    var cur = data.current;
+    var prev = data.previous;
+
+    // Hitung KPI Saat Ini
+    var curOmset = cur.reduce(function (sum, s) { return sum + (Number(s.omset) || 0); }, 0);
+    var curSessions = cur.length;
+    var curItems = cur.reduce(function (sum, s) { return sum + (Number(s.items) || 0); }, 0);
+    var curOrders = cur.reduce(function (sum, s) { return sum + (Number(s.ordersCount || s.items) || 0); }, 0);
+    var curMargin = cur.reduce(function (sum, s) { return sum + (Number(s.margin) || 0); }, 0);
+    var curAds = cur.reduce(function (sum, s) { return sum + (Number(s.ads) || 0); }, 0);
+    var curMarginPct = curOmset > 0 ? ((curMargin / curOmset) * 100).toFixed(1) : '0';
+    var curAdsRatio = curOmset > 0 ? ((curAds / curOmset) * 100).toFixed(1) : '0';
+    var curRoas = curAds > 0 ? (curOmset / curAds).toFixed(1) : '0.0';
+
+    // Hitung KPI Periode Sebelumnya
+    var prevOmset = prev.reduce(function (sum, s) { return sum + (Number(s.omset) || 0); }, 0);
+    var prevSessions = prev.length;
+    var prevItems = prev.reduce(function (sum, s) { return sum + (Number(s.items) || 0); }, 0);
+    var prevOrders = prev.reduce(function (sum, s) { return sum + (Number(s.ordersCount || s.items) || 0); }, 0);
+    var prevMargin = prev.reduce(function (sum, s) { return sum + (Number(s.margin) || 0); }, 0);
+
+    var calcChange = function (c, p) {
+      if (!p || p === 0) return c > 0 ? '+100%' : '0%';
+      var diff = ((c - p) / p) * 100;
+      return (diff >= 0 ? '+' : '') + diff.toFixed(1) + '%';
+    };
+
+    var setBadge = function (elId, pctStr) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var isPos = !pctStr.startsWith('-');
+      el.textContent = pctStr;
+      el.className = isPos
+        ? 'text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800'
+        : 'text-[9px] font-black px-1.5 py-0.2 rounded bg-rose-100 text-rose-800';
+    };
+
+    // Update Angka KPI Cards
+    if (document.getElementById('lr-kpi-omset')) document.getElementById('lr-kpi-omset').textContent = window.formatRupiah(curOmset);
+    if (document.getElementById('lr-kpi-sessions')) document.getElementById('lr-kpi-sessions').textContent = curSessions + ' Sesi';
+    if (document.getElementById('lr-kpi-items')) document.getElementById('lr-kpi-items').textContent = curItems + ' pcs';
+    if (document.getElementById('lr-kpi-orders')) document.getElementById('lr-kpi-orders').textContent = curOrders + ' Order';
+    if (document.getElementById('lr-kpi-margin')) document.getElementById('lr-kpi-margin').textContent = window.formatRupiah(curMargin);
+    if (document.getElementById('lr-kpi-margin-pct')) document.getElementById('lr-kpi-margin-pct').textContent = curMarginPct + '% margin bersih';
+    if (document.getElementById('lr-kpi-ads')) document.getElementById('lr-kpi-ads').textContent = window.formatRupiah(curAds);
+    if (document.getElementById('lr-kpi-ads-ratio')) document.getElementById('lr-kpi-ads-ratio').textContent = curAdsRatio + '% dari omset';
+    if (document.getElementById('lr-kpi-roas')) document.getElementById('lr-kpi-roas').textContent = curRoas + 'x';
+
+    setBadge('lr-kpi-badge-omset', calcChange(curOmset, prevOmset));
+    setBadge('lr-kpi-badge-sessions', calcChange(curSessions, prevSessions));
+    setBadge('lr-kpi-badge-items', calcChange(curItems, prevItems));
+    setBadge('lr-kpi-badge-orders', calcChange(curOrders, prevOrders));
+    setBadge('lr-kpi-badge-margin', calcChange(curMargin, prevMargin));
+
+    // Update Progress Bar Target vs Realisasi
+    var savedTargets = {};
+    try {
+      savedTargets = JSON.parse(localStorage.getItem('mja_live_targets') || '{}');
+    } catch (eTar) { }
+    var targetMonthly = Number(savedTargets.monthlyVal) || 150000000;
+    var targetPct = targetMonthly > 0 ? Math.min(100, Math.round((curOmset / targetMonthly) * 100)) : 0;
+    var remaining = Math.max(0, targetMonthly - curOmset);
+
+    var barEl = document.getElementById('lr-target-progress-bar');
+    if (barEl) barEl.style.width = targetPct + '%';
+
+    var actualValEl = document.getElementById('lr-target-actual-val');
+    if (actualValEl) actualValEl.textContent = window.formatRupiah(curOmset);
+
+    var targetValEl = document.getElementById('lr-target-target-val');
+    if (targetValEl) targetValEl.textContent = window.formatRupiah(targetMonthly);
+
+    var pctBadgeEl = document.getElementById('lr-target-pct-badge');
+    if (pctBadgeEl) {
+      pctBadgeEl.textContent = targetPct + '%';
+      pctBadgeEl.className = targetPct >= 100
+        ? 'px-2 py-0.5 rounded font-black text-xs bg-emerald-500 text-white'
+        : 'px-2 py-0.5 rounded font-black text-xs bg-amber-500 text-white';
+    }
+
+    var remEl = document.getElementById('lr-target-remaining-text');
+    if (remEl) {
+      remEl.textContent = remaining === 0
+        ? 'Target telah tercapai penuh! 🎉'
+        : 'Sisa kekurangan target: ' + window.formatRupiah(remaining);
+    }
+
+    var paceEl = document.getElementById('lr-target-pace-status');
+    if (paceEl) {
+      paceEl.textContent = targetPct >= 75 ? 'Pencapaian Sangat Baik' : (targetPct >= 40 ? 'Sesuai Rata-rata' : 'Perlu Dorongan Live Tambahan');
+    }
+
+    // Grafik Tren Omset & Margin Harian (Chart.js)
+    window.renderLiveTrendChart(cur);
+
+    // Grafik Batang Omset Per Platform
+    window.renderLivePlatformChart(cur);
+
+    // Tabel Top 5 Sesi Terbaik & Terburuk
+    window.renderTopBottomSessions(cur);
+
+    // Panel Perlu Perhatian
+    window.renderAttentionPanel(cur);
+  };
+
+  // Render Grafik Tren Garis (Omset & Margin)
+  window.renderLiveTrendChart = function (sessions) {
+    var canvas = document.getElementById('lr-trend-chart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (window.lrTrendChartInstance) {
+      window.lrTrendChartInstance.destroy();
+    }
+
+    // Grouping per hari
+    var daily = {};
+    sessions.forEach(function (s) {
+      var d = s.date || 'Unknown';
+      if (!daily[d]) daily[d] = { omset: 0, margin: 0 };
+      daily[d].omset += Number(s.omset) || 0;
+      daily[d].margin += Number(s.margin) || 0;
+    });
+
+    var labels = Object.keys(daily).sort();
+    if (labels.length === 0) {
+      labels = ['Tidak ada data'];
+      daily['Tidak ada data'] = { omset: 0, margin: 0 };
+    }
+
+    var omsetData = labels.map(function (k) { return daily[k].omset; });
+    var marginData = labels.map(function (k) { return daily[k].margin; });
+
+    window.lrTrendChartInstance = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Omset Penjualan (Rp)',
+            data: omsetData,
+            borderColor: '#B4532A',
+            backgroundColor: 'rgba(180, 83, 42, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          },
+          {
+            label: 'Margin Bersih (Rp)',
+            data: marginData,
+            borderColor: '#2F5D50',
+            backgroundColor: 'rgba(47, 93, 80, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' } } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                return ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: {
+              callback: function (val) {
+                return val >= 1000000 ? (val / 1000000) + ' Jt' : window.formatRupiah(val);
+              },
+              font: { size: 10 }
+            }
+          },
+          x: { ticks: { font: { size: 10 } } }
+        }
+      }
+    });
+  };
+
+  // Render Grafik Batang Per Platform (Shopee vs TikTok)
+  window.renderLivePlatformChart = function (sessions) {
+    var canvas = document.getElementById('lr-platform-chart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (window.lrPlatformChartInstance) {
+      window.lrPlatformChartInstance.destroy();
+    }
+
+    var platformData = {
+      'TikTok Shop': { omset: 0, margin: 0, count: 0 },
+      'Shopee Live': { omset: 0, margin: 0, count: 0 }
+    };
+
+    sessions.forEach(function (s) {
+      var st = (s.store || '').toLowerCase();
+      if (st.indexOf('tiktok') !== -1) {
+        platformData['TikTok Shop'].omset += Number(s.omset) || 0;
+        platformData['TikTok Shop'].margin += Number(s.margin) || 0;
+        platformData['TikTok Shop'].count++;
+      } else {
+        platformData['Shopee Live'].omset += Number(s.omset) || 0;
+        platformData['Shopee Live'].margin += Number(s.margin) || 0;
+        platformData['Shopee Live'].count++;
+      }
+    });
+
+    var labels = ['TikTok Shop Live', 'Shopee Live'];
+    var omsetVals = [platformData['TikTok Shop'].omset, platformData['Shopee Live'].omset];
+    var marginVals = [platformData['TikTok Shop'].margin, platformData['Shopee Live'].margin];
+
+    window.lrPlatformChartInstance = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Omset',
+            data: omsetVals,
+            backgroundColor: '#0F172A',
+            borderRadius: 6
+          },
+          {
+            label: 'Margin Bersih',
+            data: marginVals,
+            backgroundColor: '#10B981',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' } } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                return ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: {
+              callback: function (val) {
+                return val >= 1000000 ? (val / 1000000) + ' Jt' : window.formatRupiah(val);
+              },
+              font: { size: 10 }
+            }
+          }
+        }
+      }
+    });
+  };
+
+  // Render Top 5 dan Bottom 5 Sesi
+  window.renderTopBottomSessions = function (sessions) {
+    var topBody = document.getElementById('lr-table-top-sessions-body');
+    var bottomBody = document.getElementById('lr-table-bottom-sessions-body');
+
+    if (!topBody || !bottomBody) return;
+
+    if (sessions.length === 0) {
+      var emptyTr = '<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">Belum ada data sesi untuk kriteria ini</td></tr>';
+      topBody.innerHTML = emptyTr;
+      bottomBody.innerHTML = emptyTr;
+      return;
+    }
+
+    var sorted = sessions.slice().sort(function (a, b) {
+      return (Number(b.omset) || 0) - (Number(a.omset) || 0);
+    });
+
+    var top5 = sorted.slice(0, 5);
+    var bottom5 = sorted.slice().reverse().slice(0, 5);
+
+    var makeRows = function (list, isTop) {
+      return list.map(function (s, idx) {
+        var omset = Number(s.omset) || 0;
+        var margin = Number(s.margin) || 0;
+        var mPct = omset > 0 ? ((margin / omset) * 100).toFixed(0) : '0';
+        return '<tr class="hover:bg-slate-50 cursor-pointer transition-colors" onclick="window.openLiveSessionDetail(\'' + s.id + '\')">' +
+          '<td class="p-2.5 font-bold text-slate-800 flex items-center space-x-1.5">' +
+            '<span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ' + (isTop ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600') + '">' + (idx + 1) + '</span>' +
+            '<div class="truncate max-w-[120px]">' + (s.store || '-') + '<span class="block text-[10px] text-slate-400 font-normal">' + (s.date || '-') + '</span></div>' +
+          '</td>' +
+          '<td class="p-2.5 font-semibold text-slate-700">' + (s.host || '-') + '</td>' +
+          '<td class="p-2.5 text-right font-black text-slate-900">' + window.formatRupiah(omset) + '</td>' +
+          '<td class="p-2.5 text-right font-bold ' + (margin < 0 ? 'text-rose-600' : 'text-emerald-600') + '">' + window.formatRupiah(margin) + ' (' + mPct + '%)</td>' +
+        '</tr>';
+      }).join('');
+    };
+
+    topBody.innerHTML = makeRows(top5, true);
+    bottomBody.innerHTML = makeRows(bottom5, false);
+  };
+
+  // Render Panel "Perlu Perhatian"
+  window.renderAttentionPanel = function (sessions) {
+    var countEl = document.getElementById('lr-attention-count');
+    var cardsEl = document.getElementById('lr-attention-cards');
+    if (!cardsEl) return;
+
+    var issues = [];
+
+    sessions.forEach(function (s) {
+      var omset = Number(s.omset) || 0;
+      var margin = Number(s.margin) || 0;
+      var ads = Number(s.ads) || 0;
+      var adsRatio = omset > 0 ? (ads / omset) * 100 : 0;
+
+      if (margin < 0) {
+        issues.push({
+          type: 'danger',
+          title: 'Sesi Rugi / Margin Negatif (' + (s.id || '-') + ')',
+          desc: 'Host: ' + s.host + ' | Rugi: ' + window.formatRupiah(margin) + ' pada toko ' + s.store + ' (' + s.date + ')',
+          actionId: s.id
+        });
+      } else if (adsRatio > 35) {
+        issues.push({
+          type: 'warning',
+          title: 'Biaya Iklan Terlalu Boros (>35%)',
+          desc: 'Host: ' + s.host + ' | Iklan: ' + window.formatRupiah(ads) + ' (' + adsRatio.toFixed(1) + '% dari omset) pada sesi ' + s.id,
+          actionId: s.id
+        });
+      }
+
+      if (s.sopStatus === 'late') {
+        issues.push({
+          type: 'info',
+          title: 'Input Rekap SOP Terlambat (>2 Jam)',
+          desc: 'Host ' + s.host + ' menginput data rekap melebihi toleransi waktu siaran ' + s.date,
+          actionId: s.id
+        });
+      }
+    });
+
+    if (countEl) countEl.textContent = issues.length + ' Catatan Perhatian';
+
+    if (issues.length === 0) {
+      cardsEl.innerHTML = '<div class="col-span-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs text-center font-bold flex items-center justify-center space-x-2">' +
+        '<span>✅ Semua sesi live dalam kondisi sehat: tidak ada kerugian margin ataupun pemborosan iklan.</span>' +
+      '</div>';
+      return;
+    }
+
+    cardsEl.innerHTML = issues.slice(0, 3).map(function (iss) {
+      var colorClass = iss.type === 'danger'
+        ? 'bg-rose-50 border-rose-200 text-rose-900'
+        : (iss.type === 'warning' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-slate-50 border-slate-200 text-slate-900');
+      var dotColor = iss.type === 'danger' ? 'bg-rose-600' : (iss.type === 'warning' ? 'bg-amber-600' : 'bg-indigo-600');
+
+      return '<div class="p-3 rounded-xl border ' + colorClass + ' space-y-1.5 cursor-pointer hover:shadow-sm transition-all" onclick="window.openLiveSessionDetail(\'' + iss.actionId + '\')">' +
+        '<div class="flex items-center space-x-1.5 font-bold text-xs">' +
+          '<span class="w-2 h-2 rounded-full ' + dotColor + '"></span>' +
+          '<span>' + iss.title + '</span>' +
+        '</div>' +
+        '<p class="text-[11px] opacity-90">' + iss.desc + '</p>' +
+        '<span class="text-[10px] font-bold underline flex items-center space-x-1">Klik untuk evaluasi sesi &rarr;</span>' +
+      '</div>';
+    }).join('');
+  };
+
+  // ===================================================================
+  // SUBMENU 2: LAPORAN PER SESI (TABEL DETAIL, SORT, CARI)
+  // ===================================================================
+  window.renderSessionsReport = function () {
+    var data = window.getFilteredLiveSessions();
+    var sessions = data.current.slice();
+
+    var searchVal = (document.getElementById('lr-sessions-search') ? document.getElementById('lr-sessions-search').value : '').toLowerCase().trim();
+    var sortVal = document.getElementById('lr-sessions-sort') ? document.getElementById('lr-sessions-sort').value : 'date-desc';
+
+    if (searchVal) {
+      sessions = sessions.filter(function (s) {
+        var str = ((s.id || '') + ' ' + (s.host || '') + ' ' + (s.store || '') + ' ' + (s.date || '') + ' ' + (s.notes || '')).toLowerCase();
+        return str.indexOf(searchVal) !== -1;
+      });
+    }
+
+    sessions.sort(function (a, b) {
+      if (sortVal === 'date-desc') return (b.date || '').localeCompare(a.date || '');
+      if (sortVal === 'date-asc') return (a.date || '').localeCompare(b.date || '');
+      if (sortVal === 'omset-desc') return (Number(b.omset) || 0) - (Number(a.omset) || 0);
+      if (sortVal === 'omset-asc') return (Number(a.omset) || 0) - (Number(b.omset) || 0);
+      if (sortVal === 'margin-desc') return (Number(b.margin) || 0) - (Number(a.margin) || 0);
+      if (sortVal === 'viewers-desc') return (Number(b.viewers) || 0) - (Number(a.viewers) || 0);
+      return 0;
+    });
+
+    var countEl = document.getElementById('lr-sessions-total-count');
+    if (countEl) countEl.textContent = sessions.length + ' Sesi Live';
+
+    var tbody = document.getElementById('lr-table-sessions-body');
+    if (!tbody) return;
+
+    if (sessions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="12" class="p-8 text-center text-slate-400 italic font-semibold">Tidak ditemukan sesi live streaming yang sesuai kriteria pencarian / filter.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = sessions.map(function (s) {
+      var omset = Number(s.omset) || 0;
+      var cogs = Number(s.cogs) || 0;
+      var ads = Number(s.ads) || 0;
+      var margin = Number(s.margin) || 0;
+      var mPct = omset > 0 ? ((margin / omset) * 100).toFixed(1) : '0';
+      var roas = ads > 0 ? (omset / ads).toFixed(1) + 'x' : '-';
+      var durHours = window.parseDurationHours(s.duration);
+      var omsetPerHour = durHours > 0 ? Math.round(omset / durHours) : omset;
+
+      var sopBadge = s.sopStatus === 'late'
+        ? '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-200">Terlambat</span>'
+        : '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">SOP Valid</span>';
+
+      var storeBadge = (s.store || '').toLowerCase().indexOf('shopee') !== -1
+        ? '<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-orange-100 text-orange-800">Shopee</span>'
+        : '<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-slate-900 text-white">TikTok</span>';
+
+      return '<tr class="hover:bg-amber-50/50 cursor-pointer transition-colors" onclick="window.openLiveSessionDetail(\'' + s.id + '\')">' +
+        '<td class="p-3 font-semibold text-slate-800 whitespace-nowrap">' +
+          '<div>' + (s.date || '-') + '</div>' +
+          '<div class="text-[10px] text-slate-400 font-mono">' + (s.id || '-') + '</div>' +
+        '</td>' +
+        '<td class="p-3 whitespace-nowrap">' + storeBadge + '<div class="text-[11px] font-semibold text-slate-700 truncate max-w-[130px]">' + (s.store || '-') + '</div></td>' +
+        '<td class="p-3 font-bold text-slate-900 whitespace-nowrap">' + (s.host || '-') + '</td>' +
+        '<td class="p-3 text-slate-600 whitespace-nowrap">' + (s.duration || '-') + '</td>' +
+        '<td class="p-3 text-center whitespace-nowrap"><span class="font-bold text-indigo-700">' + (s.viewers || 0) + '</span><span class="block text-[10px] text-slate-400">Avg: ' + (s.avgViewers || Math.round((s.viewers || 0) * 0.4)) + '</span></td>' +
+        '<td class="p-3 text-center font-bold text-slate-800 whitespace-nowrap">' + (s.ordersCount || s.items || 0) + '</td>' +
+        '<td class="p-3 text-right font-black text-slate-900 whitespace-nowrap">' + window.formatRupiah(omset) + '</td>' +
+        '<td class="p-3 text-right text-slate-500 whitespace-nowrap">' + window.formatRupiah(cogs) + '</td>' +
+        '<td class="p-3 text-right font-semibold text-rose-600 whitespace-nowrap">' + window.formatRupiah(ads) + '<span class="block text-[10px] text-slate-400 font-normal">ROAS: ' + roas + '</span></td>' +
+        '<td class="p-3 text-right font-black ' + (margin < 0 ? 'text-rose-600' : 'text-emerald-600') + ' whitespace-nowrap">' + window.formatRupiah(margin) + '<span class="block text-[10px] font-bold ' + (margin < 0 ? 'text-rose-700' : 'text-emerald-700') + '">' + mPct + '%</span></td>' +
+        '<td class="p-3 text-right font-bold text-amber-900 whitespace-nowrap">' + window.formatRupiah(omsetPerHour) + '/jam</td>' +
+        '<td class="p-3 text-center whitespace-nowrap">' + sopBadge + '</td>' +
+      '</tr>';
+    }).join('');
+  };
+
+  // Buka Modal Detail Sesi Live & Feedback Manajemen
+  window.openLiveSessionDetail = function (sessionId) {
+    var raw = window.appState.data.liveSessions || [];
+    var s = raw.find(function (item) { return item.id === sessionId; });
+    if (!s) {
+      window.showToast('Data sesi live tidak ditemukan!', 'error');
+      return;
+    }
+
+    window.currentSelectedLiveSessionId = s.id;
+
+    var omset = Number(s.omset) || 0;
+    var margin = Number(s.margin) || 0;
+    var mPct = omset > 0 ? ((margin / omset) * 100).toFixed(1) : '0';
+    var ads = Number(s.ads) || 0;
+    var cogs = Number(s.cogs) || 0;
+    var fee = Number(s.fee) || 0;
+    var roas = ads > 0 ? (omset / ads).toFixed(1) + 'x' : '-';
+    var durHours = window.parseDurationHours(s.duration);
+    var omsetPerHour = durHours > 0 ? Math.round(omset / durHours) : omset;
+
+    // Header info
+    document.getElementById('lr-detail-title').textContent = 'Detail Sesi: ' + (s.id || '-');
+    document.getElementById('lr-detail-store').textContent = s.store || '-';
+    document.getElementById('lr-detail-host').textContent = s.host || '-';
+    document.getElementById('lr-detail-date').textContent = (s.date || '-') + ' (' + (s.startTime || '09:00') + ' - ' + (s.endTime || '12:00') + ' WIB)';
+    document.getElementById('lr-detail-duration').textContent = s.duration || '-';
+    document.getElementById('lr-detail-footer-id').textContent = 'Session ID: ' + s.id + ' | Operator Input: ' + (s.operator || s.host || 'Host');
+
+    // SOP Badge
+    var sopBadgeEl = document.getElementById('lr-detail-sop-badge');
+    if (sopBadgeEl) {
+      if (s.sopStatus === 'late') {
+        sopBadgeEl.textContent = 'Terlambat Input';
+        sopBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-black bg-rose-500 text-white';
+      } else {
+        sopBadgeEl.textContent = 'SOP Valid';
+        sopBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500 text-white';
+      }
+    }
+
+    // Numbers
+    document.getElementById('lr-detail-omset').textContent = window.formatRupiah(omset);
+    document.getElementById('lr-detail-orders-count').textContent = (s.ordersCount || s.items || 0) + ' Order Berhasil';
+    document.getElementById('lr-detail-margin').textContent = window.formatRupiah(margin);
+    document.getElementById('lr-detail-margin-pct').textContent = mPct + '% margin bersih';
+    document.getElementById('lr-detail-ads').textContent = window.formatRupiah(ads);
+    document.getElementById('lr-detail-roas').textContent = 'ROAS: ' + roas;
+    document.getElementById('lr-detail-viewers').textContent = (s.viewers || 0) + ' Puncak';
+    document.getElementById('lr-detail-viewers-avg').textContent = 'Avg: ' + (s.avgViewers || Math.round((s.viewers || 0) * 0.4));
+
+    document.getElementById('lr-detail-cogs').textContent = window.formatRupiah(cogs);
+    document.getElementById('lr-detail-fee').textContent = window.formatRupiah(fee);
+    document.getElementById('lr-detail-voucher').textContent = window.formatRupiah(s.otherCosts || s.voucher || 0);
+    document.getElementById('lr-detail-rate-hour').textContent = window.formatRupiah(omsetPerHour) + ' / Jam';
+
+    // Rincian Produk Spion Terjual
+    var prodBody = document.getElementById('lr-detail-products-body');
+    var sold = s.soldProducts || [];
+    var totalPcs = 0;
+
+    if (sold.length === 0) {
+      prodBody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Tidak ada rincian produk satuan yang tercatat (Rekap Total: ' + (s.items || 0) + ' pcs)</td></tr>';
+      totalPcs = s.items || 0;
+    } else {
+      prodBody.innerHTML = sold.map(function (p) {
+        var qty = Number(p.qty) || 0;
+        var hpp = Number(p.cogs) || 0;
+        var subtotal = qty * (Number(p.price) || hpp);
+        totalPcs += qty;
+        return '<tr>' +
+          '<td class="p-2.5 font-bold text-slate-800">' + (p.sku || '-') + '<span class="block text-[11px] font-normal text-slate-600">' + (p.name || '-') + '</span></td>' +
+          '<td class="p-2.5 text-center font-black text-amber-900">' + qty + ' pcs</td>' +
+          '<td class="p-2.5 text-right text-slate-500">' + window.formatRupiah(hpp) + '</td>' +
+          '<td class="p-2.5 text-right font-bold text-slate-900">' + window.formatRupiah(subtotal) + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    document.getElementById('lr-detail-total-pcs').textContent = 'Total Terjual: ' + totalPcs + ' pcs spion';
+
+    // Kendala Sesi & Catatan Host
+    var obstBox = document.getElementById('lr-detail-obstacles-box');
+    var obstList = s.obstacles || [];
+    if (obstList.length === 0) {
+      obstBox.innerHTML = '<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold">Lancar Tanpa Kendala Teknis</span>';
+    } else {
+      obstBox.innerHTML = obstList.map(function (o) {
+        return '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">⚠️ ' + o + '</span>';
+      }).join(' ');
+    }
+    document.getElementById('lr-detail-notes').textContent = s.notes || 'Tidak ada catatan tambahan dari host siaran.';
+
+    // Bukti Screenshot
+    var proofImg = document.getElementById('lr-detail-proof-img');
+    if (proofImg) {
+      proofImg.src = s.proofPhoto || window.createMockLiveAnalyticsSvg(s.store || 'Toko', s.host || 'Host', s.date || '2026-11-15', omset, s.viewers || 1000);
+    }
+
+    // Render Riwayat Catatan Manajemen
+    window.renderManagementNotesHistory(s);
+
+    // Buka Modal
+    window.openModal('modal-lr-session-detail');
+  };
+
+  // Render Catatan Manajemen pada Detail Sesi
+  window.renderManagementNotesHistory = function (session) {
+    var container = document.getElementById('lr-detail-mgmt-notes-history');
+    if (!container) return;
+
+    var notes = session.managementNotes || [];
+    if (notes.length === 0) {
+      container.innerHTML = '<p class="text-[11px] text-slate-500 italic p-2 bg-white rounded border border-amber-200/60">Belum ada evaluasi atau instruksi tertulis dari manajemen untuk sesi ini.</p>';
+      return;
+    }
+
+    container.innerHTML = notes.map(function (n) {
+      return '<div class="p-2.5 bg-white rounded-lg border border-amber-300/80 space-y-1">' +
+        '<div class="flex items-center justify-between text-[10px]">' +
+          '<strong class="text-amber-950 font-bold">' + (n.author || 'Manajemen') + ' <span class="text-slate-400 font-normal">(' + (n.role || 'Admin') + ')</span></strong>' +
+          '<span class="text-slate-400">' + (n.timeStr || n.timestamp || '-') + '</span>' +
+        '</div>' +
+        '<p class="text-xs text-slate-800 font-medium">' + (n.text || '-') + '</p>' +
+      '</div>';
+    }).join('');
+  };
+
+  // Simpan Feedback / Catatan Manajemen ke Host
+  window.saveManagementNoteFromDetail = function () {
+    var sessionId = window.currentSelectedLiveSessionId;
+    if (!sessionId) return;
+
+    var inputEl = document.getElementById('lr-detail-new-mgmt-note');
+    var text = inputEl ? inputEl.value.trim() : '';
+
+    if (!text) {
+      window.showToast('Ketik isi feedback manajemen terlebih dahulu!', 'warning');
+      return;
+    }
+
+    var raw = window.appState.data.liveSessions || [];
+    var s = raw.find(function (item) { return item.id === sessionId; });
+    if (!s) return;
+
+    var user = window.appState.currentUser || { name: 'Admin IT', role: 'admin' };
+    var now = new Date();
+    var timeStr = now.toISOString().slice(0, 10) + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
+
+    if (!s.managementNotes) s.managementNotes = [];
+    s.managementNotes.push({
+      author: user.name || 'Manajemen',
+      role: user.role || 'admin',
+      timestamp: now.toISOString(),
+      timeStr: timeStr,
+      text: text
+    });
+
+    try {
+      localStorage.setItem('mja_clean_liveSessions', JSON.stringify(raw));
+    } catch (eLs) { }
+
+    inputEl.value = '';
+    window.renderManagementNotesHistory(s);
+    window.showToast('✅ Catatan evaluasi manajemen berhasil dikirim dan tersimpan untuk Host ' + s.host + '!', 'success');
+  };
+
+  // ===================================================================
+  // SUBMENU 3: PERFORMA HOST (RANKING, METRICS, CHARTS)
+  // ===================================================================
+  window.renderHostPerformance = function () {
+    var data = window.getFilteredLiveSessions();
+    var sessions = data.current;
+
+    var hostMap = {};
+
+    sessions.forEach(function (s) {
+      var h = s.host || 'Unknown Host';
+      if (!hostMap[h]) {
+        hostMap[h] = {
+          name: h,
+          sessions: 0,
+          totalHours: 0,
+          omset: 0,
+          margin: 0,
+          orders: 0,
+          viewersSum: 0,
+          sopValidCount: 0
+        };
+      }
+      var durH = window.parseDurationHours(s.duration);
+      hostMap[h].sessions++;
+      hostMap[h].totalHours += durH;
+      hostMap[h].omset += Number(s.omset) || 0;
+      hostMap[h].margin += Number(s.margin) || 0;
+      hostMap[h].orders += Number(s.ordersCount || s.items) || 0;
+      hostMap[h].viewersSum += Number(s.viewers) || 0;
+      if (s.sopStatus !== 'late') hostMap[h].sopValidCount++;
+    });
+
+    var hostList = Object.keys(hostMap).map(function (k) { return hostMap[k]; });
+
+    // Sort berdasarkan omset tertinggi
+    hostList.sort(function (a, b) { return b.omset - a.omset; });
+
+    // Update Banner Top Host
+    var topHost = hostList[0] || null;
+    var bannerEl = document.getElementById('lr-top-host-banner');
+    if (bannerEl) {
+      if (topHost && topHost.omset > 0) {
+        var topRate = topHost.totalHours > 0 ? Math.round(topHost.omset / topHost.totalHours) : topHost.omset;
+        bannerEl.innerHTML = '<div class="flex items-center space-x-3.5">' +
+          '<div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-3xl font-black shadow-inner">' +
+            '👑' +
+          '</div>' +
+          '<div>' +
+            '<div class="flex items-center space-x-2">' +
+              '<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-300 text-amber-950">Top Host Periode Ini</span>' +
+              '<span class="text-xs text-amber-100">' + topHost.sessions + ' Sesi Live</span>' +
+            '</div>' +
+            '<h4 class="text-xl font-heading font-black text-white">' + topHost.name + '</h4>' +
+            '<p class="text-xs text-amber-100">Total Omset: <strong>' + window.formatRupiah(topHost.omset) + '</strong> | Margin: <strong>' + window.formatRupiah(topHost.margin) + '</strong></p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="text-right sm:border-l sm:border-amber-400/30 sm:pl-4">' +
+          '<span class="text-[10px] text-amber-200 block uppercase font-bold">Produktivitas Host</span>' +
+          '<div class="text-lg font-black text-white">' + window.formatRupiah(topRate) + ' / Jam</div>' +
+          '<span class="text-[11px] text-amber-100">Kepatuhan SOP: ' + Math.round((topHost.sopValidCount / topHost.sessions) * 100) + '%</span>' +
+        '</div>';
+      } else {
+        bannerEl.innerHTML = '<div class="p-2 text-center w-full text-white/80 font-semibold text-xs">Belum ada aktivitas siaran live streaming pada periode ini.</div>';
+      }
+    }
+
+    // Render Host Bar Chart
+    window.renderHostComparisonChart(hostList);
+
+    // Render Host Table
+    var tbody = document.getElementById('lr-table-hosts-body');
+    if (!tbody) return;
+
+    if (hostList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="p-6 text-center text-slate-400 italic font-semibold">Belum ada rekaman performa host pada filter ini.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = hostList.map(function (h, idx) {
+      var rateHour = h.totalHours > 0 ? Math.round(h.omset / h.totalHours) : h.omset;
+      var avgViewers = h.sessions > 0 ? Math.round(h.viewersSum / h.sessions) : 0;
+      var convRate = h.viewersSum > 0 ? ((h.orders / h.viewersSum) * 100).toFixed(1) : '0';
+      var sopPct = h.sessions > 0 ? Math.round((h.sopValidCount / h.sessions) * 100) : 100;
+      var mPct = h.omset > 0 ? ((h.margin / h.omset) * 100).toFixed(1) : '0';
+
+      var rankBadge = idx === 0
+        ? '<span class="w-6 h-6 rounded-full bg-amber-400 text-amber-950 font-black flex items-center justify-center text-xs shadow-xs">🥇</span>'
+        : (idx === 1
+          ? '<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black flex items-center justify-center text-xs">🥈</span>'
+          : (idx === 2
+            ? '<span class="w-6 h-6 rounded-full bg-amber-600 text-white font-black flex items-center justify-center text-xs">🥉</span>'
+            : '<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-xs">' + (idx + 1) + '</span>'));
+
+      return '<tr class="hover:bg-slate-50 transition-colors">' +
+        '<td class="p-3 text-center whitespace-nowrap">' + rankBadge + '</td>' +
+        '<td class="p-3 font-bold text-slate-900 whitespace-nowrap">' + h.name + '</td>' +
+        '<td class="p-3 text-center font-semibold text-slate-700 whitespace-nowrap">' + h.sessions + ' Sesi</td>' +
+        '<td class="p-3 text-center text-slate-600 whitespace-nowrap">' + h.totalHours.toFixed(1) + ' Jam</td>' +
+        '<td class="p-3 text-right font-black text-slate-900 whitespace-nowrap">' + window.formatRupiah(h.omset) + '</td>' +
+        '<td class="p-3 text-right font-bold ' + (h.margin < 0 ? 'text-rose-600' : 'text-emerald-600') + ' whitespace-nowrap">' + window.formatRupiah(h.margin) + ' (' + mPct + '%)</td>' +
+        '<td class="p-3 text-right font-extrabold text-amber-900 whitespace-nowrap">' + window.formatRupiah(rateHour) + '</td>' +
+        '<td class="p-3 text-center font-bold text-indigo-700 whitespace-nowrap">' + avgViewers + '</td>' +
+        '<td class="p-3 text-center font-semibold text-slate-700 whitespace-nowrap">' + convRate + '%</td>' +
+        '<td class="p-3 text-center whitespace-nowrap"><span class="px-2 py-0.5 rounded text-[10px] font-black ' + (sopPct >= 90 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800') + '">' + sopPct + '%</span></td>' +
+      '</tr>';
+    }).join('');
+  };
+
+  // Render Grafik Perbandingan Antar Host
+  window.renderHostComparisonChart = function (hostList) {
+    var canvas = document.getElementById('lr-host-chart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (window.lrHostChartInstance) {
+      window.lrHostChartInstance.destroy();
+    }
+
+    var labels = hostList.map(function (h) { return h.name; });
+    var omsetVals = hostList.map(function (h) { return h.omset; });
+    var marginVals = hostList.map(function (h) { return h.margin; });
+
+    window.lrHostChartInstance = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Total Omset (Rp)',
+            data: omsetVals,
+            backgroundColor: '#B4532A',
+            borderRadius: 6
+          },
+          {
+            label: 'Margin Bersih (Rp)',
+            data: marginVals,
+            backgroundColor: '#2F5D50',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' } } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                return ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: {
+              callback: function (val) {
+                return val >= 1000000 ? (val / 1000000) + ' Jt' : window.formatRupiah(val);
+              },
+              font: { size: 10 }
+            }
+          },
+          x: { ticks: { font: { size: 11, weight: 'bold' } } }
+        }
+      }
+    });
+  };
+
+  // ===================================================================
+  // SUBMENU 4: IKLAN & PROFITABILITAS
+  // ===================================================================
+  window.renderAdsProfitability = function () {
+    var data = window.getFilteredLiveSessions();
+    var sessions = data.current;
+
+    var totalOmset = sessions.reduce(function (sum, s) { return sum + (Number(s.omset) || 0); }, 0);
+    var totalAds = sessions.reduce(function (sum, s) { return sum + (Number(s.ads) || 0); }, 0);
+    var totalCogs = sessions.reduce(function (sum, s) { return sum + (Number(s.cogs) || 0); }, 0);
+    var totalFee = sessions.reduce(function (sum, s) { return sum + (Number(s.fee) || 0); }, 0);
+    var totalMargin = sessions.reduce(function (sum, s) { return sum + (Number(s.margin) || 0); }, 0);
+
+    var avgRoas = totalAds > 0 ? (totalOmset / totalAds).toFixed(2) : '0.00';
+    var adRatio = totalOmset > 0 ? ((totalAds / totalOmset) * 100).toFixed(1) : '0';
+    var preAdMargin = totalOmset - totalCogs - totalFee;
+
+    if (document.getElementById('lr-ads-total-cost')) document.getElementById('lr-ads-total-cost').textContent = window.formatRupiah(totalAds);
+    if (document.getElementById('lr-ads-avg-roas')) document.getElementById('lr-ads-avg-roas').textContent = avgRoas + 'x';
+    if (document.getElementById('lr-ads-ratio-pct')) document.getElementById('lr-ads-ratio-pct').textContent = adRatio + '%';
+    if (document.getElementById('lr-ads-pre-post-margin')) {
+      document.getElementById('lr-ads-pre-post-margin').innerHTML =
+        '<span class="text-slate-500 font-semibold">' + window.formatRupiah(preAdMargin) + '</span> &rarr; ' +
+        '<span class="' + (totalMargin < 0 ? 'text-rose-600' : 'text-emerald-600') + '">' + window.formatRupiah(totalMargin) + '</span>';
+    }
+
+    var tbody = document.getElementById('lr-table-ads-body');
+    if (!tbody) return;
+
+    if (sessions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="p-6 text-center text-slate-400 italic">Belum ada sesi pada filter ini.</td></tr>';
+      return;
+    }
+
+    // Sort berdasarkan rasio iklan tertinggi / sesi rugi
+    var sorted = sessions.slice().sort(function (a, b) {
+      var aOmset = Number(a.omset) || 0;
+      var bOmset = Number(b.omset) || 0;
+      var aAds = Number(a.ads) || 0;
+      var bAds = Number(b.ads) || 0;
+      var aRatio = aOmset > 0 ? aAds / aOmset : 0;
+      var bRatio = bOmset > 0 ? bAds / bOmset : 0;
+      return bRatio - aRatio;
+    });
+
+    tbody.innerHTML = sorted.map(function (s) {
+      var omset = Number(s.omset) || 0;
+      var ads = Number(s.ads) || 0;
+      var cogs = Number(s.cogs) || 0;
+      var fee = Number(s.fee) || 0;
+      var margin = Number(s.margin) || 0;
+      var roas = ads > 0 ? (omset / ads).toFixed(1) + 'x' : '-';
+      var ratio = omset > 0 ? ((ads / omset) * 100).toFixed(1) : '0';
+      var preMargin = omset - cogs - fee;
+      var mPct = omset > 0 ? ((margin / omset) * 100).toFixed(1) : '0';
+
+      var isLoss = margin < 0;
+      var isHighAd = Number(ratio) > 30;
+
+      var rowBg = isLoss ? 'bg-rose-50/70 hover:bg-rose-100/70' : (isHighAd ? 'bg-amber-50/50 hover:bg-amber-100/50' : 'hover:bg-slate-50');
+
+      return '<tr class="' + rowBg + ' cursor-pointer transition-colors" onclick="window.openLiveSessionDetail(\'' + s.id + '\')">' +
+        '<td class="p-3 font-semibold text-slate-800 whitespace-nowrap">' + (s.date || '-') + '<span class="block text-[10px] text-slate-400">' + s.id + '</span></td>' +
+        '<td class="p-3 font-bold text-slate-900 whitespace-nowrap">' + (s.host || '-') + '</td>' +
+        '<td class="p-3 text-slate-700 whitespace-nowrap truncate max-w-[120px]">' + (s.store || '-') + '</td>' +
+        '<td class="p-3 text-right font-bold text-slate-900 whitespace-nowrap">' + window.formatRupiah(omset) + '</td>' +
+        '<td class="p-3 text-right font-black text-rose-600 whitespace-nowrap">' + window.formatRupiah(ads) + '</td>' +
+        '<td class="p-3 text-center font-extrabold text-amber-700 whitespace-nowrap">' + roas + '</td>' +
+        '<td class="p-3 text-center whitespace-nowrap"><span class="px-2 py-0.5 rounded text-[10px] font-black ' + (isHighAd ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700') + '">' + ratio + '%</span></td>' +
+        '<td class="p-3 text-right text-slate-600 whitespace-nowrap">' + window.formatRupiah(preMargin) + '</td>' +
+        '<td class="p-3 text-right font-black ' + (isLoss ? 'text-rose-600' : 'text-emerald-600') + ' whitespace-nowrap">' + window.formatRupiah(margin) + ' (' + mPct + '%)</td>' +
+        '<td class="p-3 text-center whitespace-nowrap">' +
+          (isLoss
+            ? '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white">RUGI</span>'
+            : (Number(mPct) < 20
+              ? '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500 text-white">MARGIN TIPIS</span>'
+              : '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-600 text-white">PROFITABLE</span>')) +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  };
+
+  // ===================================================================
+  // SUBMENU 5: ANALISIS PRODUK SPION TERJUAL
+  // ===================================================================
+  window.renderLiveProductsReport = function () {
+    var data = window.getFilteredLiveSessions();
+    var sessions = data.current;
+    var inventory = window.appState.data.inventory || [];
+
+    var prodMap = {};
+
+    sessions.forEach(function (s) {
+      (s.soldProducts || []).forEach(function (p) {
+        var sku = p.sku;
+        if (!sku) return;
+        if (!prodMap[sku]) {
+          prodMap[sku] = {
+            sku: sku,
+            name: p.name || sku,
+            pcs: 0,
+            omset: 0,
+            cogs: 0
+          };
+        }
+        var qty = Number(p.qty) || 0;
+        var hpp = Number(p.cogs) || 0;
+        var pr = Number(p.price) || (hpp * 1.5);
+        prodMap[sku].pcs += qty;
+        prodMap[sku].omset += qty * pr;
+        prodMap[sku].cogs += qty * hpp;
+      });
+    });
+
+    var prodList = Object.keys(prodMap).map(function (k) { return prodMap[k]; });
+
+    // 1. Produk Terlaris (by pcs)
+    var topSelling = prodList.slice().sort(function (a, b) { return b.pcs - a.pcs; }).slice(0, 5);
+    var topBody = document.getElementById('lr-table-top-products-body');
+    if (topBody) {
+      if (topSelling.length === 0) {
+        topBody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Belum ada produk yang terjual</td></tr>';
+      } else {
+        topBody.innerHTML = topSelling.map(function (p, idx) {
+          return '<tr class="hover:bg-slate-50">' +
+            '<td class="p-2.5 font-bold text-slate-800">' + (idx + 1) + '. ' + p.sku + '<span class="block text-[10px] text-slate-500 font-normal">' + p.name + '</span></td>' +
+            '<td class="p-2.5 text-center font-black text-amber-900">' + p.pcs + ' pcs</td>' +
+            '<td class="p-2.5 text-right font-bold text-slate-900">' + window.formatRupiah(p.omset) + '</td>' +
+            '<td class="p-2.5 text-right text-emerald-600 font-bold">' + window.formatRupiah(p.omset - p.cogs) + '</td>' +
+          '</tr>';
+        }).join('');
+      }
+    }
+
+    // 2. Margin Tertinggi / Terendah
+    var marginRanked = prodList.filter(function (p) { return p.omset > 0; }).map(function (p) {
+      var profit = p.omset - p.cogs;
+      var pct = (profit / p.omset) * 100;
+      return Object.assign({}, p, { profit: profit, pct: pct });
+    }).sort(function (a, b) { return b.pct - a.pct; });
+
+    var marginBody = document.getElementById('lr-table-margin-products-body');
+    if (marginBody) {
+      if (marginRanked.length === 0) {
+        marginBody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Belum ada data margin produk</td></tr>';
+      } else {
+        marginBody.innerHTML = marginRanked.slice(0, 5).map(function (p) {
+          return '<tr class="hover:bg-slate-50">' +
+            '<td class="p-2.5 font-bold text-slate-800">' + p.sku + '<span class="block text-[10px] text-slate-500 font-normal">' + p.name + '</span></td>' +
+            '<td class="p-2.5 text-right text-slate-500">' + window.formatRupiah(p.cogs / (p.pcs || 1)) + '</td>' +
+            '<td class="p-2.5 text-right text-slate-900 font-semibold">' + window.formatRupiah(p.omset / (p.pcs || 1)) + '</td>' +
+            '<td class="p-2.5 text-right font-black text-emerald-600">' + p.pct.toFixed(1) + '%</td>' +
+          '</tr>';
+        }).join('');
+      }
+    }
+
+    // 3. Produk Jarang Laku (Slow Movers)
+    var slowMovers = inventory.filter(function (inv) {
+      var soldCount = prodMap[inv.sku] ? prodMap[inv.sku].pcs : 0;
+      return soldCount === 0;
+    }).slice(0, 5);
+
+    var slowBody = document.getElementById('lr-table-slow-products-body');
+    if (slowBody) {
+      if (slowMovers.length === 0) {
+        slowBody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-emerald-700 font-semibold italic">Luar biasa! Semua produk inventori aktif terjual dalam siaran live.</td></tr>';
+      } else {
+        slowBody.innerHTML = slowMovers.map(function (inv) {
+          return '<tr class="hover:bg-slate-50">' +
+            '<td class="p-2.5 font-bold text-slate-800">' + inv.sku + '<span class="block text-[10px] text-slate-500 font-normal">' + inv.name + '</span></td>' +
+            '<td class="p-2.5 text-center font-bold text-slate-700">' + (inv.stock || 0) + ' spion</td>' +
+            '<td class="p-2.5 text-right text-slate-700">' + window.formatRupiah(inv.price || 0) + '</td>' +
+            '<td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900">0 pcs (Slow)</span></td>' +
+          '</tr>';
+        }).join('');
+      }
+    }
+  };
+
+  // ===================================================================
+  // TARGET SETTING (MODAL & LOCAL STORAGE)
+  // ===================================================================
+  window.openLiveTargetModal = function () {
+    var saved = {};
+    try {
+      saved = JSON.parse(localStorage.getItem('mja_live_targets') || '{}');
+    } catch (e) { }
+
+    if (saved.monthlyVal && document.getElementById('lr-target-monthly-val')) {
+      document.getElementById('lr-target-monthly-val').value = saved.monthlyVal;
+    }
+    if (saved.dailyVal && document.getElementById('lr-target-daily-val')) {
+      document.getElementById('lr-target-daily-val').value = saved.dailyVal;
+    }
+    if (saved.branch1 && document.getElementById('lr-target-branch-1')) {
+      document.getElementById('lr-target-branch-1').value = saved.branch1;
+    }
+    if (saved.branch2 && document.getElementById('lr-target-branch-2')) {
+      document.getElementById('lr-target-branch-2').value = saved.branch2;
+    }
+
+    window.openModal('modal-lr-targets');
+  };
+
+  window.saveLiveTargets = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    var monthlyVal = Number(document.getElementById('lr-target-monthly-val').value) || 150000000;
+    var dailyVal = Number(document.getElementById('lr-target-daily-val').value) || 5000000;
+    var branch1 = Number(document.getElementById('lr-target-branch-1').value) || 100000000;
+    var branch2 = Number(document.getElementById('lr-target-branch-2').value) || 50000000;
+
+    var targetObj = {
+      monthlyVal: monthlyVal,
+      dailyVal: dailyVal,
+      branch1: branch1,
+      branch2: branch2,
+      updatedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem('mja_live_targets', JSON.stringify(targetObj));
+    window.closeModal('modal-lr-targets');
+    window.showToast('✅ Target omset live stream berhasil disimpan!', 'success');
+
+    // Re-render Ringkasan Eksekutif
+    window.renderExecutiveSummary();
+  };
+
+  // ===================================================================
+  // EXPORT LAPORAN (EXCEL / CSV & PRINT PDF)
+  // ===================================================================
+  window.exportLiveReportExcel = function () {
+    var data = window.getFilteredLiveSessions();
+    var sessions = data.current;
+
+    if (sessions.length === 0) {
+      window.showToast('Tidak ada data sesi live untuk diekspor pada filter ini!', 'warning');
+      return;
+    }
+
+    var csvRows = [];
+    // Header CSV
+    csvRows.push([
+      'Session ID',
+      'Tanggal',
+      'Jam Mulai',
+      'Jam Selesai',
+      'Durasi',
+      'Platform Toko',
+      'Nama Host',
+      'Puncak Viewers',
+      'Avg Viewers',
+      'Jumlah Order',
+      'Total Pcs',
+      'Total Omset (Rp)',
+      'HPP Total (Rp)',
+      'Biaya Iklan (Rp)',
+      'Platform Fee (Rp)',
+      'Margin Bersih (Rp)',
+      'ROAS',
+      'Status SOP',
+      'Kendala Sesi',
+      'Catatan Host'
+    ].map(function (c) { return '"' + c + '"'; }).join(','));
+
+    sessions.forEach(function (s) {
+      var omset = Number(s.omset) || 0;
+      var ads = Number(s.ads) || 0;
+      var roas = ads > 0 ? (omset / ads).toFixed(2) : '0';
+      var obst = (s.obstacles || []).join('; ');
+
+      csvRows.push([
+        s.id || '',
+        s.date || '',
+        s.startTime || '',
+        s.endTime || '',
+        s.duration || '',
+        s.store || '',
+        s.host || '',
+        s.viewers || 0,
+        s.avgViewers || 0,
+        s.ordersCount || s.items || 0,
+        s.items || 0,
+        omset,
+        Number(s.cogs) || 0,
+        ads,
+        Number(s.fee) || 0,
+        Number(s.margin) || 0,
+        roas,
+        s.sopStatus || 'valid',
+        obst,
+        (s.notes || '').replace(/"/g, '""')
+      ].map(function (c) { return '"' + c + '"'; }).join(','));
+    });
+
+    var csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csvRows.join('\n'));
+    var link = document.createElement('a');
+    link.setAttribute('href', csvContent);
+    link.setAttribute('download', 'Laporan_Live_Streaming_MJA_' + new Date().toISOString().slice(0, 10) + '.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.showToast('✅ Berhasil mengunduh Laporan Live format Excel (CSV)!', 'success');
+  };
+
+  window.exportLiveReportPDF = function () {
+    window.showToast('Membuka dialog cetak PDF browser...', 'info');
+    setTimeout(function () {
+      window.print();
+    }, 400);
+  };
+
+  window.openImageInNewTab = function (src) {
+    if (!src) return;
+    var w = window.open('');
+    w.document.write('<html><head><title>Bukti Analitik Live Stream</title></head><body style="margin:0;background:#0f172a;display:flex;align-items:center;justify-content:center;height:100vh;"><img src="' + src + '" style="max-width:95%;max-height:95%;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-radius:12px;"/></body></html>');
+  };
+
+})();
+
+
+</script>
 
 </body>
 </html>
