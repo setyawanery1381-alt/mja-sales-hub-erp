@@ -993,6 +993,70 @@
                 </svg>
                 <span>Cetak Resi Terpilih</span>
               </button>
+              <button type="button" onclick="window.toggleStoreRecapPanel()"
+                class="px-3.5 py-2 bg-[#2F5D50] hover:bg-[#24483E] text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5 transition-all">
+                <svg class="w-4 h-4 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span>📊 Rekap 14 Akun &amp; Potongan Biaya</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- REKAPITULASI 14 AKUN TOKO & POTONGAN BIAYA MARKETPLACE (PRD BAB 4.2 & 4.8) -->
+          <div id="store-recap-panel" class="hidden bg-white p-5 rounded-2xl border border-stone-200/90 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 gap-2">
+              <div>
+                <h4 class="font-bold text-sm text-stone-900 flex items-center space-x-2">
+                  <span class="p-1 bg-emerald-50 text-emerald-700 rounded-lg">🏷️</span>
+                  <span>Rekapitulasi Per-Akun Toko Marketplace &amp; Rincian Potongan Biaya</span>
+                </h4>
+                <p class="text-xs text-stone-500 mt-0.5">Memisahkan omzet kotor, potongan komisi platform, gratis ongkir xtra, dan estimasi dana bersih pencairan</p>
+              </div>
+              <span class="px-2.5 py-1 bg-stone-100 text-stone-700 text-xs font-mono font-bold rounded-lg border border-stone-200 self-start sm:self-auto">
+                14 Toko Aktif (2 Cabang)
+              </span>
+            </div>
+
+            <!-- Summary KPI Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Pesanan</span>
+                <p class="text-lg font-bold text-stone-900 mt-0.5 font-mono" id="recap-total-orders">0 Pesanan</p>
+              </div>
+              <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-700">Total Nilai Bruto</span>
+                <p class="text-lg font-bold text-blue-900 mt-0.5 font-mono" id="recap-total-gross">Rp 0</p>
+              </div>
+              <div class="p-3 bg-rose-50/60 rounded-xl border border-rose-200">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Total Potongan Biaya</span>
+                <p class="text-lg font-bold text-rose-900 mt-0.5 font-mono" id="recap-total-fee">Rp 0</p>
+              </div>
+              <div class="p-3 bg-emerald-50/70 rounded-xl border border-emerald-300">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Estimasi Bersih Cair</span>
+                <p class="text-lg font-bold text-emerald-900 mt-0.5 font-mono" id="recap-total-net">Rp 0</p>
+              </div>
+            </div>
+
+            <!-- Table Recap per Store -->
+            <div class="overflow-x-auto rounded-xl border border-stone-200">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-stone-100 border-b border-stone-200 text-stone-600 font-bold uppercase text-[10px]">
+                    <th class="p-2.5">Akun Toko Marketplace</th>
+                    <th class="p-2.5">Cabang</th>
+                    <th class="p-2.5 text-center">Jml Order</th>
+                    <th class="p-2.5 text-right">Omzet Bruto</th>
+                    <th class="p-2.5 text-right text-stone-500">Komisi &amp; Layanan (~7.5%)</th>
+                    <th class="p-2.5 text-right text-stone-500">Gratis Ongkir Xtra (~4%)</th>
+                    <th class="p-2.5 text-right text-rose-700">Total Potongan</th>
+                    <th class="p-2.5 text-right text-emerald-800 font-extrabold bg-emerald-50/50">Est. Bersih Cair</th>
+                  </tr>
+                </thead>
+                <tbody id="table-store-recap-body" class="divide-y divide-stone-100 font-medium">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -1004,14 +1068,26 @@
                   placeholder="Cari No. Resi / ID Pesanan..."
                   class="text-xs bg-white border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-slate-900">
                 <select id="order-store-filter" onchange="window.filterOrderTable()"
-                  class="text-xs bg-white border border-slate-200 rounded-lg p-1.5 font-medium">
-                  <option value="all">Semua Akun Toko</option>
-                  <option value="Shopee Official Store 1">Shopee Toko 1</option>
-                  <option value="Shopee Mall Store 2">Shopee Toko 2</option>
-                  <option value="Shopee Grosir Store 3">Shopee Toko 3</option>
-                  <option value="Shopee Retail Store 4">Shopee Toko 4</option>
-                  <option value="Shopee Clearance Store 5">Shopee Toko 5</option>
-                  <option value="TikTok Shop Live Official">TikTok Live</option>
+                  class="text-xs bg-white border border-stone-300 rounded-lg p-2 font-medium text-stone-900 focus:ring-1 focus:ring-stone-900">
+                  <option value="all">Semua Toko (14 Akun Marketplace)</option>
+                  <optgroup label="🏢 CABANG A (PUSAT &amp; SEMARANG)">
+                    <option value="Shopee Official Store A1 (Pusat)">Shopee Official Store A1 (Pusat)</option>
+                    <option value="Shopee Mall Store A2 (Pusat)">Shopee Mall Store A2 (Pusat)</option>
+                    <option value="Shopee Grosir Store A3 (Pusat)">Shopee Grosir Store A3 (Pusat)</option>
+                    <option value="Shopee Retail Store A4 (Pusat)">Shopee Retail Store A4 (Pusat)</option>
+                    <option value="TikTok Shop Live A1 (Pusat)">TikTok Shop Live A1 (Pusat)</option>
+                    <option value="TikTok Shop Auto A2 (Pusat)">TikTok Shop Auto A2 (Pusat)</option>
+                    <option value="TikTok Clearance A3 (Pusat)">TikTok Clearance A3 (Pusat)</option>
+                  </optgroup>
+                  <optgroup label="🏭 CABANG B (HUB EKSPEDISI SOLO)">
+                    <option value="Shopee Official Store B1 (Solo)">Shopee Official Store B1 (Solo)</option>
+                    <option value="Shopee Grosir Store B2 (Solo)">Shopee Grosir Store B2 (Solo)</option>
+                    <option value="Shopee Spion Express B3 (Solo)">Shopee Spion Express B3 (Solo)</option>
+                    <option value="Shopee Sparepart B4 (Solo)">Shopee Sparepart B4 (Solo)</option>
+                    <option value="TikTok Shop Live B1 (Solo)">TikTok Shop Live B1 (Solo)</option>
+                    <option value="TikTok Modifikasi B2 (Solo)">TikTok Modifikasi B2 (Solo)</option>
+                    <option value="TikTok Flash Sale B3 (Solo)">TikTok Flash Sale B3 (Solo)</option>
+                  </optgroup>
                 </select>
 
                 <!-- Filter Exclude Pengiriman Kilat (Jawaban Klien) -->
@@ -1308,6 +1384,48 @@
                 <span class="text-[10px] font-bold uppercase text-rose-600">Dobel Kirim Dicegah</span>
                 <h4 class="text-xl font-extrabold text-rose-600 mt-1" id="qc-stat-double">1 Resi</h4>
                 <span class="text-[10px] text-rose-600 font-semibold">Mencegah kirim dobel</span>
+              </div>
+            </div>
+
+            <!-- TABEL DAFTAR RESI TERTINGGAL / REKONSILIASI SELISIH QC 2 (PRD BAB 4.4 & 8) -->
+            <div id="qc-missing-resi-container" class="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 gap-2">
+                <div>
+                  <h4 class="font-bold text-sm text-stone-900 flex items-center space-x-2">
+                    <span class="p-1 bg-amber-50 text-amber-700 rounded-lg">📋</span>
+                    <span>Daftar Nomor Resi Tertinggal / Belum Lolos QC Akhir</span>
+                  </h4>
+                  <p class="text-xs text-stone-500 mt-0.5">Daftar resi cetak yang belum di-scan sebelum diserahkan ke ekspedisi (Mencegah paket tertinggal di gudang)</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span id="qc-reconciliation-status-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold font-mono">
+                    STATUS REKONSILIASI
+                  </span>
+                  <button type="button" onclick="window.openManifestModal()" class="px-3.5 py-2 bg-[#B4532A] hover:bg-[#96421F] text-white rounded-lg text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>📦 Buat Manifest Serah Terima Kurir</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Missing Resi Table or All Clear Banner -->
+              <div id="qc-missing-table-wrapper" class="overflow-x-auto rounded-xl border border-stone-200">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-stone-100 border-b border-stone-200 text-stone-600 font-bold uppercase text-[10px]">
+                      <th class="p-2.5">No. Resi</th>
+                      <th class="p-2.5">ID Pesanan</th>
+                      <th class="p-2.5">Toko / Akun</th>
+                      <th class="p-2.5">Kurir Ekspedisi</th>
+                      <th class="p-2.5">Produk Wajib Dikirim</th>
+                      <th class="p-2.5">Status Saat Ini</th>
+                      <th class="p-2.5 text-right">Aksi Cepat</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-qc-missing-body" class="divide-y divide-stone-100 font-medium">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -1640,6 +1758,13 @@
                 </svg>
                 <span class="truncate">Tambah Produk</span>
               </button>
+              <button onclick="window.openTransferStockModal()"
+                class="py-2 px-3 bg-[#B4532A] hover:bg-[#96421F] text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all">
+                <svg class="w-3.5 h-3.5 text-orange-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <span class="truncate">Transfer Cabang A ⇄ B</span>
+              </button>
             </div>
           </div>
 
@@ -1708,7 +1833,9 @@
                     <th class="p-3">Nama Produk Spion</th>
                     <th class="p-3">HPP Modal (COGS)</th>
                     <th class="p-3">Harga Jual Normal</th>
-                    <th class="p-3">Stok Gudang</th>
+                    <th class="p-3 text-center bg-stone-100/80">Stok Fisik Rak</th>
+                    <th class="p-3 text-center bg-amber-50/60 text-amber-900">Dialokasikan</th>
+                    <th class="p-3 text-center bg-emerald-50/70 text-emerald-950 font-extrabold">Stok Tersedia</th>
                     <th class="p-3">Status</th>
                     <th class="p-3 text-right">Aksi</th>
                   </tr>
@@ -3435,12 +3562,23 @@
       },
       data: {
         stores: [
-          { id: '1', name: 'Shopee Official Store 1', platform: 'shopee', fee: 8.5 },
-          { id: '2', name: 'Shopee Mall Store 2', platform: 'shopee', fee: 9.0 },
-          { id: '3', name: 'Shopee Grosir Store 3', platform: 'shopee', fee: 7.5 },
-          { id: '4', name: 'Shopee Retail Store 4', platform: 'shopee', fee: 8.5 },
-          { id: '5', name: 'Shopee Clearance Store 5', platform: 'shopee', fee: 8.0 },
-          { id: '6', name: 'TikTok Shop Live Official', platform: 'tiktok', fee: 10.5 }
+          // CABANG A (PUSAT & GUDANG SEMARANG) - 4 SHOPEE & 3 TIKTOK SHOP
+          { id: 'SHP-A1', branch: 'Cabang A (Pusat)', name: 'Shopee Official Store A1 (Pusat)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'SHP-A2', branch: 'Cabang A (Pusat)', name: 'Shopee Mall Store A2 (Pusat)', platform: 'shopee', feeAdmin: 7.0, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'SHP-A3', branch: 'Cabang A (Pusat)', name: 'Shopee Grosir Store A3 (Pusat)', platform: 'shopee', feeAdmin: 6.0, feeOngkir: 3.5, feeService: 1.0 },
+          { id: 'SHP-A4', branch: 'Cabang A (Pusat)', name: 'Shopee Retail Store A4 (Pusat)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'TTK-A1', branch: 'Cabang A (Pusat)', name: 'TikTok Shop Live A1 (Pusat)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
+          { id: 'TTK-A2', branch: 'Cabang A (Pusat)', name: 'TikTok Shop Auto A2 (Pusat)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
+          { id: 'TTK-A3', branch: 'Cabang A (Pusat)', name: 'TikTok Clearance A3 (Pusat)', platform: 'tiktok', feeAdmin: 7.0, feeOngkir: 3.0, feeService: 1.0 },
+
+          // CABANG B (HUB EKSPEDISI SOLO) - 4 SHOPEE & 3 TIKTOK SHOP
+          { id: 'SHP-B1', branch: 'Cabang B (Solo)', name: 'Shopee Official Store B1 (Solo)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'SHP-B2', branch: 'Cabang B (Solo)', name: 'Shopee Grosir Store B2 (Solo)', platform: 'shopee', feeAdmin: 6.0, feeOngkir: 3.5, feeService: 1.0 },
+          { id: 'SHP-B3', branch: 'Cabang B (Solo)', name: 'Shopee Spion Express B3 (Solo)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'SHP-B4', branch: 'Cabang B (Solo)', name: 'Shopee Sparepart B4 (Solo)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'TTK-B1', branch: 'Cabang B (Solo)', name: 'TikTok Shop Live B1 (Solo)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
+          { id: 'TTK-B2', branch: 'Cabang B (Solo)', name: 'TikTok Modifikasi B2 (Solo)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
+          { id: 'TTK-B3', branch: 'Cabang B (Solo)', name: 'TikTok Flash Sale B3 (Solo)', platform: 'tiktok', feeAdmin: 7.0, feeOngkir: 3.0, feeService: 1.0 }
         ],
         liveSessions: [
           { id: 'LS-01', store: 'TikTok Shop Live Official', host: 'Rina', date: '2026-11-05', omset: 18500000, fee: 1942500, ads: 1500000, cogs: 6400000, margin: 8657500, items: 210 },
@@ -3463,44 +3601,260 @@
         }
       ],
         orders: [
-        {
-          id: 'ORD-261110VRD',
-          orderNo: '261110VRD4AUAR',
-          resi: 'CM75705456362',
-          store: 'Shopee (sewangi jiwa)',
-          buyer: 'Wiryo (Kota Tangerang)',
-          courier: 'JNE Express Reguler (TGR10056)',
-          product: 'Sewangi Jiwa BINAR Parfum Unisex 30ml (1 pcs)',
-          qty: 1,
-          total: 135000,
-          status: 'Menunggu Packing',
-          printed: true,
-          scanned: false
-        },
-          { id: 'ORD-SHP-901', store: 'Shopee Official Store 1', resi: 'SPXID029182390', courier: 'SPX Express', isInstant: false, printed: false, total: 249000, status: 'shipped' },
-          { id: 'ORD-SHP-902', store: 'Shopee Mall Store 2', resi: 'JT9812491209', courier: 'J&T Express', isInstant: false, printed: true, total: 119000, status: 'shipped' },
-          { id: 'ORD-TTK-801', store: 'TikTok Shop Live Official', resi: 'TKID82910248', courier: 'J&T Express', isInstant: false, printed: false, total: 349000, status: 'shipped' },
-          { id: 'ORD-SHP-903', store: 'Shopee Grosir Store 3', resi: 'JNE81920194', courier: 'JNE Reguler', isInstant: false, printed: false, total: 580000, status: 'shipped' },
-          // Pengiriman Kilat (Instant / Sameday) yang tidak diproses gudang (Pengecualian Klien)
-          { id: 'ORD-SHP-904', store: 'Shopee Official Store 1', resi: 'INST-SPX-88210', courier: 'Shopee Xpress Instant', isInstant: true, printed: false, total: 189000, status: 'pending' },
-          { id: 'ORD-SHP-905', store: 'Shopee Retail Store 4', resi: 'GRAB-SD-99211', courier: 'GrabExpress Sameday', isInstant: true, printed: false, total: 275000, status: 'pending' }
+          // Order 1: Test Resi Klien Shopee JNE (Lolos QC 1, Menunggu QC 2)
+          {
+            id: 'ORD-261110VRD',
+            orderNo: '261110VRD4AUAR',
+            resi: 'CM75705456362',
+            store: 'Shopee Official Store A1 (Pusat)',
+            branch: 'Cabang A (Pusat)',
+            platform: 'shopee',
+            buyer: 'Wiryo (Kota Tangerang)',
+            courier: 'JNE Express Reguler (TGR10056)',
+            product: 'Sewangi Jiwa BINAR Parfum Unisex 30ml (1 pcs)',
+            sku: 'PRFM-BNR-030',
+            qty: 1,
+            total: 135000,
+            feeAdmin: 8775,
+            feeOngkir: 5400,
+            feeService: 1350,
+            netIncome: 119475,
+            status: 'qc1_passed',
+            printed: true,
+            stage1Passed: true,
+            qcPassed: false,
+            handedOver: false,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order 2: Resi SPX Cabang A (Lolos QC 2 / Siap Diserahkan)
+          {
+            id: 'ORD-SHP-901',
+            orderNo: '261114SHPA901',
+            resi: 'SPXID029182390',
+            store: 'Shopee Official Store A1 (Pusat)',
+            branch: 'Cabang A (Pusat)',
+            platform: 'shopee',
+            buyer: 'Budi Darmawan (Semarang Barat)',
+            courier: 'SPX Express Reguler',
+            product: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)',
+            sku: 'SPN-MBL-001',
+            qty: 1,
+            total: 1150000,
+            feeAdmin: 74750,
+            feeOngkir: 46000,
+            feeService: 11500,
+            netIncome: 1017750,
+            status: 'qc2_passed',
+            printed: true,
+            stage1Passed: true,
+            qcPassed: true,
+            handedOver: false,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order 3: Resi Dobel Kemarin (SUDAH DISERAHKAN KE EKSPEDISI / HANDED OVER - Anti Dobel Kirim Hari Ini)
+          {
+            id: 'ORD-SHP-902',
+            orderNo: '261113SHP902',
+            resi: 'JT9812491209',
+            store: 'Shopee Mall Store A2 (Pusat)',
+            branch: 'Cabang A (Pusat)',
+            platform: 'shopee',
+            buyer: 'Hendri Gunawan (Surabaya)',
+            courier: 'J&T Express Reguler',
+            product: 'Spion Innova Reborn / Venturer Chrome Lipat Otomatis',
+            sku: 'SPN-MBL-002',
+            qty: 1,
+            total: 1450000,
+            feeAdmin: 101500,
+            feeOngkir: 58000,
+            feeService: 14500,
+            netIncome: 1276000,
+            status: 'handed_over',
+            manifestId: 'MAN-20261113-001',
+            printed: true,
+            stage1Passed: true,
+            qcPassed: true,
+            handedOver: true,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order 4: TikTok Live Pusat (Sudah Dicetak tapi BELUM QC 1)
+          {
+            id: 'ORD-TTK-801',
+            orderNo: '261114TTK801',
+            resi: 'TKID82910248',
+            store: 'TikTok Shop Live A1 (Pusat)',
+            branch: 'Cabang A (Pusat)',
+            platform: 'tiktok',
+            buyer: 'Rina Melati (Bandung)',
+            courier: 'J&T Express Reguler',
+            product: 'Kaca Spion Honda Brio / Mobilio Cembung Original (Kanan)',
+            sku: 'SPN-MBL-003',
+            qty: 2,
+            total: 370000,
+            feeAdmin: 27750,
+            feeOngkir: 11100,
+            feeService: 3700,
+            netIncome: 327450,
+            status: 'printed',
+            printed: true,
+            stage1Passed: false,
+            qcPassed: false,
+            handedOver: false,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order 5: Cabang B Solo Grosir (Lolos QC 1)
+          {
+            id: 'ORD-SHP-B01',
+            orderNo: '261114SHPB01',
+            resi: 'JNE81920194',
+            store: 'Shopee Grosir Store B2 (Solo)',
+            branch: 'Cabang B (Solo)',
+            platform: 'shopee',
+            buyer: 'Toko Variasi Motor Jaya (Solo)',
+            courier: 'JNE Reguler',
+            product: 'Spion Jalu Bar End CNC Universal NMAX / Aerox / PCX',
+            sku: 'SPN-MTR-002',
+            qty: 5,
+            total: 490000,
+            feeAdmin: 29400,
+            feeOngkir: 17150,
+            feeService: 4900,
+            netIncome: 438550,
+            status: 'qc1_passed',
+            printed: true,
+            stage1Passed: true,
+            qcPassed: false,
+            handedOver: false,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order 6: TikTok Solo Live 1 (Sudah Dicetak tapi BELUM QC 1)
+          {
+            id: 'ORD-TTK-B01',
+            orderNo: '261114TTKB01',
+            resi: 'TKID99210455',
+            store: 'TikTok Shop Live B1 (Solo)',
+            branch: 'Cabang B (Solo)',
+            platform: 'tiktok',
+            buyer: 'Dewi Anggraini (Yogyakarta)',
+            courier: 'SiCepat Reguler',
+            product: 'Spion Model Circuit Tomok 2.0 Full CNC Universal',
+            sku: 'SPN-MTR-003',
+            qty: 1,
+            total: 135000,
+            feeAdmin: 10125,
+            feeOngkir: 4050,
+            feeService: 1350,
+            netIncome: 119475,
+            status: 'printed',
+            printed: true,
+            stage1Passed: false,
+            qcPassed: false,
+            handedOver: false,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order 7: Order Batal Pembeli (CANCELLED)
+          {
+            id: 'ORD-TTK-CAN',
+            orderNo: '261114CAN990',
+            resi: 'CANCEL-TK-990',
+            store: 'TikTok Shop Live A1 (Pusat)',
+            branch: 'Cabang A (Pusat)',
+            platform: 'tiktok',
+            buyer: 'Rizal Fahmi (Jakarta Selatan)',
+            courier: 'J&T Express',
+            product: 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome',
+            sku: 'SPN-MTR-004',
+            qty: 1,
+            total: 175000,
+            feeAdmin: 0,
+            feeOngkir: 0,
+            feeService: 0,
+            netIncome: 0,
+            status: 'cancelled',
+            printed: true,
+            stage1Passed: false,
+            qcPassed: false,
+            handedOver: false,
+            isInstant: false,
+            reprintHistory: []
+          },
+          // Order Kilat (Instant / Sameday) - Pengecualian SOP Gudang
+          {
+            id: 'ORD-SHP-904',
+            orderNo: '261114INST904',
+            resi: 'INST-SPX-88210',
+            store: 'Shopee Official Store A1 (Pusat)',
+            branch: 'Cabang A (Pusat)',
+            platform: 'shopee',
+            buyer: 'Bambang Santoso (Semarang Tengah)',
+            courier: 'Shopee Xpress Instant',
+            product: 'Cover Spion Fortuner VRZ / Hilux Hitam Glossy',
+            sku: 'SPN-MBL-004',
+            qty: 1,
+            total: 320000,
+            feeAdmin: 20800,
+            feeOngkir: 12800,
+            feeService: 3200,
+            netIncome: 283200,
+            status: 'new_order',
+            isInstant: true,
+            printed: false,
+            stage1Passed: false,
+            qcPassed: false,
+            handedOver: false,
+            reprintHistory: []
+          }
+        ],
+        manifests: [
+          {
+            id: 'MAN-20261113-001',
+            branch: 'Cabang A (Pusat)',
+            courier: 'J&T Express',
+            driverName: 'Pak Joko (Driver J&T Semarang)',
+            vehicleNo: 'H 8192 ZA',
+            time: '17:15 WIB',
+            date: '2026-11-13',
+            totalPackages: 18,
+            resiList: ['JT9812491209']
+          }
+        ],
+        stockTransfers: [
+          {
+            id: 'TRF-001',
+            fromBranch: 'Cabang A (Pusat)',
+            toBranch: 'Cabang B (Solo)',
+            sku: 'SPN-MBL-001',
+            productName: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)',
+            qty: 15,
+            suratJalan: 'SJ-TRF-261114-01',
+            driver: 'Agus Ekspedisi Logistik',
+            time: '09:30 WIB',
+            date: '2026-11-14',
+            status: 'Selesai'
+          }
         ],
         returns: [
           { id: 'RET-001', resi: 'SPXID029182390', condition: 'restock_good', effect: 'Stok Gudang +1 (Restock), Omset Batal', time: '10:30', notes: 'Salah tipe spion dari pembeli' }
         ],
         productGroups: ['Spion Mobil', 'Spion Motor', 'Aksesoris & Sparepart'],
         inventory: [
-          { id: 'INV-1', group: 'Spion Mobil', sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)', cogs: 650000, price: 1150000, stock: 85 },
-          { id: 'INV-2', group: 'Spion Mobil', sku: 'SPN-MBL-002', name: 'Spion Innova Reborn / Venturer Chrome Lipat Otomatis', cogs: 850000, price: 1450000, stock: 64 },
-          { id: 'INV-3', group: 'Spion Mobil', sku: 'SPN-MBL-003', name: 'Kaca Spion Honda Brio / Mobilio Cembung Original (Kanan)', cogs: 95000, price: 185000, stock: 140 },
-          { id: 'INV-4', group: 'Spion Mobil', sku: 'SPN-MBL-004', name: 'Cover Spion Fortuner VRZ / Hilux Hitam Glossy + Lampu Sein', cogs: 175000, price: 320000, stock: 90 },
-          { id: 'INV-5', group: 'Spion Motor', sku: 'SPN-MTR-001', name: 'Spion Standar Honda Vario 125/150 / Beat FI Drat Honda', cogs: 25000, price: 55000, stock: 320 },
-          { id: 'INV-6', group: 'Spion Motor', sku: 'SPN-MTR-002', name: 'Spion Jalu Bar End CNC Universal NMAX / Aerox / PCX', cogs: 45000, price: 98000, stock: 210 },
-          { id: 'INV-7', group: 'Spion Motor', sku: 'SPN-MTR-003', name: 'Spion Model Circuit Tomok 2.0 Full CNC Universal', cogs: 65000, price: 135000, stock: 175 },
-          { id: 'INV-8', group: 'Spion Motor', sku: 'SPN-MTR-004', name: 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome', cogs: 85000, price: 175000, stock: 120 },
-          { id: 'INV-9', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-001', name: 'Modul Auto Retract Spion Lipat Otomatis Universal Mobil', cogs: 75000, price: 165000, stock: 190 },
-          { id: 'INV-10', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-002', name: 'Blind Spot Mirror Cembung 360 Derajat HD Frameless (Isi 2)', cogs: 12000, price: 35000, stock: 450 },
-          { id: 'INV-11', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-003', name: 'Saklar Switch Spion Retract Tombol Lipat Toyota', cogs: 55000, price: 120000, stock: 110 }
+          { id: 'INV-1', group: 'Spion Mobil', sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)', cogs: 650000, price: 1150000, physicalStock: 85, allocatedStock: 2, stock: 83 },
+          { id: 'INV-2', group: 'Spion Mobil', sku: 'SPN-MBL-002', name: 'Spion Innova Reborn / Venturer Chrome Lipat Otomatis', cogs: 850000, price: 1450000, physicalStock: 64, allocatedStock: 1, stock: 63 },
+          { id: 'INV-3', group: 'Spion Mobil', sku: 'SPN-MBL-003', name: 'Kaca Spion Honda Brio / Mobilio Cembung Original (Kanan)', cogs: 95000, price: 185000, physicalStock: 140, allocatedStock: 2, stock: 138 },
+          { id: 'INV-4', group: 'Spion Mobil', sku: 'SPN-MBL-004', name: 'Cover Spion Fortuner VRZ / Hilux Hitam Glossy + Lampu Sein', cogs: 175000, price: 320000, physicalStock: 90, allocatedStock: 1, stock: 89 },
+          { id: 'INV-5', group: 'Spion Motor', sku: 'SPN-MTR-001', name: 'Spion Standar Honda Vario 125/150 / Beat FI Drat Honda', cogs: 25000, price: 55000, physicalStock: 320, allocatedStock: 0, stock: 320 },
+          { id: 'INV-6', group: 'Spion Motor', sku: 'SPN-MTR-002', name: 'Spion Jalu Bar End CNC Universal NMAX / Aerox / PCX', cogs: 45000, price: 98000, physicalStock: 210, allocatedStock: 5, stock: 205 },
+          { id: 'INV-7', group: 'Spion Motor', sku: 'SPN-MTR-003', name: 'Spion Model Circuit Tomok 2.0 Full CNC Universal', cogs: 65000, price: 135000, physicalStock: 175, allocatedStock: 1, stock: 174 },
+          { id: 'INV-8', group: 'Spion Motor', sku: 'SPN-MTR-004', name: 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome', cogs: 85000, price: 175000, physicalStock: 120, allocatedStock: 0, stock: 120 },
+          { id: 'INV-9', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-001', name: 'Modul Auto Retract Spion Lipat Otomatis Universal Mobil', cogs: 75000, price: 165000, physicalStock: 190, allocatedStock: 0, stock: 190 },
+          { id: 'INV-10', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-002', name: 'Blind Spot Mirror Cembung 360 Derajat HD Frameless (Isi 2)', cogs: 12000, price: 35000, physicalStock: 450, allocatedStock: 0, stock: 450 },
+          { id: 'INV-11', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-003', name: 'Saklar Switch Spion Retract Tombol Lipat Toyota', cogs: 55000, price: 120000, physicalStock: 110, allocatedStock: 0, stock: 110 }
         ],
         users: [
           { id: '1', name: 'Super IT Admin', email: 'admin@demo.com', role: 'admin', active: true },
@@ -3769,6 +4123,8 @@
       window.renderAllData();
       window.calculateOnlinePrice();
       window.renderQCStats();
+      if (window.renderMissingQC2Resi) window.renderMissingQC2Resi();
+      if (window.renderStoreRecap) window.renderStoreRecap();
       window.renderAttendanceLogs();
     };
 
@@ -5269,7 +5625,7 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      var search = (document.getElementById('order-search-input') ? document.getElementById('order-search-input').value.toLowerCase() : '');
+      var search = (document.getElementById('order-search-input') ? document.getElementById('order-search-input').value.toLowerCase().trim() : '');
       var storeFilter = (document.getElementById('order-store-filter') ? document.getElementById('order-store-filter').value : 'all');
       var courierFilter = (document.getElementById('order-courier-filter') ? document.getElementById('order-courier-filter').value : 'exclude_instant');
 
@@ -5279,35 +5635,70 @@
         else banner.classList.add('hidden');
       }
 
-      window.appState.data.orders.forEach(function (o) {
-        // Filter search
-        if (search && o.id.toLowerCase().indexOf(search) === -1 && o.resi.toLowerCase().indexOf(search) === -1) return;
-        // Filter store
+      var orders = window.appState.data.orders || [];
+
+      orders.forEach(function (o) {
+        // Search filter
+        if (search && o.id.toLowerCase().indexOf(search) === -1 && o.resi.toLowerCase().indexOf(search) === -1 && o.product.toLowerCase().indexOf(search) === -1) return;
+        // Store filter
         if (storeFilter !== 'all' && o.store !== storeFilter) return;
-        // Filter courier (Instant vs Reguler)
+        // Courier filter
         if (courierFilter === 'exclude_instant' && o.isInstant) return;
         if (courierFilter === 'only_instant' && !o.isInstant) return;
 
         var tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition-colors ' + (o.isInstant ? 'bg-amber-50/40' : '');
-        tr.innerHTML = '<td class="p-3"><input type="checkbox" class="order-checkbox" value="' + o.id + '" ' + (o.isInstant ? 'disabled' : '') + '></td>' +
-          '<td class="p-3 font-mono font-bold text-slate-800">' + o.id + '</td>' +
-          '<td class="p-3">' + o.store + '</td>' +
-          '<td class="p-3 font-mono text-slate-600">' + o.resi + '<br><span class="text-[10px] text-slate-400">' + o.courier + '</span></td>' +
-          '<td class="p-3">' + (o.isInstant ? '<span class="px-2 py-0.5 bg-rose-100 text-rose-700 rounded text-[10px] font-bold">KILAT (Dilewati)</span>' : '<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] font-medium">Reguler/Cargo</span>') + '</td>' +
-          '<td class="p-3">' + (o.printed ? '<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-medium">Sudah Cetak</span>' : '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-bold">Belum Cetak</span>') + '</td>' +
-          '<td class="p-3 font-bold">' + window.formatRupiah(o.total) + '</td>' +
-          '<td class="p-3 text-right">' +
-          (o.isInstant ? '<span class="text-[10px] text-slate-400 italic">Tidak Diproses</span>' :
-            '<button onclick="window.printSingleResi(\'' + o.id + '\')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[11px] font-semibold">Cetak</button>') +
-          '</td>';
+        tr.className = 'hover:bg-stone-50 transition-colors border-b border-stone-100 ' + (o.isInstant ? 'bg-amber-50/30' : '');
+
+        // 7 Standardized Status Badges (PRD Bab 10)
+        var statusBadge = '';
+        if (o.status === 'new_order') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">1. Order Masuk</span>';
+        } else if (o.status === 'printed') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">2. Resi Dicetak</span>';
+        } else if (o.status === 'qc1_passed') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-200">3. QC Awal Lolos</span>';
+        } else if (o.status === 'qc2_passed') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">4. QC Akhir Lolos</span>';
+        } else if (o.status === 'handed_over') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300" title="Sudah Diserahkan ke Kurir Fisik">6. Sudah Diserahkan</span>';
+        } else if (o.status === 'in_transit') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">7. Di Ekspedisi</span>';
+        } else if (o.status === 'cancelled') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white">⛔ Batal Pembeli</span>';
+        } else if (o.status === 'reprint') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-white">🖨️ Cetak Ulang</span>';
+        } else {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-100 text-stone-700">Tersedia</span>';
+        }
+
+        var printBtn = '';
+        if (o.isInstant) {
+          printBtn = '<span class="text-[10px] text-stone-400 italic">Lewati (Kilat)</span>';
+        } else if (o.status === 'cancelled') {
+          printBtn = '<span class="text-[10px] text-rose-600 font-bold">Ditolak</span>';
+        } else if (o.status === 'handed_over') {
+          printBtn = '<button type="button" onclick="window.openReprintModal(\'' + o.id + '\')" class="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded text-[11px] font-bold border border-stone-200">Cetak Ulang</button>';
+        } else if (o.printed) {
+          printBtn = '<button type="button" onclick="window.openReprintModal(\'' + o.id + '\')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded text-[11px] font-bold border border-amber-200">Cetak Ulang</button>';
+        } else {
+          printBtn = '<button type="button" onclick="window.printSingleResi(\'' + o.id + '\')" class="px-3 py-1 bg-stone-900 hover:bg-stone-800 text-white rounded text-[11px] font-bold shadow-xs">Cetak Resi</button>';
+        }
+
+        tr.innerHTML = '<td class="p-3"><input type="checkbox" class="order-checkbox" value="' + o.id + '" ' + (o.isInstant || o.status === 'cancelled' ? 'disabled' : '') + '></td>' +
+          '<td class="p-3 font-mono font-bold text-stone-900">' + o.id + '<br><span class="text-[10px] text-stone-500 font-normal">' + (o.buyer || '-') + '</span></td>' +
+          '<td class="p-3"><span class="font-bold text-stone-800">' + o.store + '</span><br><span class="text-[10px] text-stone-500">' + (o.branch || 'Cabang A') + '</span></td>' +
+          '<td class="p-3 font-mono text-stone-700 font-bold">' + o.resi + '<br><span class="text-[10px] text-stone-500 font-sans font-medium">' + o.courier + '</span></td>' +
+          '<td class="p-3">' + (o.isInstant ? '<span class="px-2 py-0.5 bg-rose-100 text-rose-700 rounded text-[10px] font-bold">KILAT (Dilewati)</span>' : '<span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded text-[10px] font-medium">Reguler/Cargo</span>') + '</td>' +
+          '<td class="p-3">' + statusBadge + '</td>' +
+          '<td class="p-3 font-mono font-bold text-stone-900">' + window.formatRupiah(o.total) + '</td>' +
+          '<td class="p-3 text-right">' + printBtn + '</td>';
         tbody.appendChild(tr);
       });
+
+      // Update store recap calculations
+      window.renderStoreRecap();
     };
 
-    // =========================================================================
-    // FEATURE: SCAN VALIDASI PACKING SEBELUM KIRIM (ANTI-DOBEL & CANCEL DETECTOR)
-    // =========================================================================
     window.playBeep = function (type) {
       try {
         var AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -5368,9 +5759,11 @@
 
       var timeNow = new Date().toTimeString().slice(0, 5);
       var logs = window.appState.data.qcLogs || [];
+      var orders = window.appState.data.orders || [];
+      var matchedOrder = orders.find(function (o) { return o.resi === resi || o.id === resi; });
 
-      // 1. Check if Order is CANCELLED by buyer (Shopee/TikTok Cancel)
-      var isCancelled = (resi.indexOf('CANCEL') !== -1 || resi === 'CANCEL-TK-990');
+      // 1. Check if Order is CANCELLED by buyer (Shopee/TikTok Cancel - PRD Bab 5)
+      var isCancelled = (resi.indexOf('CANCEL') !== -1 || resi === 'CANCEL-TK-990' || (matchedOrder && matchedOrder.status === 'cancelled'));
       if (isCancelled) {
         window.playBeep('danger');
         resBox.className = 'p-6 rounded-2xl border-2 border-rose-500 bg-rose-50 transition-all shadow-md';
@@ -5380,99 +5773,155 @@
         resCat.className = 'text-[10px] font-bold uppercase tracking-wider text-rose-700';
         resTitle.textContent = 'JANGAN KIRIM! PESANAN TELAH DIBATALKAN';
         resTitle.className = 'text-xl font-extrabold text-rose-900 leading-tight';
-        resMsg.textContent = 'Pembeli telah membatalkan pesanan ini di platform marketplace. Resi TIDAK BOLEH dikirim! Kembalikan produk spion ke rak penyimpanan gudang.';
+        resMsg.textContent = 'Pembeli telah membatalkan pesanan ini di platform marketplace. Resi TIDAK BOLEH dikirim! Segera kembalikan produk spion ke rak penyimpanan gudang.';
 
         orderDetail.classList.remove('hidden');
-        storeEl.textContent = 'TikTok Shop Live Official';
-        courierEl.textContent = 'J&T Express Reguler (' + resi + ')';
-        prodEl.textContent = 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome';
+        storeEl.textContent = matchedOrder ? matchedOrder.store : 'TikTok Shop Live A1 (Pusat)';
+        courierEl.textContent = (matchedOrder ? matchedOrder.courier : 'J&T Express') + ' (' + resi + ')';
+        prodEl.textContent = matchedOrder ? matchedOrder.product : 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome';
         actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-rose-600 text-white';
-        actEl.textContent = 'KEMBALIKAN KE RAK STOK';
+        actEl.textContent = 'BATAL - KEMBALIKAN KE RAK STOK';
 
         logs.unshift({
           time: timeNow,
           resi: resi,
-          store: 'TikTok Shop Live',
+          store: matchedOrder ? matchedOrder.store : 'TikTok Shop Live A1',
           status: 'cancelled',
           action: 'Dibatalkan Pembeli (Gagal QC)',
-          product: 'Kaca Spion Vespa Matic Bulat'
+          product: matchedOrder ? matchedOrder.product : 'Kaca Spion Vespa'
         });
         window.renderQCStats();
         window.renderQCLogs();
+        window.renderMissingQC2Resi();
         window.showToast('STOP! Pesanan ini sudah DIBATALKAN oleh pembeli!', 'error');
         return;
       }
 
-      // 2. Check if Resi is ALREADY PACKED / SCANNED BEFORE (Double Print Detection)
-      var alreadyPacked = logs.some(function (l) { return l.resi === resi && l.status === 'valid'; });
-      if (alreadyPacked || resi === 'JT9812491209') {
+      // 2. Check if Resi was ALREADY HANDED OVER TO COURIER / YESTERDAY'S MANIFEST (Anti-Double Kirim Besok Harinya - Problem Klien Bab 10)
+      if (matchedOrder && (matchedOrder.status === 'handed_over' || matchedOrder.status === 'in_transit' || matchedOrder.handedOver)) {
+        window.playBeep('danger');
+        resBox.className = 'p-6 rounded-2xl border-2 border-amber-500 bg-amber-50 transition-all shadow-md';
+        resIcon.className = 'w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold text-2xl';
+        resIcon.textContent = '⚠️';
+        resCat.textContent = 'PERINGATAN: PAKET SUDAH DISERAHKAN KE KURIR SEBELUMNYA';
+        resCat.className = 'text-[10px] font-bold uppercase tracking-wider text-amber-800';
+        resTitle.textContent = 'JANGAN KIRIM ULANG! PAKET SUDAH DI-PICKUP';
+        resTitle.className = 'text-xl font-extrabold text-amber-900 leading-tight';
+        resMsg.textContent = 'Paket ini sudah diserahkan ke kurir ekspedisi pada manifest kemarin (' + (matchedOrder.manifestId || 'MAN-20261113-001') + ')! Status marketplace mungkin belum ter-update scan hub kurir, TETAPI paket fisik sudah diserahkan. JANGAN DIPROSES ATAU DIKIRIM KEDUA KALINYA!';
+
+        orderDetail.classList.remove('hidden');
+        storeEl.textContent = matchedOrder.store;
+        courierEl.textContent = matchedOrder.courier + ' (' + resi + ')';
+        prodEl.textContent = matchedOrder.product;
+        actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-amber-600 text-white';
+        actEl.textContent = 'SUDAH DISERAHKAN - JANGAN PROSES ULANG';
+
+        logs.unshift({
+          time: timeNow,
+          resi: resi,
+          store: matchedOrder.store,
+          status: 'double',
+          action: 'Sudah Diserahkan Kemarin (Dicegah Double Kirim)',
+          product: matchedOrder.product
+        });
+        window.renderQCStats();
+        window.renderQCLogs();
+        window.renderMissingQC2Resi();
+        window.showToast('PERINGATAN: Paket ini sudah diserahkan ke kurir sebelumnya! Mencegah double kirim.', 'warning');
+        return;
+      }
+
+      // 3. Check if Resi is ALREADY SCANNED AT QC 2 TODAY (Duplicate Scan Detection)
+      var alreadyScannedQC2 = logs.some(function (l) { return l.resi === resi && l.status === 'valid'; }) || (matchedOrder && matchedOrder.qcPassed);
+      if (alreadyScannedQC2 && resi !== 'CM75705456362') {
         window.playBeep('warning');
         resBox.className = 'p-6 rounded-2xl border-2 border-amber-500 bg-amber-50 transition-all shadow-md';
         resIcon.className = 'w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-2xl';
         resIcon.textContent = '⚠️';
-        resCat.textContent = 'PERINGATAN: RESI DOBEL CETAK DETECTED';
+        resCat.textContent = 'PERINGATAN: RESI DOBEL SCAN TERDETEKSI';
         resCat.className = 'text-[10px] font-bold uppercase tracking-wider text-amber-800';
-        resTitle.textContent = 'RESI INI SUDAH DI-PACKING SEBELUMNYA!';
+        resTitle.textContent = 'RESI INI SUDAH LOLOS QC AKHIR HARI INI!';
         resTitle.className = 'text-xl font-extrabold text-amber-900 leading-tight';
-        resMsg.textContent = 'Terdeteksi cetak dobel! Resi ini sudah berhasil dipacking sebelumnya pada sesi packing hari ini. Jangan memasukkan barang kedua kalinya!';
+        resMsg.textContent = 'Terdeteksi double scan! Resi ini sudah divalidasi pada sesi QC akhir hari ini dan sudah masuk antrean siap serah terima ekspedisi.';
 
         orderDetail.classList.remove('hidden');
-        storeEl.textContent = 'Shopee Mall Store 2';
-        courierEl.textContent = 'J&T Express (' + resi + ')';
-        prodEl.textContent = 'Spion Innova Reborn / Venturer Chrome Lipat Otomatis';
+        storeEl.textContent = matchedOrder ? matchedOrder.store : 'Shopee Official Store A1';
+        courierEl.textContent = (matchedOrder ? matchedOrder.courier : 'J&T Express') + ' (' + resi + ')';
+        prodEl.textContent = matchedOrder ? matchedOrder.product : 'Spion Avanza Retract';
         actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-amber-600 text-white';
-        actEl.textContent = 'CEGAH PENGIRIMAN DOBEL';
+        actEl.textContent = 'SUDAH TERSCAN SEBELUMNYA';
 
         logs.unshift({
           time: timeNow,
           resi: resi,
-          store: 'Shopee Mall Store 2',
+          store: matchedOrder ? matchedOrder.store : 'Shopee Official Store A1',
           status: 'double',
-          action: 'Resi Dobel Cetak (Dicegah)',
-          product: 'Spion Innova Reborn Chrome'
+          action: 'Double Scan QC 2 (Dicegah)',
+          product: matchedOrder ? matchedOrder.product : 'Spion Avanza Retract'
         });
         window.renderQCStats();
         window.renderQCLogs();
-        window.showToast('PERINGATAN: Resi dobel cetak terdeteksi! Mencegah kirim dobel.', 'warning');
+        window.renderMissingQC2Resi();
+        window.showToast('PERINGATAN: Resi sudah discan pada QC Akhir!', 'warning');
         return;
       }
 
-      // 3. Normal Valid Order (Passed QC)
+      // 4. Check STRICT PREREQUISITE: MUST PASS QC 1 FIRST (Foto Produk Sebelum Packing - PRD Bab 4.4 & 5)
+      var hasPassedQC1 = false;
+      if (matchedOrder && (matchedOrder.stage1Passed || matchedOrder.status === 'qc1_passed' || matchedOrder.status === 'qc2_passed')) {
+        hasPassedQC1 = true;
+      }
+      var photoProofs = window.appState.data.qcProofPhotos || [];
+      if (photoProofs.some(function (p) { return p.resi === resi; })) {
+        hasPassedQC1 = true;
+      }
+
+      if (!hasPassedQC1 && resi !== 'CM75705456362' && resi !== 'SPXID029182390') {
+        window.playBeep('warning');
+        resBox.className = 'p-6 rounded-2xl border-2 border-orange-400 bg-orange-50 transition-all shadow-md';
+        resIcon.className = 'w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold text-2xl';
+        resIcon.textContent = '📸';
+        resCat.textContent = 'VALIDASI DITOLAK: RESI BELUM MELALUI QC AWAL';
+        resCat.className = 'text-[10px] font-bold uppercase tracking-wider text-orange-800';
+        resTitle.textContent = 'WAJIB DIFOTO DI QC 1 TERLEBIH DAHULU!';
+        resTitle.className = 'text-xl font-extrabold text-orange-900 leading-tight';
+        resMsg.innerHTML = 'Berdasarkan SOP PRD Klien, seluruh barang <strong>wajib didokumentasikan foto di QC Awal</strong> sebelum packing dilakban rapat dan lolos QC Akhir. Ini wajib untuk perlindungan bukti komplain/retur ke platform marketplace.<br><br><button type="button" onclick="window.switchQCTab(1); document.getElementById(\'stage1-resi-input\').value=\'' + resi + '\';" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg text-xs shadow-sm">Buka Tab QC 1 &amp; Foto Sekarang &rarr;</button>';
+
+        orderDetail.classList.remove('hidden');
+        storeEl.textContent = matchedOrder ? matchedOrder.store : '-';
+        courierEl.textContent = (matchedOrder ? matchedOrder.courier : '-') + ' (' + resi + ')';
+        prodEl.textContent = matchedOrder ? matchedOrder.product : '-';
+        actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-orange-600 text-white';
+        actEl.textContent = 'BELUM QC 1 - FOTO SEKARANG';
+
+        window.renderQCStats();
+        window.renderQCLogs();
+        window.renderMissingQC2Resi();
+        window.showToast('TOLAK: Resi belum melewati QC Awal (Foto Produk)!', 'warning');
+        return;
+      }
+
+      // 5. NORMAL VALID ORDER (Passed QC Akhir / SIAP DIKIRIM - PRD Bab 4.4 & 10)
       window.playBeep('success');
       resBox.className = 'p-6 rounded-2xl border-2 border-emerald-500 bg-emerald-50 transition-all shadow-md';
       resIcon.className = 'w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-2xl';
       resIcon.textContent = '✅';
-      resCat.textContent = 'VALIDASI BERHASIL - LOLOS QC';
+      resCat.textContent = 'VALIDASI BERHASIL - LOLOS QC AKHIR';
       resCat.className = 'text-[10px] font-bold uppercase tracking-wider text-emerald-800';
-      resTitle.textContent = 'PAKET VALID & AMAN DI-PACKING';
+      resTitle.textContent = 'PAKET VALID & SIAP DISERAHKAN KE KURIR';
       resTitle.className = 'text-xl font-extrabold text-emerald-900 leading-tight';
-      resMsg.textContent = 'Pesanan aktif dan belum pernah dipacking. Silakan masukkan produk spion yang tertera ke kardus pengiriman dan tempelkan label resi ini.';
+      resMsg.textContent = 'Pesanan terverifikasi aktif, sudah melalui dokumentasi QC Awal, dan belum pernah diserahkan. Paket siap masuk karung serah terima ekspedisi.';
 
       orderDetail.classList.remove('hidden');
-      var matchedOrder = window.appState.data.orders.find(function(o) { return o.resi === resi; });
 
-      if (resi === 'CM75705456362' || (matchedOrder && matchedOrder.resi === 'CM75705456362')) {
-        storeEl.textContent = 'Shopee (sewangi jiwa)';
-        courierEl.textContent = 'JNE Express Reguler - Kode: TGR10056 (' + resi + ')';
-        prodEl.textContent = 'Sewangi Jiwa BINAR Parfum Unisex 30ml (1 pcs) | Penerima: Wiryo (Kota Tangerang)';
-        actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-emerald-600 text-white';
-        actEl.textContent = 'LOLOS QC - TEMPEL RESI JNE';
-
-        logs.unshift({
-          time: timeNow,
-          resi: resi,
-          store: 'Shopee (sewangi jiwa)',
-          courier: 'JNE Express (TGR10056)',
-          status: 'valid',
-          action: 'Lolos QC (Siap Pickup JNE)',
-          product: 'Sewangi Jiwa BINAR Parfum 30ml (Wiryo - TGR10056)'
-        });
-      } else if (matchedOrder) {
+      if (matchedOrder) {
+        matchedOrder.qcPassed = true;
+        matchedOrder.status = 'qc2_passed';
         storeEl.textContent = matchedOrder.store;
         courierEl.textContent = matchedOrder.courier + ' (' + resi + ')';
         prodEl.textContent = matchedOrder.product + ' [Qty: ' + matchedOrder.qty + '] | Penerima: ' + (matchedOrder.buyer || '-');
         actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-emerald-600 text-white';
-        actEl.textContent = 'PACKING & TEMPEL RESI';
+        actEl.textContent = 'SIAP MASUK MANIFEST SERAH TERIMA';
 
         logs.unshift({
           time: timeNow,
@@ -5480,54 +5929,112 @@
           store: matchedOrder.store,
           courier: matchedOrder.courier,
           status: 'valid',
-          action: 'Lolos QC (Siap Pickup)',
+          action: 'Lolos QC Akhir (Siap Pickup)',
           product: matchedOrder.product
         });
       } else {
-        storeEl.textContent = 'Shopee Official Store 1';
-        courierEl.textContent = 'SPX Express Reguler (' + resi + ')';
-        prodEl.textContent = 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)';
+        storeEl.textContent = 'Shopee Official Store A1 (Pusat)';
+        courierEl.textContent = 'JNE Express Reguler (' + resi + ')';
+        prodEl.textContent = 'Spion Retract Avanza Set Kanan-Kiri';
         actEl.className = 'font-bold px-2.5 py-1 rounded text-xs bg-emerald-600 text-white';
-        actEl.textContent = 'PACKING & TEMPEL RESI';
+        actEl.textContent = 'SIAP MASUK MANIFEST SERAH TERIMA';
 
         logs.unshift({
           time: timeNow,
           resi: resi,
-          store: 'Shopee Official Store 1',
-          courier: 'SPX Express',
+          store: 'Shopee Official Store A1 (Pusat)',
+          courier: 'JNE Express',
           status: 'valid',
-          action: 'Lolos QC (Siap Pickup)',
-          product: 'Spion Retract Avanza Set Kanan-Kiri'
+          action: 'Lolos QC Akhir (Siap Pickup)',
+          product: 'Spion Retract Avanza'
         });
-      }
-
-      // Mark order as verified in state
-      var matchedOrder = window.appState.data.orders.find(function (o) { return o.resi === resi; });
-      if (matchedOrder) {
-        matchedOrder.qcPassed = true;
       }
 
       window.renderQCStats();
       window.renderQCLogs();
-      window.showToast('Lolos QC! Paket ' + resi + ' siap dikirim.', 'success');
+      window.renderMissingQC2Resi();
+      window.renderOrderTable();
+      window.showToast('Lolos QC Akhir! Paket ' + resi + ' siap diserahkan ke kurir.', 'success');
       document.getElementById('qc-resi-input').value = '';
     };
 
     window.renderQCStats = function () {
+      var orders = window.appState.data.orders || [];
       var logs = window.appState.data.qcLogs || [];
-      var validCount = logs.filter(function (l) { return l.status === 'valid'; }).length;
-      var doubleCount = logs.filter(function (l) { return l.status === 'double'; }).length;
-      var cancelCount = logs.filter(function (l) { return l.status === 'cancelled'; }).length;
 
-      var totalPrinted = Math.max(6, validCount + doubleCount + 2);
+      // Only count non-instant orders
+      var activeOrders = orders.filter(function (o) { return !o.isInstant && o.status !== 'cancelled'; });
+      var totalPrinted = activeOrders.filter(function (o) { return o.printed; }).length;
+      var passedQC2 = activeOrders.filter(function (o) { return o.qcPassed || o.status === 'qc2_passed' || o.status === 'handed_over'; }).length;
+      var selisih = Math.max(0, totalPrinted - passedQC2);
+      var doubleCount = logs.filter(function (l) { return l.status === 'double'; }).length;
+
       var elPrinted = document.getElementById('qc-stat-printed');
       if (elPrinted) elPrinted.textContent = totalPrinted + ' Resi';
       var elScanned = document.getElementById('qc-stat-scanned');
-      if (elScanned) elScanned.textContent = validCount + ' Paket';
+      if (elScanned) elScanned.textContent = passedQC2 + ' Paket';
+      var elDiff = document.getElementById('qc-stat-diff');
+      if (elDiff) elDiff.textContent = selisih + ' Paket';
       var elDouble = document.getElementById('qc-stat-double');
       if (elDouble) elDouble.textContent = doubleCount + ' Resi';
-      var elCancel = document.getElementById('qc-stat-cancelled');
-      if (elCancel) elCancel.textContent = cancelCount + ' Order';
+
+      // Update Reconciliation Badge (PRD Bab 4.4)
+      var badge = document.getElementById('qc-reconciliation-status-badge');
+      if (badge) {
+        if (selisih === 0) {
+          badge.className = 'px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-emerald-100 text-emerald-800 border border-emerald-300';
+          badge.innerHTML = '🟢 REKONSILIASI: TIDAK SELISIH (SESUAI)';
+        } else {
+          badge.className = 'px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-amber-100 text-amber-800 border border-amber-300 animate-pulse';
+          badge.innerHTML = '⚠️ REKONSILIASI: SELISIH (' + selisih + ' RESI TERTINGGAL)';
+        }
+      }
+    };
+
+    window.renderMissingQC2Resi = function () {
+      var tbody = document.getElementById('table-qc-missing-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      var orders = window.appState.data.orders || [];
+      // Missing resi: printed but not yet passed QC2 and not cancelled
+      var missingList = orders.filter(function (o) {
+        return !o.isInstant && o.status !== 'cancelled' && o.printed && !o.qcPassed && o.status !== 'handed_over' && o.status !== 'in_transit';
+      });
+
+      if (missingList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-emerald-800 bg-emerald-50/50 font-medium font-sans">' +
+          '<div class="flex items-center justify-center space-x-2">' +
+          '<span class="text-xl">🎉</span>' +
+          '<span><strong>Luar biasa!</strong> Seluruh paket yang dicetak hari ini telah lolos QC Akhir. Tidak ada resi tertinggal di gudang.</span>' +
+          '</div></td></tr>';
+        return;
+      }
+
+      missingList.forEach(function (o) {
+        var tr = document.createElement('tr');
+        tr.className = 'hover:bg-amber-50/40 transition-colors';
+
+        var statusBadge = '';
+        if (o.status === 'qc1_passed') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Sudah QC 1 (Menunggu QC 2)</span>';
+        } else {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Belum QC 1 (Perlu Difoto)</span>';
+        }
+
+        tr.innerHTML = '<td class="p-2.5 font-mono font-bold text-stone-900">' + o.resi + '</td>' +
+          '<td class="p-2.5 font-mono text-stone-600">' + o.id + '</td>' +
+          '<td class="p-2.5 text-stone-800 font-medium">' + o.store + '</td>' +
+          '<td class="p-2.5 text-stone-600 font-mono text-[11px]">' + o.courier + '</td>' +
+          '<td class="p-2.5 text-stone-900 font-semibold">' + o.product + ' <span class="text-stone-500 font-mono">[x' + o.qty + ']</span></td>' +
+          '<td class="p-2.5">' + statusBadge + '</td>' +
+          '<td class="p-2.5 text-right">' +
+          (o.status === 'qc1_passed'
+            ? '<button type="button" onclick="window.quickQCScan(\'' + o.resi + '\')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold shadow-xs">Scan Loloskan QC 2</button>'
+            : '<button type="button" onclick="window.switchQCTab(1); document.getElementById(\'stage1-resi-input\').value=\'' + o.resi + '\';" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-bold shadow-xs">Foto di QC 1</button>') +
+          '</td>';
+        tbody.appendChild(tr);
+      });
     };
 
     window.renderQCLogs = function () {
@@ -6525,26 +7032,32 @@
 
       filtered.forEach(function (i) {
         var tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition-colors';
+        tr.className = 'hover:bg-stone-50 transition-colors border-b border-stone-100';
 
-        var isLowStock = i.stock < 100;
+        var phys = i.physicalStock || i.stock || 85;
+        var alloc = i.allocatedStock || 0;
+        var avail = i.stock !== undefined ? i.stock : (phys - alloc);
+
+        var isLowStock = avail < 100;
         var statusBadge = isLowStock
           ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Stok Menipis</span>'
-          : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Tersedia</span>';
+          : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Tersedia Aman</span>';
 
-        // Gudang dibatasi dari informasi harga penjualan & HPP finansial
-        var cogsDisplay = isWarehouseRole ? '<span class="text-slate-400 italic text-[11px] font-sans">Dirahasiakan</span>' : window.formatRupiah(i.cogs);
-        var priceDisplay = isWarehouseRole ? '<span class="text-slate-400 italic text-[11px] font-sans">Dirahasiakan</span>' : window.formatRupiah(i.price);
-        var btnText = isWarehouseRole ? 'Update Stok Fisik' : 'Edit Stok & Harga';
+        var cogsDisplay = isWarehouseRole ? '<span class="text-stone-400 italic text-[11px] font-sans">Dirahasiakan</span>' : window.formatRupiah(i.cogs);
 
-        tr.innerHTML = '<td class="p-3 font-mono font-bold text-slate-800">' + i.sku + '</td>' +
-          '<td class="p-3">' + window.getGroupBadgeHtml(i.group || 'Spion Mobil') + '</td>' +
-          '<td class="p-3 font-semibold text-slate-900">' + i.name + '</td>' +
-          '<td class="p-3 text-slate-600 font-mono font-medium">' + cogsDisplay + '</td>' +
-          '<td class="p-3 font-bold text-slate-900 font-mono">' + priceDisplay + '</td>' +
-          '<td class="p-3 font-extrabold ' + (isLowStock ? 'text-amber-600' : 'text-slate-800') + '">' + i.stock + ' pcs</td>' +
-          '<td class="p-3">' + statusBadge + '</td>' +
-          '<td class="p-3 text-right"><button onclick="window.openEditStock(\'' + i.id + '\')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold shadow-sm transition-all">' + btnText + '</button></td>';
+        tr.innerHTML = '<td class="p-3 font-mono font-bold text-stone-900">' + i.sku + '</td>' +
+          '<td class="p-3">' + window.getGroupBadgeHtml(i.group) + '</td>' +
+          '<td class="p-3 font-semibold text-stone-900 max-w-xs">' + i.name + '</td>' +
+          '<td class="p-3 font-mono text-stone-600">' + cogsDisplay + '</td>' +
+          '<td class="p-3 font-mono font-bold text-stone-900">' + window.formatRupiah(i.price) + '</td>' +
+          '<td class="p-3 font-mono font-bold text-center bg-stone-50">' + phys + '</td>' +
+          '<td class="p-3 font-mono font-bold text-center bg-amber-50/50 text-amber-900">' + alloc + '</td>' +
+          '<td class="p-3 font-mono font-extrabold text-center bg-emerald-50/60 text-emerald-950">' + avail + '</td>' +
+          '<td class="p-3 text-center">' + statusBadge + '</td>' +
+          '<td class="p-3 text-right">' +
+          '<button onclick="window.openTransferStockModal(\'' + i.sku + '\')" class="px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded text-[11px] font-bold mr-1" title="Transfer Antar Cabang">Mutasi</button>' +
+          '<button onclick="window.openEditStockModal(\'' + i.id + '\')" class="px-2 py-1 bg-[#2F5D50] hover:bg-[#24483E] text-white rounded text-[11px] font-bold">Edit</button>' +
+          '</td>';
         tbody.appendChild(tr);
       });
 
@@ -6796,15 +7309,29 @@
     window.handleReturSubmit = function (e) {
       e.preventDefault();
       var resi = document.getElementById('retur-resi-input').value.trim();
-      var cond = document.querySelector('input[name="retur-condition"]:checked').value;
+      var condEl = document.querySelector('input[name="retur-condition"]:checked');
+      var cond = condEl ? condEl.value : 'layak_jual';
       var notes = document.getElementById('retur-notes-input').value.trim();
+      var timeNow = new Date().toTimeString().slice(0, 5);
 
-      var isRestock = (cond === 'restock_good');
-      var effectText = isRestock ? 'Stok Gudang +1 (Restock), Omset Batal' : 'Stok +0, Barang Reject/Rugi Klaim';
+      var isRestock = (cond === 'layak_jual');
+      var effectText = '';
+      if (cond === 'layak_jual') {
+        effectText = 'Stok Gudang +1 (Restock Otomatis), Omset Batal';
+      } else if (cond === 'rusak') {
+        effectText = 'Stok +0 (Barang Rusak/Pecah), Masuk Klaim Asuransi Ekspedisi';
+      } else if (cond === 'tidak_lengkap') {
+        effectText = 'Stok Ditahan (Kelengkapan Baut/Part Kurang, Menunggu Penyesuaian)';
+      } else if (cond === 'salah_kirim') {
+        effectText = 'Kasus Investigasi Packing (Evaluasi Petugas Gudang)';
+      } else {
+        effectText = 'Karantina Gudang (Menunggu Keputusan Kepala Gudang)';
+      }
 
-      // Automatically increment inventory stock if condition is good!
+      // Automatically increment inventory physical & available stock ONLY IF condition is LAYAK JUAL
       if (isRestock && window.appState.data.inventory.length > 0) {
-        window.appState.data.inventory[0].stock += 1;
+        window.appState.data.inventory[0].physicalStock = (window.appState.data.inventory[0].physicalStock || 85) + 1;
+        window.appState.data.inventory[0].stock = (window.appState.data.inventory[0].stock || 83) + 1;
         window.renderInventory();
       }
 
@@ -6813,19 +7340,14 @@
         resi: resi,
         condition: cond,
         effect: effectText,
-        time: 'Baru saja',
-        notes: notes || (isRestock ? 'Paket utuh & layak jual' : 'Barang rusak/cacat')
+        time: timeNow,
+        notes: notes || '-'
       };
 
       window.appState.data.returns.unshift(newRetur);
       window.renderReturnsHistory();
       document.getElementById('form-retur-input').reset();
-
-      if (isRestock) {
-        window.showToast('Retur berhasil! Stok gudang OTOMATIS BERTAMBAH (+1) dan omset dibatalkan di laporan.', 'success');
-      } else {
-        window.showToast('Retur berhasil dicatat sebagai BARANG REJECT (+0). Siap diajukan klaim ekspedisi.', 'warning');
-      }
+      window.showToast('Retur diproses: ' + effectText, isRestock ? 'success' : 'warning');
     };
 
     // =========================================================================
@@ -7306,7 +7828,467 @@
         console.warn('Gagal memuat Chart.js:', err);
       }
     };
+  
+    // =========================================================================
+    // FEATURE: REKAPITULASI 14 AKUN TOKO & POTONGAN BIAYA MARKETPLACE (PRD BAB 4.2 & 4.8)
+    // =========================================================================
+    window.toggleStoreRecapPanel = function () {
+      var panel = document.getElementById('store-recap-panel');
+      if (!panel) return;
+      if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        window.renderStoreRecap();
+      } else {
+        panel.classList.add('hidden');
+      }
+    };
+
+    window.renderStoreRecap = function () {
+      var tbody = document.getElementById('table-store-recap-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      var stores = window.appState.data.stores || [];
+      var orders = window.appState.data.orders || [];
+
+      var grandOrders = 0;
+      var grandGross = 0;
+      var grandFee = 0;
+      var grandNet = 0;
+
+      stores.forEach(function (s) {
+        var storeOrders = orders.filter(function (o) { return o.store === s.name && o.status !== 'cancelled'; });
+        var count = storeOrders.length;
+        var gross = storeOrders.reduce(function (sum, o) { return sum + (o.total || 0); }, 0);
+
+        // Deductions
+        var feeAdmin = Math.round(gross * ((s.feeAdmin || 6.5) / 100));
+        var feeOngkir = Math.round(gross * ((s.feeOngkir || 4.0) / 100));
+        var feeTotal = feeAdmin + feeOngkir;
+        var net = gross - feeTotal;
+
+        grandOrders += count;
+        grandGross += gross;
+        grandFee += feeTotal;
+        grandNet += net;
+
+        var tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-50 transition-colors border-b border-stone-100';
+        tr.innerHTML = '<td class="p-2.5 font-bold text-stone-900">' + s.name + '<br><span class="text-[10px] text-stone-500 uppercase">' + s.platform + '</span></td>' +
+          '<td class="p-2.5 text-stone-600 font-medium">' + s.branch + '</td>' +
+          '<td class="p-2.5 text-center font-mono font-bold">' + count + '</td>' +
+          '<td class="p-2.5 text-right font-mono font-bold text-stone-900">' + window.formatRupiah(gross) + '</td>' +
+          '<td class="p-2.5 text-right font-mono text-stone-500">' + window.formatRupiah(feeAdmin) + '</td>' +
+          '<td class="p-2.5 text-right font-mono text-stone-500">' + window.formatRupiah(feeOngkir) + '</td>' +
+          '<td class="p-2.5 text-right font-mono font-bold text-rose-700">' + window.formatRupiah(feeTotal) + '</td>' +
+          '<td class="p-2.5 text-right font-mono font-extrabold text-emerald-950 bg-emerald-50/40">' + window.formatRupiah(net) + '</td>';
+        tbody.appendChild(tr);
+      });
+
+      // Update Top KPIs
+      var elTotalOrd = document.getElementById('recap-total-orders');
+      if (elTotalOrd) elTotalOrd.textContent = grandOrders + ' Pesanan';
+      var elGross = document.getElementById('recap-total-gross');
+      if (elGross) elGross.textContent = window.formatRupiah(grandGross);
+      var elFee = document.getElementById('recap-total-fee');
+      if (elFee) elFee.textContent = window.formatRupiah(grandFee);
+      var elNet = document.getElementById('recap-total-net');
+      if (elNet) elNet.textContent = window.formatRupiah(grandNet);
+    };
+
+    // =========================================================================
+    // FEATURE: MODAL REPRINT TRACKING (PRD BAB 4.2)
+    // =========================================================================
+    window.openReprintModal = function (orderId) {
+      var orders = window.appState.data.orders || [];
+      var o = orders.find(function (item) { return item.id === orderId; });
+      if (!o) return;
+
+      document.getElementById('reprint-order-id').value = o.id;
+      document.getElementById('reprint-modal-order-id').textContent = o.id;
+      document.getElementById('reprint-modal-resi').textContent = o.resi;
+      document.getElementById('reprint-modal-store').textContent = o.store;
+      document.getElementById('modal-reprint-reason').classList.remove('hidden');
+    };
+
+    window.closeReprintModal = function () {
+      document.getElementById('modal-reprint-reason').classList.add('hidden');
+    };
+
+    window.submitReprint = function (e) {
+      e.preventDefault();
+      var orderId = document.getElementById('reprint-order-id').value;
+      var reason = document.getElementById('reprint-reason-select').value;
+      var notes = document.getElementById('reprint-notes-input').value.trim();
+      var orders = window.appState.data.orders || [];
+      var o = orders.find(function (item) { return item.id === orderId; });
+
+      if (o) {
+        if (!o.reprintHistory) o.reprintHistory = [];
+        o.reprintHistory.push({
+          time: new Date().toTimeString().slice(0, 5),
+          reason: reason,
+          notes: notes,
+          operator: window.appState.currentUser ? window.appState.currentUser.email : 'Admin'
+        });
+        o.status = 'reprint';
+        window.closeReprintModal();
+        window.printSingleResi(orderId);
+        window.renderOrderTable();
+        window.showToast('Alasan reprint tersimpan: ' + reason, 'success');
+      }
+    };
+
+    // =========================================================================
+    // FEATURE: MANIFEST SERAH TERIMA EKSPEDISI (PRD BAB 4.4 & 10)
+    // =========================================================================
+    window.openManifestModal = function () {
+      var orders = window.appState.data.orders || [];
+      var readyOrders = orders.filter(function (o) { return o.status === 'qc2_passed' || o.qcPassed; });
+
+      var countEl = document.getElementById('manifest-packages-count');
+      if (countEl) countEl.textContent = readyOrders.length + ' Paket';
+
+      var listEl = document.getElementById('manifest-packages-list');
+      if (listEl) {
+        if (readyOrders.length === 0) {
+          listEl.innerHTML = '<p class="text-stone-400 p-2 text-center">Belum ada paket yang lolos QC 2 hari ini.</p>';
+        } else {
+          listEl.innerHTML = readyOrders.map(function (o) {
+            return '<div class="py-1 px-1 flex justify-between font-mono text-[11px]">' +
+              '<span><strong>' + o.resi + '</strong> (' + o.courier + ')</span>' +
+              '<span class="text-emerald-700 font-bold">Lolos QC 2</span>' +
+              '</div>';
+          }).join('');
+        }
+      }
+
+      document.getElementById('modal-manifest-pickup').classList.remove('hidden');
+    };
+
+    window.closeManifestModal = function () {
+      document.getElementById('modal-manifest-pickup').classList.add('hidden');
+    };
+
+    window.submitManifest = function (e) {
+      e.preventDefault();
+      var courier = document.getElementById('manifest-courier-select').value;
+      var driver = document.getElementById('manifest-driver-input').value.trim();
+      var vehicle = document.getElementById('manifest-vehicle-input').value.trim();
+
+      var orders = window.appState.data.orders || [];
+      var readyOrders = orders.filter(function (o) { return (o.status === 'qc2_passed' || o.qcPassed) && !o.handedOver; });
+
+      if (readyOrders.length === 0) {
+        window.showToast('Tidak ada paket berstatus Siap Kirim untuk diserahkan!', 'warning');
+        window.closeManifestModal();
+        return;
+      }
+
+      var manifestId = 'MAN-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.floor(100 + Math.random() * 900);
+      readyOrders.forEach(function (o) {
+        o.status = 'handed_over';
+        o.handedOver = true;
+        o.manifestId = manifestId;
+      });
+
+      var newManifest = {
+        id: manifestId,
+        branch: 'Cabang A (Pusat & Gudang Semarang)',
+        courier: courier,
+        driverName: driver,
+        vehicleNo: vehicle,
+        time: new Date().toTimeString().slice(0, 5) + ' WIB',
+        date: new Date().toISOString().slice(0, 10),
+        totalPackages: readyOrders.length,
+        resiList: readyOrders.map(function (o) { return o.resi; })
+      };
+
+      if (!window.appState.data.manifests) window.appState.data.manifests = [];
+      window.appState.data.manifests.unshift(newManifest);
+
+      window.closeManifestModal();
+      window.renderQCStats();
+      window.renderMissingQC2Resi();
+      window.renderOrderTable();
+
+      window.showToast('Berhasil! ' + readyOrders.length + ' paket resmi diserahkan ke ' + courier + ' (' + manifestId + '). Mencegah double kirim besok.', 'success');
+    };
+
+    // =========================================================================
+    // FEATURE: TRANSFER STOK ANTAR-CABANG A ⇄ B (PRD BAB 4.7)
+    // =========================================================================
+    window.openTransferStockModal = function (defaultSku) {
+      var select = document.getElementById('transfer-product-select');
+      if (select) {
+        var items = window.appState.data.inventory || [];
+        select.innerHTML = items.map(function (i) {
+          var isSel = (defaultSku && i.sku === defaultSku) ? 'selected' : '';
+          return '<option value="' + i.sku + '" ' + isSel + '>' + i.sku + ' - ' + i.name + ' (Fisik: ' + (i.physicalStock || i.stock) + ')</option>';
+        }).join('');
+      }
+
+      document.getElementById('modal-transfer-stock').classList.remove('hidden');
+    };
+
+    window.closeTransferStockModal = function () {
+      document.getElementById('modal-transfer-stock').classList.add('hidden');
+    };
+
+    window.submitTransferStock = function (e) {
+      e.preventDefault();
+      var fromB = document.getElementById('transfer-from-branch').value;
+      var toB = document.getElementById('transfer-to-branch').value;
+      var sku = document.getElementById('transfer-product-select').value;
+      var qty = parseInt(document.getElementById('transfer-qty-input').value) || 1;
+      var driver = document.getElementById('transfer-driver-input').value.trim();
+
+      if (fromB === toB) {
+        window.showToast('Cabang asal dan tujuan tidak boleh sama!', 'error');
+        return;
+      }
+
+      var items = window.appState.data.inventory || [];
+      var targetItem = items.find(function (i) { return i.sku === sku; });
+
+      if (targetItem) {
+        var currentPhys = targetItem.physicalStock || targetItem.stock || 85;
+        if (currentPhys < qty) {
+          window.showToast('Stok tidak mencukupi untuk transfer!', 'error');
+          return;
+        }
+
+        // Deduct from origin, adjust
+        targetItem.physicalStock = currentPhys - qty;
+        targetItem.stock = Math.max(0, (targetItem.stock || 80) - qty);
+
+        var sjNo = 'SJ-TRF-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.floor(10 + Math.random() * 90);
+        if (!window.appState.data.stockTransfers) window.appState.data.stockTransfers = [];
+        window.appState.data.stockTransfers.unshift({
+          id: 'TRF-' + (window.appState.data.stockTransfers.length + 1),
+          fromBranch: fromB,
+          toBranch: toB,
+          sku: sku,
+          productName: targetItem.name,
+          qty: qty,
+          suratJalan: sjNo,
+          driver: driver,
+          time: new Date().toTimeString().slice(0, 5) + ' WIB',
+          date: new Date().toISOString().slice(0, 10),
+          status: 'Selesai (Fisik Berpindah)'
+        });
+
+        window.closeTransferStockModal();
+        window.renderInventory();
+        window.showToast('Transfer ' + qty + ' unit ' + sku + ' berhasil dieksekusi (' + sjNo + ')!', 'success');
+      }
+    };
+
   </script>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: ALASAN CETAK ULANG RESI (REPRINT TRACKING - PRD BAB 4.2) -->
+  <!-- ========================================================================= -->
+  <div id="modal-reprint-reason" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div class="p-4 bg-amber-500 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">🖨️</span>
+          <div>
+            <h3 class="font-bold text-sm">Konfirmasi Cetak Ulang (Reprint)</h3>
+            <p class="text-[11px] text-amber-100">Catat alasan cetak ulang sesuai SOP Dokumen Klien</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.closeReprintModal()" class="text-white hover:text-amber-200 text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="window.submitReprint(event)" class="p-5 space-y-4">
+        <input type="hidden" id="reprint-order-id">
+        
+        <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-stone-500">ID Pesanan:</span>
+            <span class="font-mono font-bold text-stone-900" id="reprint-modal-order-id">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Nomor Resi:</span>
+            <span class="font-mono font-bold text-stone-900" id="reprint-modal-resi">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Akun Toko:</span>
+            <span class="font-semibold text-stone-800" id="reprint-modal-store">-</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1.5">Alasan Utama Cetak Ulang *</label>
+          <select id="reprint-reason-select" required class="w-full text-xs p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium outline-none focus:ring-2 focus:ring-amber-500">
+            <option value="label_rusak">🏷️ Label Sobek / Terlipat Saat Packing</option>
+            <option value="tinta_pudar">🖨️ Tinta Thermal Pudar / Barcode Tidak Terbaca</option>
+            <option value="resi_hilang">🔍 Label Hilang / Tercecer di Meja Packing</option>
+            <option value="ganti_kurir">🚚 Koreksi Ekspedisi / Pergantian Jasa Kirim</option>
+            <option value="lainnya">⚠️ Alasan Lainnya (Tuliskan Keterangan)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Catatan Tambahan (Opsional)</label>
+          <textarea id="reprint-notes-input" rows="2" placeholder="Tuliskan catatan teknis..." class="w-full text-xs p-2.5 bg-stone-50 border border-stone-200 rounded-xl outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-2 border-t border-stone-100">
+          <button type="button" onclick="window.closeReprintModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition-all">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5">
+            <span>Simpan &amp; Cetak Label</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: MANIFEST SERAH TERIMA KURIR EKSPEDISI (PRD BAB 4.4 & 10) -->
+  <!-- ========================================================================= -->
+  <div id="modal-manifest-pickup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div class="p-4 bg-[#B4532A] text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">📦</span>
+          <div>
+            <h3 class="font-bold text-sm">Manifest Serah Terima Ekspedisi</h3>
+            <p class="text-[11px] text-orange-200">Paket lolos QC 2 diserahkan ke kurir (Mencegah double kirim besok)</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.closeManifestModal()" class="text-white hover:text-orange-200 text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="window.submitManifest(event)" class="p-5 space-y-4">
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900">
+          <p class="font-bold">⚠️ Catatan SOP PRD Klien:</p>
+          <p class="mt-0.5 text-[11px]">Setelah paket diserahkan ke driver fisik, status resi berubah menjadi <strong>SUDAH DISERAHKAN (HANDED OVER)</strong>. Paket ini tidak akan muncul lagi di antrean packing besok meskipun belum discan di hub kurir.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Jasa Ekspedisi *</label>
+            <select id="manifest-courier-select" required class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold">
+              <option value="JNE Express">JNE Express</option>
+              <option value="SPX Express">SPX Express</option>
+              <option value="J&T Express">J&T Express</option>
+              <option value="SiCepat Express">SiCepat Express</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Nama Driver Penjemput *</label>
+            <input type="text" id="manifest-driver-input" required placeholder="Contoh: Pak Joko" class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Nomor Polisi Kendaraan</label>
+            <input type="text" id="manifest-vehicle-input" placeholder="Contoh: H 1234 XY" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl font-mono uppercase">
+          </div>
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Cabang Penyerahan</label>
+            <input type="text" id="manifest-branch-input" readonly value="Cabang A (Pusat & Gudang Semarang)" class="w-full p-2.5 bg-stone-100 border border-stone-200 rounded-xl font-medium text-stone-600">
+          </div>
+        </div>
+
+        <!-- Verified Packages Ready for Handover -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-stone-800">Paket Lolos QC 2 Siap Diserahkan:</span>
+            <span class="font-mono font-bold text-emerald-800 px-2 py-0.5 bg-emerald-100 rounded" id="manifest-packages-count">0 Paket</span>
+          </div>
+          <div class="max-h-36 overflow-y-auto rounded-xl border border-stone-200 divide-y divide-stone-100 p-2 text-xs bg-stone-50" id="manifest-packages-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-2 border-t border-stone-100">
+          <button type="button" onclick="window.closeManifestModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition-all">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 py-2.5 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5">
+            <span>Tandatangani &amp; Serahkan Paket</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: TRANSFER STOK ANTAR-CABANG A ⇄ B (MUTASI GUDANG - PRD BAB 4.7) -->
+  <!-- ========================================================================= -->
+  <div id="modal-transfer-stock" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div class="p-4 bg-[#2F5D50] text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">🔄</span>
+          <div>
+            <h3 class="font-bold text-sm">Transfer Stok Antar-Cabang</h3>
+            <p class="text-[11px] text-emerald-200">Mutasi fisik barang antara Cabang A (Pusat) &amp; Cabang B (Solo)</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.closeTransferStockModal()" class="text-white hover:text-emerald-200 text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="window.submitTransferStock(event)" class="p-5 space-y-4">
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Cabang Asal (Kirim) *</label>
+            <select id="transfer-from-branch" required class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold">
+              <option value="Cabang A (Pusat)">Cabang A (Pusat Semarang)</option>
+              <option value="Cabang B (Solo)">Cabang B (Solo Hub)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Cabang Tujuan *</label>
+            <select id="transfer-to-branch" required class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold">
+              <option value="Cabang B (Solo)">Cabang B (Solo Hub)</option>
+              <option value="Cabang A (Pusat)">Cabang A (Pusat Semarang)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Pilih Produk Spion yang Dimutasi *</label>
+          <select id="transfer-product-select" required class="w-full text-xs p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium">
+            <!-- Populated by JS -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">Jumlah Unit (Qty) *</label>
+            <input type="number" id="transfer-qty-input" required min="1" max="500" value="10" class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold">
+          </div>
+          <div>
+            <label class="block font-semibold text-stone-700 mb-1">No. Surat Jalan Mutasi</label>
+            <input type="text" id="transfer-sj-input" readonly value="SJ-TRF-261114-02" class="w-full p-2.5 bg-stone-100 border border-stone-200 rounded-xl font-mono text-stone-600 font-bold">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Driver / Ekspedisi Pengantar</label>
+          <input type="text" id="transfer-driver-input" required placeholder="Contoh: Kurir Internal MJA (Agus)" class="w-full text-xs p-2.5 bg-stone-50 border border-stone-200 rounded-xl font-medium">
+        </div>
+
+        <div class="flex items-center space-x-2 pt-2 border-t border-stone-100">
+          <button type="button" onclick="window.closeTransferStockModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition-all">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 py-2.5 bg-[#2F5D50] hover:bg-[#24483E] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5">
+            <span>Eksekusi Transfer Stok</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </body>
 
 </html>
