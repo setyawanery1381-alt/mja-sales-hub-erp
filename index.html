@@ -13964,6 +13964,314 @@
     return items;
   };
 
+  // ===========================================================================
+  // RBAC & ROLE GUARD FIXES: LAPORAN LIVE & PENJUALAN DETAIL
+  // ===========================================================================
+
+  window.getRoleAllowedSections = function (role) {
+    if (role === 'warehouse') {
+      // GUDANG: Khusus stok, QC kirim, retur, dan absensi
+      return ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
+    } else if (role === 'host') {
+      // HOST LIVE: Khusus rekap sesi live, absensi, dan penjualan detail miliknya
+      return ['section-live', 'section-sales-detail', 'section-attendance'];
+    } else if (role === 'finance') {
+      // FINANCE: Akses semua manajerial termasuk Laporan Live dan Penjualan Detail
+      return ['section-dashboard', 'section-live-reports', 'section-sales-detail', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
+    } else {
+      // ADMIN & OWNER: Akses SEMUA modul lengkap
+      return ['section-dashboard', 'section-live-reports', 'section-sales-detail', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
+    }
+  };
+
+  window.applyRolePermissions = function (role) {
+    window.appState.currentRole = role;
+    var allowed = window.getRoleAllowedSections(role);
+
+    // Sidebar navigation map
+    var navButtons = {
+      'section-dashboard': document.getElementById('nav-section-dashboard'),
+      'section-live-reports': document.getElementById('nav-section-live-reports'),
+      'section-sales-detail': document.getElementById('nav-section-sales-detail'),
+      'section-live': document.getElementById('nav-section-live'),
+      'section-pricing': document.getElementById('nav-section-pricing'),
+      'section-orders': document.getElementById('nav-section-orders'),
+      'section-qc-scan': document.getElementById('nav-section-qc-scan'),
+      'section-returns': document.getElementById('nav-section-returns'),
+      'section-inventory': document.getElementById('nav-section-inventory'),
+      'section-attendance': document.getElementById('nav-section-attendance'),
+      'section-attendance-report': document.getElementById('nav-section-attendance-report'),
+      'section-financial': document.getElementById('nav-section-financial'),
+      'section-users': document.getElementById('it-admin-nav-item')
+    };
+
+    for (var secId in navButtons) {
+      var btn = navButtons[secId];
+      if (btn) {
+        if (allowed.indexOf(secId) !== -1) {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+      }
+    }
+
+    // Mobile drawer navigation map
+    var drawerMap = {
+      'section-dashboard': document.getElementById('drawer-item-section-dashboard'),
+      'section-live-reports': document.getElementById('drawer-item-section-live-reports'),
+      'section-sales-detail': document.getElementById('drawer-item-section-sales-detail'),
+      'section-live': document.getElementById('drawer-item-section-live'),
+      'section-inventory': document.getElementById('drawer-item-section-inventory'),
+      'section-qc-scan': document.getElementById('drawer-item-section-qc-scan'),
+      'section-attendance': document.getElementById('drawer-item-section-attendance'),
+      'section-attendance-report': document.getElementById('drawer-item-section-attendance-report'),
+      'section-financial': document.getElementById('drawer-item-section-financial'),
+      'section-orders': document.getElementById('drawer-item-section-orders'),
+      'section-pricing': document.getElementById('drawer-item-section-pricing'),
+      'section-users': document.getElementById('drawer-item-section-users')
+    };
+
+    for (var dSec in drawerMap) {
+      var dEl = drawerMap[dSec];
+      if (dEl) {
+        if (allowed.indexOf(dSec) !== -1) {
+          dEl.classList.remove('hidden');
+        } else {
+          dEl.classList.add('hidden');
+        }
+      }
+    }
+
+    if (typeof window.renderMobileBottomNav === 'function') {
+      window.renderMobileBottomNav(role, window.appState.currentSection);
+    }
+  };
+
+  window.navigateTo = function (sectionId) {
+    var role = window.appState.currentRole || 'admin';
+    var allowed = window.getRoleAllowedSections(role);
+
+    // Strict Role Guard
+    if (sectionId === 'section-live' && role !== 'host') {
+      window.showToast('Akses Ditolak: Menu Rekap Sesi Live hanya bisa diakses dan dilakukan oleh user Host Live!', 'error');
+      sectionId = allowed[0] || 'section-dashboard';
+    } else if (sectionId === 'section-live-reports' && (role === 'host' || role === 'warehouse')) {
+      window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen/Admin!', 'warning');
+      sectionId = allowed[0] || 'section-attendance';
+    } else if (allowed.indexOf(sectionId) === -1) {
+      window.showToast('Akses dibatasi untuk peran ' + role + '!', 'warning');
+      sectionId = allowed[0] || 'section-dashboard';
+    }
+
+    window.appState.currentSection = sectionId;
+
+    var sections = document.querySelectorAll('.content-section');
+    for (var i = 0; i < sections.length; i++) {
+      sections[i].classList.add('hidden');
+    }
+    var target = document.getElementById(sectionId);
+    if (target) target.classList.remove('hidden');
+
+    if (sectionId === 'section-dashboard') {
+      setTimeout(function () {
+        if (typeof window.initCharts === 'function') window.initCharts();
+      }, 120);
+    } else if (sectionId === 'section-live') {
+      if (typeof window.renderLiveSessions === 'function') {
+        window.renderLiveSessions();
+      }
+    } else if (sectionId === 'section-live-reports') {
+      setTimeout(function () {
+        if (typeof window.initLiveReportsDashboard === 'function') {
+          window.initLiveReportsDashboard();
+        }
+      }, 80);
+    } else if (sectionId === 'section-sales-detail') {
+      setTimeout(function () {
+        if (typeof window.renderSalesDetailReport === 'function') {
+          window.renderSalesDetailReport();
+        }
+      }, 80);
+    } else if (sectionId === 'section-users') {
+      if (typeof window.updateResetStats === 'function') {
+        window.updateResetStats();
+      }
+    }
+
+    // Update sidebar nav active state
+    var navLinks = document.querySelectorAll('.nav-link');
+    for (var j = 0; j < navLinks.length; j++) {
+      navLinks[j].classList.remove('bg-slate-800', 'text-white');
+      navLinks[j].classList.add('text-slate-300');
+    }
+    var activeNav = document.getElementById('nav-' + sectionId);
+    if (activeNav) {
+      activeNav.classList.add('bg-slate-800', 'text-white');
+      activeNav.classList.remove('text-slate-300');
+    }
+
+    var desktopTitles = {
+      'section-dashboard': 'Dashboard Eksekutif',
+      'section-live': 'Rekap Sesi Live Shopping',
+      'section-live-reports': 'Pusat Analitik & Laporan Live Stream',
+      'section-sales-detail': 'Laporan Penjualan Detail',
+      'section-pricing': 'Kalkulator Harga Modal & Jual Online',
+      'section-orders': 'Order & Cetak Resi Multi-Toko',
+      'section-qc-scan': 'Scan Validasi Packing Sebelum Kirim',
+      'section-returns': 'Penerimaan Retur Paket (Restock)',
+      'section-inventory': 'Inventori Stok Spion (Mobil & Motor)',
+      'section-attendance': 'Presensi Karyawan & Tag Lokasi GPS',
+      'section-attendance-report': 'Rekap Presensi Seluruh Karyawan (Admin & Owner)',
+      'section-financial': 'Laporan Laba Rugi (P&L)',
+      'section-users': 'Manajemen Pengguna IT'
+    };
+
+    var mobileTitles = {
+      'section-dashboard': 'Dashboard',
+      'section-live': 'Rekap Live',
+      'section-live-reports': 'Laporan Live',
+      'section-sales-detail': 'Penjualan Detail',
+      'section-pricing': 'Kalkulator',
+      'section-orders': 'Order & Resi',
+      'section-qc-scan': 'Scan QC',
+      'section-returns': 'Retur Paket',
+      'section-inventory': 'Stok Spion',
+      'section-attendance': 'Presensi GPS',
+      'section-attendance-report': 'Rekap Presensi',
+      'section-financial': 'Laba Rugi',
+      'section-users': 'Kelola Akun'
+    };
+
+    var titleEl = document.getElementById('topbar-page-title');
+    if (titleEl) {
+      var title = (window.innerWidth >= 768 ? desktopTitles[sectionId] : mobileTitles[sectionId]) || 'MJA Sales Hub';
+      titleEl.textContent = title;
+    }
+  };
+
+  // Submenu Switcher for Laporan Live (Fixes Tab IDs)
+  window.switchLiveReportTab = function (tabId) {
+    var baseId = tabId.replace('btn-', '').replace('content-', '');
+    if (!baseId.startsWith('tab-lr-')) {
+      baseId = 'tab-lr-' + baseId.replace('lr-tab-', '');
+    }
+    window.activeLiveReportTab = baseId;
+
+    var tabList = ['tab-lr-executive', 'tab-lr-sessions', 'tab-lr-hosts', 'tab-lr-ads', 'tab-lr-products'];
+    tabList.forEach(function (t) {
+      var isCurrent = (t === baseId);
+      var contentEl = document.getElementById(t) || document.getElementById('content-' + t);
+      var btnEl = document.getElementById('btn-' + t);
+
+      if (contentEl) {
+        if (isCurrent) contentEl.classList.remove('hidden');
+        else contentEl.classList.add('hidden');
+      }
+
+      if (btnEl) {
+        if (isCurrent) {
+          btnEl.className = 'lr-tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-slate-900 text-white whitespace-nowrap shadow-xs cursor-pointer';
+        } else {
+          btnEl.className = 'lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer';
+        }
+      }
+    });
+
+    if (baseId === 'tab-lr-executive') {
+      if (typeof window.renderExecutiveSummary === 'function') window.renderExecutiveSummary();
+    } else if (baseId === 'tab-lr-sessions') {
+      if (typeof window.renderSessionsReport === 'function') window.renderSessionsReport();
+    } else if (baseId === 'tab-lr-hosts') {
+      if (typeof window.renderHostPerformance === 'function') window.renderHostPerformance();
+    } else if (baseId === 'tab-lr-ads') {
+      if (typeof window.renderAdsProfitability === 'function') window.renderAdsProfitability();
+    } else if (baseId === 'tab-lr-products') {
+      if (typeof window.renderLiveProductsReport === 'function') window.renderLiveProductsReport();
+    }
+  };
+
+  // Robust getFilteredLiveSessions with date cleaning
+  window.getFilteredLiveSessions = function () {
+    var raw = window.appState.data.liveSessions || [];
+    var period = (document.getElementById('lr-filter-period') && document.getElementById('lr-filter-period').value) || 'month';
+    var branch = (document.getElementById('lr-filter-branch') && document.getElementById('lr-filter-branch').value) || 'all';
+    var platform = (document.getElementById('lr-filter-platform') && document.getElementById('lr-filter-platform').value) || 'all';
+    var host = (document.getElementById('lr-filter-host') && document.getElementById('lr-filter-host').value) || 'all';
+    var store = (document.getElementById('lr-filter-store') && document.getElementById('lr-filter-store').value) || 'all';
+
+    var now = new Date();
+    var todayStr = now.toISOString().slice(0, 10);
+    var curStart, curEnd, prevStart, prevEnd;
+
+    if (period === 'today') {
+      curStart = todayStr;
+      curEnd = todayStr;
+      var yest = new Date(now.getTime() - 86400000).toISOString().slice(0, 10);
+      prevStart = yest;
+      prevEnd = yest;
+    } else if (period === '7days') {
+      var d7 = new Date(now.getTime() - 6 * 86400000).toISOString().slice(0, 10);
+      curStart = d7;
+      curEnd = todayStr;
+      var d14 = new Date(now.getTime() - 13 * 86400000).toISOString().slice(0, 10);
+      var d8 = new Date(now.getTime() - 7 * 86400000).toISOString().slice(0, 10);
+      prevStart = d14;
+      prevEnd = d8;
+    } else if (period === 'month') {
+      var ym = todayStr.slice(0, 7);
+      curStart = ym + '-01';
+      curEnd = ym + '-31';
+      var prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      var prevYm = prevMonthDate.toISOString().slice(0, 7);
+      prevStart = prevYm + '-01';
+      prevEnd = prevYm + '-31';
+    } else if (period === 'last_month') {
+      var pmDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      var pmYm = pmDate.toISOString().slice(0, 7);
+      curStart = pmYm + '-01';
+      curEnd = pmYm + '-31';
+      var pm2Date = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      var pm2Ym = pm2Date.toISOString().slice(0, 7);
+      prevStart = pm2Ym + '-01';
+      prevEnd = pm2Ym + '-31';
+    } else if (period === 'custom') {
+      var cStart = document.getElementById('lr-custom-start') ? document.getElementById('lr-custom-start').value : '';
+      var cEnd = document.getElementById('lr-custom-end') ? document.getElementById('lr-custom-end').value : '';
+      curStart = cStart || '2000-01-01';
+      curEnd = cEnd || '2099-12-31';
+      prevStart = '2000-01-01';
+      prevEnd = '2000-01-01';
+    } else {
+      curStart = '2000-01-01';
+      curEnd = '2099-12-31';
+      prevStart = '2000-01-01';
+      prevEnd = '2000-01-01';
+    }
+
+    var filterFunc = function (s, start, end) {
+      var d = window.cleanWibDate(s.date);
+      if (d < start || d > end) return false;
+
+      if (platform !== 'all') {
+        var sStore = (s.store || '').toLowerCase();
+        if (platform === 'shopee' && sStore.indexOf('shopee') === -1) return false;
+        if (platform === 'tiktok' && sStore.indexOf('tiktok') === -1) return false;
+      }
+
+      if (host !== 'all' && (s.host || '') !== host) return false;
+      if (store !== 'all' && (s.store || '') !== store) return false;
+
+      return true;
+    };
+
+    return {
+      current: raw.filter(function (s) { return filterFunc(s, curStart, curEnd); }),
+      previous: raw.filter(function (s) { return filterFunc(s, prevStart, prevEnd); })
+    };
+  };
+
+
   // Inisialisasi Database User saat pertama kali dimuat
   window.initUserDatabase();
 
