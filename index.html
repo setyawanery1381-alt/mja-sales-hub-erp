@@ -4718,6 +4718,14 @@
         setTimeout(function () {
           if (typeof window.initCharts === 'function') window.initCharts();
         }, 120);
+      } else if (sectionId === 'section-live') {
+        if (typeof window.renderLiveSessions === 'function') {
+          window.renderLiveSessions();
+        }
+      } else if (sectionId === 'section-users') {
+        if (typeof window.updateResetStats === 'function') {
+          window.updateResetStats();
+        }
       }
 
       // Update sidebar nav active state
@@ -5841,12 +5849,6 @@
       window.renderStoreSettings();
     };
 
-      if (sectionId === 'section-users') {
-        if (typeof window.updateResetStats === 'function') {
-          window.updateResetStats();
-        }
-      }
-
     window.renderDashboardMetrics = function () {
       var tbody = document.getElementById('table-store-performance');
       if (!tbody) return;
@@ -5884,7 +5886,7 @@
           '<td class="p-3">' + window.formatRupiah(gross) + '</td>' +
           '<td class="p-3 text-rose-600">(' + window.formatRupiah(admin) + ')</td>' +
           '<td class="p-3 text-rose-600">(' + window.formatRupiah(ads) + ')</td>' +
-          '<td class="p-3 text-amber-600">' + window.formatRupiah(returns) + '</td>' +
+          '<td class="p-3 text-amber-600">' + window.formatRupiah(returnStore) + '</td>' +
           '<td class="p-3 text-right font-extrabold text-emerald-600">' + window.formatRupiah(net) + '</td>';
         tbody.appendChild(tr);
       });
@@ -6478,7 +6480,7 @@
     window.populateAttendanceDayDropdowns = function () {
       ['att-my-filter-day', 'att-all-filter-day'].forEach(function (selId) {
         var sel = document.getElementById(selId);
-        if (!sel || sel.options.length > 2) return;
+        if (!sel || !sel.options || sel.options.length > 2) return;
         for (var d = 1; d <= 31; d++) {
           var val = (d < 10 ? '0' : '') + d;
           var opt = document.createElement('option');
