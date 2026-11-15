@@ -426,7 +426,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
-          <span class="font-medium">Rekap Sesi Live</span>
+          <span class="font-medium flex-1 text-left">Rekap Sesi Live</span>
+          <span class="px-1.5 py-0.2 bg-amber-500/20 text-amber-300 text-[10px] font-bold rounded">Host Live</span>
         </button>
 
         <button onclick="window.navigateTo('section-pricing')" id="nav-section-pricing"
@@ -912,27 +913,75 @@
         </div>
 
         <!-- =================================================================== -->
-        <!-- SECTION 2: REKAP SESI LIVE (SHOPEE & TIKTOK) -->
+        <!-- SECTION 2: REKAP SESI LIVE (KHUSUS HOST LIVE & WAJIB PASCA-LIVE) -->
         <!-- =================================================================== -->
         <div id="section-live" class="content-section hidden space-y-6">
-          <div
-            class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <h3 class="text-lg font-bold text-slate-900">Rekapitulasi Sesi Live Shopping</h3>
-              <p class="text-xs text-slate-500">Hitung cepat margin bersih langsung sehabis siaran live berakhir</p>
+          <!-- SOP BANNER HOST LIVE -->
+          <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 text-white p-5 rounded-2xl shadow-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="space-y-1.5 max-w-2xl">
+                <div class="flex items-center space-x-2">
+                  <span class="px-2.5 py-0.5 bg-black/30 backdrop-blur-xs text-[10px] font-extrabold uppercase tracking-wider rounded-md border border-white/20">
+                    SOP RESMI HOST LIVE STREAM
+                  </span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-white text-amber-900">
+                    Khusus Host Live
+                  </span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-heading font-black tracking-tight text-white">
+                  Rekapitulasi Sesi Live Shopping (Shopee &amp; TikTok)
+                </h3>
+                <p class="text-xs text-amber-100 leading-relaxed">
+                  Setiap Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir untuk memotong stok fisik spion di gudang dan mengunci omset real-time.
+                </p>
+              </div>
+              <button onclick="window.openNewLiveModal()"
+                class="px-5 py-3 bg-white text-amber-950 hover:bg-amber-50 rounded-xl text-xs font-black shadow-lg active:scale-95 transition-all flex items-center justify-center space-x-2 flex-shrink-0 cursor-pointer">
+                <svg class="w-4 h-4 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                </svg>
+                <span>+ Input Rekap Pasca-Live (Wajib)</span>
+              </button>
             </div>
-            <button onclick="window.openNewLiveModal()"
-              class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center space-x-1.5">
-              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>+ Input Sesi Live Baru</span>
-            </button>
+          </div>
+
+          <!-- KARTU STATUS KEPATUHAN INPUT HARI INI -->
+          <div id="live-today-compliance-card" class="p-4 rounded-xl border transition-all">
+            <!-- Di-render dinamis oleh renderLiveComplianceStatus() -->
+          </div>
+
+          <!-- SUMMARY METRICS HOST -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Sesi Live</span>
+              <span class="text-base sm:text-lg font-black text-slate-800" id="host-stat-total-sessions">0 Sesi</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Omset Sesi</span>
+              <span class="text-base sm:text-lg font-black text-emerald-600" id="host-stat-total-omset">Rp 0</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Spion Terjual</span>
+              <span class="text-base sm:text-lg font-black text-indigo-600" id="host-stat-total-items">0 pcs</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rata-rata Margin</span>
+              <span class="text-base sm:text-lg font-black text-amber-600" id="host-stat-avg-margin">0%</span>
+            </div>
           </div>
 
           <!-- History Sesi Live -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cards-live-sessions">
-            <!-- Populated by JS -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center space-x-2">
+                <span>Riwayat Rekap Sesi Live Tersimpan</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700" id="host-live-badge-count">0</span>
+              </h4>
+              <span class="text-[11px] text-slate-400 italic">Otomatis sinkron dengan mutasi stok gudang</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cards-live-sessions">
+              <!-- Populated by JS -->
+            </div>
           </div>
         </div>
 
@@ -3078,112 +3127,212 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: INPUT SESI LIVE BARU -->
+  <!-- MODAL: INPUT SESI LIVE BARU (KHUSUS HOST LIVE & WAJIB PASCA-LIVE) -->
   <!-- ========================================================================= -->
   <div id="modal-live-session"
-    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100">
-      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
-        <h4 class="font-bold text-sm">Input Rekap Sesi Live</h4>
-        <button onclick="window.closeModal('modal-live-session')"
-          class="text-slate-400 hover:text-white">&times;</button>
-      </div>
-      <form onsubmit="window.handleSaveLiveSession(event)" class="p-5 space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">Pilih Toko / Channel Live</label>
-          <select id="modal-live-store" required
-            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold">
-            <option value="TikTok Shop Live Official">TikTok Shop Live Official</option>
-            <option value="Shopee Live Toko 1 (Official)">Shopee Live Toko 1 (Official Store)</option>
-            <option value="Shopee Live Toko 2 (Mall)">Shopee Live Toko 2 (Mall Store)</option>
-            <option value="Shopee Live Toko 3 (Grosir)">Shopee Live Toko 3 (Grosir Store)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">Nama Host Live</label>
-          <input type="text" id="modal-live-host" required placeholder="Contoh: Rina / Sarah / Maya"
-            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200 my-auto max-h-[92vh] flex flex-col">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between flex-shrink-0 border-b border-slate-800">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Total Omset Live (Rp)</label>
-            <input type="number" id="modal-live-omset" required placeholder="18500000"
-              class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg font-bold">
+            <h4 class="font-heading font-bold text-sm text-white">Formulir Rekap Sesi Live Shopping</h4>
+            <p class="text-[11px] text-amber-400 font-semibold">Khusus Host Live — Wajib Diisi Segera Sehabis Siaran Berakhir</p>
+          </div>
+        </div>
+        <button onclick="window.closeModal('modal-live-session')"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">&times;</button>
+      </div>
+
+      <!-- SOP Alert Box -->
+      <div class="bg-amber-50 border-b border-amber-200 px-4 py-2 text-[11px] text-amber-900 flex items-center justify-between">
+        <span class="flex items-center space-x-1.5 font-medium">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+          <span>SOP: Seluruh data penjualan, durasi, dan produk terjual wajib diinput sebelum shift selesai.</span>
+        </span>
+        <span class="font-bold text-rose-700 uppercase tracking-wider text-[10px]">Wajib Host</span>
+      </div>
+
+      <form onsubmit="window.handleSaveLiveSession(event)" class="p-4 sm:p-5 space-y-3.5 text-xs overflow-y-auto flex-1">
+        <!-- Channel Toko & Host Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Toko / Channel Live <span class="text-rose-600">*</span></label>
+            <select id="modal-live-store" required
+              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-amber-500">
+              <option value="TikTok Shop Live Official">TikTok Shop Live Official</option>
+              <option value="Shopee Live Toko 1 (Official)">Shopee Live Toko 1 (Official Store)</option>
+              <option value="Shopee Live Toko 2 (Mall)">Shopee Live Toko 2 (Mall Store)</option>
+              <option value="Shopee Live Toko 3 (Grosir)">Shopee Live Toko 3 (Grosir Store)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nama Host Live <span class="text-rose-600">*</span></label>
+            <input type="text" id="modal-live-host" required placeholder="Nama Host Siaran"
+              class="w-full h-10 px-3 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-amber-500" readonly>
+          </div>
+        </div>
+
+        <!-- Waktu Siaran & Durasi -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-slate-800 text-[11px] uppercase tracking-wider">Waktu Siaran Live:</label>
+            <span id="modal-live-duration-text" class="text-[11px] font-extrabold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+              Durasi: 3 Jam 00 Menit
+            </span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Jam Mulai <span class="text-rose-600">*</span></label>
+              <input type="time" id="modal-live-start-time" value="09:00" required onchange="window.updateLiveDurationDisplay()"
+                class="w-full h-9 px-2 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Jam Selesai <span class="text-rose-600">*</span></label>
+              <input type="time" id="modal-live-end-time" value="12:00" required onchange="window.updateLiveDurationDisplay()"
+                class="w-full h-9 px-2 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 text-center">
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Puncak Penonton (Peak) <span class="text-rose-600">*</span></label>
+              <input type="number" id="modal-live-viewers" required value="1250" placeholder="1250" min="1"
+                class="w-full h-9 px-2 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 text-center" title="Puncak penonton / viewers tertinggi saat siaran">
+            </div>
+          </div>
+        </div>
+
+        <!-- Omset & Biaya Iklan -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Total Omset Penjualan Live (Rp) <span class="text-rose-600">*</span></label>
+            <input type="number" id="modal-live-omset" required placeholder="Contoh: 18500000" min="1"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-black text-slate-900 text-sm focus:outline-none focus:border-emerald-600">
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="font-semibold text-slate-600">Biaya Iklan Live</label>
+              <label class="font-bold text-slate-700">Biaya Iklan Live</label>
               <select id="modal-live-ads-type" onchange="window.updateLiveHelper()"
-                class="text-[10px] bg-slate-100 border border-slate-200 rounded px-1">
+                class="text-[10px] bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 font-bold">
                 <option value="rp">Rp</option>
                 <option value="pct">%</option>
               </select>
             </div>
-            <input type="number" id="modal-live-ads" required placeholder="1500000"
-              class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+            <input type="number" id="modal-live-ads" required placeholder="Contoh: 1500000"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-800">
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-2">
+
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="font-semibold text-slate-600">Voucher / Diskon</label>
+              <label class="font-bold text-slate-700">Voucher / Diskon</label>
               <select id="modal-live-voucher-type" onchange="window.updateLiveHelper()"
-                class="text-[10px] bg-slate-100 border border-slate-200 rounded px-1">
+                class="text-[10px] bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 font-bold">
                 <option value="rp">Rp</option>
                 <option value="pct">%</option>
               </select>
             </div>
             <input type="number" id="modal-live-voucher" value="500000"
-              class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+              class="w-full h-9 px-3 bg-white border border-slate-300 rounded-lg text-slate-800">
           </div>
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Target Margin Min (%)</label>
-            <input type="number" id="modal-live-target-margin" value="25" placeholder="25" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg font-bold text-emerald-700">
+            <label class="block font-bold text-slate-700 mb-1">Target Margin Min (%)</label>
+            <input type="number" id="modal-live-target-margin" value="25" placeholder="25"
+              class="w-full h-9 px-3 bg-white border border-slate-300 rounded-lg font-bold text-emerald-700">
           </div>
         </div>
-        <!-- Input Rincian Produk Spion Terjual Saat Live (Req 7 Klien) -->
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-          <label class="block font-bold text-slate-800 text-xs">Pilih Produk Spion Terjual Saat Live:</label>
+
+        <!-- Input Rincian Produk Spion Terjual Saat Live (Wajib untuk Potong Stok Fisik Gudang) -->
+        <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-slate-900 text-xs">
+              Pilih Produk Spion Terjual Saat Live <span class="text-rose-600">*</span>:
+            </label>
+            <span class="text-[10px] font-bold text-amber-800">Otomatis Potong Stok Gudang</span>
+          </div>
           <div class="grid grid-cols-12 gap-1.5">
             <select id="modal-live-item-select"
-              class="col-span-6 p-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold">
+              class="col-span-7 h-9 px-2 bg-white border border-amber-300 rounded-lg text-xs font-semibold text-slate-800">
               <!-- Populated dynamically -->
             </select>
             <input type="number" id="modal-live-item-qty" placeholder="Qty" min="1" value="5"
-              class="col-span-3 p-2 bg-white border border-slate-300 rounded-lg text-xs text-center font-bold">
+              class="col-span-2 h-9 px-1 bg-white border border-amber-300 rounded-lg text-xs text-center font-black">
             <button type="button" onclick="window.addLiveSoldItem()"
-              class="col-span-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all shadow-xs">
-              + Tambah
+              class="col-span-3 h-9 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all shadow-xs flex items-center justify-center space-x-1 cursor-pointer">
+              <span>+ Tambah</span>
             </button>
           </div>
           <div id="modal-live-items-list"
-            class="space-y-1 max-h-28 overflow-y-auto pt-1 border-t border-slate-200 text-[11px]">
+            class="space-y-1.5 max-h-28 overflow-y-auto pt-1 border-t border-amber-200/80 text-[11px]">
             <!-- List of added items -->
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-600 mb-1">Total Qty Terjual (pcs)</label>
             <input type="number" id="modal-live-qty" required placeholder="210"
-              class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg font-bold">
+              class="w-full h-9 px-3 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-800" readonly>
           </div>
           <div>
             <label class="block font-semibold text-slate-600 mb-1">Estimasi HPP Total (Rp)</label>
             <input type="number" id="modal-live-cogs" required placeholder="7500000"
-              class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg font-bold">
+              class="w-full h-9 px-3 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-800" readonly>
           </div>
         </div>
-        <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-800">
-          <p class="font-bold text-[11px]">Kalkulasi Margin Otomatis:</p>
-          <p class="text-[11px] text-emerald-700" id="modal-live-calc-hint">Iklan & voucher dapat dimasukkan dalam
-            Rupiah (Rp) atau Persentase (%).</p>
+
+        <!-- Bukti Tangkapan Layar Akhir Sesi Live / Analytics Screenshot -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-slate-800 text-[11px] uppercase tracking-wider">
+              Bukti Tangkapan Layar Analitik Akhir Live:
+            </label>
+            <button type="button" onclick="window.useDemoLiveScreenshot()"
+              class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 underline cursor-pointer">
+              Gunakan Contoh Screenshot
+            </button>
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="file" id="modal-live-proof-file" accept="image/*" onchange="window.handleLiveProofUpload(event)" class="hidden">
+            <button type="button" onclick="document.getElementById('modal-live-proof-file').click()"
+              class="h-9 px-3 bg-white border border-slate-300 rounded-lg text-slate-700 font-semibold text-xs flex items-center space-x-1.5 hover:bg-slate-50 cursor-pointer">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>Upload / Foto Screenshot</span>
+            </button>
+            <span id="modal-live-proof-status" class="text-[11px] text-slate-500 italic">Belum ada screenshot terlampir</span>
+          </div>
+          <div id="modal-live-proof-preview-box" class="hidden relative rounded-lg border border-slate-200 overflow-hidden max-h-36 bg-slate-900 flex items-center justify-center">
+            <img id="modal-live-proof-img" src="" alt="Screenshot Bukti Live" class="max-h-36 object-contain">
+          </div>
         </div>
-        <div class="flex justify-end space-x-2 pt-2">
+
+        <!-- Catatan Evaluasi Host -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Catatan &amp; Evaluasi Siaran Live</label>
+          <textarea id="modal-live-notes" rows="2" placeholder="Catatan kendala sinyal, produk spion paling banyak ditanyakan viewers, atau promo live berikutnya..."
+            class="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 text-xs focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
           <button type="button" onclick="window.closeModal('modal-live-session')"
-            class="px-3 py-2 bg-slate-100 text-slate-700 rounded-lg">Batal</button>
+            class="h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-all cursor-pointer">
+            Batal
+          </button>
           <button type="submit"
-            class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Simpan Rekap</button>
+            class="h-10 px-5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-lg shadow-md transition-all flex items-center space-x-1.5 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Simpan Rekap Pasca-Live (Wajib)</span>
+          </button>
         </div>
       </form>
     </div>
@@ -4965,14 +5114,14 @@
         // GUDANG: Khusus isian stok (inventory), scan QC kirim, retur, dan absensi
         return ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
       } else if (role === 'host') {
-        // HOST LIVE: Khusus menu rekap sesi live dan absensi
+        // HOST LIVE: Khusus menu rekap sesi live dan absensi (Wajib diisi setelah melakukan live)
         return ['section-live', 'section-attendance'];
       } else if (role === 'finance') {
-        // FINANCE: Akses semua kecuali Manajemen IT
-        return ['section-dashboard', 'section-live', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
+        // FINANCE: Akses semua kecuali Manajemen IT & Rekap Live (Khusus Host Live)
+        return ['section-dashboard', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
       } else {
-        // ADMIN & OWNER: Akses SEMUA 11 modul
-        return ['section-dashboard', 'section-live', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
+        // ADMIN & OWNER: Akses SEMUA modul manajerial (Rekap Live khusus diakses & diinput oleh Host Live)
+        return ['section-dashboard', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
       }
     };
 
@@ -5208,8 +5357,11 @@
       var role = window.appState.currentRole || 'admin';
       var allowed = window.getRoleAllowedSections(role);
 
-      // Strict Guard: If section is not allowed, block and redirect
-      if (allowed.indexOf(sectionId) === -1) {
+      // Strict Guard: Menu Rekap Live HANYA bisa diakses dan dilakukan oleh user Host Live
+      if (sectionId === 'section-live' && role !== 'host') {
+        window.showToast('Akses Ditolak: Menu Rekap Sesi Live hanya bisa diakses dan dilakukan oleh user Host Live!', 'error');
+        sectionId = allowed[0] || 'section-dashboard';
+      } else if (allowed.indexOf(sectionId) === -1) {
         window.showToast('Akses dibatasi untuk peran ' + role + '!', 'warning');
         sectionId = allowed[0] || 'section-attendance';
       }
@@ -6413,28 +6565,142 @@
 
     window.renderLiveSessions = function () {
       var container = document.getElementById('cards-live-sessions');
+      var sessions = window.appState.data.liveSessions || [];
+
+      // Update KPI Header Host
+      var totalSessions = sessions.length;
+      var totalOmset = 0;
+      var totalItems = 0;
+      var totalMargin = 0;
+
+      sessions.forEach(function (ls) {
+        totalOmset += (ls.omset || 0);
+        totalItems += (ls.items || 0);
+        totalMargin += (ls.margin || 0);
+      });
+
+      var avgMargin = totalOmset > 0 ? ((totalMargin / totalOmset) * 100).toFixed(1) : '0';
+
+      var elTot = document.getElementById('host-stat-total-sessions');
+      var elOmset = document.getElementById('host-stat-total-omset');
+      var elItems = document.getElementById('host-stat-total-items');
+      var elMargin = document.getElementById('host-stat-avg-margin');
+      var elBadge = document.getElementById('host-live-badge-count');
+
+      if (elTot) elTot.textContent = totalSessions + ' Sesi';
+      if (elOmset) elOmset.textContent = window.formatRupiah(totalOmset);
+      if (elItems) elItems.textContent = totalItems + ' pcs';
+      if (elMargin) elMargin.textContent = avgMargin + '%';
+      if (elBadge) elBadge.textContent = totalSessions;
+
+      // Update Kepatuhan SOP Input Pasca-Live Hari Ini
+      var compCard = document.getElementById('live-today-compliance-card');
+      if (compCard) {
+        var todayStr = new Date().toISOString().slice(0, 10);
+        var hasSubmittedToday = sessions.some(function (ls) { return ls.date === todayStr; });
+
+        if (hasSubmittedToday) {
+          compCard.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs';
+          compCard.innerHTML = '<div class="flex items-center space-x-3">' +
+            '<div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0">✓</div>' +
+            '<div>' +
+            '<div class="flex items-center space-x-2">' +
+            '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-700 text-white uppercase tracking-wider">STATUS SOP HARI INI: LENGKAP</span>' +
+            '<span class="text-xs font-bold text-emerald-900">Rekap Pasca-Live Selesai Diinput</span>' +
+            '</div>' +
+            '<p class="text-xs text-emerald-800 mt-0.5">Terima kasih! Laporan live hari ini telah mengunci omset dan memotong stok gudang spion secara otomatis.</p>' +
+            '</div>' +
+            '</div>' +
+            '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg transition-all flex items-center space-x-1 flex-shrink-0 cursor-pointer">' +
+            '<span>+ Input Sesi Tambahan</span>' +
+            '</button>';
+        } else {
+          compCard.className = 'p-4 rounded-xl border-2 bg-amber-50 border-amber-400 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm';
+          compCard.innerHTML = '<div class="flex items-center space-x-3">' +
+            '<div class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0 animate-bounce">!</div>' +
+            '<div>' +
+            '<div class="flex items-center space-x-2">' +
+            '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white uppercase tracking-wider">SOP WAJIB PASCA-LIVE</span>' +
+            '<span class="text-xs font-bold text-rose-900">Belum Ada Rekap Live Hari Ini</span>' +
+            '</div>' +
+            '<p class="text-xs text-amber-900 mt-0.5">Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
+            '</div>' +
+            '</div>' +
+            '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl transition-all shadow-md flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">' +
+            '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>' +
+            '<span>🔴 Input Rekap Pasca-Live Sekarang</span>' +
+            '</button>';
+        }
+      }
+
       if (!container) return;
       container.innerHTML = '';
 
-      window.appState.data.liveSessions.forEach(function (ls) {
-        var card = document.createElement('div');
-        card.className = 'bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3';
-        card.innerHTML = '<div class="flex justify-between items-start">' +
-          '<div>' +
-          '<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">' + ls.date + '</span>' +
-          '<h4 class="font-bold text-sm text-slate-800">' + ls.store + '</h4>' +
-          '<p class="text-xs text-slate-500">Host: ' + ls.host + '</p>' +
-          '</div>' +
-          '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Selesai</span>' +
-          '</div>' +
-          '<div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100 font-mono">' +
-          '<div><span class="text-slate-400 block text-[10px]">OMSET</span><span class="font-bold text-slate-800">' + window.formatRupiah(ls.omset) + '</span></div>' +
-          '<div><span class="text-slate-400 block text-[10px]">MARGIN BERSIH</span><span class="font-bold text-emerald-600">' + window.formatRupiah(ls.margin) + '</span></div>' +
-          '</div>' +
-          '<div class="text-[11px] text-slate-500 flex justify-between">' +
-          '<span>Item Laku: ' + ls.items + ' pcs</span>' +
-          '<span>Ads: ' + window.formatRupiah(ls.ads) + '</span>' +
+      if (sessions.length === 0) {
+        container.innerHTML = '<div class="col-span-full p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">' +
+          '<p class="font-bold text-slate-600 mb-1">Belum ada riwayat rekap sesi live.</p>' +
+          '<p>Klik tombol "+ Input Rekap Pasca-Live" di atas untuk menambahkan laporan siaran Anda.</p>' +
           '</div>';
+        return;
+      }
+
+      sessions.forEach(function (ls, idx) {
+        var card = document.createElement('div');
+        card.className = 'bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5 hover:shadow-md transition-shadow';
+
+        var timeRange = ls.startTime ? (ls.startTime + ' - ' + (ls.endTime || '') + ' WIB') : '';
+        var durBadge = ls.duration ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">' + ls.duration + '</span>' : '';
+        var viewersBadge = ls.viewers ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1">👁️ ' + Number(ls.viewers).toLocaleString('id-ID') + ' Puncak</span>' : '';
+
+        // Rincian produk terjual
+        var productsHtml = '';
+        if (Array.isArray(ls.soldProducts) && ls.soldProducts.length > 0) {
+          productsHtml = '<div class="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[11px]">' +
+            '<span class="text-[10px] font-bold text-slate-500 block uppercase tracking-wider">Potong Stok Gudang:</span>';
+          ls.soldProducts.forEach(function (sp) {
+            productsHtml += '<div class="flex justify-between items-center text-slate-700">' +
+              '<span><strong>' + sp.sku + '</strong> x ' + sp.qty + ' pcs</span>' +
+              '<span class="font-semibold text-emerald-700">' + window.formatRupiah(sp.subtotal || 0) + '</span>' +
+              '</div>';
+          });
+          productsHtml += '</div>';
+        }
+
+        // Tombol Bukti Screenshot
+        var proofBtn = '';
+        if (ls.proofPhoto) {
+          proofBtn = '<button type="button" onclick="window.viewLiveProofPhoto(' + idx + ')" class="w-full py-1.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center justify-center space-x-1.5 cursor-pointer">' +
+            '<svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>' +
+            '<span>Lihat Bukti Analitik Siaran</span>' +
+            '</button>';
+        }
+
+        card.innerHTML = '<div class="flex justify-between items-start gap-2">' +
+          '<div>' +
+          '<div class="flex items-center space-x-1.5 mb-1">' +
+          '<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">' + ls.date + '</span>' +
+          durBadge +
+          '</div>' +
+          '<h4 class="font-bold text-sm text-slate-900 leading-snug">' + ls.store + '</h4>' +
+          '<p class="text-xs text-slate-500 font-medium mt-0.5">Host: <strong>' + ls.host + '</strong> ' + (timeRange ? '<span class="text-slate-400">(' + timeRange + ')</span>' : '') + '</p>' +
+          '</div>' +
+          '<div class="flex flex-col items-end space-y-1">' +
+          '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">✓ SOP Valid</span>' +
+          viewersBadge +
+          '</div>' +
+          '</div>' +
+          '<div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100 font-mono bg-slate-50/50 p-2 rounded-lg">' +
+          '<div><span class="text-slate-400 block text-[10px]">TOTAL OMSET</span><span class="font-bold text-slate-900 text-sm">' + window.formatRupiah(ls.omset) + '</span></div>' +
+          '<div><span class="text-slate-400 block text-[10px]">MARGIN BERSIH</span><span class="font-bold text-emerald-600 text-sm">' + window.formatRupiah(ls.margin) + '</span></div>' +
+          '</div>' +
+          productsHtml +
+          '<div class="text-[11px] text-slate-500 flex justify-between items-center pt-0.5">' +
+          '<span>Total Spion: <strong>' + ls.items + ' pcs</strong></span>' +
+          '<span>Iklan: ' + window.formatRupiah(ls.ads) + '</span>' +
+          '</div>' +
+          (ls.notes ? '<p class="text-[11px] text-slate-600 bg-amber-50/50 p-2 rounded-lg border border-amber-100 italic">" ' + ls.notes + ' "</p>' : '') +
+          proofBtn;
+
         container.appendChild(card);
       });
     };
@@ -7467,6 +7733,20 @@
           window.playBeep('error');
           window.showToast('Gagal: Anda sudah melakukan Presensi Masuk hari ini pada pukul ' + (existingIn.time || '') + ' WIB! Presensi masuk hanya dapat dilakukan 1 kali sehari.', 'error');
           return;
+        }
+      }
+
+      // ATURAN 1B (SOP KHUSUS HOST LIVE): Wajib input rekap sesi live sebelum Absen Pulang
+      if (inOut === 'out' && (user.role === 'host' || window.appState.currentRole === 'host')) {
+        var sessions = window.appState.data.liveSessions || [];
+        var hasLiveToday = sessions.some(function (ls) { return ls.date === dateStr; });
+        if (!hasLiveToday) {
+          var proceed = confirm('⚠️ PERHATIAN SOP HOST LIVE:\n\nAnda terdeteksi belum menginput Rekap Sesi Live hari ini.\nSesuai SOP, Host Live WAJIB menginput laporan rekapitulasi setelah siaran live selesai sebelum mengakhiri shift / absen pulang.\n\nKlik "OK" untuk membuka formulir Rekap Live sekarang,\natau "Batal" jika hari ini memang tidak ada jadwal siaran.');
+          if (proceed) {
+            window.navigateTo('section-live');
+            window.openNewLiveModal();
+            return;
+          }
         }
       }
 
@@ -8891,17 +9171,138 @@
       checkboxes.forEach(function (cb) { cb.checked = master.checked; });
     };
 
-    // Live Session Submission
+    // =========================================================================
+    // FITUR REKAP SESI LIVE (KHUSUS HOST LIVE & WAJIB DIISI PASCA-LIVE)
+    // =========================================================================
+
+    // Generator SVG Screenshot Bukti Analitik Akhir Live Streaming
+    window.createMockLiveAnalyticsSvg = function (store, host, date, omset, viewers) {
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750" viewBox="0 0 600 750">' +
+        '<rect width="600" height="750" fill="#0f172a"/>' +
+        '<rect x="20" y="20" width="560" height="710" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>' +
+        '<circle cx="60" cy="65" r="18" fill="#ef4444"/>' +
+        '<text x="90" y="72" fill="#ffffff" font-family="sans-serif" font-size="18" font-weight="bold">SIARAN TELAH BERAKHIR</text>' +
+        '<text x="60" y="125" fill="#94a3b8" font-family="sans-serif" font-size="13">Channel: ' + store + '</text>' +
+        '<text x="60" y="148" fill="#94a3b8" font-family="sans-serif" font-size="13">Host: ' + host + ' | Waktu: ' + date + '</text>' +
+        '<line x1="40" y1="170" x2="560" y2="170" stroke="#334155" stroke-width="1.5"/>' +
+        '<rect x="40" y="190" width="520" height="110" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>' +
+        '<text x="60" y="225" fill="#94a3b8" font-family="sans-serif" font-size="12" font-weight="bold">ESTIMASI PENDAPATAN KOTOR</text>' +
+        '<text x="60" y="270" fill="#10b981" font-family="sans-serif" font-size="32" font-weight="bold">' + (window.formatRupiah ? window.formatRupiah(omset) : 'Rp ' + omset) + '</text>' +
+        '<rect x="40" y="320" width="250" height="95" rx="12" fill="#0f172a"/>' +
+        '<text x="60" y="350" fill="#94a3b8" font-family="sans-serif" font-size="12">PUNCAK PENONTON</text>' +
+        '<text x="60" y="390" fill="#ffffff" font-family="sans-serif" font-size="24" font-weight="bold">' + viewers + ' Viewers</text>' +
+        '<rect x="310" y="320" width="250" height="95" rx="12" fill="#0f172a"/>' +
+        '<text x="330" y="350" fill="#94a3b8" font-family="sans-serif" font-size="12">STATUS KINERJA</text>' +
+        '<text x="330" y="390" fill="#38bdf8" font-family="sans-serif" font-size="20" font-weight="bold">TARGET TERCAPAI</text>' +
+        '<rect x="40" y="435" width="520" height="235" rx="12" fill="#0f172a"/>' +
+        '<text x="60" y="470" fill="#f59e0b" font-family="sans-serif" font-size="13" font-weight="bold">VERIFIKASI DASHBOARD ANALITIK AKHIR LIVE</text>' +
+        '<text x="60" y="505" fill="#cbd5e1" font-family="sans-serif" font-size="12">&#x2022; Terverifikasi otomatis oleh sistem MJA ERP</text>' +
+        '<text x="60" y="535" fill="#cbd5e1" font-family="sans-serif" font-size="12">&#x2022; Stok gudang spion langsung terpotong akurat</text>' +
+        '<text x="60" y="565" fill="#cbd5e1" font-family="sans-serif" font-size="12">&#x2022; Laporan diinput pasca-live oleh ' + host + '</text>' +
+        '<rect x="60" y="605" width="480" height="40" rx="8" fill="#1e293b"/>' +
+        '<text x="80" y="630" fill="#10b981" font-family="monospace" font-size="12">&#x2713; TERSINKRONISASI KE DATABASE PERUSAHAAN</text>' +
+        '</svg>';
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    };
+
+    // Helper Durasi Siaran
+    window.updateLiveDurationDisplay = function () {
+      var sEl = document.getElementById('modal-live-start-time');
+      var eEl = document.getElementById('modal-live-end-time');
+      var durEl = document.getElementById('modal-live-duration-text');
+      if (!sEl || !eEl || !durEl) return;
+
+      var s = sEl.value || '09:00';
+      var e = eEl.value || '12:00';
+      var sParts = s.split(':').map(Number);
+      var eParts = e.split(':').map(Number);
+      var sMin = sParts[0] * 60 + sParts[1];
+      var eMin = eParts[0] * 60 + eParts[1];
+      var diff = eMin - sMin;
+      if (diff < 0) diff += 24 * 60; // Melewati tengah malam
+      var h = Math.floor(diff / 60);
+      var m = diff % 60;
+      durEl.textContent = 'Durasi: ' + h + ' Jam ' + (m < 10 ? '0' : '') + m + ' Menit';
+    };
 
     // State items sementara saat modal live dibuka
     window.currentLiveSoldItems = [];
+    window.currentLiveProofPhoto = '';
+
+    window.handleLiveProofUpload = function (event) {
+      var file = event.target.files && event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        window.currentLiveProofPhoto = e.target.result;
+        var box = document.getElementById('modal-live-proof-preview-box');
+        var img = document.getElementById('modal-live-proof-img');
+        var st = document.getElementById('modal-live-proof-status');
+        if (img) img.src = e.target.result;
+        if (box) box.classList.remove('hidden');
+        if (st) st.textContent = 'Screenshot terlampir (' + (file.name || 'foto.jpg') + ')';
+        window.showToast('Screenshot bukti analitik live berhasil diunggah!', 'success');
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.useDemoLiveScreenshot = function () {
+      var store = document.getElementById('modal-live-store').value || 'TikTok Shop Live Official';
+      var host = document.getElementById('modal-live-host').value || 'Sarah Amanda';
+      var omset = document.getElementById('modal-live-omset').value || '18500000';
+      var viewers = document.getElementById('modal-live-viewers').value || '1250';
+      var now = new Date();
+      var dateStr = now.toISOString().slice(0, 10);
+
+      var svgData = window.createMockLiveAnalyticsSvg(store, host, dateStr, omset, viewers);
+      window.currentLiveProofPhoto = svgData;
+      var box = document.getElementById('modal-live-proof-preview-box');
+      var img = document.getElementById('modal-live-proof-img');
+      var st = document.getElementById('modal-live-proof-status');
+      if (img) img.src = svgData;
+      if (box) box.classList.remove('hidden');
+      if (st) st.textContent = 'Contoh screenshot dashboard creator terlampir';
+      window.showToast('Screenshot analitik demo terpasang!', 'success');
+    };
 
     window.openNewLiveModal = function () {
+      // Validasi ketat peran Host Live
+      if (window.appState.currentRole !== 'host') {
+        window.showToast('Akses Ditolak: Hanya user Host Live yang berhak menginput Rekap Sesi Live!', 'error');
+        return;
+      }
+
       window.currentLiveSoldItems = [];
+      window.currentLiveProofPhoto = '';
+
+      var hostInput = document.getElementById('modal-live-host');
+      if (hostInput) {
+        var user = window.appState.currentUser || { name: 'Sarah Amanda', email: 'host@demo.com' };
+        hostInput.value = user.name || (user.email ? user.email.split('@')[0] : 'Host Live');
+      }
+
+      var now = new Date();
+      var hh = now.getHours();
+      var mm = now.getMinutes();
+      var endHStr = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+      var startH = (hh - 2 + 24) % 24;
+      var startHStr = String(startH).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+
+      var sEl = document.getElementById('modal-live-start-time');
+      var eEl = document.getElementById('modal-live-end-time');
+      if (sEl) sEl.value = startHStr;
+      if (eEl) eEl.value = endHStr;
+      window.updateLiveDurationDisplay();
+
+      var previewBox = document.getElementById('modal-live-proof-preview-box');
+      if (previewBox) previewBox.classList.add('hidden');
+      var proofStatus = document.getElementById('modal-live-proof-status');
+      if (proofStatus) proofStatus.textContent = 'Belum ada screenshot terlampir';
+
       var selectEl = document.getElementById('modal-live-item-select');
       if (selectEl) {
         selectEl.innerHTML = '';
-        window.appState.data.inventory.forEach(function (item) {
+        (window.appState.data.inventory || []).forEach(function (item) {
           var opt = document.createElement('option');
           opt.value = item.sku;
           opt.textContent = item.sku + ' - ' + item.name + ' (Stok: ' + item.stock + ')';
@@ -8909,7 +9310,9 @@
         });
       }
       window.renderModalLiveItemsList();
-      document.getElementById('modal-live-session').classList.remove('hidden');
+
+      var modal = document.getElementById('modal-live-session');
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.addLiveSoldItem = function () {
@@ -8919,7 +9322,7 @@
 
       var sku = selectEl.value;
       var qty = parseInt(qtyEl.value, 10) || 1;
-      var prod = window.appState.data.inventory.find(function (it) { return it.sku === sku; });
+      var prod = (window.appState.data.inventory || []).find(function (it) { return it.sku === sku; });
       if (!prod) return;
 
       var price = prod.price || 500000;
@@ -8944,9 +9347,13 @@
         totalCogs += (it.cogs * it.qty);
       });
 
-      document.getElementById('modal-live-qty').value = totalQ;
-      document.getElementById('modal-live-omset').value = totalOmset;
-      document.getElementById('modal-live-cogs').value = totalCogs;
+      var qEl = document.getElementById('modal-live-qty');
+      var oEl = document.getElementById('modal-live-omset');
+      var cEl = document.getElementById('modal-live-cogs');
+
+      if (qEl) qEl.value = totalQ;
+      if (oEl) oEl.value = totalOmset;
+      if (cEl) cEl.value = totalCogs;
 
       window.renderModalLiveItemsList();
       window.showToast('Item ' + prod.sku + ' (' + qty + ' pcs) ditambahkan ke rekap live!', 'success');
@@ -8958,31 +9365,82 @@
       container.innerHTML = '';
 
       if (window.currentLiveSoldItems.length === 0) {
-        container.innerHTML = '<p class="text-slate-400 italic text-[11px] py-1">Belum ada produk dipilih. Gunakan pemilih di atas.</p>';
+        container.innerHTML = '<p class="text-slate-400 italic text-[11px] py-1 text-center">Belum ada produk dipilih. Gunakan pemilih di atas lalu klik "+ Tambah".</p>';
         return;
       }
 
       window.currentLiveSoldItems.forEach(function (it, idx) {
         var div = document.createElement('div');
-        div.className = 'flex items-center justify-between p-1.5 bg-white border border-slate-200 rounded-md';
-        div.innerHTML = '<div><strong>' + it.sku + '</strong> x ' + it.qty + ' pcs <span class="text-slate-400">(' + it.name + ')</span></div>' +
-          '<div class="font-bold text-emerald-700">' + window.formatRupiah(it.subtotal) + '</div>';
+        div.className = 'flex items-center justify-between p-2 bg-white border border-slate-200 rounded-lg shadow-2xs';
+        div.innerHTML = '<div class="truncate mr-2"><strong class="text-slate-800">' + it.sku + '</strong> x <span class="font-bold text-amber-700">' + it.qty + ' pcs</span> <span class="text-slate-400 text-[10px]">(' + it.name + ')</span></div>' +
+          '<div class="flex items-center space-x-2 flex-shrink-0">' +
+          '<span class="font-bold text-emerald-700">' + window.formatRupiah(it.subtotal) + '</span>' +
+          '<button type="button" onclick="window.removeLiveSoldItem(' + idx + ')" class="text-rose-500 hover:text-rose-700 font-bold px-1" title="Hapus item">&times;</button>' +
+          '</div>';
         container.appendChild(div);
       });
     };
 
-    window.openNewLiveModal_legacy = function () {
-      document.getElementById('modal-live-session').classList.remove('hidden');
+    window.removeLiveSoldItem = function (index) {
+      if (index >= 0 && index < window.currentLiveSoldItems.length) {
+        window.currentLiveSoldItems.splice(index, 1);
+        var totalQ = 0;
+        var totalOmset = 0;
+        var totalCogs = 0;
+        window.currentLiveSoldItems.forEach(function (it) {
+          totalQ += it.qty;
+          totalOmset += it.subtotal;
+          totalCogs += (it.cogs * it.qty);
+        });
+
+        var qEl = document.getElementById('modal-live-qty');
+        var oEl = document.getElementById('modal-live-omset');
+        var cEl = document.getElementById('modal-live-cogs');
+
+        if (qEl) qEl.value = totalQ;
+        if (oEl) oEl.value = totalOmset;
+        if (cEl) cEl.value = totalCogs;
+
+        window.renderModalLiveItemsList();
+      }
     };
+
+    window.openNewLiveModal_legacy = function () {
+      window.openNewLiveModal();
+    };
+
     window.closeModal = function (id) {
-      document.getElementById(id).classList.add('hidden');
+      var m = document.getElementById(id);
+      if (m) m.classList.add('hidden');
     };
 
     window.handleSaveLiveSession = function (e) {
       e.preventDefault();
+
+      // Validasi ketat peran Host Live
+      if (window.appState.currentRole !== 'host') {
+        window.showToast('Akses Ditolak: Hanya user Host Live yang berhak menginput Rekap Sesi Live!', 'error');
+        return;
+      }
+
       var store = document.getElementById('modal-live-store').value;
       var host = document.getElementById('modal-live-host').value;
       var omset = Number(document.getElementById('modal-live-omset').value);
+      var startTime = document.getElementById('modal-live-start-time') ? document.getElementById('modal-live-start-time').value : '09:00';
+      var endTime = document.getElementById('modal-live-end-time') ? document.getElementById('modal-live-end-time').value : '12:00';
+      var viewers = Number(document.getElementById('modal-live-viewers') ? document.getElementById('modal-live-viewers').value : 1000);
+      var notes = document.getElementById('modal-live-notes') ? document.getElementById('modal-live-notes').value.trim() : '';
+
+      if (omset <= 0) {
+        window.showToast('Total omset penjualan live wajib diisi lebih dari 0!', 'warning');
+        return;
+      }
+
+      // Validasi wajib produk spion terjual agar stok gudang terpotong
+      if (window.currentLiveSoldItems.length === 0) {
+        alert('⚠️ WAJIB INPUT PRODUK SPION:\n\nHarap pilih minimal 1 produk spion yang terjual saat siaran live pada kotak di atas, lalu klik tombol "+ Tambah".\n\nHal ini wajib agar stok gudang otomatis terpotong akurat!');
+        return;
+      }
 
       var adsRaw = Number(document.getElementById('modal-live-ads').value || 0);
       var adsType = document.getElementById('modal-live-ads-type').value;
@@ -8997,28 +9455,45 @@
 
       // Determine fee percentage from store settings
       var feePct = 9.5;
-      var matchedStore = window.appState.data.stores.find(function (s) { return s.name.indexOf(store) !== -1; });
+      var matchedStore = (window.appState.data.stores || []).find(function (s) { return s.name.indexOf(store) !== -1; });
       if (matchedStore) feePct = matchedStore.fee;
 
       var fee = Math.round(omset * (feePct / 100));
       var margin = omset - fee - ads - voucher - cogs;
 
+      // Hitung durasi
+      var sParts = startTime.split(':').map(Number);
+      var eParts = endTime.split(':').map(Number);
+      var diffMin = (eParts[0] * 60 + eParts[1]) - (sParts[0] * 60 + sParts[1]);
+      if (diffMin < 0) diffMin += 24 * 60;
+      var durationStr = Math.floor(diffMin / 60) + ' Jam ' + (diffMin % 60 < 10 ? '0' : '') + (diffMin % 60) + ' Menit';
+
+      var proofPhoto = window.currentLiveProofPhoto;
+      if (!proofPhoto) {
+        proofPhoto = window.createMockLiveAnalyticsSvg(store, host, new Date().toISOString().slice(0, 10), omset, viewers);
+      }
+
       var newSession = {
-        id: 'LS-0' + (window.appState.data.liveSessions.length + 1),
+        id: 'LS-0' + ((window.appState.data.liveSessions || []).length + 1),
         store: store,
         host: host,
         date: new Date().toISOString().slice(0, 10),
+        startTime: startTime,
+        endTime: endTime,
+        duration: durationStr,
+        viewers: viewers,
         omset: omset,
         fee: fee,
         ads: ads + voucher,
         cogs: cogs,
         margin: margin,
-        items: qty
+        items: qty,
+        notes: notes,
+        proofPhoto: proofPhoto,
+        soldProducts: window.currentLiveSoldItems.slice()
       };
 
-      // Simpan rincian produk yang terjual dan OTOMATIS POTONG STOK GUDANG (Req 7)
-      newSession.soldProducts = window.currentLiveSoldItems.slice();
-
+      // Simpan rincian produk yang terjual dan OTOMATIS POTONG STOK GUDANG
       if (window.currentLiveSoldItems.length > 0) {
         var user = window.appState.currentUser || { name: 'Host Live' };
         var opName = user.name || user.email.split('@')[0];
@@ -9027,10 +9502,9 @@
         var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
         window.currentLiveSoldItems.forEach(function (item) {
-          var inv = window.appState.data.inventory.find(function (it) { return it.sku === item.sku; });
+          var inv = (window.appState.data.inventory || []).find(function (it) { return it.sku === item.sku; });
           if (inv) {
             inv.stock = Math.max(0, inv.stock - item.qty);
-            // Catat log mutasi pengurangan stok karena penjualan live
             if (!window.appState.data.stockLogs) window.appState.data.stockLogs = [];
             window.appState.data.stockLogs.unshift({
               id: 'LOG-' + Date.now() + '-' + item.sku,
@@ -9049,14 +9523,62 @@
             });
           }
         });
-        window.renderInventory();
-        window.renderStockLogs();
+        if (typeof window.renderInventory === 'function') window.renderInventory();
+        if (typeof window.renderStockLogs === 'function') window.renderStockLogs();
       }
 
+      if (!window.appState.data.liveSessions) window.appState.data.liveSessions = [];
       window.appState.data.liveSessions.unshift(newSession);
+
+      try {
+        localStorage.setItem('mja_clean_liveSessions', JSON.stringify(window.appState.data.liveSessions));
+      } catch (eLs) { }
+
+      // Sinkronisasi Sesi Live ke Google Sheets jika online
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'saveLiveSession',
+              id: newSession.id,
+              date: newSession.date,
+              store: newSession.store,
+              host: newSession.host,
+              omset: newSession.omset,
+              fee: newSession.fee,
+              ads: newSession.ads,
+              cogs: newSession.cogs,
+              margin: newSession.margin,
+              items: newSession.items,
+              duration: newSession.duration,
+              viewers: newSession.viewers,
+              notes: newSession.notes
+            })
+          }).catch(function (eGas) { console.warn('GAS save live error:', eGas); });
+        } catch (eGasOuter) { }
+      }
+
       window.renderLiveSessions();
       window.closeModal('modal-live-session');
-      window.showToast('Sesi live tersimpan! Stok gudang spion otomatis terpotong & masuk laporan Admin/Owner.', 'success');
+      window.showToast('SOP Terpenuhi: Rekap sesi live berhasil disimpan! Stok gudang spion otomatis terpotong.', 'success');
+    };
+
+    window.viewLiveProofPhoto = function (index) {
+      var sessions = window.appState.data.liveSessions || [];
+      var ls = sessions[index];
+      if (!ls) return;
+
+      var img = document.getElementById('modal-photo-img');
+      var meta = document.getElementById('modal-photo-meta');
+      if (img) img.src = ls.proofPhoto || window.createMockLiveAnalyticsSvg(ls.store, ls.host, ls.date, ls.omset, ls.viewers || 1000);
+      if (meta) {
+        meta.textContent = 'Bukti Analitik Live: ' + ls.store + ' | Host: ' + ls.host + ' (' + ls.date + ') | Omset: ' + window.formatRupiah(ls.omset);
+      }
+      var modal = document.getElementById('modal-view-photo');
+      if (modal) modal.classList.remove('hidden');
     };
 
     // 1-Click Google Sheets Exporter

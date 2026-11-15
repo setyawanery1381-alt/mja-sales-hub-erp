@@ -288,6 +288,34 @@ function doPost(e) {
       });
     }
 
+    // 5. SAVE LIVE SESSION: Simpan laporan rekap pasca-live dari Host Live
+    if (action === 'saveLiveSession') {
+      var sheet = ss.getSheetByName('Live_Sessions');
+      if (!sheet) {
+        sheet = ss.insertSheet('Live_Sessions');
+        sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
+      }
+      sheet.appendRow([
+        payload.id || ('LS-' + Date.now()),
+        payload.date || Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jakarta', 'yyyy-MM-dd'),
+        payload.store || 'TikTok Shop Live',
+        payload.host || 'Host Live',
+        payload.omset || 0,
+        payload.fee || 0,
+        payload.ads || 0,
+        payload.cogs || 0,
+        payload.margin || 0,
+        payload.items || 0,
+        payload.duration || '',
+        payload.viewers || 0,
+        payload.notes || ''
+      ]);
+      return jsonResponse_({
+        success: true,
+        message: 'Rekap sesi live berhasil disimpan ke Google Sheets'
+      });
+    }
+
     return jsonResponse_({ success: false, message: 'Action tidak dikenali: ' + action });
   } catch (err) {
     return jsonResponse_({ success: false, error: err.toString() });
