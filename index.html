@@ -1073,8 +1073,8 @@
               <span class="text-base sm:text-lg font-black text-indigo-600" id="host-stat-total-items">0 pcs</span>
             </div>
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rata-rata Margin</span>
-              <span class="text-base sm:text-lg font-black text-amber-600" id="host-stat-avg-margin">0%</span>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rata-rata Omset / Sesi</span>
+              <span class="text-base sm:text-lg font-black text-emerald-600" id="host-stat-avg-margin">Rp 0</span>
             </div>
           </div>
 
@@ -7980,9 +7980,9 @@
           '<button type="button" onclick="window.deleteLiveSession(\'' + ls.id + '\')" class="text-rose-500 hover:text-rose-700 text-[10px] font-bold flex items-center space-x-0.5 mt-1 cursor-pointer" title="Hapus sesi ini"><span>🗑️ Hapus Sesi</span></button>' +
           '</div>' +
           '</div>' +
-          '<div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100 font-mono bg-slate-50/50 p-2 rounded-lg">' +
-          '<div><span class="text-slate-400 block text-[10px]">TOTAL OMSET</span><span class="font-bold text-slate-900 text-sm">' + window.formatRupiah(ls.omset) + '</span></div>' +
-          '<div><span class="text-slate-400 block text-[10px]">MARGIN BERSIH</span><span class="font-bold text-emerald-600 text-sm">' + window.formatRupiah(ls.margin) + '</span></div>' +
+          '<div class="py-2.5 px-3 border-y border-slate-100 font-mono bg-slate-50/60 rounded-xl flex items-center justify-between">' +
+          '<div><span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">TOTAL OMSET SESI LIVE</span><span class="font-black text-emerald-700 text-base">' + window.formatRupiah(ls.omset) + '</span></div>' +
+          '<span class="text-[11px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-2xs">' + (ls.items || 0) + ' pcs spion</span>' +
           '</div>' +
           productsHtml +
           '<div class="text-[11px] text-slate-500 flex justify-between items-center pt-0.5">' +
@@ -13924,7 +13924,7 @@
     var totalOmset = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.omset) || 0); }, 0);
     var totalItems = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.items) || 0); }, 0);
     var totalMargin = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.margin) || 0); }, 0);
-    var avgMargin = totalOmset > 0 ? ((totalMargin / totalOmset) * 100).toFixed(1) : '0';
+    var avgOmset = totalSessions > 0 ? Math.round(totalOmset / totalSessions) : 0;
 
     var elTot = document.getElementById('host-stat-total-sessions');
     var elOmset = document.getElementById('host-stat-total-omset');
@@ -13935,7 +13935,7 @@
     if (elTot) elTot.textContent = totalSessions + ' Sesi';
     if (elOmset) elOmset.textContent = window.formatRupiah(totalOmset);
     if (elItems) elItems.textContent = totalItems + ' pcs';
-    if (elMargin) elMargin.textContent = avgMargin + '%';
+    if (elMargin) elMargin.textContent = window.formatRupiah(avgOmset);
     if (elBadge) elBadge.textContent = filteredSessions.length;
 
     var compCard = document.getElementById('live-today-compliance-card');
@@ -14067,10 +14067,10 @@
         '<button type="button" onclick="window.deleteLiveSession(\'' + ls.id + '\')" class="text-rose-500 hover:text-rose-700 text-[10px] font-bold flex items-center space-x-0.5 mt-1 cursor-pointer" title="Hapus sesi ini"><span>🗑️ Hapus Sesi</span></button>' +
         '</div>' +
         '</div>' +
-        '<div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100 font-mono bg-slate-50/50 p-2 rounded-lg">' +
-        '<div><span class="text-slate-400 block text-[10px]">TOTAL OMSET</span><span class="font-bold text-slate-900 text-sm">' + window.formatRupiah(ls.omset) + '</span></div>' +
-        '<div><span class="text-slate-400 block text-[10px]">MARGIN BERSIH</span><span class="font-bold text-emerald-600 text-sm">' + window.formatRupiah(ls.margin) + '</span></div>' +
-        '</div>' +
+        '<div class="py-2.5 px-3 border-y border-slate-100 font-mono bg-slate-50/60 rounded-xl flex items-center justify-between">' +
+          '<div><span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">TOTAL OMSET SESI LIVE</span><span class="font-black text-emerald-700 text-base">' + window.formatRupiah(ls.omset) + '</span></div>' +
+          '<span class="text-[11px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-2xs">' + (ls.items || 0) + ' pcs spion</span>' +
+          '</div>' +
         productsHtml +
         mgmtNotesHtml +
         '<div class="flex justify-between items-center text-xs text-slate-500 pt-1">' +
@@ -14568,10 +14568,9 @@
     if (qtyInput) qtyInput.value = totalQty;
     if (cogsInput) cogsInput.value = totalCogs;
 
-    // Jika omset masih kosong atau 0, otomatis isi dari total omset item terpilih
     var omsetEl = document.getElementById('modal-live-omset');
-    if (omsetEl && (!omsetEl.value || Number(omsetEl.value) === 0)) {
-      omsetEl.value = totalOmset;
+    if (omsetEl) {
+      omsetEl.value = totalOmset > 0 ? totalOmset : '';
     }
   };
 
@@ -14651,24 +14650,11 @@
 
     window.populateLiveProductSelect();
 
-    // Default item agar host tidak perlu bingung mencari tombol tambah
-    var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
-    var defaultItem = inventory[0] || { sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia Chrome', price: 1150000, cogs: 690000 };
-    window.currentLiveSoldItems = [
-      {
-        sku: defaultItem.sku,
-        name: defaultItem.name,
-        qty: 5,
-        price: defaultItem.price || 1150000,
-        cogs: defaultItem.cogs || 690000,
-        subtotal: (defaultItem.price || 1150000) * 5
-      }
-    ];
-
+    window.currentLiveSoldItems = [];
     window.renderModalLiveItemsList();
 
     var omsetEl = document.getElementById('modal-live-omset');
-    if (omsetEl) omsetEl.value = 5750000;
+    if (omsetEl) omsetEl.value = '';
 
     var previewBox = document.getElementById('modal-live-proof-preview-box');
     if (previewBox) previewBox.classList.add('hidden');
@@ -14702,6 +14688,23 @@ window.handleSaveLiveSession = function (e) {
     var store = document.getElementById('modal-live-store').value;
     var host = (document.getElementById('modal-live-host') ? document.getElementById('modal-live-host').value : '').trim() || 'Bambang Santoso';
     var omset = Number(document.getElementById('modal-live-omset').value) || 0;
+
+    var itemsTotalOmset = 0;
+    var itemsTotalCogs = 0;
+    var itemsTotalQty = 0;
+    if (Array.isArray(window.currentLiveSoldItems) && window.currentLiveSoldItems.length > 0) {
+      window.currentLiveSoldItems.forEach(function (it) {
+        var q = Number(it.qty) || 1;
+        var p = Number(it.price) || 0;
+        var sub = Number(it.subtotal) || (q * p);
+        itemsTotalOmset += sub;
+        itemsTotalCogs += ((Number(it.cogs) || 0) * q);
+        itemsTotalQty += q;
+      });
+    }
+    if (itemsTotalOmset > 0) {
+      omset = itemsTotalOmset;
+    }
     var startTime = document.getElementById('modal-live-start-time') ? document.getElementById('modal-live-start-time').value : '16:33';
     var endTime = document.getElementById('modal-live-end-time') ? document.getElementById('modal-live-end-time').value : '18:33';
     var viewers = Number(document.getElementById('modal-live-viewers') ? document.getElementById('modal-live-viewers').value : 1250);
@@ -14876,9 +14879,19 @@ window.handleSaveLiveSession = function (e) {
 
     // Refresh UI
     window.closeModal('modal-live-session');
+    try {
+      localStorage.removeItem('mja_metrics_is_reset');
+    } catch (eM) {}
+    if (window.appState && window.appState.data) {
+      window.appState.data.isResetMetrics = false;
+    }
+
     window.renderLiveSessions();
     window.populateSalesDetailFilterOptions();
     window.renderSalesDetailReport();
+    if (typeof window.renderDashboardMetrics === 'function') {
+      window.renderDashboardMetrics();
+    }
 
     // Reset keranjang form
     window.currentLiveSoldItems = [];
@@ -15247,14 +15260,103 @@ window.handleSaveLiveSession = function (e) {
     window.showToast('✅ Seluruh data yang dipilih berhasil direset bersih ke NOL (0)!', 'success');
   };
 
-  // Override renderDashboardMetrics agar mematuhi reset metrics
-  var originalRenderDashboardMetrics = window.renderDashboardMetrics;
+  
+  
+  // Auto-Fix live sessions data so omset matches sum of soldProducts exactly
+  window.autoFixLiveSessionsData = function () {
+    var sessions = (window.appState && window.appState.data && window.appState.data.liveSessions) || [];
+    var updated = false;
+    sessions.forEach(function (s) {
+      if (Array.isArray(s.soldProducts) && s.soldProducts.length > 0) {
+        var realOmset = 0;
+        var realQty = 0;
+        var realCogs = 0;
+        s.soldProducts.forEach(function (sp) {
+          var q = Number(sp.qty) || 1;
+          var p = Number(sp.price) || (sp.subtotal ? Math.round(sp.subtotal / q) : 0);
+          var sub = Number(sp.subtotal) || (q * p);
+          realOmset += sub;
+          realQty += q;
+          realCogs += ((Number(sp.cogs) || (p * 0.6)) * q);
+        });
+        if (realOmset > 0 && s.omset !== realOmset) {
+          s.omset = realOmset;
+          s.items = realQty;
+          s.cogs = realCogs;
+          var fee = Math.round(s.omset * 0.095);
+          s.fee = fee;
+          s.margin = s.omset - fee - (Number(s.ads) || 0) - (Number(s.voucher) || 0) - realCogs;
+          updated = true;
+        }
+      }
+    });
+    if (updated) {
+      try {
+        localStorage.setItem('mja_live_sessions', JSON.stringify(sessions));
+      } catch (e) { }
+    }
+  };
+
+
+  // Unified Dynamic Dashboard Metrics Renderer (Live Sessions + Orders)
   window.renderDashboardMetrics = function () {
+    if (typeof window.autoFixLiveSessionsData === 'function') {
+      window.autoFixLiveSessionsData();
+    }
+
+    var liveSessions = (window.appState && window.appState.data && window.appState.data.liveSessions) || [];
+    var orders = (window.appState && window.appState.data && window.appState.data.orders) || [];
+    var returns = (window.appState && window.appState.data && window.appState.data.returns) || [];
+
     var isReset = (window.appState && window.appState.data && window.appState.data.isResetMetrics) ||
                   (localStorage.getItem('mja_metrics_is_reset') === 'true');
 
-    if (isReset) {
-      // Set seluruh angka dashboard ke NOL (0)
+    // If there is actual live session or order recorded, automatically cancel reset suppression
+    if (isReset && (liveSessions.length > 0 || orders.length > 0)) {
+      isReset = false;
+      if (window.appState && window.appState.data) window.appState.data.isResetMetrics = false;
+      try { localStorage.removeItem('mja_metrics_is_reset'); } catch (e) {}
+    }
+
+    var storeFilter = (document.getElementById('dashboard-store-filter') && document.getElementById('dashboard-store-filter').value) || 'all';
+    var periodFilter = (document.getElementById('dashboard-period-filter') && document.getElementById('dashboard-period-filter').value) || '7days';
+
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var nowTime = Date.now();
+
+    var filteredSessions = liveSessions.filter(function (s) {
+      if (storeFilter === 'shopee' && (s.store || '').toLowerCase().indexOf('shopee') === -1) return false;
+      if (storeFilter === 'tiktok' && (s.store || '').toLowerCase().indexOf('tiktok') === -1) return false;
+
+      var sDate = window.cleanWibDate ? window.cleanWibDate(s.date) : (s.date || '').slice(0, 10);
+      if (periodFilter === 'today') {
+        if (sDate !== todayStr) return false;
+      } else if (periodFilter === '7days') {
+        var d = new Date(sDate);
+        if ((nowTime - d.getTime()) > (7 * 86400000 + 86400000)) return false;
+      } else if (periodFilter === 'month') {
+        if (sDate.slice(0, 7) !== todayStr.slice(0, 7)) return false;
+      }
+      return true;
+    });
+
+    var filteredOrders = orders.filter(function (o) {
+      if (storeFilter === 'shopee' && (o.channel || o.store || '').toLowerCase().indexOf('shopee') === -1) return false;
+      if (storeFilter === 'tiktok' && (o.channel || o.store || '').toLowerCase().indexOf('tiktok') === -1) return false;
+
+      var oDate = window.cleanWibDate ? window.cleanWibDate(o.date) : (o.date || '').slice(0, 10);
+      if (periodFilter === 'today') {
+        if (oDate !== todayStr) return false;
+      } else if (periodFilter === '7days') {
+        var d = new Date(oDate);
+        if ((nowTime - d.getTime()) > (7 * 86400000 + 86400000)) return false;
+      } else if (periodFilter === 'month') {
+        if (oDate.slice(0, 7) !== todayStr.slice(0, 7)) return false;
+      }
+      return true;
+    });
+
+    if (isReset || (filteredSessions.length === 0 && filteredOrders.length === 0)) {
       if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = 'Rp 0';
       if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = 'Rp 0';
       if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = 'Rp 0';
@@ -15267,11 +15369,10 @@ window.handleSaveLiveSession = function (e) {
       var tbody = document.getElementById('table-store-performance');
       if (tbody) {
         tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 italic">' +
-          'Data metrik telah direset bersih ke 0. Menunggu transaksi penjualan baru.' +
+          'Belum ada transaksi penjualan pada filter ini. Data sistem bersih 0.' +
           '</td></tr>';
       }
 
-      // Reset grafik Chart.js ke 0 jika aktif
       try {
         if (window.trendChartInstance && window.trendChartInstance.data) {
           window.trendChartInstance.data.datasets.forEach(function (ds) {
@@ -15288,76 +15389,151 @@ window.handleSaveLiveSession = function (e) {
           donutLabel.innerHTML = '<span class="text-xl font-bold text-slate-800">0.0%</span><br><span class="text-[10px] text-slate-400">LABA BERSIH</span>';
         }
       } catch (eChart) { }
-
       return;
     }
 
-    if (typeof originalRenderDashboardMetrics === 'function') {
-      originalRenderDashboardMetrics();
-    }
+    var totalGross = 0;
+    var totalAdmin = 0;
+    var totalAds = 0;
+    var totalVoucher = 0;
+    var totalCogs = 0;
+    var totalOrders = 0;
 
-    // Dynamic calculation of Orders & Returns for KPI card
-    var ordersList = (window.appState && window.appState.data && window.appState.data.orders) || [];
-    var returnsList = (window.appState && window.appState.data && window.appState.data.returns) || [];
-    var ordCount = ordersList.length;
-    var retCount = returnsList.length;
-    var retRate = ordCount > 0 ? ((retCount / ordCount) * 100).toFixed(1) : '0.0';
+    var storeMap = {};
 
-    var ordCountEl = document.getElementById('kpi-orders-count');
-    var retRateEl = document.getElementById('kpi-return-rate');
-    if (ordCountEl) ordCountEl.textContent = ordCount > 0 ? (ordCount.toLocaleString('id-ID') + ' Order') : '0 Order';
-    if (retRateEl) retRateEl.textContent = retRate + '% (' + retCount + ' Paket)';
+    filteredSessions.forEach(function (s) {
+      var gross = Number(s.omset) || 0;
+      var admin = Number(s.fee) || Math.round(gross * 0.095);
+      var ads = Number(s.ads) || 0;
+      var voucher = Number(s.voucher) || 0;
+      var cogs = Number(s.cogs) || Math.round(gross * 0.6);
+      var net = gross - admin - ads - voucher - cogs;
+      var ordCount = Number(s.ordersCount) || Number(s.items) || 1;
 
-    var netPctEl = document.getElementById('kpi-net-percent');
-    if (netPctEl && (netPctEl.textContent.indexOf('NaN') !== -1 || !netPctEl.textContent)) {
-      netPctEl.textContent = '0.0%';
-    }
-  };
+      totalGross += gross;
+      totalAdmin += admin;
+      totalAds += ads;
+      totalVoucher += voucher;
+      totalCogs += cogs;
+      totalOrders += ordCount;
 
-
-  // ===========================================================================
-  // STRICT POLLING ENFORCEMENT: NEVER RESTORE DELETED ATTENDANCE OR SESSIONS
-  // ===========================================================================
-  var origFetchRemoteAtt = window.fetchRemoteAttendance;
-  window.fetchRemoteAttendance = function (silent) {
-    if (localStorage.getItem('mja_attendance_reset_all') === 'true') {
-      // Jika sudah di-reset bersih, jangan masukkan log lama
-      var resetTs = Number(localStorage.getItem('mja_attendance_reset_timestamp') || 0);
-      var curLogs = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
-      // Hanya pertahankan log yang diinput setelah reset
-      var keepLogs = curLogs.filter(function (l) {
-        return l._timestamp && l._timestamp > resetTs;
-      });
-      if (window.appState && window.appState.data) {
-        window.appState.data.attendanceLogs = keepLogs;
+      var sName = s.store || 'TikTok Shop Live Official';
+      if (!storeMap[sName]) {
+        storeMap[sName] = {
+          name: sName,
+          platform: sName.toLowerCase().indexOf('shopee') !== -1 ? 'shopee' : 'tiktok',
+          gross: 0,
+          admin: 0,
+          ads: 0,
+          returns: 0,
+          cogs: 0,
+          net: 0
+        };
       }
-      if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
-      if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
-      return;
-    }
-    if (typeof origFetchRemoteAtt === 'function') origFetchRemoteAtt(silent);
-  };
+      storeMap[sName].gross += gross;
+      storeMap[sName].admin += admin;
+      storeMap[sName].ads += ads;
+      storeMap[sName].cogs += cogs;
+      storeMap[sName].net += net;
+    });
 
-  var origSyncLive = window.syncLiveSessionsFromGAS;
-  window.syncLiveSessionsFromGAS = function (isManual) {
-    if (localStorage.getItem('mja_livesessions_reset_all') === 'true') {
-      var resetTs = Number(localStorage.getItem('mja_livesessions_reset_timestamp') || 0);
-      var curSessions = (window.appState && window.appState.data && window.appState.data.liveSessions) || [];
-      var keep = curSessions.filter(function (s) {
-        return s._timestamp && s._timestamp > resetTs;
-      });
-      if (window.appState && window.appState.data) {
-        window.appState.data.liveSessions = keep;
+    filteredOrders.forEach(function (o) {
+      var gross = Number(o.total) || 0;
+      var admin = Number(o.adminFee) || Math.round(gross * 0.095);
+      var cogs = Number(o.cogs) || Math.round(gross * 0.6);
+      var net = gross - admin - cogs;
+
+      totalGross += gross;
+      totalAdmin += admin;
+      totalCogs += cogs;
+      totalOrders += 1;
+
+      var sName = o.store || o.channel || 'Shopee Official Store';
+      if (!storeMap[sName]) {
+        storeMap[sName] = {
+          name: sName,
+          platform: sName.toLowerCase().indexOf('tiktok') !== -1 ? 'tiktok' : 'shopee',
+          gross: 0,
+          admin: 0,
+          ads: 0,
+          returns: 0,
+          cogs: 0,
+          net: 0
+        };
       }
-      if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
-      if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
-      if (isManual) window.showToast('✅ Data sesi live telah direset ke 0.', 'info');
-      return;
+      storeMap[sName].gross += gross;
+      storeMap[sName].admin += admin;
+      storeMap[sName].cogs += cogs;
+      storeMap[sName].net += net;
+    });
+
+    var totalReturns = returns.length;
+    var totalDeductions = totalAdmin + totalAds + totalVoucher;
+    var totalNet = totalGross - totalDeductions - totalCogs;
+    var netPct = totalGross > 0 ? ((totalNet / totalGross) * 100).toFixed(1) : '0.0';
+
+    if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = window.formatRupiah(totalGross);
+    if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = window.formatRupiah(totalDeductions);
+    if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = window.formatRupiah(totalNet);
+    if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = netPct + '%';
+    if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = totalOrders + ' Order';
+    if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = (totalOrders > 0 ? ((totalReturns / totalOrders) * 100).toFixed(1) : '0.0') + '% (' + totalReturns + ' Paket)';
+    if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = window.formatRupiah(totalGross);
+    if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = window.formatRupiah(totalNet) + ' (' + netPct + '%)';
+
+    var tbody = document.getElementById('table-store-performance');
+    if (tbody) {
+      tbody.innerHTML = '';
+      var storeKeys = Object.keys(storeMap);
+      if (storeKeys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 italic">Belum ada transaksi penjualan pada filter ini.</td></tr>';
+      } else {
+        storeKeys.forEach(function (key) {
+          var st = storeMap[key];
+          var tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition-colors';
+          tr.innerHTML = '<td class="p-3 font-bold text-slate-800">' + st.name + '</td>' +
+            '<td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (st.platform === 'shopee' ? 'bg-orange-100 text-orange-700' : 'bg-slate-900 text-white') + '">' + st.platform.toUpperCase() + '</span></td>' +
+            '<td class="p-3 font-semibold text-slate-900">' + window.formatRupiah(st.gross) + '</td>' +
+            '<td class="p-3 text-rose-600 font-semibold">(' + window.formatRupiah(st.admin) + ')</td>' +
+            '<td class="p-3 text-rose-600 font-semibold">' + (st.ads > 0 ? '(' + window.formatRupiah(st.ads) + ')' : 'Rp 0') + '</td>' +
+            '<td class="p-3 text-amber-600 font-semibold">' + window.formatRupiah(st.returns) + '</td>' +
+            '<td class="p-3 text-right font-extrabold text-emerald-600">' + window.formatRupiah(st.net) + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
     }
-    if (typeof origSyncLive === 'function') origSyncLive(isManual);
+
+    try {
+      if (window.trendChartInstance && window.trendChartInstance.data) {
+        var grossInMillions = Number((totalGross / 1000000).toFixed(1));
+        var netInMillions = Number((totalNet / 1000000).toFixed(1));
+        window.trendChartInstance.data.datasets[0].data = [0, 0, 0, 0, 0, 0, grossInMillions];
+        if (window.trendChartInstance.data.datasets[1]) {
+          window.trendChartInstance.data.datasets[1].data = [0, 0, 0, 0, 0, 0, netInMillions];
+        }
+        window.trendChartInstance.update();
+      }
+      if (window.costChartInstance && window.costChartInstance.data) {
+        window.costChartInstance.data.datasets[0].data = [
+          Math.max(0, totalNet),
+          totalCogs,
+          totalAdmin,
+          totalAds
+        ];
+        window.costChartInstance.update();
+      }
+      var donutLabel = document.getElementById('donut-center-label');
+      if (donutLabel) {
+        donutLabel.innerHTML = '<span class="text-xl font-bold text-slate-800">' + netPct + '%</span><br><span class="text-[10px] text-slate-400">LABA BERSIH</span>';
+      }
+    } catch (eChart) { }
   };
 
   // Restore user session immediately
+  if (typeof window.autoFixLiveSessionsData === 'function') {
+    window.autoFixLiveSessionsData();
+  }
   if (typeof window.checkAndRestoreUserSession === 'function') {
     window.checkAndRestoreUserSession();
   }
