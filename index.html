@@ -2266,17 +2266,26 @@
                 </div>
               </div>
 
+              <!-- Status Presensi Hari Ini (Auto-Validation 1x Masuk per Hari) -->
+              <div id="att-today-status-card" class="p-2.5 rounded-md border text-xs font-semibold bg-[#FAF6F0] border-[#E8E2D9] text-[#1F1A17] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                <div class="flex items-center space-x-2">
+                  <span id="att-today-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span id="att-today-status-text">Memeriksa status kehadiran hari ini...</span>
+                </div>
+                <span id="att-today-shift-rules" class="text-[10px] text-[#6E655F] font-mono">Batas Masuk: 08:30 | Min Pulang: 17:00</span>
+              </div>
+
               <!-- Action Submit Buttons -->
               <div class="grid grid-cols-2 gap-2 pt-1">
-                <button type="button" onclick="window.submitAttendance('in')"
+                <button type="button" id="btn-att-checkin" onclick="window.submitAttendance('in')"
                   class="h-11 bg-[#2F5D50] hover:bg-[#254A40] text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                   </svg>
-                  <span>Absen Masuk</span>
+                  <span>Absen Masuk (1x Sehari)</span>
                 </button>
-                <button type="button" onclick="window.submitAttendance('out')"
+                <button type="button" id="btn-att-checkout" onclick="window.submitAttendance('out')"
                   class="h-11 bg-[#1F1A17] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2433,8 +2442,8 @@
               </span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
+              <div class="lg:col-span-2">
                 <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Nama Kantor / Lokasi</label>
                 <input type="text" id="cfg-office-name" value="Kantor Pusat MJA Semarang"
                   class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
@@ -2450,12 +2459,19 @@
                   class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Batas Radius Valid (Meter)</label>
-                <div class="flex items-center space-x-1.5">
-                  <input type="number" id="cfg-office-radius" value="50" min="5" max="1000"
-                    class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
-                  <span class="text-xs font-semibold text-[#6E655F] px-1">Meter</span>
-                </div>
+                <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Radius (Meter)</label>
+                <input type="number" id="cfg-office-radius" value="50" min="5" max="1000"
+                  class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-[#2F5D50] mb-1">Batas Max Masuk</label>
+                <input type="time" id="cfg-att-max-in" value="08:30"
+                  class="w-full h-11 px-3 bg-white border-2 border-[#2F5D50]/50 rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-[#B4532A] mb-1">Batas Min Pulang</label>
+                <input type="time" id="cfg-att-min-out" value="17:00"
+                  class="w-full h-11 px-3 bg-white border-2 border-[#B4532A]/50 rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
               </div>
             </div>
 
@@ -2569,7 +2585,8 @@
                     <th class="p-3">Tipe Presensi</th>
                     <th class="p-3">Koordinat GPS</th>
                     <th class="p-3">Jarak ke Kantor</th>
-                    <th class="p-3">Verifikasi Radius</th>
+                    <th class="p-3">Status &amp; Verifikasi</th>
+                    <th class="p-3 text-center">Aksi Revisi IT</th>
                   </tr>
                 </thead>
                 <tbody id="table-all-attendance-logs" class="divide-y divide-[#E8E2D9] font-medium">
@@ -3532,6 +3549,108 @@
   </div>
 
   <!-- ========================================================================= -->
+  <!-- MODAL KHUSUS ADMIN IT: REVISI PRESENSI URGENT -->
+  <!-- ========================================================================= -->
+  <div id="modal-revision-attendance"
+    class="fixed inset-0 bg-[#1F1A17]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-md max-w-lg w-full shadow-2xl overflow-hidden border border-[#E8E2D9] p-5 space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E8E2D9]">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-md bg-[#FAF6F0] border border-[#E8E2D9] flex items-center justify-center text-[#B4532A]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Revisi Data Presensi (Akses Khusus Admin IT)</h4>
+            <p class="text-[10px] text-[#6E655F]">Koreksi darurat catatan kehadiran staf dengan jejak audit resmi</p>
+          </div>
+        </div>
+        <button onclick="window.closeModal('modal-revision-attendance')"
+          class="h-8 w-8 flex items-center justify-center rounded-md bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] text-base font-bold">&times;</button>
+      </div>
+
+      <input type="hidden" id="rev-log-id">
+
+      <div class="bg-amber-50 border border-amber-200 rounded-md p-2.5 text-xs text-amber-900 flex items-start space-x-2">
+        <span class="text-amber-700 font-bold">⚠️</span>
+        <span class="text-[11px] leading-tight">Perhatian: Hak akses revisi hanya dimiliki Admin IT / Owner. Setiap perubahan akan disimpan permanen ke Google Sheets beserta alasan urgensi.</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Nama Karyawan</label>
+          <input type="text" id="rev-log-name" readonly
+            class="w-full h-10 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] opacity-80 cursor-not-allowed">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Divisi / Role</label>
+          <input type="text" id="rev-log-role" readonly
+            class="w-full h-10 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] opacity-80 cursor-not-allowed">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Tanggal Presensi</label>
+          <input type="date" id="rev-log-date"
+            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Jam Waktu (HH:mm:ss)</label>
+          <input type="text" id="rev-log-time" placeholder="08:00:00"
+            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Tipe Absen</label>
+          <select id="rev-log-inout"
+            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+            <option value="Masuk">Masuk (Check In)</option>
+            <option value="Pulang">Pulang (Check Out)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Status Verifikasi</label>
+          <select id="rev-log-status"
+            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+            <option value="valid">Hadir Tepat Waktu (Valid)</option>
+            <option value="late">Terlambat</option>
+            <option value="early_leave">Pulang Lebih Awal</option>
+            <option value="courier">Tugas Ekspedisi / Dinas Luar</option>
+            <option value="warning">Di Luar Radius</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Catatan Presensi Asli</label>
+        <input type="text" id="rev-log-notes"
+          class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md text-xs text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-[#B4532A] mb-1">Alasan Urgent Revisi Admin IT (Wajib Diisi) *</label>
+        <input type="text" id="rev-log-reason" placeholder="Contoh: Kamera HP staf sempat blank / Tugas darurat ekspedisi"
+          class="w-full h-10 px-3 bg-white border-2 border-[#B4532A]/50 rounded-md text-xs font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+        <p class="text-[10px] text-[#6E655F] mt-1">Alasan ini akan otomatis dicatat sebagai audit trail di log dan Spreadsheet.</p>
+      </div>
+
+      <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#E8E2D9]">
+        <button type="button" onclick="window.closeModal('modal-revision-attendance')"
+          class="h-10 px-4 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] font-semibold text-xs rounded-md transition-all">
+          Batal
+        </button>
+        <button type="button" onclick="window.saveAttendanceRevision()"
+          class="h-10 px-5 bg-[#2F5D50] hover:bg-[#254A40] text-white font-bold text-xs rounded-md shadow transition-all flex items-center space-x-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>Simpan Revisi Absen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- ========================================================================= -->
   <!-- JAVASCRIPT LOGIC (STRICT ZERO-ERROR RUNTIME) -->
   <!-- ========================================================================= -->
   
@@ -4067,7 +4186,9 @@
         address: 'Semarang, Jawa Tengah',
         lat: -6.9826,
         lng: 110.4208,
-        radius: 50 // meter default tolerance
+        radius: 50, // meter default tolerance
+        maxCheckInTime: '08:30', // batas max masuk
+        minCheckOutTime: '17:00' // batas min pulang
       },
       data: {
         stores: [
@@ -4519,6 +4640,7 @@
             if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
             if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
             if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+            if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus();
 
             if (!silent) {
               window.showToast('Data presensi berhasil disinkronkan dari Google Sheets (' + merged.length + ' log)', 'success');
@@ -4711,6 +4833,7 @@
       try { if (typeof window.renderStoreRecap === 'function') window.renderStoreRecap(); } catch (e6) { console.error(e6); }
       try { if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs(); } catch (e7) { console.error(e7); }
       try { if (typeof window.fetchRemoteAttendance === 'function') window.fetchRemoteAttendance(true); } catch (e8) { }
+      try { if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus(); } catch (e9) { }
     };
 
     window.handleLogout = function () {
@@ -6681,18 +6804,22 @@
     };
 
     window.syncOfficeSettingsToUI = function () {
-      var cfg = window.appState.officeSettings || { name: 'Kantor Pusat MJA Semarang', lat: -6.9826, lng: 110.4208, radius: 50 };
+      var cfg = window.appState.officeSettings || { name: 'Kantor Pusat MJA Semarang', lat: -6.9826, lng: 110.4208, radius: 50, maxCheckInTime: '08:30', minCheckOutTime: '17:00' };
       var elName = document.getElementById('cfg-office-name');
       var elLat = document.getElementById('cfg-office-lat');
       var elLng = document.getElementById('cfg-office-lng');
       var elRadius = document.getElementById('cfg-office-radius');
+      var elMaxIn = document.getElementById('cfg-att-max-in');
+      var elMinOut = document.getElementById('cfg-att-min-out');
       var elPill = document.getElementById('cfg-geofence-status-pill');
 
       if (elName) elName.value = cfg.name;
       if (elLat) elLat.value = cfg.lat;
       if (elLng) elLng.value = cfg.lng;
       if (elRadius) elRadius.value = cfg.radius;
-      if (elPill) elPill.textContent = 'Status Geofence: Aktif (' + cfg.radius + 'm)';
+      if (elMaxIn) elMaxIn.value = cfg.maxCheckInTime || '08:30';
+      if (elMinOut) elMinOut.value = cfg.minCheckOutTime || '17:00';
+      if (elPill) elPill.textContent = 'Status Geofence: Aktif (' + cfg.radius + 'm | Max In: ' + (cfg.maxCheckInTime || '08:30') + ' | Min Out: ' + (cfg.minCheckOutTime || '17:00') + ')';
     };
 
     window.saveOfficeGeofenceSettings = function () {
@@ -6700,11 +6827,15 @@
       var elLat = document.getElementById('cfg-office-lat');
       var elLng = document.getElementById('cfg-office-lng');
       var elRadius = document.getElementById('cfg-office-radius');
+      var elMaxIn = document.getElementById('cfg-att-max-in');
+      var elMinOut = document.getElementById('cfg-att-min-out');
 
       var lat = parseFloat(elLat ? elLat.value : -6.9826);
       var lng = parseFloat(elLng ? elLng.value : 110.4208);
       var radius = parseInt(elRadius ? elRadius.value : 50, 10);
       var name = elName ? elName.value.trim() : 'Kantor Pusat MJA Semarang';
+      var maxIn = (elMaxIn && elMaxIn.value) ? elMaxIn.value : '08:30';
+      var minOut = (elMinOut && elMinOut.value) ? elMinOut.value : '17:00';
 
       if (isNaN(lat) || isNaN(lng)) {
         window.showToast('Koordinat latitude/longitude tidak valid!', 'error');
@@ -6719,16 +6850,21 @@
         name: name,
         lat: lat,
         lng: lng,
-        radius: radius
+        radius: radius,
+        maxCheckInTime: maxIn,
+        minCheckOutTime: minOut
       };
       localStorage.setItem('mja_office_settings', JSON.stringify(window.appState.officeSettings));
       window.syncOfficeSettingsToUI();
       window.updateGPSUI();
+      if (typeof window.updateTodayAttendanceStatus === 'function') {
+        window.updateTodayAttendanceStatus();
+      }
       window.renderAttendanceLogs();
       if (typeof window.renderAllAttendanceReport === 'function') {
         window.renderAllAttendanceReport();
       }
-      window.showToast('Pengaturan GPS Kantor Semarang (' + radius + 'm) tersimpan!', 'success');
+      window.showToast('Pengaturan GPS & Batas Jam Absen (Max In: ' + maxIn + ' | Min Out: ' + minOut + ') tersimpan!', 'success');
     };
 
     window.setOfficeToCurrentGPS = function () {
@@ -7216,7 +7352,20 @@
       var ss = String(now.getSeconds()).padStart(2, '0');
       var timeNow = hh + ':' + mm + ':' + ss;
 
-      var office = window.appState.officeSettings || { lat: -6.9826, lng: 110.4208, radius: 50 };
+      // ATURAN 1: Cek In / Absen Masuk hanya bisa dilakukan 1 KALI dalam sehari
+      if (inOut === 'in') {
+        var existingIn = (window.appState.data.attendanceLogs || []).find(function (l) {
+          var isSameUser = (l.email === user.email || (user.name && l.name === user.name));
+          return isSameUser && l.date === dateStr && l.inOut === 'Masuk';
+        });
+        if (existingIn) {
+          window.playBeep('error');
+          window.showToast('Gagal: Anda sudah melakukan Presensi Masuk hari ini pada pukul ' + (existingIn.time || '') + ' WIB! Presensi masuk hanya dapat dilakukan 1 kali sehari.', 'error');
+          return;
+        }
+      }
+
+      var office = window.appState.officeSettings || { lat: -6.9826, lng: 110.4208, radius: 50, maxCheckInTime: '08:30', minCheckOutTime: '17:00' };
       var isCourier = (type === 'courier');
       var dest = isCourier ? (document.getElementById('att-courier-destination') ? document.getElementById('att-courier-destination').value : 'Ekspedisi') : 'Kantor ' + branch;
       var manualInput = document.getElementById('att-courier-manual-notes');
@@ -7225,6 +7374,22 @@
 
       var dist = isCourier ? 1250 : (window.currentGPS.distance || 14);
       var status = isCourier ? 'courier' : (dist <= office.radius ? 'valid' : 'warning');
+
+      // ATURAN 2: Evaluasi Batas Max Jam Masuk & Batas Min Jam Pulang
+      var maxInTime = (office.maxCheckInTime || '08:30') + ':00';
+      var minOutTime = (office.minCheckOutTime || '17:00') + ':00';
+
+      if (inOut === 'in' && !isCourier) {
+        if (timeNow > maxInTime) {
+          status = 'late';
+          notes = notes + ' (Terlambat - batas max: ' + (office.maxCheckInTime || '08:30') + ' WIB)';
+        }
+      } else if (inOut === 'out' && !isCourier) {
+        if (timeNow < minOutTime) {
+          status = 'early_leave';
+          notes = notes + ' (Pulang Cepat - batas min: ' + (office.minCheckOutTime || '17:00') + ' WIB)';
+        }
+      }
 
       var newLog = {
         id: 'ATT-' + Date.now(),
@@ -7310,6 +7475,9 @@
       window.renderAttendanceLogs();
       if (typeof window.renderAllAttendanceReport === 'function') {
         window.renderAllAttendanceReport();
+      }
+      if (typeof window.updateTodayAttendanceStatus === 'function') {
+        window.updateTodayAttendanceStatus();
       }
       window.renderDashboardMetrics();
       // Siaran instan ke dashboard admin/owner tanpa delay (Req 3)
@@ -7466,11 +7634,15 @@
 
         var statusBadge = '';
         if (l.status === 'valid') {
-          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#2F5D50] border border-[#2F5D50]/40">Valid (&le; 50m)</span>';
+          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">Hadir Tepat Waktu</span>';
+        } else if (l.status === 'late') {
+          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">⚠️ Terlambat</span>';
+        } else if (l.status === 'early_leave') {
+          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-orange-50 text-orange-800 border border-orange-300">⚠️ Pulang Cepat</span>';
         } else if (l.status === 'courier') {
           statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#1F1A17] border border-[#E8E2D9]">Tugas Ekspedisi</span>';
         } else {
-          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#B4532A] border border-[#B4532A]/40">Di Luar Radius</span>';
+          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-800 border border-rose-300">Di Luar Radius</span>';
         }
 
         var photoSrc = l.photo || window.createMockAvatarSvg(l.name, l.role, l.time, l.coords);
@@ -7518,7 +7690,12 @@
           '<td class="p-3 font-bold text-[11px] ' + (l.distance <= 50 ? 'text-[#2F5D50]' : 'text-[#B4532A]') + '">' +
           l.distance + ' Meter' +
           '</td>' +
-          '<td class="p-3">' + statusBadge + '</td>';
+          '<td class="p-3">' + statusBadge + '</td>' +
+          '<td class="p-3 text-center">' +
+          ((window.appState.currentRole === 'admin' || window.appState.currentRole === 'owner')
+            ? '<button type="button" onclick="window.openRevisionModal(\'' + l.id + '\')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#1F1A17] hover:bg-black text-amber-300 font-bold text-[10px] shadow-xs transition-all border border-amber-500/30 cursor-pointer"><svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg><span>Revisi</span></button>'
+            : '<span class="text-stone-300 text-xs">-</span>') +
+          '</td>';
         tbody.appendChild(tr);
       });
     };

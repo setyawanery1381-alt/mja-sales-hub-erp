@@ -130,6 +130,47 @@ function doPost(e) {
       });
     }
 
+    // 2. UPDATE / REVISI PRESENSI OLEH ADMIN IT (URGENT REVISION)
+    if (action === 'updateAttendance') {
+      var sheet = ss.getSheetByName('Presensi');
+      if (!sheet) {
+        return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
+      }
+
+      var idToUpdate = String(payload.id);
+      var data = sheet.getDataRange().getValues();
+      var foundRow = -1;
+
+      for (var r = 1; r < data.length; r++) {
+        if (String(data[r][0]) === idToUpdate) {
+          foundRow = r + 1; // 1-indexed baris di Spreadsheet
+          break;
+        }
+      }
+
+      if (foundRow === -1) {
+        return jsonResponse_({ success: false, message: 'ID Presensi tidak ditemukan: ' + idToUpdate });
+      }
+
+      // Update sel: Tanggal (kolom 2), Jam (kolom 3), Masuk/Pulang (kolom 9), Status (kolom 12), Catatan (kolom 13)
+      if (payload.date) sheet.getRange(foundRow, 2).setValue(payload.date);
+      if (payload.time) sheet.getRange(foundRow, 3).setValue("'" + payload.time);
+      if (payload.inOut) sheet.getRange(foundRow, 9).setValue(payload.inOut);
+      if (payload.status) sheet.getRange(foundRow, 12).setValue(payload.status);
+      
+      var notesVal = (payload.notes || '');
+      if (payload.revisionReason) {
+        notesVal += ' [REVISI ADMIN IT: ' + payload.revisionReason + ' oleh ' + (payload.revisedBy || 'Admin') + ']';
+      }
+      sheet.getRange(foundRow, 13).setValue(notesVal);
+
+      return jsonResponse_({
+        success: true,
+        id: idToUpdate,
+        message: 'Presensi berhasil direvisi oleh Admin IT di Google Sheets'
+      });
+    }
+
     return jsonResponse_({ success: false, message: 'Action tidak dikenali: ' + action });
   } catch (err) {
     return jsonResponse_({ success: false, error: err.toString() });
