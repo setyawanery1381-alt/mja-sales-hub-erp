@@ -3378,6 +3378,14 @@
                 <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">Semua Role</span>
               </div>
               <div class="flex items-center space-x-2 text-xs">
+                <button type="button" id="btn-refresh-sales-detail" onclick="window.refreshSalesDetailData(this)"
+                  class="h-8 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg shadow-2xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                  title="Segarkan data laporan host live & transaksi terbaru">
+                  <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Segarkan Data</span>
+                </button>
                 <button type="button" onclick="window.syncLiveSessionsFromGAS(true)"
                   class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg border border-slate-300 transition-colors flex items-center space-x-1 cursor-pointer">
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14081,6 +14089,48 @@
     });
 
     return items;
+  };
+
+  
+  // ===========================================================================
+  // REFRESH SALES DETAIL DATA (INSTANT SYNC FOR ADMIN, OWNER, FINANCE)
+  // ===========================================================================
+  window.refreshSalesDetailData = function (btnEl) {
+    var svg = btnEl ? btnEl.querySelector('svg') : null;
+    if (svg) svg.classList.add('animate-spin');
+
+    // 1. Reload latest liveSessions from localStorage (in case host inputted in another tab/session)
+    try {
+      var savedLive = localStorage.getItem('mja_clean_liveSessions');
+      if (savedLive) {
+        var parsedLive = JSON.parse(savedLive);
+        if (Array.isArray(parsedLive)) {
+          window.appState.data.liveSessions = parsedLive;
+        }
+      }
+    } catch (e) {
+      console.warn('Refresh local storage read warning:', e);
+    }
+
+    // 2. Fetch remote live sessions from Google Sheets if configured
+    if (typeof window.syncLiveSessionsFromGAS === 'function') {
+      window.syncLiveSessionsFromGAS(true);
+    }
+
+    // 3. Update filter options (in case new host or store appeared)
+    if (typeof window.populateSalesDetailFilterOptions === 'function') {
+      window.populateSalesDetailFilterOptions();
+    }
+
+    // 4. Re-render sales detail table & 4 KPI cards
+    if (typeof window.renderSalesDetailReport === 'function') {
+      window.renderSalesDetailReport();
+    }
+
+    setTimeout(function () {
+      if (svg) svg.classList.remove('animate-spin');
+      window.showToast('✅ Data laporan host live berhasil disegarkan!', 'success');
+    }, 600);
   };
 
   window.renderSalesDetailReport = function () {
