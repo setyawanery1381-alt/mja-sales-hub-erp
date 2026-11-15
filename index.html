@@ -3587,7 +3587,7 @@
                   <option value="date-asc">Urutkan: Tanggal Terlama</option>
                   <option value="omset-desc">Urutkan: Omset Tertinggi</option>
                   <option value="omset-asc">Urutkan: Omset Terendah</option>
-                  <option value="margin-desc">Urutkan: Margin Tertinggi</option>
+                  
                   <option value="qty-desc">Urutkan: Qty Terbanyak</option>
                 </select>
               </div>
@@ -10938,10 +10938,13 @@
       window.showToast('Menghubungkan ke Google Sheets...', 'info');
 
       var promises = sessions.map(function (s) {
+        var cleanD = window.cleanWibDate(s.date);
+        var airTime = s.liveTime || (s.startTime ? (s.startTime + ' - ' + (s.endTime || '') + ' WIB') : (s.time || ''));
+        var fullLiveTime = airTime + (s.inputTime ? (' (Input: ' + s.inputTime + ')') : '');
         var params = new URLSearchParams({
           action: 'saveLiveSession',
           id: s.id,
-          date: s.date,
+          date: cleanD,
           store: s.store,
           host: s.host,
           omset: s.omset,
@@ -10953,6 +10956,7 @@
           duration: s.duration || '',
           viewers: s.viewers || 0,
           notes: s.notes || '',
+          liveTime: fullLiveTime,
           t: Date.now()
         });
         var getUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + params.toString();
@@ -13210,60 +13214,42 @@
   'use strict';
 
   // Helper: Format Tanggal & Jam Indonesia (WIB) dengan Detik
-  window.formatWibDateTime = function (dateVal, timeVal) {
-    if (!dateVal) return '-';
-    var dStr = String(dateVal).trim();
-
-    // Deteksi jika dStr mengandung kata-kata zona waktu seperti GMT+0700 atau WAKTU INDOCHINA
-    if (dStr.indexOf('GMT') !== -1 || dStr.indexOf('INDOCHINA') !== -1 || dStr.length > 25) {
-      try {
-        var parsedDate = new Date(dStr);
-        if (!isNaN(parsedDate.getTime())) {
-          var y = parsedDate.getFullYear();
-          var m = String(parsedDate.getMonth() + 1).padStart(2, '0');
-          var d = String(parsedDate.getDate()).padStart(2, '0');
-          var hh = String(parsedDate.getHours()).padStart(2, '0');
-          var mm = String(parsedDate.getMinutes()).padStart(2, '0');
-          var ss = String(parsedDate.getSeconds()).padStart(2, '0');
-          dStr = y + '-' + m + '-' + d;
-          if (!timeVal || timeVal === '10:00 WIB' || timeVal === '-') {
-            timeVal = hh + ':' + mm + ':' + ss;
-          }
-        }
-      } catch (err) {
-        dStr = dStr.slice(0, 10);
-      }
-    }
-
-    if (dStr.length >= 10 && dStr.indexOf('T') !== -1) {
-      dStr = dStr.slice(0, 10);
-    }
-
-    var cleanTime = timeVal ? String(timeVal).replace('WIB', '').trim() : '00:00:00';
-    if (cleanTime.indexOf(':') === -1) cleanTime = '00:00:00';
-    var parts = cleanTime.split(':');
-    var hh = String(parts[0] || '00').padStart(2, '0');
-    var mm = String(parts[1] || '00').padStart(2, '0');
-    var ss = String(parts[2] || '00').padStart(2, '0');
-
-    return dStr + ' ' + hh + ':' + mm + ':' + ss + ' WIB';
-  };
-
   window.cleanWibDate = function (dateVal) {
     if (!dateVal) return new Date().toISOString().slice(0, 10);
     var s = String(dateVal).trim();
-    if (s.indexOf('GMT') !== -1 || s.indexOf('INDOCHINA') !== -1 || s.length > 25) {
-      try {
-        var d = new Date(s);
-        if (!isNaN(d.getTime())) {
-          var y = d.getFullYear();
-          var m = String(d.getMonth() + 1).padStart(2, '0');
-          var day = String(d.getDate()).padStart(2, '0');
-          return y + '-' + m + '-' + day;
-        }
-      } catch (e) {}
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+      return s.slice(0, 10);
     }
+    try {
+      var d = new Date(s);
+      if (!isNaN(d.getTime())) {
+        var y = d.getFullYear();
+        var m = String(d.getMonth() + 1).padStart(2, '0');
+        var day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+      }
+    } catch (e) {}
     return s.slice(0, 10);
+  };
+
+  window.formatWibDateTime = function (dateVal, timeVal) {
+    if (!dateVal) return '-';
+    var dStr = window.cleanWibDate(dateVal);
+
+    var cleanTime = timeVal ? String(timeVal).replace('WIB', '').trim() : '';
+    if (!cleanTime || cleanTime === '-' || cleanTime === '10:00' || cleanTime === '00:00:00') {
+      var dRaw = String(dateVal);
+      var match = dRaw.match(/(\d{1,2}:\d{2}(?::\d{2})?)/);
+      if (match) cleanTime = match[1];
+    }
+    if (!cleanTime) cleanTime = '18:33:00';
+
+    var parts = cleanTime.split(':');
+    var hh = String(parts[0] || '18').padStart(2, '0');
+    var mm = String(parts[1] || '30').padStart(2, '0');
+    var ss = String(parts[2] || '00').padStart(2, '0');
+
+    return dStr + ' ' + hh + ':' + mm + ':' + ss + ' WIB';
   };
 
   // 1. JAM DIGITAL REALTIME (WIB DENGAN DETIK)
@@ -13286,17 +13272,23 @@
       var dateString = dayName + ', ' + dateNum + ' ' + monthName + ' ' + year;
 
       var topbarClockText = document.getElementById('clock-time-val');
-      if (topbarClockText) {
-        topbarClockText.textContent = timeString;
-      }
+      if (topbarClockText) topbarClockText.textContent = timeString;
+
+      var topbarLiveClock = document.getElementById('topbar-live-clock');
+      if (topbarLiveClock) topbarLiveClock.textContent = timeString;
 
       var dashClockTime = document.getElementById('dashboard-clock-time');
       var dashClockDate = document.getElementById('dashboard-clock-date');
       if (dashClockTime) dashClockTime.textContent = timeString;
       if (dashClockDate) dashClockDate.textContent = dateString;
+
+      var attWatermark = document.getElementById('att-watermark-time');
+      if (attWatermark) attWatermark.textContent = timeString;
     }
     tick();
-    setInterval(tick, 1000);
+    if (!window._mjaClockTimer) {
+      window._mjaClockTimer = setInterval(tick, 1000);
+    }
   };
 
   // 2. SISTEM PENGGUNA & AUTENTIKASI DENGAN NIK DAN PASSWORD 123456
