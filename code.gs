@@ -17,18 +17,24 @@ function doGet(e) {
       return jsonResponse_({ success: false, message: 'Sheet Presensi belum dibuat. Jalankan setupDatabase() di setup.gs' });
     }
     
-    var data = sheet.getDataRange().getValues();
+    var range = sheet.getDataRange();
+    var data = range.getValues();
+    var displayData = range.getDisplayValues();
     var logs = [];
+
     // Baris 1 adalah Header (index 0)
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
+      var disp = displayData[i];
       if (row[0]) {
-        var dateFormatted = row[1] instanceof Date 
-          ? Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd') 
-          : String(row[1]);
-        var timeFormatted = row[2] instanceof Date 
-          ? Utilities.formatDate(row[2], 'GMT+7', 'HH:mm') 
-          : String(row[2]);
+        // Ambil display value langsung dari sel untuk menghindari konversi timezone 1899 Batavia (+17 menit)
+        var dateFormatted = (disp && disp[1]) ? String(disp[1]).trim() : (row[1] instanceof Date ? Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd') : String(row[1]));
+        var timeFormatted = (disp && disp[2]) ? String(disp[2]).trim() : (row[2] instanceof Date ? Utilities.formatDate(row[2], 'GMT+7', 'HH:mm:ss') : String(row[2]));
+        
+        // Bersihkan tanda petik awal jika ada
+        if (timeFormatted.charAt(0) === "'") {
+          timeFormatted = timeFormatted.substring(1);
+        }
 
         logs.push({
           id: String(row[0]),
@@ -97,12 +103,13 @@ function doPost(e) {
 
       var newId = payload.id || ('ATT-' + Date.now());
       var dateVal = payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd');
-      var timeVal = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm');
+      var timeVal = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss');
 
+      // Simpan waktu dengan tanda petik tunggal "'" agar Spreadsheet menyimpannya sebagai teks murni lengkap dengan detik (HH:mm:ss) tanpa konversi tanggal 1899
       sheet.appendRow([
         newId,
         dateVal,
-        timeVal,
+        "'" + timeVal,
         payload.name || 'Karyawan',
         payload.email || '',
         payload.role || 'warehouse',
