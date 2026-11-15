@@ -77,10 +77,68 @@ function doGet(e) {
     return jsonResponse_({ success: true, users: users });
   }
 
-  // 3. PING / STATUS
+  // 3. DELETE ATTENDANCE via GET (Dukungan CORS penuh dari browser)
+  if (action === 'deleteAttendance') {
+    var sheet = ss.getSheetByName('Presensi');
+    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
+
+    var idToDelete = String(e.parameter.id || '');
+    var data = sheet.getDataRange().getValues();
+    var deleted = false;
+
+    for (var r = 1; r < data.length; r++) {
+      if (String(data[r][0]) === idToDelete) {
+        sheet.deleteRow(r + 1);
+        deleted = true;
+        break;
+      }
+    }
+
+    return jsonResponse_({
+      success: deleted,
+      message: deleted ? 'Presensi ' + idToDelete + ' berhasil dihapus dari Google Sheets' : 'ID tidak ditemukan'
+    });
+  }
+
+  // 4. RESET ATTENDANCE via GET (Dukungan CORS penuh dari browser)
+  if (action === 'resetAttendance') {
+    var sheet = ss.getSheetByName('Presensi');
+    var scope = String(e.parameter.scope || 'all');
+    var deletedCount = 0;
+
+    if (sheet) {
+      var lastRow = sheet.getLastRow();
+      if (lastRow > 1) {
+        if (scope === 'today') {
+          var tz = Session.getScriptTimeZone() || 'Asia/Jakarta';
+          var todayStr = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
+          var data = sheet.getDataRange().getValues();
+          for (var r = data.length - 1; r >= 1; r--) {
+            var rowDate = String(data[r][1] || '').trim();
+            if (rowDate === todayStr) {
+              sheet.deleteRow(r + 1);
+              deletedCount++;
+            }
+          }
+        } else {
+          deletedCount = lastRow - 1;
+          sheet.deleteRows(2, lastRow - 1);
+        }
+      }
+    }
+    return jsonResponse_({
+      success: true,
+      deletedCount: deletedCount,
+      scope: scope,
+      message: 'Presensi di Google Sheets berhasil dibersihkan (' + scope + ', ' + deletedCount + ' baris dihapus)'
+    });
+  }
+
+  // 5. PING / STATUS
   return jsonResponse_({
     status: 'ONLINE',
     service: 'MJA Sales Hub ERP — Google Sheets Live Gateway',
+    version: '2.4-clean-reset-ready',
     timestamp: new Date().toISOString()
   });
 }
@@ -184,7 +242,7 @@ function doPost(e) {
 
       for (var r = 1; r < data.length; r++) {
         if (String(data[r][0]) === idToDelete) {
-          sheet.deleteRow(r + 1); // 1-indexed baris di Spreadsheet
+          sheet.deleteRow(r + 1);
           deleted = true;
           break;
         }
@@ -199,15 +257,34 @@ function doPost(e) {
     // 4. RESET ATTENDANCE: Kosongkan seluruh riwayat presensi demo untuk persiapan demo klien
     if (action === 'resetAttendance') {
       var sheet = ss.getSheetByName('Presensi');
+      var scope = String(payload.scope || 'all');
+      var deletedCount = 0;
+
       if (sheet) {
         var lastRow = sheet.getLastRow();
         if (lastRow > 1) {
-          sheet.deleteRows(2, lastRow - 1);
+          if (scope === 'today') {
+            var tz = Session.getScriptTimeZone() || 'Asia/Jakarta';
+            var todayStr = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
+            var data = sheet.getDataRange().getValues();
+            for (var r = data.length - 1; r >= 1; r--) {
+              var rowDate = String(data[r][1] || '').trim();
+              if (rowDate === todayStr) {
+                sheet.deleteRow(r + 1);
+                deletedCount++;
+              }
+            }
+          } else {
+            deletedCount = lastRow - 1;
+            sheet.deleteRows(2, lastRow - 1);
+          }
         }
       }
       return jsonResponse_({
         success: true,
-        message: 'Seluruh riwayat presensi di Google Sheets berhasil direset bersih untuk persiapan demo klien'
+        deletedCount: deletedCount,
+        scope: scope,
+        message: 'Seluruh riwayat presensi di Google Sheets berhasil direset bersih (' + scope + ')'
       });
     }
 

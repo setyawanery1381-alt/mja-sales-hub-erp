@@ -4682,14 +4682,47 @@
       fetch(fetchUrl)
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          if (data && data.success && Array.isArray(data.logs) && data.logs.length > 0) {
+          if (data && data.success && Array.isArray(data.logs)) {
+            // Ambil daftar ID yang pernah dihapus / direset secara lokal
+            var deletedIds = [];
+            try {
+              deletedIds = JSON.parse(localStorage.getItem('mja_deleted_attendance_ids') || '[]');
+            } catch (eDel) { }
+            var deletedMap = {};
+            deletedIds.forEach(function (id) { deletedMap[id] = true; });
+
+            // Saring agar data yang sudah di-reset/delete tidak pernah muncul lagi
+            var validRemoteLogs = data.logs.filter(function (l) {
+              return l.id && !deletedMap[l.id];
+            });
+
+            // Jika Google Sheets kosong (0 data) atau semua log yang datang masuk blacklist reset
+            if (validRemoteLogs.length === 0 && (data.logs.length === 0 || deletedIds.length > 0)) {
+              var cur = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
+              var filteredCur = cur.filter(function (l) { return l.id && !deletedMap[l.id]; });
+              if (data.logs.length === 0) filteredCur = [];
+
+              if (window.appState && window.appState.data) {
+                window.appState.data.attendanceLogs = filteredCur;
+              }
+              try {
+                localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(filteredCur));
+              } catch (eSet) { }
+
+              if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
+              if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+              if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+              if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus();
+              return;
+            }
+
             var currentLogs = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
             var existingIds = {};
-            data.logs.forEach(function (l) { if (l.id) existingIds[l.id] = true; });
+            validRemoteLogs.forEach(function (l) { if (l.id) existingIds[l.id] = true; });
 
-            var merged = data.logs.slice();
+            var merged = validRemoteLogs.slice();
             currentLogs.forEach(function (localLog) {
-              if (localLog.id && !existingIds[localLog.id]) {
+              if (localLog.id && !existingIds[localLog.id] && !deletedMap[localLog.id]) {
                 merged.unshift(localLog);
                 existingIds[localLog.id] = true;
               }
@@ -4736,9 +4769,9 @@
     // Auto-Restore Persistent Attendance Logs from LocalStorage (Permanent History)
     try {
       var savedAtt = localStorage.getItem('mja_persistent_attendanceLogs');
-      if (savedAtt) {
+      if (savedAtt !== null) {
         var parsedAtt = JSON.parse(savedAtt);
-        if (Array.isArray(parsedAtt) && parsedAtt.length > 0) {
+        if (Array.isArray(parsedAtt)) {
           window.appState.data.attendanceLogs = parsedAtt;
         }
       }
@@ -7925,26 +7958,33 @@
       logs.splice(logIdx, 1);
       window.appState.data.attendanceLogs = logs;
 
+      // Catat logId ke blacklist localStorage agar polling 7-detik tidak menghidupkan lagi
       try {
+        var delIds = JSON.parse(localStorage.getItem('mja_deleted_attendance_ids') || '[]');
+        if (delIds.indexOf(logId) === -1) delIds.push(logId);
+        localStorage.setItem('mja_deleted_attendance_ids', JSON.stringify(delIds));
         localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(logs.slice(0, 150)));
       } catch (e) { }
 
       if (window.GAS_ENDPOINT_URL) {
-        try {
-          fetch(window.GAS_ENDPOINT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'deleteAttendance',
-              id: logId
-            })
-          }).then(function () {
-            console.log('Penghapusan presensi dikirim ke Google Sheets');
-          }).catch(function (err) {
-            console.warn('Gagal hapus di GAS:', err);
+        var getDelUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=deleteAttendance&id=' + encodeURIComponent(logId) + '&t=' + Date.now();
+        fetch(getDelUrl)
+          .then(function (res) { return res.json(); })
+          .then(function (resData) {
+            console.log('Sync hapus GAS (GET):', resData);
+            if (resData && !resData.success && resData.message && resData.message.indexOf('Action tidak dikenali') !== -1) {
+              window.showToast('Perhatian: Deploy versi baru code.gs di Apps Script agar Google Sheets ikut bersih!', 'warning');
+            }
+          })
+          .catch(function () {
+            // Fallback POST jika GET terkendala
+            fetch(window.GAS_ENDPOINT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'deleteAttendance', id: logId })
+            }).catch(function (err) { console.warn('Gagal hapus di GAS:', err); });
           });
-        } catch (eGas) { }
       }
 
       if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
@@ -7983,6 +8023,17 @@
 
       var logs = window.appState.data.attendanceLogs || [];
 
+      // Masukkan semua ID target ke blacklist deletedIds agar polling tidak pernah menghidupkannya lagi
+      try {
+        var delList = JSON.parse(localStorage.getItem('mja_deleted_attendance_ids') || '[]');
+        logs.forEach(function (l) {
+          if (scope === 'all' || l.date === todayStr) {
+            if (l.id && delList.indexOf(l.id) === -1) delList.push(l.id);
+          }
+        });
+        localStorage.setItem('mja_deleted_attendance_ids', JSON.stringify(delList));
+      } catch (eDel) { }
+
       if (scope === 'today') {
         window.appState.data.attendanceLogs = logs.filter(function (l) {
           return l.date !== todayStr;
@@ -7996,21 +8047,26 @@
       } catch (e) { }
 
       if (window.GAS_ENDPOINT_URL) {
-        try {
-          fetch(window.GAS_ENDPOINT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'resetAttendance',
-              scope: scope
-            })
-          }).then(function () {
-            console.log('Reset presensi dikirim ke Google Sheets');
-          }).catch(function (err) {
-            console.warn('Gagal reset di GAS:', err);
+        var getResetUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=resetAttendance&scope=' + encodeURIComponent(scope) + '&t=' + Date.now();
+        fetch(getResetUrl)
+          .then(function (res) { return res.json(); })
+          .then(function (gasRes) {
+            console.log('Sync reset GAS (GET):', gasRes);
+            if (gasRes && gasRes.success) {
+              window.showToast('Google Sheets & Aplikasi Berhasil Direset Bersih!', 'success');
+            } else if (gasRes && gasRes.message && gasRes.message.indexOf('Action tidak dikenali') !== -1) {
+              alert('⚠️ PENTING UNTUK ADMIN IT:\n\nGoogle Apps Script Anda masih menjalankan versi lama, sehingga baris di Google Sheets belum terhapus otomatis.\n\nSilakan buka script.google.com, PASTE kode terbaru dari code.gs, lalu klik:\nDeploy > Manage deployments > Edit (ikon pensil) > Version: New version > Deploy!\n\n(Catatan: Data di tampilan aplikasi & HP sudah aman bersih dan tidak akan muncul lagi).');
+            }
+          })
+          .catch(function () {
+            // Fallback POST jika GET terkendala
+            fetch(window.GAS_ENDPOINT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'resetAttendance', scope: scope })
+            }).catch(function (err) { console.warn('Gagal reset di GAS:', err); });
           });
-        } catch (eGas) { }
       }
 
       window.closeModal('modal-reset-attendance');
