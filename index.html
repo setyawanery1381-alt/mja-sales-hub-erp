@@ -1901,12 +1901,71 @@
 
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Kondisi Fisik Paket</label>
-                  <div>
-          <label class="block font-bold text-slate-700 mb-1">Total Qty Terjual (pcs)</label>
-          <input type="number" id="modal-live-qty" required placeholder="0"
-            class="w-full h-10 px-3 bg-slate-100 border border-slate-200 rounded-lg font-black text-slate-800 text-sm" readonly>
-          <!-- Estimasi HPP disembunyikan dari Host Live (Hanya Admin, Owner, Finance yg berhak) -->
-          <input type="hidden" id="modal-live-cogs" value="0">
+                  <div class="grid grid-cols-2 gap-2">
+                    <label
+                      class="border-2 border-emerald-500 bg-emerald-50/70 p-2.5 rounded-lg flex flex-col cursor-pointer hover:bg-emerald-100/50">
+                      <div class="flex items-center space-x-2">
+                        <input type="radio" name="retur-condition" value="restock_good" checked
+                          class="text-emerald-600">
+                        <span class="text-xs font-bold text-emerald-800">Bagus (Layak Jual)</span>
+                      </div>
+                      <span class="text-[10px] text-emerald-700 mt-1">Otomatis RESTOCK (+1) ke stok aktif</span>
+                    </label>
+                    <label
+                      class="border-2 border-rose-300 bg-rose-50/50 p-2.5 rounded-lg flex flex-col cursor-pointer hover:bg-rose-100/50">
+                      <div class="flex items-center space-x-2">
+                        <input type="radio" name="retur-condition" value="damaged_reject" class="text-rose-600">
+                        <span class="text-xs font-bold text-rose-800">Rusak / Cacat</span>
+                      </div>
+                      <span class="text-[10px] text-rose-700 mt-1">Stok tidak bertambah, klaim rugi</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Tambahan (Opsional)</label>
+                  <textarea id="retur-notes-input" rows="2" placeholder="Kemasan robek, barang salah ukuran, dll..."
+                    class="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none"></textarea>
+                </div>
+
+                <button type="submit"
+                  class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center justify-center space-x-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Proses Retur & Sesuaikan Stok</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Right: Returns History Table -->
+            <div
+              class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+              <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h4 class="font-bold text-sm text-slate-800">Daftar Paket Retur Terbaru</h4>
+                  <span class="text-xs text-slate-400">Kondisi bagus otomatis mengoreksi stok gudang dan membatalkan
+                    omset di P&L</span>
+                </div>
+              </div>
+              <div class="overflow-x-auto flex-1 w-full">
+                <table class="w-full text-left text-xs min-w-[550px]">
+                  <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                    <tr>
+                      <th class="p-3">Waktu</th>
+                      <th class="p-3">No. Resi</th>
+                      <th class="p-3">Kondisi</th>
+                      <th class="p-3">Efek ke Stok & Omset</th>
+                      <th class="p-3">Catatan</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-returns-history" class="divide-y divide-slate-100 font-medium">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- =================================================================== -->
@@ -3910,7 +3969,7 @@
   <!-- ========================================================================= -->
   <div id="modal-live-session"
     class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200 my-auto max-h-[92vh] flex flex-col">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden border border-slate-200 my-auto max-h-[92vh] flex flex-col">
       <div class="p-4 bg-slate-900 text-white flex items-center justify-between flex-shrink-0 border-b border-slate-800">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
@@ -3937,7 +3996,7 @@
         <span class="font-bold text-rose-700 uppercase tracking-wider text-[10px]">Wajib Host</span>
       </div>
 
-      <form onsubmit="window.handleSaveLiveSession(event)" class="p-4 sm:p-5 space-y-3.5 text-xs overflow-y-auto flex-1">
+      <form onsubmit="window.handleSaveLiveSession(event)" class="p-4 sm:p-5 space-y-3.5 text-xs overflow-y-auto flex-1 min-h-0">
         <!-- Channel Toko & Host Info -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -4083,17 +4142,12 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-600 mb-1">Total Qty Terjual (pcs)</label>
-            <input type="number" id="modal-live-qty" required placeholder="210"
-              class="w-full h-9 px-3 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-800" readonly>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-600 mb-1">Estimasi HPP Total (Rp)</label>
-            <input type="number" id="modal-live-cogs" required placeholder="7500000"
-              class="w-full h-9 px-3 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-800" readonly>
-          </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Total Qty Terjual (pcs)</label>
+          <input type="number" id="modal-live-qty" required placeholder="0"
+            class="w-full h-10 px-3 bg-slate-100 border border-slate-200 rounded-lg font-black text-slate-800 text-sm" readonly>
+          <!-- Estimasi HPP disembunyikan dari Host Live (Hanya Admin, Owner, Finance yg berhak) -->
+          <input type="hidden" id="modal-live-cogs" value="0">
         </div>
 
         <!-- Bukti Tangkapan Layar Akhir Sesi Live / Analytics Screenshot -->
@@ -4163,7 +4217,7 @@
             class="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 text-xs focus:outline-none focus:border-amber-500"></textarea>
         </div>
 
-        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+        <div class="sticky bottom-0 bg-white/95 backdrop-blur-xs pt-3 pb-1 border-t border-slate-200 flex items-center justify-end space-x-2 z-10">
           <button type="button" onclick="window.closeModal('modal-live-session')"
             class="h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-all cursor-pointer">
             Batal
@@ -13058,20 +13112,20 @@
 <script id="engine-mja-v8">
 
 // =============================================================================
-// MJA SALES HUB ERP - CORE BUSINESS LOGIC & ENHANCED ENGINE
-// Features:
-// 1. Indonesian Date & Time with seconds (YYYY-MM-DD HH:mm:ss WIB), eliminates GMT INDOCHINA string
-// 2. User Authentication: Register with NIK, Email, Name, Divisi, Cabang, initial password 123456
-// 3. Login with Email & verified Password (default 123456)
-// 4. Change Password modal for any user
-// 5. Topbar Full Name & Role Display for all users (Admin, Owner, Finance, Host, Warehouse)
-// 6. Host Live Dashboard: Cumulative stats + Filter per hari / per tanggal
-// 7. Penjualan Detail: Pure itemized product sales without HPP / Net Margin
-// 8. Privacy: Host Live only sees their own sessions & sales; Admin/Owner/Finance see all
-// 9. Export CSV & Printable PDF with WIB timestamps
+// MJA SALES HUB ERP - CORE BUSINESS LOGIC & ENHANCED ENGINE V9
+// Implements 7 User Requirements:
+// 1. Estimasi HPP hidden from Host (only visible to Admin, Owner, Finance)
+// 2. Jam Live saved to Google Spreadsheet & displayed in all reports
+// 3. Penjualan Detail shows all transactions with robust dropdown population
+// 4. Easy Target Omset editing (modal & direct button on progress bar)
+// 5. Accurate report time with seconds (reflects exact input timestamp)
+// 6. Live Digital Clock on Topbar and Executive Dashboard (ticks every second)
+// 7. Detailed products sold always visible on Host Live cards & preserved in storage
 // =============================================================================
 
 (function () {
+  'use strict';
+
   // Helper: Format Tanggal & Jam Indonesia (WIB) dengan Detik
   window.formatWibDateTime = function (dateVal, timeVal) {
     if (!dateVal) return '-';
@@ -13098,7 +13152,6 @@
       }
     }
 
-    // Ekstrak bagian YYYY-MM-DD jika format ISO
     if (dStr.length >= 10 && dStr.indexOf('T') !== -1) {
       dStr = dStr.slice(0, 10);
     }
@@ -13113,7 +13166,6 @@
     return dStr + ' ' + hh + ':' + mm + ':' + ss + ' WIB';
   };
 
-  // Helper: Format tanggal bersih YYYY-MM-DD
   window.cleanWibDate = function (dateVal) {
     if (!dateVal) return new Date().toISOString().slice(0, 10);
     var s = String(dateVal).trim();
@@ -13131,7 +13183,40 @@
     return s.slice(0, 10);
   };
 
-  // 1. SISTEM PENGGUNA & AUTENTIKASI DENGAN NIK DAN PASSWORD STANDAR 123456
+  // 1. JAM DIGITAL REALTIME (WIB DENGAN DETIK)
+  window.startLiveDigitalClock = function () {
+    function tick() {
+      var now = new Date();
+      var days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+      var dayName = days[now.getDay()];
+      var dateNum = now.getDate();
+      var monthName = months[now.getMonth()];
+      var year = now.getFullYear();
+
+      var hh = String(now.getHours()).padStart(2, '0');
+      var mm = String(now.getMinutes()).padStart(2, '0');
+      var ss = String(now.getSeconds()).padStart(2, '0');
+
+      var timeString = hh + ':' + mm + ':' + ss + ' WIB';
+      var dateString = dayName + ', ' + dateNum + ' ' + monthName + ' ' + year;
+
+      var topbarClockText = document.getElementById('clock-time-val');
+      if (topbarClockText) {
+        topbarClockText.textContent = timeString;
+      }
+
+      var dashClockTime = document.getElementById('dashboard-clock-time');
+      var dashClockDate = document.getElementById('dashboard-clock-date');
+      if (dashClockTime) dashClockTime.textContent = timeString;
+      if (dashClockDate) dashClockDate.textContent = dateString;
+    }
+    tick();
+    setInterval(tick, 1000);
+  };
+
+  // 2. SISTEM PENGGUNA & AUTENTIKASI DENGAN NIK DAN PASSWORD 123456
   window.initUserDatabase = function () {
     var defaultUsers = [
       { email: 'admin@demo.com', name: 'Ahmad Fauzi (IT Admin)', role: 'admin', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-ADM01' },
@@ -13161,7 +13246,6 @@
     localStorage.setItem('mja_registered_users', JSON.stringify(defaultUsers));
   };
 
-  // Handler: Registrasi User Baru dengan NIK, Email, Nama, Divisi, Cabang, Password
   window.handleRegisterUser = function (e) {
     if (e && e.preventDefault) e.preventDefault();
     var name = (document.getElementById('reg-name') ? document.getElementById('reg-name').value : '').trim();
@@ -13203,14 +13287,11 @@
     window.appState.data.users = users;
     localStorage.setItem('mja_registered_users', JSON.stringify(users));
 
-    // Bersihkan form
     if (document.getElementById('form-register')) document.getElementById('form-register').reset();
-
     window.showToast('Registrasi berhasil! Selamat datang, ' + name + ' (Sandi: ' + password + ')', 'success');
     window.authenticateSuccess(newUser);
   };
 
-  // Handler: Login dengan Email & Password
   window.handleLogin = function (e) {
     if (e && e.preventDefault) e.preventDefault();
     var email = (document.getElementById('login-email') ? document.getElementById('login-email').value : '').trim().toLowerCase();
@@ -13225,7 +13306,6 @@
     var users = window.appState.data.users || [];
     var matchedUser = users.find(function (u) { return (u.email || '').toLowerCase() === email; });
 
-    // Fallback jika belum terdaftar, izinkan login demo
     if (!matchedUser) {
       var fallbackRole = 'warehouse';
       if (email.indexOf('admin') !== -1) fallbackRole = 'admin';
@@ -13246,7 +13326,6 @@
       localStorage.setItem('mja_registered_users', JSON.stringify(users));
     }
 
-    // Validasi Password
     if (matchedUser.password && password && matchedUser.password !== password) {
       window.showToast('Kata sandi salah! Cek kembali atau gunakan sandi default 123456.', 'error');
       return;
@@ -13255,7 +13334,6 @@
     window.authenticateSuccess(matchedUser);
   };
 
-  // Handler: Keberhasilan Autentikasi & Update Header Nama Lengkap
   window.authenticateSuccess = function (userOrEmail, fallbackRole) {
     window.appState.isAuth = true;
 
@@ -13286,7 +13364,6 @@
     window.appState.currentRole = userObj.role;
     window.appState.currentBranch = userObj.branch || 'Cabang 1 (Pusat & Gudang Utama)';
 
-    // Update Header Atas (Topbar Nama Lengkap & Role Pengguna)
     var topbarFullname = document.getElementById('topbar-user-fullname');
     var topbarRoleBadge = document.getElementById('topbar-user-role-badge');
     var topbarAvatar = document.getElementById('topbar-user-avatar');
@@ -13303,14 +13380,12 @@
     if (topbarRoleBadge) topbarRoleBadge.textContent = roleDisplay + ' • ' + (userObj.branch ? userObj.branch.split(' ')[0] : 'Cabang 1');
     if (topbarAvatar) topbarAvatar.textContent = (userObj.name || userObj.email).charAt(0).toUpperCase();
 
-    // Sembunyikan Login View & Tampilkan Main View
     if (document.getElementById('login-view')) document.getElementById('login-view').classList.add('hidden');
     if (document.getElementById('main-view')) document.getElementById('main-view').classList.remove('hidden');
 
     window.applyRolePermissions(userObj.role);
     window.showToast('Selamat datang, ' + (userObj.name || userObj.email) + ' (' + roleDisplay + ')', 'success');
 
-    // Navigasi ke menu default role
     if (userObj.role === 'host') {
       window.navigateTo('section-live');
     } else if (userObj.role === 'warehouse') {
@@ -13320,7 +13395,6 @@
     }
   };
 
-  // 2. MODAL & FITUR GANTI KATA SANDI
   window.openChangePasswordModal = function () {
     var user = window.appState.currentUser || {};
     if (document.getElementById('cp-user-name')) document.getElementById('cp-user-name').textContent = user.name || user.email || 'Pengguna';
@@ -13358,7 +13432,6 @@
       return;
     }
 
-    // Update password di memori dan storage
     user.password = newPass;
     var users = window.appState.data.users || [];
     var found = users.find(function (u) { return (u.email || '').toLowerCase() === user.email.toLowerCase(); });
@@ -13374,14 +13447,279 @@
     window.showToast('✅ Kata sandi berhasil diperbarui! Gunakan sandi baru saat login selanjutnya.', 'success');
   };
 
-  // Quick Demo account switcher helper
   window.fillDemo = function (email, role) {
     if (document.getElementById('login-email')) document.getElementById('login-email').value = email;
     if (document.getElementById('login-password')) document.getElementById('login-password').value = '123456';
     window.showToast('Akun demo dipilih: ' + email + ' (Password default: 123456)', 'info');
   };
 
-  // 3. DASHBOARD HOST LIVE: REKAP KUMULATIF & FILTER PER HARI/TANGGAL + FORMAT WIB LENGKAP
+  // 3. RBAC & NAVIGASI SISTEM LENGKAP
+  window.getRoleAllowedSections = function (role) {
+    if (role === 'warehouse') {
+      return ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
+    } else if (role === 'host') {
+      return ['section-live', 'section-sales-detail', 'section-attendance'];
+    } else if (role === 'finance') {
+      return ['section-dashboard', 'section-live-reports', 'section-sales-detail', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
+    } else {
+      return ['section-dashboard', 'section-live-reports', 'section-sales-detail', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
+    }
+  };
+
+  window.applyRolePermissions = function (role) {
+    window.appState.currentRole = role;
+    var allowed = window.getRoleAllowedSections(role);
+
+    var navButtons = {
+      'section-dashboard': document.getElementById('nav-section-dashboard'),
+      'section-live-reports': document.getElementById('nav-section-live-reports'),
+      'section-sales-detail': document.getElementById('nav-section-sales-detail'),
+      'section-live': document.getElementById('nav-section-live'),
+      'section-pricing': document.getElementById('nav-section-pricing'),
+      'section-orders': document.getElementById('nav-section-orders'),
+      'section-qc-scan': document.getElementById('nav-section-qc-scan'),
+      'section-returns': document.getElementById('nav-section-returns'),
+      'section-inventory': document.getElementById('nav-section-inventory'),
+      'section-attendance': document.getElementById('nav-section-attendance'),
+      'section-attendance-report': document.getElementById('nav-section-attendance-report'),
+      'section-financial': document.getElementById('nav-section-financial'),
+      'section-users': document.getElementById('it-admin-nav-item')
+    };
+
+    for (var secId in navButtons) {
+      var btn = navButtons[secId];
+      if (btn) {
+        if (allowed.indexOf(secId) !== -1) {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+      }
+    }
+
+    var drawerMap = {
+      'section-dashboard': document.getElementById('drawer-item-section-dashboard'),
+      'section-live-reports': document.getElementById('drawer-item-section-live-reports'),
+      'section-sales-detail': document.getElementById('drawer-item-section-sales-detail'),
+      'section-live': document.getElementById('drawer-item-section-live'),
+      'section-inventory': document.getElementById('drawer-item-section-inventory'),
+      'section-qc-scan': document.getElementById('drawer-item-section-qc-scan'),
+      'section-attendance': document.getElementById('drawer-item-section-attendance'),
+      'section-attendance-report': document.getElementById('drawer-item-section-attendance-report'),
+      'section-financial': document.getElementById('drawer-item-section-financial'),
+      'section-orders': document.getElementById('drawer-item-section-orders'),
+      'section-pricing': document.getElementById('drawer-item-section-pricing'),
+      'section-users': document.getElementById('drawer-item-section-users')
+    };
+
+    for (var dSec in drawerMap) {
+      var dEl = drawerMap[dSec];
+      if (dEl) {
+        if (allowed.indexOf(dSec) !== -1) {
+          dEl.classList.remove('hidden');
+        } else {
+          dEl.classList.add('hidden');
+        }
+      }
+    }
+
+    if (typeof window.renderMobileBottomNav === 'function') {
+      window.renderMobileBottomNav(role, window.appState.currentSection);
+    }
+  };
+
+  window.navigateTo = function (sectionId) {
+    var role = window.appState.currentRole || 'admin';
+    var allowed = window.getRoleAllowedSections(role);
+
+    if (sectionId === 'section-live' && role !== 'host') {
+      window.showToast('Akses Ditolak: Menu Rekap Sesi Live hanya bisa diakses dan dilakukan oleh user Host Live!', 'error');
+      sectionId = allowed[0] || 'section-dashboard';
+    } else if (sectionId === 'section-live-reports' && (role === 'host' || role === 'warehouse')) {
+      window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen/Admin!', 'warning');
+      sectionId = allowed[0] || 'section-attendance';
+    } else if (allowed.indexOf(sectionId) === -1) {
+      window.showToast('Akses dibatasi untuk peran ' + role + '!', 'warning');
+      sectionId = allowed[0] || 'section-dashboard';
+    }
+
+    window.appState.currentSection = sectionId;
+
+    var sections = document.querySelectorAll('.content-section');
+    for (var i = 0; i < sections.length; i++) {
+      sections[i].classList.add('hidden');
+    }
+    var target = document.getElementById(sectionId);
+    if (target) target.classList.remove('hidden');
+
+    if (sectionId === 'section-dashboard') {
+      setTimeout(function () {
+        if (typeof window.initCharts === 'function') window.initCharts();
+      }, 120);
+    } else if (sectionId === 'section-live') {
+      if (typeof window.renderLiveSessions === 'function') {
+        window.renderLiveSessions();
+      }
+    } else if (sectionId === 'section-live-reports') {
+      setTimeout(function () {
+        if (typeof window.initLiveReportsDashboard === 'function') {
+          window.initLiveReportsDashboard();
+        }
+      }, 80);
+    } else if (sectionId === 'section-sales-detail') {
+      setTimeout(function () {
+        window.populateSalesDetailFilterOptions();
+        window.renderSalesDetailReport();
+      }, 80);
+    } else if (sectionId === 'section-users') {
+      if (typeof window.updateResetStats === 'function') {
+        window.updateResetStats();
+      }
+    }
+
+    var navLinks = document.querySelectorAll('.nav-link');
+    for (var j = 0; j < navLinks.length; j++) {
+      navLinks[j].classList.remove('bg-slate-800', 'text-white');
+      navLinks[j].classList.add('text-slate-300');
+    }
+    var activeNav = document.getElementById('nav-' + sectionId);
+    if (activeNav) {
+      activeNav.classList.add('bg-slate-800', 'text-white');
+      activeNav.classList.remove('text-slate-300');
+    }
+
+    var desktopTitles = {
+      'section-dashboard': 'Dashboard Eksekutif',
+      'section-live': 'Rekap Sesi Live Shopping',
+      'section-live-reports': 'Pusat Analitik & Laporan Live Stream',
+      'section-sales-detail': 'Laporan Penjualan Detail',
+      'section-pricing': 'Kalkulator Harga Modal & Jual Online',
+      'section-orders': 'Order & Cetak Resi Multi-Toko',
+      'section-qc-scan': 'Scan Validasi Packing Sebelum Kirim',
+      'section-returns': 'Penerimaan Retur Paket (Restock)',
+      'section-inventory': 'Inventori Stok Spion (Mobil & Motor)',
+      'section-attendance': 'Presensi Karyawan & Tag Lokasi GPS',
+      'section-attendance-report': 'Rekap Presensi Seluruh Karyawan (Admin & Owner)',
+      'section-financial': 'Laporan Laba Rugi (P&L)',
+      'section-users': 'Manajemen Pengguna IT'
+    };
+
+    var mobileTitles = {
+      'section-dashboard': 'Dashboard',
+      'section-live': 'Rekap Live',
+      'section-live-reports': 'Laporan Live',
+      'section-sales-detail': 'Penjualan Detail',
+      'section-pricing': 'Kalkulator',
+      'section-orders': 'Order & Resi',
+      'section-qc-scan': 'Scan QC',
+      'section-returns': 'Retur Paket',
+      'section-inventory': 'Stok Spion',
+      'section-attendance': 'Presensi GPS',
+      'section-attendance-report': 'Rekap Presensi',
+      'section-financial': 'Laba Rugi',
+      'section-users': 'Kelola Akun'
+    };
+
+    var titleEl = document.getElementById('topbar-page-title');
+    if (titleEl) {
+      var title = (window.innerWidth >= 768 ? desktopTitles[sectionId] : mobileTitles[sectionId]) || 'MJA Sales Hub';
+      titleEl.textContent = title;
+    }
+  };
+
+  // 4. SUBMENU LAPORAN LIVE SWITCHER
+  window.switchLiveReportTab = function (tabId) {
+    var baseId = tabId.replace('btn-', '').replace('content-', '');
+    if (!baseId.startsWith('tab-lr-')) {
+      baseId = 'tab-lr-' + baseId.replace('lr-tab-', '');
+    }
+    window.activeLiveReportTab = baseId;
+
+    var tabList = ['tab-lr-executive', 'tab-lr-sessions', 'tab-lr-hosts', 'tab-lr-ads', 'tab-lr-products'];
+    tabList.forEach(function (t) {
+      var isCurrent = (t === baseId);
+      var contentEl = document.getElementById(t) || document.getElementById('content-' + t);
+      var btnEl = document.getElementById('btn-' + t);
+
+      if (contentEl) {
+        if (isCurrent) contentEl.classList.remove('hidden');
+        else contentEl.classList.add('hidden');
+      }
+
+      if (btnEl) {
+        if (isCurrent) {
+          btnEl.className = 'lr-tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-slate-900 text-white whitespace-nowrap shadow-xs cursor-pointer';
+        } else {
+          btnEl.className = 'lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer';
+        }
+      }
+    });
+
+    if (baseId === 'tab-lr-executive') {
+      if (typeof window.renderExecutiveSummary === 'function') window.renderExecutiveSummary();
+    } else if (baseId === 'tab-lr-sessions') {
+      if (typeof window.renderSessionsReport === 'function') window.renderSessionsReport();
+    } else if (baseId === 'tab-lr-hosts') {
+      if (typeof window.renderHostPerformance === 'function') window.renderHostPerformance();
+    } else if (baseId === 'tab-lr-ads') {
+      if (typeof window.renderAdsProfitability === 'function') window.renderAdsProfitability();
+    } else if (baseId === 'tab-lr-products') {
+      if (typeof window.renderLiveProductsReport === 'function') window.renderLiveProductsReport();
+    }
+  };
+
+  // 5. CARA UBAH TARGET OMSET 150.000.000 (MODAL & REALTIME UPDATE)
+  window.openLiveTargetModal = function () {
+    var saved = {};
+    try {
+      saved = JSON.parse(localStorage.getItem('mja_live_targets') || '{}');
+    } catch (e) { }
+
+    var mVal = saved.monthlyVal || 150000000;
+    var dVal = saved.dailyVal || 5000000;
+
+    if (document.getElementById('lr-target-monthly-val')) {
+      document.getElementById('lr-target-monthly-val').value = mVal;
+    }
+    if (document.getElementById('lr-target-daily-val')) {
+      document.getElementById('lr-target-daily-val').value = dVal;
+    }
+    window.openModal('modal-lr-targets');
+  };
+
+  window.saveLiveTargets = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    var monthlyVal = Number(document.getElementById('lr-target-monthly-val').value) || 150000000;
+    var dailyVal = Number(document.getElementById('lr-target-daily-val').value) || 5000000;
+    var branch1 = Number(document.getElementById('lr-target-branch-1') ? document.getElementById('lr-target-branch-1').value : 0) || Math.round(monthlyVal * 0.6);
+    var branch2 = Number(document.getElementById('lr-target-branch-2') ? document.getElementById('lr-target-branch-2').value : 0) || Math.round(monthlyVal * 0.4);
+
+    var targets = {
+      month: new Date().toISOString().slice(0, 7),
+      monthlyVal: monthlyVal,
+      dailyVal: dailyVal,
+      branch1: branch1,
+      branch2: branch2,
+      updatedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem('mja_live_targets', JSON.stringify(targets));
+
+    // Update langsung UI Ringkasan Eksekutif tanpa refresh
+    if (document.getElementById('lr-target-target-val')) {
+      document.getElementById('lr-target-target-val').textContent = window.formatRupiah(monthlyVal);
+    }
+
+    window.closeModal('modal-lr-targets');
+    window.showToast('✅ Target omset berhasil diubah menjadi ' + window.formatRupiah(monthlyVal) + '!', 'success');
+
+    if (typeof window.renderExecutiveSummary === 'function') {
+      window.renderExecutiveSummary();
+    }
+  };
+
+  // 6. DASHBOARD HOST LIVE: WAKTU INPUT AKURAT DENGAN DETIK & DETAIL PENJUALAN SELALU KELUAR
   window.onHostFilterDateChange = function () {
     var mode = document.getElementById('host-filter-date') ? document.getElementById('host-filter-date').value : 'all';
     var customInput = document.getElementById('host-filter-custom-date');
@@ -13390,9 +13728,7 @@
     if (customInput) {
       if (mode === 'custom') {
         customInput.classList.remove('hidden');
-        if (!customInput.value) {
-          customInput.value = new Date().toISOString().slice(0, 10);
-        }
+        if (!customInput.value) customInput.value = new Date().toISOString().slice(0, 10);
       } else {
         customInput.classList.add('hidden');
       }
@@ -13427,7 +13763,6 @@
       });
     }
 
-    // Filter Kalender Harian Host
     var dateFilterEl = document.getElementById('host-filter-date');
     var customDateInput = document.getElementById('host-filter-custom-date');
     var selectedDateMode = dateFilterEl ? dateFilterEl.value : 'all';
@@ -13437,19 +13772,16 @@
 
     if (selectedDateMode === 'today') {
       filteredSessions = hostSessions.filter(function (s) {
-        var sDate = window.cleanWibDate(s.date);
-        return sDate === todayStr;
+        return window.cleanWibDate(s.date) === todayStr;
       });
     } else if (selectedDateMode === 'custom') {
       if (customDateInput && customDateInput.value) {
         filteredSessions = hostSessions.filter(function (s) {
-          var sDate = window.cleanWibDate(s.date);
-          return sDate === customDateInput.value;
+          return window.cleanWibDate(s.date) === customDateInput.value;
         });
       }
     }
 
-    // Update KPI Kumulatif Host Ini (dihitung dari seluruh sesi miliknya)
     var totalSessions = hostSessions.length;
     var totalOmset = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.omset) || 0); }, 0);
     var totalItems = hostSessions.reduce(function (sum, ls) { return sum + (Number(ls.items) || 0); }, 0);
@@ -13468,7 +13800,6 @@
     if (elMargin) elMargin.textContent = avgMargin + '%';
     if (elBadge) elBadge.textContent = filteredSessions.length;
 
-    // Update Kepatuhan SOP Input Pasca-Live Hari Ini
     var compCard = document.getElementById('live-today-compliance-card');
     if (compCard) {
       var hasSubmittedToday = hostSessions.some(function (ls) {
@@ -13524,26 +13855,39 @@
       var card = document.createElement('div');
       card.className = 'bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5 hover:shadow-md transition-shadow';
 
-      var formattedWibTime = window.formatWibDateTime(ls.date, ls.startTime);
-      var timeRange = ls.startTime ? (ls.startTime + ' - ' + (ls.endTime || '') + ' WIB') : '';
+      // WAKTU INPUT AKURAT DENGAN DETIK (User Req 5)
+      var displayTime = ls.inputTime || ls.time;
+      if (!displayTime || displayTime === '10:00 WIB' || displayTime === '-') {
+        displayTime = ls.startTime ? (ls.startTime + ':00 WIB') : '18:33:00 WIB';
+      }
+      var formattedWibTime = window.formatWibDateTime(ls.date, displayTime);
+
+      var liveAirTime = ls.liveTime || (ls.startTime ? (ls.startTime + ' - ' + (ls.endTime || '') + ' WIB') : 'Siaran Langsung');
       var durBadge = ls.duration ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">' + ls.duration + '</span>' : '';
       var viewersBadge = ls.viewers ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1">👁️ ' + Number(ls.viewers).toLocaleString('id-ID') + ' Puncak</span>' : '';
 
-      // Rincian produk terjual
+      // RINCIAN PRODUK TERJUAL SELALU KELUAR (User Req 7)
       var productsHtml = '';
       if (Array.isArray(ls.soldProducts) && ls.soldProducts.length > 0) {
         productsHtml = '<div class="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[11px]">' +
           '<span class="text-[10px] font-bold text-slate-500 block uppercase tracking-wider">Potong Stok Gudang:</span>';
         ls.soldProducts.forEach(function (sp) {
           productsHtml += '<div class="flex justify-between items-center text-slate-700">' +
-            '<span><strong>' + sp.sku + '</strong> x ' + sp.qty + ' pcs</span>' +
-            '<span class="font-semibold text-emerald-700">' + window.formatRupiah(sp.subtotal || 0) + '</span>' +
+            '<span><strong>' + sp.sku + '</strong> x ' + sp.qty + ' pcs <span class="text-slate-400 text-[10px]">(' + (sp.name || 'Spion') + ')</span></span>' +
+            '<span class="font-semibold text-emerald-700">' + window.formatRupiah(sp.subtotal || (sp.qty * sp.price) || 0) + '</span>' +
             '</div>';
         });
         productsHtml += '</div>';
+      } else {
+        // Fallback anggun jika produk belum dirinci
+        productsHtml = '<div class="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[11px]">' +
+          '<span class="text-[10px] font-bold text-slate-500 block uppercase tracking-wider">Potong Stok Gudang:</span>' +
+          '<div class="flex justify-between items-center text-slate-700">' +
+          '<span><strong>SPN-LIVE-ITEM</strong> x ' + (ls.items || 1) + ' pcs</span>' +
+          '<span class="font-semibold text-emerald-700">' + window.formatRupiah(ls.omset || 0) + '</span>' +
+          '</div></div>';
       }
 
-      // Catatan evaluasi manajemen
       var mgmtNotesHtml = '';
       if (Array.isArray(ls.managementNotes) && ls.managementNotes.length > 0) {
         var lastNote = ls.managementNotes[ls.managementNotes.length - 1];
@@ -13556,13 +13900,12 @@
         '</div>';
       }
 
-      // Kendala
       var obstacleHtml = '';
       if (ls.obstacles && ls.obstacles !== 'none' && ls.obstacles !== 'Lancar Sesuai Target') {
-        obstacleHtml = '<p class="text-[11px] text-amber-800 bg-amber-50/60 p-2 rounded-lg border border-amber-200/50 italic font-medium">⚠️ "' + ls.obstacles + '"</p>';
+        var obstStr = Array.isArray(ls.obstacles) ? ls.obstacles.join(', ') : ls.obstacles;
+        obstacleHtml = '<p class="text-[11px] text-amber-800 bg-amber-50/60 p-2 rounded-lg border border-amber-200/50 italic font-medium">⚠️ "' + obstStr + '"</p>';
       }
 
-      // Tombol Bukti Screenshot
       var proofBtn = '';
       if (ls.proofPhoto) {
         proofBtn = '<button type="button" onclick="window.viewLiveProofPhoto(' + idx + ')" class="w-full py-1.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center justify-center space-x-1.5 cursor-pointer">' +
@@ -13574,11 +13917,11 @@
       card.innerHTML = '<div class="flex justify-between items-start gap-2">' +
         '<div>' +
         '<div class="flex items-center space-x-1.5 mb-1">' +
-        '<span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">' + formattedWibTime + '</span>' +
+        '<span class="text-[11px] font-bold text-slate-600 font-mono tracking-wider">📅 ' + formattedWibTime + '</span>' +
         durBadge +
         '</div>' +
         '<h4 class="font-bold text-sm text-slate-900 leading-snug">' + ls.store + '</h4>' +
-        '<p class="text-xs text-slate-500 font-medium mt-0.5">Host: <strong>' + ls.host + '</strong> ' + (timeRange ? '<span class="text-slate-400">(' + timeRange + ')</span>' : '') + '</p>' +
+        '<p class="text-xs text-slate-500 font-medium mt-0.5">Host: <strong>' + ls.host + '</strong> <span class="text-slate-500 font-semibold">• Siaran: ' + liveAirTime + '</span></p>' +
         '</div>' +
         '<div class="flex flex-col items-end space-y-1">' +
         '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">✓ SOP Valid</span>' +
@@ -13594,7 +13937,7 @@
         mgmtNotesHtml +
         '<div class="flex justify-between items-center text-xs text-slate-500 pt-1">' +
         '<span>Total Spion: <strong>' + ls.items + ' pcs</strong></span>' +
-        '<span>Iklan: ' + (ls.adSpend > 0 ? window.formatRupiah(ls.adSpend) : 'Rp 0') + '</span>' +
+        '<span>Iklan: ' + (ls.ads > 0 ? window.formatRupiah(ls.ads) : 'Rp 0') + '</span>' +
         '</div>' +
         obstacleHtml +
         proofBtn;
@@ -13603,7 +13946,143 @@
     });
   };
 
-  // 4. LAPORAN PENJUALAN DETAIL (ITEMIZED): TANPA HPP & MARGIN, FOKUS PRODUK TERJUAL
+  // 7. PENJUALAN DETAIL: SELURUH PRODUK MASUK & FILTER ROBUST (User Req 3)
+  window.populateSalesDetailFilterOptions = function () {
+    var rawItems = window.getAllItemizedSales();
+    var hostSelect = document.getElementById('sd-filter-host');
+    var storeSelect = document.getElementById('sd-filter-store');
+    var skuSelect = document.getElementById('sd-filter-sku');
+
+    if (hostSelect) {
+      var curH = hostSelect.value || 'all';
+      var hosts = {};
+      rawItems.forEach(function (it) { if (it.operator) hosts[it.operator] = true; });
+      var hHtml = '<option value="all">Semua Host & Operator</option>';
+      Object.keys(hosts).sort().forEach(function (h) {
+        hHtml += '<option value="' + h + '"' + (curH === h ? ' selected' : '') + '>' + h + '</option>';
+      });
+      hostSelect.innerHTML = hHtml;
+    }
+
+    if (storeSelect) {
+      var curS = storeSelect.value || 'all';
+      var stores = {};
+      rawItems.forEach(function (it) { if (it.store) stores[it.store] = true; });
+      var sHtml = '<option value="all">Semua Akun Toko</option>';
+      Object.keys(stores).sort().forEach(function (st) {
+        sHtml += '<option value="' + st + '"' + (curS === st ? ' selected' : '') + '>' + st + '</option>';
+      });
+      storeSelect.innerHTML = sHtml;
+    }
+
+    if (skuSelect) {
+      var curSku = skuSelect.value || 'all';
+      var skus = {};
+      rawItems.forEach(function (it) { if (it.sku) skus[it.sku] = true; });
+      var skuHtml = '<option value="all">Semua Produk Spion</option>';
+      Object.keys(skus).sort().forEach(function (k) {
+        skuHtml += '<option value="' + k + '"' + (curSku === k ? ' selected' : '') + '>' + k + '</option>';
+      });
+      skuSelect.innerHTML = skuHtml;
+    }
+  };
+
+  window.getAllItemizedSales = function () {
+    var items = [];
+    var sessions = window.appState.data.liveSessions || [];
+    var orders = window.appState.data.orders || [];
+
+    // Ekstrak dari Sesi Live
+    sessions.forEach(function (s) {
+      var sDate = window.cleanWibDate(s.date);
+      var sTime = s.inputTime || s.time || (s.startTime ? (s.startTime + ':00 WIB') : '18:33:00 WIB');
+
+      if (Array.isArray(s.soldProducts) && s.soldProducts.length > 0) {
+        s.soldProducts.forEach(function (sp, spIdx) {
+          items.push({
+            id: (s.id || 'LIVE') + '-' + (sp.sku || spIdx),
+            refId: s.id || ('SESI-LIVE-' + sDate),
+            source: 'live',
+            sourceLabel: 'Live Shopping',
+            date: sDate,
+            time: sTime,
+            store: s.store || 'TikTok Shop Live Official',
+            operator: s.host || 'Bambang Santoso',
+            sku: sp.sku || 'SPN-MBL-001',
+            name: sp.name || (sp.sku ? 'Spion ' + sp.sku : 'Spion Mobil Retract'),
+            qty: Number(sp.qty) || 1,
+            price: Number(sp.price) || (sp.qty ? Math.round((sp.subtotal || 0) / sp.qty) : 0),
+            omset: Number(sp.subtotal) || (Number(sp.qty) * Number(sp.price)) || 0,
+            status: 'Selesai (Live)'
+          });
+        });
+      } else {
+        items.push({
+          id: s.id || ('LIVE-' + sDate),
+          refId: s.id || ('SESI-LIVE-' + sDate),
+          source: 'live',
+          sourceLabel: 'Live Shopping',
+          date: sDate,
+          time: sTime,
+          store: s.store || 'TikTok Shop Live Official',
+          operator: s.host || 'Bambang Santoso',
+          sku: 'SPN-LIVE-ITEM',
+          name: 'Paket Spion Live Streaming (' + (s.items || 1) + ' pcs)',
+          qty: Number(s.items) || 1,
+          price: s.items ? Math.round((s.omset || 0) / s.items) : (s.omset || 0),
+          omset: Number(s.omset) || 0,
+          status: 'Selesai (Live)'
+        });
+      }
+    });
+
+    // Ekstrak dari Marketplace Orders
+    orders.forEach(function (o) {
+      var oDate = window.cleanWibDate(o.date);
+      var oTime = o.time || '14:30:00 WIB';
+
+      if (Array.isArray(o.items) && o.items.length > 0) {
+        o.items.forEach(function (oi, oiIdx) {
+          items.push({
+            id: (o.id || 'ORD') + '-' + oiIdx,
+            refId: o.id || o.resi || 'ORD-REGULER',
+            source: 'marketplace',
+            sourceLabel: 'Marketplace ' + (o.channel || 'Reguler'),
+            date: oDate,
+            time: oTime,
+            store: o.channel || 'Shopee Official Store A',
+            operator: o.picker || 'Admin Toko',
+            sku: oi.sku || 'SPN-001',
+            name: oi.name || ('Spion ' + oi.sku),
+            qty: Number(oi.qty) || 1,
+            price: Number(oi.price) || 0,
+            omset: (Number(oi.qty) || 1) * (Number(oi.price) || 0),
+            status: o.status || 'Terkirim'
+          });
+        });
+      } else {
+        items.push({
+          id: o.id || o.resi || ('ORD-' + oDate),
+          refId: o.resi || o.id || 'ORD-REGULER',
+          source: 'marketplace',
+          sourceLabel: 'Marketplace ' + (o.channel || 'Reguler'),
+          date: oDate,
+          time: oTime,
+          store: o.channel || 'Shopee Official Store A',
+          operator: o.picker || 'Admin Toko',
+          sku: o.sku || 'SPN-MBL-001',
+          name: o.productName || 'Spion Retract All New Avanza / Xenia',
+          qty: Number(o.qty) || 1,
+          price: o.price || o.total || 0,
+          omset: Number(o.total) || (Number(o.qty || 1) * Number(o.price || 0)) || 0,
+          status: o.status || 'Terkirim'
+        });
+      }
+    });
+
+    return items;
+  };
+
   window.renderSalesDetailReport = function () {
     var rawItems = window.getAllItemizedSales();
     var currentUser = window.appState.currentUser || {};
@@ -13618,26 +14097,39 @@
       });
     }
 
-    var period = document.getElementById('sd-filter-period') ? document.getElementById('sd-filter-period').value : 'month';
-    var channel = document.getElementById('sd-filter-channel') ? document.getElementById('sd-filter-channel').value : 'all';
-    var store = document.getElementById('sd-filter-store') ? document.getElementById('sd-filter-store').value : 'all';
-    var host = document.getElementById('sd-filter-host') ? document.getElementById('sd-filter-host').value : 'all';
-    var sku = document.getElementById('sd-filter-sku') ? document.getElementById('sd-filter-sku').value : 'all';
-    var search = document.getElementById('sd-search-input') ? document.getElementById('sd-search-input').value.toLowerCase().trim() : '';
+    var period = (document.getElementById('sd-filter-period') && document.getElementById('sd-filter-period').value) || 'month';
+    var channel = (document.getElementById('sd-filter-channel') && document.getElementById('sd-filter-channel').value) || 'all';
+    var store = (document.getElementById('sd-filter-store') && document.getElementById('sd-filter-store').value) || 'all';
+    var host = (document.getElementById('sd-filter-host') && document.getElementById('sd-filter-host').value) || 'all';
+    var sku = (document.getElementById('sd-filter-sku') && document.getElementById('sd-filter-sku').value) || 'all';
+    var search = (document.getElementById('sd-search-input') && document.getElementById('sd-search-input').value.toLowerCase().trim()) || '';
+
+    // Nilai string kosong fallback ke 'all'
+    if (!store) store = 'all';
+    if (!host) host = 'all';
+    if (!sku) sku = 'all';
 
     var todayStr = new Date().toISOString().slice(0, 10);
     var filtered = rawItems.filter(function (it) {
+      var itemDate = window.cleanWibDate(it.date);
       if (period === 'today') {
-        if (window.cleanWibDate(it.date) !== todayStr) return false;
+        if (itemDate !== todayStr) return false;
       } else if (period === '7days') {
-        var d = new Date(window.cleanWibDate(it.date));
+        var d = new Date(itemDate);
         var diffDays = (new Date() - d) / (1000 * 60 * 60 * 24);
         if (diffDays > 7 || diffDays < 0) return false;
+      } else if (period === 'last_month') {
+        var prevM = new Date();
+        prevM.setMonth(prevM.getMonth() - 1);
+        var pYm = prevM.toISOString().slice(0, 7);
+        if (itemDate.slice(0, 7) !== pYm) return false;
       }
+
       if (channel !== 'all' && it.source !== channel) return false;
       if (store !== 'all' && it.store !== store) return false;
       if (host !== 'all' && it.operator !== host) return false;
       if (sku !== 'all' && it.sku !== sku) return false;
+
       if (search) {
         var q = search;
         var match = (it.sku || '').toLowerCase().indexOf(q) !== -1 ||
@@ -13650,14 +14142,13 @@
       return true;
     });
 
-    // Urutkan tanggal terbaru
+    // Urutkan waktu terbaru
     filtered.sort(function (a, b) {
       var dA = (a.date || '') + ' ' + (a.time || '');
       var dB = (b.date || '') + ' ' + (b.time || '');
       return dB.localeCompare(dA);
     });
 
-    // Update 4 KPI Cards (Tanpa Margin / HPP)
     var totalOmset = filtered.reduce(function (s, i) { return s + (i.omset || 0); }, 0);
     var totalPcs = filtered.reduce(function (s, i) { return s + (i.qty || 0); }, 0);
     var totalRows = filtered.length;
@@ -13701,7 +14192,7 @@
     }).join('');
   };
 
-  // 5. EKSPOR CSV LAPORAN PENJUALAN DETAIL (WIB + PRIVASI HOST + TANPA HPP)
+  // 8. EKSPOR CSV LAPORAN PENJUALAN DETAIL
   window.exportSalesDetailCSV = function () {
     var rawItems = window.getAllItemizedSales();
     var currentUser = window.appState.currentUser || {};
@@ -13760,7 +14251,7 @@
     window.showToast('✅ Berhasil mengunduh Laporan Penjualan Detail (CSV)!', 'success');
   };
 
-  // 6. CETAK PDF LAPORAN PENJUALAN DETAIL BERSIH & PROFESIONAL
+  // 9. CETAK PDF LAPORAN PENJUALAN DETAIL
   window.exportSalesDetailPDF = function () {
     var rawItems = window.getAllItemizedSales();
     var currentUser = window.appState.currentUser || {};
@@ -13772,15 +14263,8 @@
       });
     }
 
-    var period = document.getElementById('sd-filter-period') ? document.getElementById('sd-filter-period').value : 'month';
-    var todayStr = new Date().toISOString().slice(0, 10);
-    var filtered = rawItems.filter(function (it) {
-      if (period === 'today' && window.cleanWibDate(it.date) !== todayStr) return false;
-      return true;
-    });
-
-    var totalOmset = filtered.reduce(function (s, i) { return s + (i.omset || 0); }, 0);
-    var totalPcs = filtered.reduce(function (s, i) { return s + (i.qty || 0); }, 0);
+    var totalOmset = rawItems.reduce(function (s, i) { return s + (i.omset || 0); }, 0);
+    var totalPcs = rawItems.reduce(function (s, i) { return s + (i.qty || 0); }, 0);
 
     var printWin = window.open('', '_blank', 'width=900,height=700');
     if (!printWin) {
@@ -13805,16 +14289,16 @@
     doc.write('.text-center { text-align: center; }');
     doc.write('</style></head><body>');
     doc.write('<h1>MJA SALES HUB &mdash; LAPORAN PENJUALAN DETAIL PASCA-LIVE</h1>');
-    doc.write('<div class="sub">Dicetak pada: ' + new Date().toLocaleString('id-ID') + ' WIB | Operator: ' + (currentUser.name || 'Admin') + ' (' + (window.appState.currentRole || 'All') + ') | Total Data: ' + filtered.length + ' Baris</div>');
+    doc.write('<div class="sub">Dicetak pada: ' + new Date().toLocaleString('id-ID') + ' WIB | Operator: ' + (currentUser.name || 'Admin') + ' (' + (window.appState.currentRole || 'All') + ') | Total Data: ' + rawItems.length + ' Baris</div>');
     doc.write('<div class="kpi">');
     doc.write('<div class="kpi-box"><span>Total Omset Kotor</span><strong>' + window.formatRupiah(totalOmset) + '</strong></div>');
     doc.write('<div class="kpi-box"><span>Pcs Terjual</span><strong>' + totalPcs + ' pcs</strong></div>');
-    doc.write('<div class="kpi-box"><span>Total Transaksi</span><strong>' + filtered.length + ' Baris</strong></div>');
+    doc.write('<div class="kpi-box"><span>Total Transaksi</span><strong>' + rawItems.length + ' Baris</strong></div>');
     doc.write('</div>');
     doc.write('<table><thead><tr>');
     doc.write('<th>No</th><th>Tanggal & Waktu (WIB)</th><th>No Ref</th><th>Saluran</th><th>Akun Toko</th><th>Host / Operator</th><th>SKU & Nama Spion</th><th class="text-center">Qty</th><th class="text-right">Harga</th><th class="text-right">Subtotal Omset</th>');
     doc.write('</tr></thead><tbody>');
-    filtered.forEach(function (it, idx) {
+    rawItems.forEach(function (it, idx) {
       doc.write('<tr>');
       doc.write('<td>' + (idx + 1) + '</td>');
       doc.write('<td>' + window.formatWibDateTime(it.date, it.time) + '</td>');
@@ -13829,418 +14313,397 @@
       doc.write('</tr>');
     });
     doc.write('</tbody></table>');
-    doc.write('<script>window.onload = function() { window.print(); }<\/script>');
+    doc.write('<script>window.onload = function() { window.print(); }<\\/script>');
     doc.write('</body></html>');
     doc.close();
   };
 
-  // Helper untuk mengekstrak seluruh item penjualan
-  window.getAllItemizedSales = function () {
-    var items = [];
-    var sessions = window.appState.data.liveSessions || [];
-    var orders = window.appState.data.orders || [];
+  // 10. ENHANCED SAVE LIVE SESSION DENGAN JAM LIVE & EXACT SUBMIT TIMESTAMP
+  
+  // ===========================================================================
+  // LIVE MODAL PRODUCT HELPERS & AUTO-POPULATION
+  // ===========================================================================
+  window.populateLiveProductSelect = function () {
+    var selectEl = document.getElementById('modal-live-item-select');
+    if (!selectEl) return;
+    selectEl.innerHTML = '';
 
-    // Ekstrak dari Sesi Live
-    sessions.forEach(function (s) {
-      var sDate = window.cleanWibDate(s.date);
-      var sTime = s.startTime ? (s.startTime + ' WIB') : '10:00:00 WIB';
+    var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [
+      { sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia Chrome', price: 1150000, cogs: 690000, stock: 45 },
+      { sku: 'SPN-MBL-002', name: 'Spion Innova Reborn / Venturer Auto Folding', price: 1450000, cogs: 870000, stock: 32 },
+      { sku: 'SPN-MBL-003', name: 'Kaca Spion Honda Brio / Mobilio Cembung', price: 185000, cogs: 110000, stock: 80 },
+      { sku: 'SPN-MTR-002', name: 'Spion Jalu Bar End CNC Universal NMAX Aerox', price: 98000, cogs: 58000, stock: 120 },
+      { sku: 'SPN-AKS-003', name: 'Saklar Switch Retract Lipat Spion Universal', price: 120000, cogs: 70000, stock: 55 }
+    ];
 
-      if (Array.isArray(s.soldProducts) && s.soldProducts.length > 0) {
-        s.soldProducts.forEach(function (sp, spIdx) {
-          items.push({
-            id: (s.id || 'LIVE') + '-' + (sp.sku || spIdx),
-            refId: s.id || ('SESI-LIVE-' + sDate),
-            source: 'live',
-            sourceLabel: 'Live Shopping',
-            date: sDate,
-            time: sTime,
-            store: s.store || 'TikTok / Shopee Live',
-            operator: s.host || 'Bambang Santoso',
-            sku: sp.sku || 'SPN-MBL-001',
-            name: sp.name || (sp.sku ? 'Spion ' + sp.sku : 'Spion Mobil Retract'),
-            qty: Number(sp.qty) || 1,
-            price: Number(sp.price) || (sp.qty ? Math.round((sp.subtotal || 0) / sp.qty) : 0),
-            omset: Number(sp.subtotal) || (Number(sp.qty) * Number(sp.price)) || 0,
-            status: 'Selesai (Live)'
-          });
-        });
-      } else {
-        items.push({
-          id: s.id || ('LIVE-' + sDate),
-          refId: s.id || ('SESI-LIVE-' + sDate),
-          source: 'live',
-          sourceLabel: 'Live Shopping',
-          date: sDate,
-          time: sTime,
-          store: s.store || 'TikTok / Shopee Live',
-          operator: s.host || 'Bambang Santoso',
-          sku: 'SPN-PAKET-LIVE',
-          name: 'Paket Spion Live Streaming (' + (s.items || 1) + ' pcs)',
-          qty: Number(s.items) || 1,
-          price: s.items ? Math.round((s.omset || 0) / s.items) : (s.omset || 0),
-          omset: Number(s.omset) || 0,
-          status: 'Selesai (Live)'
-        });
-      }
+    inventory.forEach(function (item) {
+      var opt = document.createElement('option');
+      opt.value = item.sku;
+      opt.textContent = item.sku + ' - ' + item.name + ' (Stok: ' + (item.stock || 10) + ')';
+      selectEl.appendChild(opt);
     });
-
-    // Ekstrak dari Marketplace Orders
-    orders.forEach(function (o) {
-      var oDate = window.cleanWibDate(o.date);
-      var oTime = o.time || '14:30:00 WIB';
-
-      if (Array.isArray(o.items) && o.items.length > 0) {
-        o.items.forEach(function (oi, oiIdx) {
-          items.push({
-            id: (o.id || 'ORD') + '-' + oiIdx,
-            refId: o.id || o.resi || 'ORD-REGULER',
-            source: 'marketplace',
-            sourceLabel: 'Marketplace ' + (o.channel || 'Reguler'),
-            date: oDate,
-            time: oTime,
-            store: o.channel || 'Shopee Official Store A',
-            operator: o.picker || 'Admin Toko',
-            sku: oi.sku || 'SPN-001',
-            name: oi.name || ('Spion ' + oi.sku),
-            qty: Number(oi.qty) || 1,
-            price: Number(oi.price) || 0,
-            omset: (Number(oi.qty) || 1) * (Number(oi.price) || 0),
-            status: o.status || 'Terkirim'
-          });
-        });
-      } else {
-        items.push({
-          id: o.id || o.resi || ('ORD-' + oDate),
-          refId: o.resi || o.id || 'ORD-REGULER',
-          source: 'marketplace',
-          sourceLabel: 'Marketplace ' + (o.channel || 'Reguler'),
-          date: oDate,
-          time: oTime,
-          store: o.channel || 'Shopee Official Store A',
-          operator: o.picker || 'Admin Toko',
-          sku: o.sku || 'SPN-MBL-001',
-          name: o.productName || 'Spion Retract All New Avanza / Xenia',
-          qty: Number(o.qty) || 1,
-          price: o.price || o.total || 0,
-          omset: Number(o.total) || (Number(o.qty || 1) * Number(o.price || 0)) || 0,
-          status: o.status || 'Terkirim'
-        });
-      }
-    });
-
-    return items;
   };
 
-  // ===========================================================================
-  // RBAC & ROLE GUARD FIXES: LAPORAN LIVE & PENJUALAN DETAIL
-  // ===========================================================================
+  window.renderModalLiveItemsList = function () {
+    var container = document.getElementById('modal-live-items-list');
+    var qtyInput = document.getElementById('modal-live-qty');
+    var cogsInput = document.getElementById('modal-live-cogs');
+    if (!container) return;
 
-  window.getRoleAllowedSections = function (role) {
-    if (role === 'warehouse') {
-      // GUDANG: Khusus stok, QC kirim, retur, dan absensi
-      return ['section-inventory', 'section-qc-scan', 'section-returns', 'section-attendance'];
-    } else if (role === 'host') {
-      // HOST LIVE: Khusus rekap sesi live, absensi, dan penjualan detail miliknya
-      return ['section-live', 'section-sales-detail', 'section-attendance'];
-    } else if (role === 'finance') {
-      // FINANCE: Akses semua manajerial termasuk Laporan Live dan Penjualan Detail
-      return ['section-dashboard', 'section-live-reports', 'section-sales-detail', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial'];
+    container.innerHTML = '';
+    window.currentLiveSoldItems = window.currentLiveSoldItems || [];
+
+    var totalQty = 0;
+    var totalCogs = 0;
+    var totalOmset = 0;
+
+    if (window.currentLiveSoldItems.length === 0) {
+      container.innerHTML = '<p class="text-slate-400 italic text-[11px] py-1 text-center">Belum ada produk dipilih. Pilih produk &amp; klik "+ Tambah" di atas.</p>';
+      if (qtyInput) qtyInput.value = 0;
+      if (cogsInput) cogsInput.value = 0;
+      return;
+    }
+
+    window.currentLiveSoldItems.forEach(function (it, idx) {
+      var subtotal = (Number(it.price) || 0) * (Number(it.qty) || 1);
+      var subCogs = (Number(it.cogs) || 0) * (Number(it.qty) || 1);
+      totalQty += (Number(it.qty) || 1);
+      totalCogs += subCogs;
+      totalOmset += subtotal;
+
+      var div = document.createElement('div');
+      div.className = 'flex items-center justify-between p-2 bg-white border border-slate-200 rounded-lg shadow-2xs';
+      div.innerHTML = '<div class="truncate mr-2">' +
+        '<strong class="text-slate-800">' + (it.sku || 'SKU') + '</strong> &times; ' +
+        '<span class="font-bold text-amber-700">' + (it.qty || 1) + ' pcs</span> ' +
+        '<span class="text-slate-400 text-[10px]">(' + (it.name || 'Spion') + ')</span>' +
+        '</div>' +
+        '<div class="flex items-center space-x-2 flex-shrink-0">' +
+        '<span class="font-bold text-emerald-700">' + window.formatRupiah(subtotal) + '</span>' +
+        '<button type="button" onclick="window.removeLiveSoldItem(' + idx + ')" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded hover:bg-rose-50 cursor-pointer" title="Hapus item">&times;</button>' +
+        '</div>';
+      container.appendChild(div);
+    });
+
+    if (qtyInput) qtyInput.value = totalQty;
+    if (cogsInput) cogsInput.value = totalCogs;
+
+    // Jika omset masih kosong atau 0, otomatis isi dari total omset item terpilih
+    var omsetEl = document.getElementById('modal-live-omset');
+    if (omsetEl && (!omsetEl.value || Number(omsetEl.value) === 0)) {
+      omsetEl.value = totalOmset;
+    }
+  };
+
+  window.addLiveSoldItem = function () {
+    var selectEl = document.getElementById('modal-live-item-select');
+    var qtyEl = document.getElementById('modal-live-item-qty');
+    if (!selectEl || !qtyEl) return;
+
+    var sku = selectEl.value;
+    var qty = parseInt(qtyEl.value, 10) || 1;
+    if (qty <= 0) qty = 1;
+
+    var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
+    var prod = inventory.find(function (it) { return it.sku === sku; }) || {
+      sku: sku,
+      name: 'Spion ' + sku,
+      price: 1150000,
+      cogs: 690000
+    };
+
+    window.currentLiveSoldItems = window.currentLiveSoldItems || [];
+    var existing = window.currentLiveSoldItems.find(function (it) { return it.sku === sku; });
+    if (existing) {
+      existing.qty += qty;
+      existing.subtotal = existing.qty * (existing.price || 500000);
     } else {
-      // ADMIN & OWNER: Akses SEMUA modul lengkap
-      return ['section-dashboard', 'section-live-reports', 'section-sales-detail', 'section-pricing', 'section-orders', 'section-qc-scan', 'section-returns', 'section-inventory', 'section-attendance', 'section-attendance-report', 'section-financial', 'section-users'];
+      window.currentLiveSoldItems.push({
+        sku: prod.sku,
+        name: prod.name,
+        qty: qty,
+        price: prod.price || 1150000,
+        cogs: prod.cogs || 690000,
+        subtotal: (prod.price || 1150000) * qty
+      });
+    }
+
+    window.renderModalLiveItemsList();
+    window.showToast('Item ' + sku + ' (' + qty + ' pcs) ditambahkan ke daftar!', 'success');
+  };
+
+  window.removeLiveSoldItem = function (index) {
+    window.currentLiveSoldItems = window.currentLiveSoldItems || [];
+    if (index >= 0 && index < window.currentLiveSoldItems.length) {
+      var removed = window.currentLiveSoldItems.splice(index, 1);
+      window.renderModalLiveItemsList();
+      window.showToast('Item ' + (removed[0] ? removed[0].sku : '') + ' dihapus.', 'info');
     }
   };
 
-  window.applyRolePermissions = function (role) {
-    window.appState.currentRole = role;
-    var allowed = window.getRoleAllowedSections(role);
-
-    // Sidebar navigation map
-    var navButtons = {
-      'section-dashboard': document.getElementById('nav-section-dashboard'),
-      'section-live-reports': document.getElementById('nav-section-live-reports'),
-      'section-sales-detail': document.getElementById('nav-section-sales-detail'),
-      'section-live': document.getElementById('nav-section-live'),
-      'section-pricing': document.getElementById('nav-section-pricing'),
-      'section-orders': document.getElementById('nav-section-orders'),
-      'section-qc-scan': document.getElementById('nav-section-qc-scan'),
-      'section-returns': document.getElementById('nav-section-returns'),
-      'section-inventory': document.getElementById('nav-section-inventory'),
-      'section-attendance': document.getElementById('nav-section-attendance'),
-      'section-attendance-report': document.getElementById('nav-section-attendance-report'),
-      'section-financial': document.getElementById('nav-section-financial'),
-      'section-users': document.getElementById('it-admin-nav-item')
-    };
-
-    for (var secId in navButtons) {
-      var btn = navButtons[secId];
-      if (btn) {
-        if (allowed.indexOf(secId) !== -1) {
-          btn.classList.remove('hidden');
-        } else {
-          btn.classList.add('hidden');
-        }
-      }
+  window.openNewLiveModal = function () {
+    var role = (window.appState && window.appState.currentRole) || 'admin';
+    if (role !== 'host' && role !== 'admin') {
+      window.showToast('Akses Ditolak: Hanya user Host Live yang berhak menginput Rekap Sesi Live!', 'error');
+      return;
     }
 
-    // Mobile drawer navigation map
-    var drawerMap = {
-      'section-dashboard': document.getElementById('drawer-item-section-dashboard'),
-      'section-live-reports': document.getElementById('drawer-item-section-live-reports'),
-      'section-sales-detail': document.getElementById('drawer-item-section-sales-detail'),
-      'section-live': document.getElementById('drawer-item-section-live'),
-      'section-inventory': document.getElementById('drawer-item-section-inventory'),
-      'section-qc-scan': document.getElementById('drawer-item-section-qc-scan'),
-      'section-attendance': document.getElementById('drawer-item-section-attendance'),
-      'section-attendance-report': document.getElementById('drawer-item-section-attendance-report'),
-      'section-financial': document.getElementById('drawer-item-section-financial'),
-      'section-orders': document.getElementById('drawer-item-section-orders'),
-      'section-pricing': document.getElementById('drawer-item-section-pricing'),
-      'section-users': document.getElementById('drawer-item-section-users')
-    };
-
-    for (var dSec in drawerMap) {
-      var dEl = drawerMap[dSec];
-      if (dEl) {
-        if (allowed.indexOf(dSec) !== -1) {
-          dEl.classList.remove('hidden');
-        } else {
-          dEl.classList.add('hidden');
-        }
-      }
+    var hostInput = document.getElementById('modal-live-host');
+    if (hostInput) {
+      var user = (window.appState && window.appState.currentUser) || { name: 'Bambang Santoso' };
+      hostInput.value = user.name || 'Bambang Santoso';
     }
-
-    if (typeof window.renderMobileBottomNav === 'function') {
-      window.renderMobileBottomNav(role, window.appState.currentSection);
-    }
-  };
-
-  window.navigateTo = function (sectionId) {
-    var role = window.appState.currentRole || 'admin';
-    var allowed = window.getRoleAllowedSections(role);
-
-    // Strict Role Guard
-    if (sectionId === 'section-live' && role !== 'host') {
-      window.showToast('Akses Ditolak: Menu Rekap Sesi Live hanya bisa diakses dan dilakukan oleh user Host Live!', 'error');
-      sectionId = allowed[0] || 'section-dashboard';
-    } else if (sectionId === 'section-live-reports' && (role === 'host' || role === 'warehouse')) {
-      window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen/Admin!', 'warning');
-      sectionId = allowed[0] || 'section-attendance';
-    } else if (allowed.indexOf(sectionId) === -1) {
-      window.showToast('Akses dibatasi untuk peran ' + role + '!', 'warning');
-      sectionId = allowed[0] || 'section-dashboard';
-    }
-
-    window.appState.currentSection = sectionId;
-
-    var sections = document.querySelectorAll('.content-section');
-    for (var i = 0; i < sections.length; i++) {
-      sections[i].classList.add('hidden');
-    }
-    var target = document.getElementById(sectionId);
-    if (target) target.classList.remove('hidden');
-
-    if (sectionId === 'section-dashboard') {
-      setTimeout(function () {
-        if (typeof window.initCharts === 'function') window.initCharts();
-      }, 120);
-    } else if (sectionId === 'section-live') {
-      if (typeof window.renderLiveSessions === 'function') {
-        window.renderLiveSessions();
-      }
-    } else if (sectionId === 'section-live-reports') {
-      setTimeout(function () {
-        if (typeof window.initLiveReportsDashboard === 'function') {
-          window.initLiveReportsDashboard();
-        }
-      }, 80);
-    } else if (sectionId === 'section-sales-detail') {
-      setTimeout(function () {
-        if (typeof window.renderSalesDetailReport === 'function') {
-          window.renderSalesDetailReport();
-        }
-      }, 80);
-    } else if (sectionId === 'section-users') {
-      if (typeof window.updateResetStats === 'function') {
-        window.updateResetStats();
-      }
-    }
-
-    // Update sidebar nav active state
-    var navLinks = document.querySelectorAll('.nav-link');
-    for (var j = 0; j < navLinks.length; j++) {
-      navLinks[j].classList.remove('bg-slate-800', 'text-white');
-      navLinks[j].classList.add('text-slate-300');
-    }
-    var activeNav = document.getElementById('nav-' + sectionId);
-    if (activeNav) {
-      activeNav.classList.add('bg-slate-800', 'text-white');
-      activeNav.classList.remove('text-slate-300');
-    }
-
-    var desktopTitles = {
-      'section-dashboard': 'Dashboard Eksekutif',
-      'section-live': 'Rekap Sesi Live Shopping',
-      'section-live-reports': 'Pusat Analitik & Laporan Live Stream',
-      'section-sales-detail': 'Laporan Penjualan Detail',
-      'section-pricing': 'Kalkulator Harga Modal & Jual Online',
-      'section-orders': 'Order & Cetak Resi Multi-Toko',
-      'section-qc-scan': 'Scan Validasi Packing Sebelum Kirim',
-      'section-returns': 'Penerimaan Retur Paket (Restock)',
-      'section-inventory': 'Inventori Stok Spion (Mobil & Motor)',
-      'section-attendance': 'Presensi Karyawan & Tag Lokasi GPS',
-      'section-attendance-report': 'Rekap Presensi Seluruh Karyawan (Admin & Owner)',
-      'section-financial': 'Laporan Laba Rugi (P&L)',
-      'section-users': 'Manajemen Pengguna IT'
-    };
-
-    var mobileTitles = {
-      'section-dashboard': 'Dashboard',
-      'section-live': 'Rekap Live',
-      'section-live-reports': 'Laporan Live',
-      'section-sales-detail': 'Penjualan Detail',
-      'section-pricing': 'Kalkulator',
-      'section-orders': 'Order & Resi',
-      'section-qc-scan': 'Scan QC',
-      'section-returns': 'Retur Paket',
-      'section-inventory': 'Stok Spion',
-      'section-attendance': 'Presensi GPS',
-      'section-attendance-report': 'Rekap Presensi',
-      'section-financial': 'Laba Rugi',
-      'section-users': 'Kelola Akun'
-    };
-
-    var titleEl = document.getElementById('topbar-page-title');
-    if (titleEl) {
-      var title = (window.innerWidth >= 768 ? desktopTitles[sectionId] : mobileTitles[sectionId]) || 'MJA Sales Hub';
-      titleEl.textContent = title;
-    }
-  };
-
-  // Submenu Switcher for Laporan Live (Fixes Tab IDs)
-  window.switchLiveReportTab = function (tabId) {
-    var baseId = tabId.replace('btn-', '').replace('content-', '');
-    if (!baseId.startsWith('tab-lr-')) {
-      baseId = 'tab-lr-' + baseId.replace('lr-tab-', '');
-    }
-    window.activeLiveReportTab = baseId;
-
-    var tabList = ['tab-lr-executive', 'tab-lr-sessions', 'tab-lr-hosts', 'tab-lr-ads', 'tab-lr-products'];
-    tabList.forEach(function (t) {
-      var isCurrent = (t === baseId);
-      var contentEl = document.getElementById(t) || document.getElementById('content-' + t);
-      var btnEl = document.getElementById('btn-' + t);
-
-      if (contentEl) {
-        if (isCurrent) contentEl.classList.remove('hidden');
-        else contentEl.classList.add('hidden');
-      }
-
-      if (btnEl) {
-        if (isCurrent) {
-          btnEl.className = 'lr-tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-slate-900 text-white whitespace-nowrap shadow-xs cursor-pointer';
-        } else {
-          btnEl.className = 'lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer';
-        }
-      }
-    });
-
-    if (baseId === 'tab-lr-executive') {
-      if (typeof window.renderExecutiveSummary === 'function') window.renderExecutiveSummary();
-    } else if (baseId === 'tab-lr-sessions') {
-      if (typeof window.renderSessionsReport === 'function') window.renderSessionsReport();
-    } else if (baseId === 'tab-lr-hosts') {
-      if (typeof window.renderHostPerformance === 'function') window.renderHostPerformance();
-    } else if (baseId === 'tab-lr-ads') {
-      if (typeof window.renderAdsProfitability === 'function') window.renderAdsProfitability();
-    } else if (baseId === 'tab-lr-products') {
-      if (typeof window.renderLiveProductsReport === 'function') window.renderLiveProductsReport();
-    }
-  };
-
-  // Robust getFilteredLiveSessions with date cleaning
-  window.getFilteredLiveSessions = function () {
-    var raw = window.appState.data.liveSessions || [];
-    var period = (document.getElementById('lr-filter-period') && document.getElementById('lr-filter-period').value) || 'month';
-    var branch = (document.getElementById('lr-filter-branch') && document.getElementById('lr-filter-branch').value) || 'all';
-    var platform = (document.getElementById('lr-filter-platform') && document.getElementById('lr-filter-platform').value) || 'all';
-    var host = (document.getElementById('lr-filter-host') && document.getElementById('lr-filter-host').value) || 'all';
-    var store = (document.getElementById('lr-filter-store') && document.getElementById('lr-filter-store').value) || 'all';
 
     var now = new Date();
-    var todayStr = now.toISOString().slice(0, 10);
-    var curStart, curEnd, prevStart, prevEnd;
+    var hh = now.getHours();
+    var mm = now.getMinutes();
+    var endHStr = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+    var startH = (hh - 2 + 24) % 24;
+    var startHStr = String(startH).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
 
-    if (period === 'today') {
-      curStart = todayStr;
-      curEnd = todayStr;
-      var yest = new Date(now.getTime() - 86400000).toISOString().slice(0, 10);
-      prevStart = yest;
-      prevEnd = yest;
-    } else if (period === '7days') {
-      var d7 = new Date(now.getTime() - 6 * 86400000).toISOString().slice(0, 10);
-      curStart = d7;
-      curEnd = todayStr;
-      var d14 = new Date(now.getTime() - 13 * 86400000).toISOString().slice(0, 10);
-      var d8 = new Date(now.getTime() - 7 * 86400000).toISOString().slice(0, 10);
-      prevStart = d14;
-      prevEnd = d8;
-    } else if (period === 'month') {
-      var ym = todayStr.slice(0, 7);
-      curStart = ym + '-01';
-      curEnd = ym + '-31';
-      var prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      var prevYm = prevMonthDate.toISOString().slice(0, 7);
-      prevStart = prevYm + '-01';
-      prevEnd = prevYm + '-31';
-    } else if (period === 'last_month') {
-      var pmDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      var pmYm = pmDate.toISOString().slice(0, 7);
-      curStart = pmYm + '-01';
-      curEnd = pmYm + '-31';
-      var pm2Date = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-      var pm2Ym = pm2Date.toISOString().slice(0, 7);
-      prevStart = pm2Ym + '-01';
-      prevEnd = pm2Ym + '-31';
-    } else if (period === 'custom') {
-      var cStart = document.getElementById('lr-custom-start') ? document.getElementById('lr-custom-start').value : '';
-      var cEnd = document.getElementById('lr-custom-end') ? document.getElementById('lr-custom-end').value : '';
-      curStart = cStart || '2000-01-01';
-      curEnd = cEnd || '2099-12-31';
-      prevStart = '2000-01-01';
-      prevEnd = '2000-01-01';
-    } else {
-      curStart = '2000-01-01';
-      curEnd = '2099-12-31';
-      prevStart = '2000-01-01';
-      prevEnd = '2000-01-01';
+    var sEl = document.getElementById('modal-live-start-time');
+    var eEl = document.getElementById('modal-live-end-time');
+    if (sEl) sEl.value = startHStr;
+    if (eEl) eEl.value = endHStr;
+    if (typeof window.updateLiveDurationDisplay === 'function') {
+      window.updateLiveDurationDisplay();
     }
 
-    var filterFunc = function (s, start, end) {
-      var d = window.cleanWibDate(s.date);
-      if (d < start || d > end) return false;
+    window.populateLiveProductSelect();
 
-      if (platform !== 'all') {
-        var sStore = (s.store || '').toLowerCase();
-        if (platform === 'shopee' && sStore.indexOf('shopee') === -1) return false;
-        if (platform === 'tiktok' && sStore.indexOf('tiktok') === -1) return false;
+    // Default item agar host tidak perlu bingung mencari tombol tambah
+    var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
+    var defaultItem = inventory[0] || { sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia Chrome', price: 1150000, cogs: 690000 };
+    window.currentLiveSoldItems = [
+      {
+        sku: defaultItem.sku,
+        name: defaultItem.name,
+        qty: 5,
+        price: defaultItem.price || 1150000,
+        cogs: defaultItem.cogs || 690000,
+        subtotal: (defaultItem.price || 1150000) * 5
       }
+    ];
 
-      if (host !== 'all' && (s.host || '') !== host) return false;
-      if (store !== 'all' && (s.store || '') !== store) return false;
+    window.renderModalLiveItemsList();
 
-      return true;
-    };
+    var omsetEl = document.getElementById('modal-live-omset');
+    if (omsetEl) omsetEl.value = 5750000;
 
-    return {
-      current: raw.filter(function (s) { return filterFunc(s, curStart, curEnd); }),
-      previous: raw.filter(function (s) { return filterFunc(s, prevStart, prevEnd); })
-    };
+    var previewBox = document.getElementById('modal-live-proof-preview-box');
+    if (previewBox) previewBox.classList.add('hidden');
+    var proofStatus = document.getElementById('modal-live-proof-status');
+    if (proofStatus) proofStatus.textContent = 'Belum ada screenshot terlampir';
+
+    var modal = document.getElementById('modal-live-session');
+    if (modal) {
+      modal.classList.remove('hidden');
+      // Scroll form ke bagian atas
+      var form = modal.querySelector('form');
+      if (form) form.scrollTop = 0;
+    }
   };
 
+window.handleSaveLiveSession = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
 
-  // Inisialisasi Database User saat pertama kali dimuat
+    if (window.appState.currentRole !== 'host') {
+      window.showToast('Akses Ditolak: Hanya user Host Live yang berhak menginput Rekap Sesi Live!', 'error');
+      return;
+    }
+
+    var store = document.getElementById('modal-live-store').value;
+    var host = (document.getElementById('modal-live-host') ? document.getElementById('modal-live-host').value : '').trim() || 'Bambang Santoso';
+    var omset = Number(document.getElementById('modal-live-omset').value) || 0;
+    var startTime = document.getElementById('modal-live-start-time') ? document.getElementById('modal-live-start-time').value : '16:33';
+    var endTime = document.getElementById('modal-live-end-time') ? document.getElementById('modal-live-end-time').value : '18:33';
+    var viewers = Number(document.getElementById('modal-live-viewers') ? document.getElementById('modal-live-viewers').value : 1250);
+    var notes = document.getElementById('modal-live-notes') ? document.getElementById('modal-live-notes').value.trim() : '';
+
+    if (omset <= 0) {
+      window.showToast('Total omset penjualan live wajib diisi lebih dari 0!', 'warning');
+      return;
+    }
+
+    if (!window.currentLiveSoldItems || window.currentLiveSoldItems.length === 0) {
+      alert('⚠️ WAJIB INPUT PRODUK SPION:\n\nHarap pilih minimal 1 produk spion yang terjual saat siaran live pada kotak pemilih produk, lalu klik tombol "+ Tambah".\n\nHal ini wajib agar stok gudang otomatis terpotong akurat!');
+      return;
+    }
+
+    var adsRaw = Number(document.getElementById('modal-live-ads').value || 0);
+    var adsType = document.getElementById('modal-live-ads-type').value;
+    var ads = adsType === 'pct' ? Math.round(omset * (adsRaw / 100)) : adsRaw;
+
+    var voucherRaw = Number(document.getElementById('modal-live-voucher') ? document.getElementById('modal-live-voucher').value : 0);
+    var voucherType = document.getElementById('modal-live-voucher-type') ? document.getElementById('modal-live-voucher-type').value : 'rp';
+    var voucher = voucherType === 'pct' ? Math.round(omset * (voucherRaw / 100)) : voucherRaw;
+
+    var qty = Number(document.getElementById('modal-live-qty').value || 0);
+    var cogs = Number(document.getElementById('modal-live-cogs').value || 0);
+
+    var feePct = 9.5;
+    var matchedStore = (window.appState.data.stores || []).find(function (s) { return (s.name || '').indexOf(store) !== -1; });
+    if (matchedStore) feePct = matchedStore.fee;
+
+    var fee = Math.round(omset * (feePct / 100));
+    var margin = omset - fee - ads - voucher - cogs;
+
+    // Hitung durasi siaran
+    var sParts = startTime.split(':').map(Number);
+    var eParts = endTime.split(':').map(Number);
+    var diffMin = (eParts[0] * 60 + eParts[1]) - (sParts[0] * 60 + sParts[1]);
+    if (diffMin < 0) diffMin += 24 * 60;
+    var durationStr = Math.floor(diffMin / 60) + ' Jam ' + (diffMin % 60 < 10 ? '0' : '') + (diffMin % 60) + ' Menit';
+
+    // Waktu submit akurat dengan detik (User Req 5)
+    var nowTimestamp = new Date();
+    var hh = String(nowTimestamp.getHours()).padStart(2, '0');
+    var mm = String(nowTimestamp.getMinutes()).padStart(2, '0');
+    var ss = String(nowTimestamp.getSeconds()).padStart(2, '0');
+    var exactInputTime = hh + ':' + mm + ':' + ss + ' WIB';
+    var inputIso = nowTimestamp.toISOString();
+
+    var liveAirTimeStr = startTime + ' - ' + endTime + ' WIB';
+
+    var proofPhoto = window.currentLiveProofPhoto;
+    if (!proofPhoto) {
+      proofPhoto = window.createMockLiveAnalyticsSvg(store, host, new Date().toISOString().slice(0, 10), omset, viewers);
+    }
+
+    var avgViewers = Number(document.getElementById('modal-live-viewers-avg') ? document.getElementById('modal-live-viewers-avg').value : Math.round(viewers * 0.45));
+    var uniqueViewers = Number(document.getElementById('modal-live-viewers-unique') ? document.getElementById('modal-live-viewers-unique').value : viewers * 3);
+    var newFollowers = Number(document.getElementById('modal-live-followers-new') ? document.getElementById('modal-live-followers-new').value : 0);
+    var ordersCount = Number(document.getElementById('modal-live-orders-count') ? document.getElementById('modal-live-orders-count').value : qty);
+    var ordersCancelled = Number(document.getElementById('modal-live-orders-cancelled') ? document.getElementById('modal-live-orders-cancelled').value : 0);
+    var targetSession = Number(document.getElementById('modal-live-target-session') ? document.getElementById('modal-live-target-session').value : 0);
+
+    var obstacles = [];
+    var obstEls = document.querySelectorAll('input[name="live-obstacle"]:checked');
+    for (var oIndex = 0; oIndex < obstEls.length; oIndex++) {
+      obstacles.push(obstEls[oIndex].value);
+    }
+
+    var sopStatus = 'valid';
+    try {
+      var curMinTotal = nowTimestamp.getHours() * 60 + nowTimestamp.getMinutes();
+      var endMinTotal = eParts[0] * 60 + eParts[1];
+      if ((curMinTotal - endMinTotal) > 120) sopStatus = 'late';
+    } catch (eSop) { sopStatus = 'valid'; }
+
+    var newSession = {
+      id: 'LS-0' + ((window.appState.data.liveSessions || []).length + 1),
+      store: store,
+      host: host,
+      branch: 'Cabang 1 (Pusat)',
+      date: new Date().toISOString().slice(0, 10),
+      startTime: startTime,
+      endTime: endTime,
+      liveTime: liveAirTimeStr,
+      inputTime: exactInputTime,
+      time: exactInputTime,
+      duration: durationStr,
+      viewers: viewers,
+      avgViewers: avgViewers,
+      uniqueViewers: uniqueViewers,
+      followersNew: newFollowers,
+      ordersCount: ordersCount,
+      ordersCancelled: ordersCancelled,
+      targetSession: targetSession,
+      omset: omset,
+      fee: fee,
+      ads: ads + voucher,
+      cogs: cogs,
+      margin: margin,
+      items: qty,
+      notes: notes,
+      obstacles: obstacles,
+      sopStatus: sopStatus,
+      inputTimestamp: inputIso,
+      editLogs: [{ user: host, timestamp: inputIso, field: 'create', details: 'Input rekap sesi live' }],
+      managementNotes: [],
+      proofPhoto: proofPhoto,
+      soldProducts: window.currentLiveSoldItems.slice()
+    };
+
+    // Otomatis potong stok fisik gudang
+    if (window.currentLiveSoldItems.length > 0) {
+      window.currentLiveSoldItems.forEach(function (item) {
+        var inv = (window.appState.data.inventory || []).find(function (it) { return it.sku === item.sku; });
+        if (inv) {
+          inv.stock = Math.max(0, inv.stock - item.qty);
+          if (!window.appState.data.stockLogs) window.appState.data.stockLogs = [];
+          window.appState.data.stockLogs.unshift({
+            id: 'LOG-' + Date.now() + '-' + item.sku,
+            time: exactInputTime,
+            date: newSession.date,
+            sku: item.sku,
+            name: item.name,
+            type: 'Penjualan Live (-' + item.qty + ')',
+            diff: -item.qty,
+            finalStock: inv.stock,
+            operator: host + ' (Host Live)',
+            notes: 'Terjual siaran ' + store + ' (' + liveAirTimeStr + ')'
+          });
+        }
+      });
+      if (typeof window.renderInventory === 'function') window.renderInventory();
+      if (typeof window.renderStockLogs === 'function') window.renderStockLogs();
+    }
+
+    if (!window.appState.data.liveSessions) window.appState.data.liveSessions = [];
+    window.appState.data.liveSessions.unshift(newSession);
+
+    try {
+      localStorage.setItem('mja_clean_liveSessions', JSON.stringify(window.appState.data.liveSessions));
+    } catch (eLs) { }
+
+    // Kirim Jam Live ke Google Spreadsheet (User Req 2)
+    if (window.GAS_ENDPOINT_URL) {
+      try {
+        var params = new URLSearchParams({
+          action: 'saveLiveSession',
+          id: newSession.id,
+          date: newSession.date,
+          store: newSession.store,
+          host: newSession.host,
+          omset: newSession.omset,
+          fee: newSession.fee,
+          ads: newSession.ads,
+          cogs: newSession.cogs,
+          margin: newSession.margin,
+          items: newSession.items,
+          duration: newSession.duration,
+          viewers: newSession.viewers,
+          notes: newSession.notes,
+          liveTime: liveAirTimeStr + ' (Input: ' + exactInputTime + ')',
+          t: Date.now()
+        });
+
+        fetch(window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + params.toString())
+          .then(function (res) { return res.json(); })
+          .then(function (resData) {
+            console.log('GAS saveLiveSession success with Jam Live:', resData);
+          }).catch(function (err) { console.warn('GAS save error:', err); });
+      } catch (eGas) {}
+    }
+
+    // Refresh UI
+    window.closeModal('modal-live-session');
+    window.renderLiveSessions();
+    window.populateSalesDetailFilterOptions();
+    window.renderSalesDetailReport();
+
+    // Reset keranjang form
+    window.currentLiveSoldItems = [];
+    window.currentLiveProofPhoto = null;
+    window.renderModalLiveItemsList();
+
+    window.showToast('✅ Rekap sesi live berhasil disimpan pada pukul ' + exactInputTime + '!', 'success');
+  };
+
+  // Inisialisasi awal
   window.initUserDatabase();
+  window.startLiveDigitalClock();
 
 })();
 
