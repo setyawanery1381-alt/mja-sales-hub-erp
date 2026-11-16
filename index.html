@@ -583,7 +583,7 @@
     </aside>
 
     <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 pb-48 md:pb-8">
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 pb-24 md:pb-8">
 
       <!-- TOP NAVBAR (STRICT MOBILE 3-ELEMENT ROW 1 + SECONDARY ROW 2) -->
       <header class="bg-white border-b border-[#E8E2D9] sticky top-0 z-30 px-4 py-2.5 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-xs" style="padding-top: max(env(safe-area-inset-top, 0px), 10px);">
@@ -1008,7 +1008,7 @@
                 <h3 class="text-lg sm:text-xl font-heading font-black tracking-tight text-white">
                   Rekapitulasi Sesi Live Shopping (Shopee &amp; TikTok)
                 </h3>
-                <p class="text-xs text-amber-100 leading-relaxed">
+                <p class="text-xs text-amber-100 leading-relaxed hidden sm:block">
                   Setiap Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir untuk memotong stok fisik spion di gudang dan mengunci omset real-time.
                 </p>
               </div>
@@ -3778,7 +3778,7 @@
     <!-- MOBILE BOTTOM NAVIGATION (5-ITEM FIXED GRID, MIN AREA 44PX, NO OVERFLOW) -->
     <nav id="mobile-bottom-nav"
       class="md:hidden fixed bottom-0 inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#E8E2D9] grid grid-cols-5 items-start px-2 pt-2 z-40 shadow-[0_-6px_28px_rgba(0,0,0,0.18)] mobile-bottom-bar"
-      style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 68px); min-height: 118px;">
+      style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 14px); min-height: 64px;">
       <!-- 1. Home (4 karakter) -->
       <button onclick="window.navigateTo('section-dashboard')" id="bnav-section-dashboard"
         class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] transition-all">
@@ -6157,15 +6157,19 @@
 
     // Auto-sync polling dari Google Sheets setiap 7 detik saat membuka menu presensi
     setInterval(function () {
-      if (window.appState && window.appState.isAuth && (window.appState.currentSection === 'section-attendance-report' || window.appState.currentSection === 'section-attendance')) {
-        if (typeof window.fetchRemoteAttendance === 'function') {
-          window.fetchRemoteAttendance(true);
-        }
+      if (window.appState && window.appState.isAuth) {
+        // Polling live sessions dari Google Sheets tiap 3 detik agar PC admin & HP host langsung terkoneksi tanpa delay
         if (typeof window.syncLiveSessionsFromGAS === 'function') {
           window.syncLiveSessionsFromGAS(false);
         }
+        // Polling presensi bila sedang di menu presensi
+        if (window.appState.currentSection === 'section-attendance-report' || window.appState.currentSection === 'section-attendance') {
+          if (typeof window.fetchRemoteAttendance === 'function') {
+            window.fetchRemoteAttendance(true);
+          }
+        }
       }
-    }, 7000);
+    }, 3000);
 
     // Auto-Restore Persistent Attendance Logs from LocalStorage (Permanent History)
     try {
@@ -6500,8 +6504,8 @@
       var colCount = items.length;
 
       bnav.className = 'md:hidden fixed bottom-0 inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#E8E2D9] grid items-start px-2 pt-2 z-40 shadow-[0_-6px_28px_rgba(0,0,0,0.18)] mobile-bottom-bar ' + (colCount === 3 ? 'grid-cols-3' : 'grid-cols-5');
-      bnav.style.paddingBottom = 'max(env(safe-area-inset-bottom, 0px), 68px)';
-      bnav.style.minHeight = '118px';
+      bnav.style.paddingBottom = 'max(env(safe-area-inset-bottom, 0px), 14px)';
+      bnav.style.minHeight = '64px';
 
       var navHtml = '';
       items.forEach(function (item) {
@@ -12683,7 +12687,7 @@
   'use strict';
 
   // 1. SINKRONISASI DUA ARAH SESI LIVE DARI GOOGLE SPREADSHEET
-  window.syncLiveSessionsFromGAS = function (isManual) {
+    window.syncLiveSessionsFromGAS = function (isManual) {
     if (!window.GAS_ENDPOINT_URL) return;
 
     if (isManual) {
@@ -12697,31 +12701,77 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data && data.success) {
-          var remoteSessions = data.sessions || [];
+          var rawSessions = data.sessions || [];
 
-          // PENTING: Jika spreadsheet telah dihapus/kosong di Google Sheets (0 baris),
-          // maka sinkronkan ke web agar data di web juga ikut kosong (tidak menampilkan data usang).
-          if (remoteSessions.length === 0) {
-            window.appState.data.liveSessions = [];
-            try {
-              localStorage.setItem('mja_clean_liveSessions', '[]');
-            } catch (eLs) { }
-            console.log('Google Sheets Live_Sessions kosong. Local live sessions dikosongkan.');
-          } else {
-            // Ada data dari Google Sheets, perbarui local state
-            window.appState.data.liveSessions = remoteSessions;
-            try {
-              localStorage.setItem('mja_clean_liveSessions', JSON.stringify(remoteSessions));
-            } catch (eLs) { }
+          // CARI MARKER RESET TERAKHIR DARI GOOGLE SHEETS
+          var lastResetIdx = -1;
+          for (var i = rawSessions.length - 1; i >= 0; i--) {
+            var sItem = rawSessions[i];
+            if (sItem.store === 'SYSTEM_RESET' || (sItem.id && sItem.id.indexOf('RESET_MARKER') !== -1)) {
+              lastResetIdx = i;
+              break;
+            }
           }
 
-          // Refresh UI jika sedang di menu terkait
+          // Hanya ambil sesi live yang diinput SETELAH reset terakhir (bersih dari data Rina, Sarah, Maya & tes lama)
+          var remoteSessions = (lastResetIdx !== -1) ? rawSessions.slice(lastResetIdx + 1) : rawSessions;
+
+          // Parse soldProducts dari kolom notes jika tersedia
+          remoteSessions.forEach(function (s) {
+            if (s.notes && (s.notes.indexOf('"soldProducts"') !== -1 || s.notes.indexOf('{"') === 0)) {
+              try {
+                var parsed = JSON.parse(s.notes);
+                if (parsed && Array.isArray(parsed.soldProducts) && parsed.soldProducts.length > 0) {
+                  s.soldProducts = parsed.soldProducts;
+                  // Hitung ulang omset, items, dan margin secara presisi dari rincian barang
+                  var realOmset = 0;
+                  var realQty = 0;
+                  var realCogs = 0;
+                  s.soldProducts.forEach(function (sp) {
+                    var q = Number(sp.qty) || 1;
+                    var p = Number(sp.price) || (sp.subtotal ? Math.round(sp.subtotal / q) : 0);
+                    var sub = Number(sp.subtotal) || (q * p);
+                    realOmset += sub;
+                    realQty += q;
+                    realCogs += ((Number(sp.cogs) || (p * 0.6)) * q);
+                  });
+                  if (realOmset > 0) {
+                    s.omset = realOmset;
+                    s.items = realQty;
+                    s.cogs = realCogs;
+                    s.fee = Math.round(s.omset * 0.095);
+                    s.margin = s.omset - s.fee - (Number(s.ads) || 0) - realCogs;
+                  }
+                }
+              } catch (eP) { }
+            }
+          });
+
+          // Perbarui local state & localStorage permanen
+          window.appState.data.liveSessions = remoteSessions;
+          try {
+            localStorage.setItem('mja_clean_liveSessions', JSON.stringify(remoteSessions));
+            localStorage.setItem('mja_live_sessions', JSON.stringify(remoteSessions));
+          } catch (eLs) { }
+
+          // Jika ada sesi aktif, otomatis hilangkan status blokir reset di dasbor
+          if (remoteSessions.length > 0) {
+            try {
+              localStorage.removeItem('mja_metrics_is_reset');
+            } catch (eR) { }
+            if (window.appState && window.appState.data) {
+              window.appState.data.isResetMetrics = false;
+            }
+          }
+
+          // Refresh seluruh UI terkait secara instan tanpa delay
           if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
-          if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
+          if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
           if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+          if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
 
           if (isManual) {
-            window.showToast('✅ Berhasil tersinkron dengan Google Spreadsheet (' + remoteSessions.length + ' Sesi Live)!', 'success');
+            window.showToast('✅ Berhasil tersinkron (' + remoteSessions.length + ' Sesi Live aktif)!', 'success');
           }
         }
       })
@@ -12733,7 +12783,6 @@
       });
   };
 
-  // 2. HAPUS SATUAN SESI LIVE
   window.deleteLiveSession = function (sessionId) {
     if (!confirm('Apakah Anda yakin ingin menghapus Sesi Live ' + sessionId + ' ini?')) return;
 
@@ -12770,15 +12819,32 @@
     window.appState.data.liveSessions = [];
     try {
       localStorage.setItem('mja_clean_liveSessions', '[]');
+      localStorage.setItem('mja_live_sessions', '[]');
+      localStorage.setItem('mja_livesessions_reset_all', 'true');
+      localStorage.setItem('mja_livesessions_reset_timestamp', String(Date.now()));
     } catch (eLs) { }
 
     if (window.GAS_ENDPOINT_URL) {
-      fetch(window.GAS_ENDPOINT_URL + '?action=resetLiveSessions&t=' + Date.now())
-        .then(function (res) { return res.json(); })
-        .then(function (resData) {
-          console.log('GAS resetLiveSessions response:', resData);
-        })
-        .catch(function (e) { console.warn('GAS reset error:', e); });
+      try {
+        var rParams = new URLSearchParams({
+          action: 'saveLiveSession',
+          id: 'RESET_MARKER_' + Date.now(),
+          date: '2026-11-16',
+          store: 'SYSTEM_RESET',
+          host: 'SYSTEM',
+          omset: '0',
+          fee: '0',
+          ads: '0',
+          cogs: '0',
+          margin: '0',
+          items: '0',
+          duration: '0',
+          viewers: '0',
+          notes: 'SYSTEM_RESET_' + Date.now(),
+          liveTime: ''
+        });
+        fetch(window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + rParams.toString());
+      } catch (eR) { }
     }
 
     if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
@@ -14864,7 +14930,7 @@ window.handleSaveLiveSession = function (e) {
           items: newSession.items,
           duration: newSession.duration,
           viewers: newSession.viewers,
-          notes: newSession.notes,
+          notes: JSON.stringify({ note: newSession.notes || '', soldProducts: window.currentLiveSoldItems || newSession.soldProducts || [] }),
           liveTime: liveAirTimeStr + ' (Input: ' + exactInputTime + ')',
           t: Date.now()
         });
@@ -15219,6 +15285,30 @@ window.handleSaveLiveSession = function (e) {
       localStorage.setItem('mja_livesessions_reset_all', 'true');
       localStorage.setItem('mja_livesessions_reset_timestamp', String(resetTimestamp));
       localStorage.setItem('mja_clean_liveSessions', '[]');
+      localStorage.setItem('mja_live_sessions', '[]');
+
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          var resetLiveParams = new URLSearchParams({
+            action: 'saveLiveSession',
+            id: 'RESET_MARKER_' + resetTimestamp,
+            date: '2026-11-16',
+            store: 'SYSTEM_RESET',
+            host: 'SYSTEM',
+            omset: '0',
+            fee: '0',
+            ads: '0',
+            cogs: '0',
+            margin: '0',
+            items: '0',
+            duration: '0',
+            viewers: '0',
+            notes: 'SYSTEM_RESET_' + resetTimestamp,
+            liveTime: ''
+          });
+          fetch(window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + resetLiveParams.toString());
+        } catch (eRstGas) { }
+      }
     }
 
     if (chkQc) {
