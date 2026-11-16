@@ -11673,7 +11673,23 @@
     window.renderAttentionPanel(cur);
   };
 
-  // Render Grafik Tren Garis (Omset & Margin)
+  //   // Helper Format Sumbu Y Grafik (Juta / Ribu Rupiah Bersih)
+  window.formatChartAxisRupiah = function (val) {
+    if (val === 0) return 'Rp 0';
+    var abs = Math.abs(val);
+    var sign = val < 0 ? '-' : '';
+    if (abs >= 1000000) {
+      var jt = abs / 1000000;
+      return sign + 'Rp ' + (Number.isInteger(jt) ? jt : jt.toFixed(1)) + ' Jt';
+    }
+    if (abs >= 1000) {
+      var rb = abs / 1000;
+      return sign + 'Rp ' + (Number.isInteger(rb) ? rb : rb.toFixed(0)) + ' Rb';
+    }
+    return sign + 'Rp ' + abs;
+  };
+
+  // Render Grafik Tren Garis (Omset & Margin) - Desain Kontras & Skala Jelas
   window.renderLiveTrendChart = function (sessions) {
     var canvas = document.getElementById('lr-trend-chart');
     if (!canvas || typeof Chart === 'undefined') return;
@@ -11682,23 +11698,47 @@
       window.lrTrendChartInstance.destroy();
     }
 
+    sessions = sessions || [];
+
     // Grouping per hari
     var daily = {};
     sessions.forEach(function (s) {
-      var d = s.date || 'Unknown';
+      var d = s.date ? window.cleanWibDate(s.date) : '';
+      if (!d) return;
       if (!daily[d]) daily[d] = { omset: 0, margin: 0 };
       daily[d].omset += Number(s.omset) || 0;
       daily[d].margin += Number(s.margin) || 0;
     });
 
-    var labels = Object.keys(daily).sort();
-    if (labels.length === 0) {
-      labels = ['Tidak ada data'];
-      daily['Tidak ada data'] = { omset: 0, margin: 0 };
+    var rawLabels = Object.keys(daily).sort();
+    var labels = [];
+    var omsetData = [];
+    var marginData = [];
+
+    // Jika belum ada data sesi, buat timeline 7 hari terakhir yang realistis
+    if (rawLabels.length === 0) {
+      var now = new Date();
+      var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      for (var i = 6; i >= 0; i--) {
+        var dayDate = new Date(now.getTime() - i * 86400000);
+        var lbl = dayDate.getDate() + ' ' + monthNames[dayDate.getMonth()];
+        labels.push(lbl);
+        omsetData.push(0);
+        marginData.push(0);
+      }
+    } else {
+      var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      rawLabels.forEach(function (isoD) {
+        var parts = isoD.split('-');
+        var displayLabel = parts.length === 3 ? (parseInt(parts[2], 10) + ' ' + (monthNames[parseInt(parts[1], 10) - 1] || '')) : isoD;
+        labels.push(displayLabel);
+        omsetData.push(daily[isoD].omset);
+        marginData.push(daily[isoD].margin);
+      });
     }
 
-    var omsetData = labels.map(function (k) { return daily[k].omset; });
-    var marginData = labels.map(function (k) { return daily[k].margin; });
+    var maxVal = Math.max.apply(null, omsetData.concat(marginData));
+    var yMax = maxVal > 0 ? Math.ceil((maxVal * 1.25) / 1000000) * 1000000 : 5000000;
 
     window.lrTrendChartInstance = new Chart(canvas, {
       type: 'line',
@@ -11708,56 +11748,94 @@
           {
             label: 'Omset Penjualan (Rp)',
             data: omsetData,
-            borderColor: '#B4532A',
-            backgroundColor: 'rgba(180, 83, 42, 0.1)',
+            borderColor: '#D97706',
+            backgroundColor: 'rgba(217, 119, 6, 0.12)',
             fill: true,
-            tension: 0.3,
-            borderWidth: 2.5,
-            pointRadius: 4,
-            pointHoverRadius: 6
+            tension: 0.35,
+            borderWidth: 3,
+            pointBackgroundColor: '#D97706',
+            pointBorderColor: '#FFFFFF',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 8
           },
           {
             label: 'Margin Bersih (Rp)',
             data: marginData,
-            borderColor: '#2F5D50',
-            backgroundColor: 'rgba(47, 93, 80, 0.1)',
+            borderColor: '#059669',
+            backgroundColor: 'rgba(5, 150, 105, 0.08)',
             fill: true,
-            tension: 0.3,
-            borderWidth: 2.5,
-            pointRadius: 4,
-            pointHoverRadius: 6
+            tension: 0.35,
+            borderWidth: 3,
+            pointBackgroundColor: '#059669',
+            pointBorderColor: '#FFFFFF',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 8
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         plugins: {
-          legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' } } },
+          legend: {
+            position: 'top',
+            labels: {
+              font: { size: 12, weight: 'bold' },
+              color: '#1E293B',
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 15
+            }
+          },
           tooltip: {
+            backgroundColor: '#0F172A',
+            titleFont: { size: 12, weight: 'bold' },
+            bodyFont: { size: 12 },
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
               label: function (ctx) {
-                return ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
+                return ' ' + ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
               }
             }
           }
         },
         scales: {
           y: {
+            beginAtZero: true,
+            suggestedMin: 0,
+            suggestedMax: yMax,
+            grid: {
+              color: 'rgba(226, 232, 240, 0.8)',
+              drawBorder: false
+            },
             ticks: {
+              color: '#475569',
+              font: { size: 11, weight: '600' },
               callback: function (val) {
-                return val >= 1000000 ? (val / 1000000) + ' Jt' : window.formatRupiah(val);
-              },
-              font: { size: 10 }
+                return window.formatChartAxisRupiah(val);
+              }
             }
           },
-          x: { ticks: { font: { size: 10 } } }
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: '#475569',
+              font: { size: 11, weight: '600' }
+            }
+          }
         }
       }
     });
   };
 
-  // Render Grafik Batang Per Platform (Shopee vs TikTok)
+  // Render Grafik Batang Per Platform (Shopee vs TikTok) - Desain Kontras & Jelas
   window.renderLivePlatformChart = function (sessions) {
     var canvas = document.getElementById('lr-platform-chart');
     if (!canvas || typeof Chart === 'undefined') return;
@@ -11765,6 +11843,8 @@
     if (window.lrPlatformChartInstance) {
       window.lrPlatformChartInstance.destroy();
     }
+
+    sessions = sessions || [];
 
     var platformData = {
       'TikTok Shop': { omset: 0, margin: 0, count: 0 },
@@ -11788,22 +11868,29 @@
     var omsetVals = [platformData['TikTok Shop'].omset, platformData['Shopee Live'].omset];
     var marginVals = [platformData['TikTok Shop'].margin, platformData['Shopee Live'].margin];
 
+    var maxPVal = Math.max.apply(null, omsetVals.concat(marginVals));
+    var yPMax = maxPVal > 0 ? Math.ceil((maxPVal * 1.25) / 1000000) * 1000000 : 5000000;
+
     window.lrPlatformChartInstance = new Chart(canvas, {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [
           {
-            label: 'Omset',
+            label: 'Omset Penjualan',
             data: omsetVals,
             backgroundColor: '#0F172A',
-            borderRadius: 6
+            borderRadius: 8,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7
           },
           {
             label: 'Margin Bersih',
             data: marginVals,
             backgroundColor: '#10B981',
-            borderRadius: 6
+            borderRadius: 8,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7
           }
         ]
       },
@@ -11811,22 +11898,51 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' } } },
+          legend: {
+            position: 'top',
+            labels: {
+              font: { size: 12, weight: 'bold' },
+              color: '#1E293B',
+              usePointStyle: true,
+              pointStyle: 'rectRounded',
+              padding: 15
+            }
+          },
           tooltip: {
+            backgroundColor: '#0F172A',
+            titleFont: { size: 12, weight: 'bold' },
+            bodyFont: { size: 12 },
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
               label: function (ctx) {
-                return ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
+                return ' ' + ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
               }
             }
           }
         },
         scales: {
           y: {
+            beginAtZero: true,
+            suggestedMin: 0,
+            suggestedMax: yPMax,
+            grid: {
+              color: 'rgba(226, 232, 240, 0.8)',
+              drawBorder: false
+            },
             ticks: {
+              color: '#475569',
+              font: { size: 11, weight: '600' },
               callback: function (val) {
-                return val >= 1000000 ? (val / 1000000) + ' Jt' : window.formatRupiah(val);
-              },
-              font: { size: 10 }
+                return window.formatChartAxisRupiah(val);
+              }
+            }
+          },
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: '#1E293B',
+              font: { size: 12, weight: 'bold' }
             }
           }
         }
@@ -11834,7 +11950,7 @@
     });
   };
 
-  // Render Top 5 dan Bottom 5 Sesi
+// Render Top 5 dan Bottom 5 Sesi
   window.renderTopBottomSessions = function (sessions) {
     var topBody = document.getElementById('lr-table-top-sessions-body');
     var bottomBody = document.getElementById('lr-table-bottom-sessions-body');
@@ -12302,9 +12418,13 @@
       window.lrHostChartInstance.destroy();
     }
 
+    hostList = hostList || [];
     var labels = hostList.map(function (h) { return h.name; });
     var omsetVals = hostList.map(function (h) { return h.omset; });
     var marginVals = hostList.map(function (h) { return h.margin; });
+
+    var maxHVal = Math.max.apply(null, omsetVals.concat(marginVals));
+    var yHMax = maxHVal > 0 ? Math.ceil((maxHVal * 1.25) / 1000000) * 1000000 : 5000000;
 
     window.lrHostChartInstance = new Chart(canvas, {
       type: 'bar',
@@ -12314,14 +12434,18 @@
           {
             label: 'Total Omset (Rp)',
             data: omsetVals,
-            backgroundColor: '#B4532A',
-            borderRadius: 6
+            backgroundColor: '#0284C7',
+            borderRadius: 8,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7
           },
           {
             label: 'Margin Bersih (Rp)',
             data: marginVals,
-            backgroundColor: '#2F5D50',
-            borderRadius: 6
+            backgroundColor: '#10B981',
+            borderRadius: 8,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7
           }
         ]
       },
@@ -12329,25 +12453,53 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' } } },
+          legend: {
+            position: 'top',
+            labels: {
+              font: { size: 12, weight: 'bold' },
+              color: '#1E293B',
+              usePointStyle: true,
+              pointStyle: 'rectRounded',
+              padding: 15
+            }
+          },
           tooltip: {
+            backgroundColor: '#0F172A',
+            titleFont: { size: 12, weight: 'bold' },
+            bodyFont: { size: 12 },
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
               label: function (ctx) {
-                return ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
+                return ' ' + ctx.dataset.label + ': ' + window.formatRupiah(ctx.raw);
               }
             }
           }
         },
         scales: {
           y: {
+            beginAtZero: true,
+            suggestedMin: 0,
+            suggestedMax: yHMax,
+            grid: {
+              color: 'rgba(226, 232, 240, 0.8)',
+              drawBorder: false
+            },
             ticks: {
+              color: '#475569',
+              font: { size: 11, weight: '600' },
               callback: function (val) {
-                return val >= 1000000 ? (val / 1000000) + ' Jt' : window.formatRupiah(val);
-              },
-              font: { size: 10 }
+                return window.formatChartAxisRupiah ? window.formatChartAxisRupiah(val) : (val >= 1000000 ? (val / 1000000) + ' Jt' : val);
+              }
             }
           },
-          x: { ticks: { font: { size: 11, weight: 'bold' } } }
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: '#1E293B',
+              font: { size: 11, weight: 'bold' }
+            }
+          }
         }
       }
     });
