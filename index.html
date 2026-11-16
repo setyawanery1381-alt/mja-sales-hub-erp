@@ -2830,40 +2830,40 @@
               </div>
               <div class="p-3 bg-white flex justify-between font-bold text-slate-900">
                 <span>(+) PENDAPATAN KOTOR (GROSS REVENUE)</span>
-                <span id="pl-gross">Rp 148.500.000</span>
+                <span id="pl-gross">Rp 0</span>
               </div>
               <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
                 <span>- Potongan Biaya Admin 5 Toko Shopee</span>
-                <span class="text-rose-600" id="pl-admin-shopee">(Rp 11.880.000)</span>
+                <span class="text-rose-600" id="pl-admin-shopee">Rp 0</span>
               </div>
               <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
                 <span>- Potongan Komisi TikTok Shop Live</span>
-                <span class="text-rose-600" id="pl-admin-tiktok">(Rp 4.250.000)</span>
+                <span class="text-rose-600" id="pl-admin-tiktok">Rp 0</span>
               </div>
               <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
                 <span>- Biaya Voucher Diskon Toko</span>
-                <span class="text-rose-600" id="pl-voucher">(Rp 2.400.000)</span>
+                <span class="text-rose-600" id="pl-voucher">Rp 0</span>
               </div>
               <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
                 <span>- Pembatalan Omset dari Paket Retur</span>
-                <span class="text-rose-600" id="pl-returns">(Rp 3.820.000)</span>
+                <span class="text-rose-600" id="pl-returns">Rp 0</span>
               </div>
               <div class="p-3 bg-white flex justify-between font-bold text-slate-900">
                 <span>(=) PENDAPATAN BERSIH SETELAH MARKETPLACE</span>
-                <span id="pl-net-marketplace">Rp 126.150.000</span>
+                <span id="pl-net-marketplace">Rp 0</span>
               </div>
               <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
                 <span>- Total Harga Pokok Penjualan (HPP / COGS)</span>
-                <span class="text-rose-600" id="pl-cogs">(Rp 52.330.000)</span>
+                <span class="text-rose-600" id="pl-cogs">Rp 0</span>
               </div>
               <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
                 <span>- Biaya Iklan (Shopee Ads + TikTok Live Ads)</span>
-                <span class="text-rose-600" id="pl-ads">(Rp 21.500.000)</span>
+                <span class="text-rose-600" id="pl-ads">Rp 0</span>
               </div>
               <div
                 class="p-4 bg-emerald-50 flex justify-between text-sm font-extrabold text-emerald-800 border-t-2 border-emerald-500">
                 <span>(=) LABA BERSIH OPERASIONAL RIIL</span>
-                <span id="pl-final-margin">Rp 52.320.000 (35.2%)</span>
+                <span id="pl-final-margin">Rp 0 (0.0%)</span>
               </div>
             </div>
           </div>
@@ -15254,6 +15254,13 @@ window.handleSaveLiveSession = function (e) {
       if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = '0 Order';
       if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = '0.0% (0 Paket)';
       if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = 'Rp 0';
+      if (document.getElementById('pl-admin-shopee')) document.getElementById('pl-admin-shopee').textContent = 'Rp 0';
+      if (document.getElementById('pl-admin-tiktok')) document.getElementById('pl-admin-tiktok').textContent = 'Rp 0';
+      if (document.getElementById('pl-voucher')) document.getElementById('pl-voucher').textContent = 'Rp 0';
+      if (document.getElementById('pl-returns')) document.getElementById('pl-returns').textContent = 'Rp 0';
+      if (document.getElementById('pl-net-marketplace')) document.getElementById('pl-net-marketplace').textContent = 'Rp 0';
+      if (document.getElementById('pl-cogs')) document.getElementById('pl-cogs').textContent = 'Rp 0';
+      if (document.getElementById('pl-ads')) document.getElementById('pl-ads').textContent = 'Rp 0';
       if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = 'Rp 0 (0.0%)';
 
       var tbody = document.getElementById('table-store-performance');
@@ -15368,7 +15375,23 @@ window.handleSaveLiveSession = function (e) {
     if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = netPct + '%';
     if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = totalOrders + ' Order';
     if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = (totalOrders > 0 ? ((totalReturns / totalOrders) * 100).toFixed(1) : '0.0') + '% (' + totalReturns + ' Paket)';
+    var adminShopee = 0;
+    var adminTiktok = 0;
+    Object.keys(storeMap).forEach(function(k) {
+      var st = storeMap[k];
+      if (st.platform === 'shopee') adminShopee += st.admin;
+      else if (st.platform === 'tiktok') adminTiktok += st.admin;
+    });
+    var netMarketplace = totalGross - adminShopee - adminTiktok - totalVoucher;
+
     if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = window.formatRupiah(totalGross);
+    if (document.getElementById('pl-admin-shopee')) document.getElementById('pl-admin-shopee').textContent = adminShopee > 0 ? '(' + window.formatRupiah(adminShopee) + ')' : 'Rp 0';
+    if (document.getElementById('pl-admin-tiktok')) document.getElementById('pl-admin-tiktok').textContent = adminTiktok > 0 ? '(' + window.formatRupiah(adminTiktok) + ')' : 'Rp 0';
+    if (document.getElementById('pl-voucher')) document.getElementById('pl-voucher').textContent = totalVoucher > 0 ? '(' + window.formatRupiah(totalVoucher) + ')' : 'Rp 0';
+    if (document.getElementById('pl-returns')) document.getElementById('pl-returns').textContent = 'Rp 0';
+    if (document.getElementById('pl-net-marketplace')) document.getElementById('pl-net-marketplace').textContent = window.formatRupiah(netMarketplace);
+    if (document.getElementById('pl-cogs')) document.getElementById('pl-cogs').textContent = totalCogs > 0 ? '(' + window.formatRupiah(totalCogs) + ')' : 'Rp 0';
+    if (document.getElementById('pl-ads')) document.getElementById('pl-ads').textContent = totalAds > 0 ? '(' + window.formatRupiah(totalAds) + ')' : 'Rp 0';
     if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = window.formatRupiah(totalNet) + ' (' + netPct + '%)';
 
     var tbody = document.getElementById('table-store-performance');
