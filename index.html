@@ -263,8 +263,8 @@
             </span>
             <select id="login-branch"
               class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-slate-800 outline-none">
-              <option value="Cabang 1 (Pusat & Gudang Utama)">Cabang 1 (Pusat & Gudang Utama)</option>
-              <option value="Cabang 2 (Gudang Hub Ekspedisi)">Cabang 2 (Gudang Hub Ekspedisi)</option>
+              <option value="MJA Pusat (Semarang)">1. MJA Pusat (Semarang)</option>
+              <option value="MJA Cabang 1 (Bekasi)">2. MJA Cabang 1 (Bekasi)</option>
             </select>
           </div>
         </div>
@@ -657,7 +657,7 @@
             class="h-9 px-2.5 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center space-x-1 min-w-0 max-w-[145px] sm:max-w-[200px] active:scale-95 transition-all"
             title="Ganti Cabang">
             <span class="flex-shrink-0 text-xs">📍</span>
-            <span id="topbar-branch-name" class="truncate font-semibold">Cabang 1 (Pusat)</span>
+            <span id="topbar-branch-name" class="truncate font-semibold">MJA Pusat (Semarang)</span>
             <span class="flex-shrink-0 text-[10px] text-[#6E655F]">▾</span>
           </button>
 
@@ -1473,7 +1473,7 @@
                 <span>Export Rekap Manifest (PDF / Sheet)</span>
               </button>
               <span class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-xl border border-slate-200">
-                Gudang: <strong id="qc-active-branch">Cabang 1 (Pusat)</strong>
+                Gudang: <strong id="qc-active-branch">MJA Pusat (Semarang)</strong>
               </span>
             </div>
           </div>
@@ -2255,7 +2255,7 @@
             <div class="flex items-center space-x-2">
               <span
                 class="px-3 py-1.5 bg-[#FAF6F0] text-[#B4532A] rounded-md border border-[#E8E2D9] text-xs font-bold">
-                Cabang: <span id="attendance-active-branch">Cabang 1 (Pusat)</span>
+                Cabang: <span id="attendance-active-branch">MJA Pusat (Semarang)</span>
               </span>
             </div>
           </div>
@@ -2645,37 +2645,40 @@
                   </svg>
                 </div>
                 <div>
-                  <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Pengaturan Titik GPS Kantor Semarang &amp;
-                    Batas Radius</h4>
-                  <p class="text-[11px] text-[#6E655F]">Tentukan koordinat kantor pusat dan toleransi jarak presensi
-                    karyawan (default 50 meter)</p>
+                  <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Pengaturan Titik GPS Cabang (Semarang &amp; Bekasi) &amp; Batas Radius 10 Meter</h4>
+                  <p class="text-[11px] text-[#6E655F]">Tentukan koordinat kantor dan batas radius presensi (Wajib &le; 10 meter baru bisa absen)</p>
                 </div>
               </div>
               <span id="cfg-geofence-status-pill"
                 class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#FAF6F0] text-[#2F5D50] border border-[#E8E2D9]">
-                Status Geofence: Aktif (50m)
+                Status Geofence: Aktif (10m)
               </span>
+              <select id="cfg-branch-selector" onchange="window.selectGeofenceBranch(this.value)"
+                class="ml-2 h-7 px-2 text-[11px] font-bold bg-[#FAF6F0] border border-[#B4532A]/40 rounded-md text-[#B4532A] focus:outline-none cursor-pointer">
+                <option value="MJA Pusat (Semarang)">1. MJA Pusat (Semarang)</option>
+                <option value="MJA Cabang 1 (Bekasi)">2. MJA Cabang 1 (Bekasi)</option>
+              </select>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
               <div class="lg:col-span-2">
                 <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Nama Kantor / Lokasi</label>
-                <input type="text" id="cfg-office-name" value="Kantor Pusat MJA Semarang"
+                <input type="text" id="cfg-office-name" value="MJA Pusat (Semarang)"
                   class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
               </div>
               <div>
                 <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Latitude Kantor</label>
-                <input type="text" id="cfg-office-lat" value="-6.9826"
+                <input type="text" id="cfg-office-lat" value="-7.006970"
                   class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
               </div>
               <div>
                 <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Longitude Kantor</label>
-                <input type="text" id="cfg-office-lng" value="110.4208"
+                <input type="text" id="cfg-office-lng" value="110.340500"
                   class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
               </div>
               <div>
                 <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Radius (Meter)</label>
-                <input type="number" id="cfg-office-radius" value="50" min="5" max="1000"
+                <input type="number" id="cfg-office-radius" value="10" min="5" max="1000"
                   class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
               </div>
               <div>
@@ -2704,7 +2707,11 @@
                   </svg>
                   <span>Gunakan GPS Saya Saat Ini</span>
                 </button>
-                <button type="button" onclick="window.saveOfficeGeofenceSettings()"
+                <a id="cfg-branch-maps-link" href="https://maps.app.goo.gl/3Zi25tiZWPwCQW5KA?g_st=ic" target="_blank"
+                class="text-[11px] text-indigo-600 hover:text-indigo-800 font-bold underline flex items-center space-x-1 mr-auto">
+                <span>📍 Buka Titik Tag Google Maps Kantor</span>
+              </a>
+              <button type="button" onclick="window.saveOfficeGeofenceSettings()"
                   class="h-11 px-4 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs rounded-md shadow transition-all flex items-center space-x-1.5">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -3841,7 +3848,7 @@
         </div>
         <button onclick="window.switchOperationalBranch()"
           class="flex-shrink-0 text-indigo-700 font-bold bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200 text-[11px]">
-          📍 <span id="drawer-branch-info">Cabang 1</span> ▾
+          📍 <span id="drawer-branch-info">MJA Pusat (Semarang)</span> ▾
         </button>
       </div>
 
@@ -4363,12 +4370,26 @@
           </div>
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Stok Fisik Tersedia di Gudang (pcs)</label>
-          <div class="relative">
-            <input type="number" id="edit-stock-qty" required
-              class="w-full p-2.5 bg-white border-2 border-emerald-500 rounded-lg font-extrabold text-base text-slate-900 outline-none">
-            <span class="absolute right-3 top-2.5 text-slate-400 font-bold">pcs</span>
+          <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Stok Fisik Rak (pcs)</label>
+            <div class="relative">
+              <input type="number" id="edit-stock-qty" required min="0"
+                class="w-full p-2.5 bg-white border-2 border-emerald-500 rounded-lg font-extrabold text-base text-slate-900 outline-none">
+              <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">pcs</span>
+            </div>
+            <p class="text-[9px] text-slate-500 mt-0.5">Fisik di rak gudang</p>
           </div>
+          <div>
+            <label class="block font-semibold text-amber-800 mb-1">Dialokasikan (pcs)</label>
+            <div class="relative">
+              <input type="number" id="edit-stock-allocated" value="0" min="0"
+                class="w-full p-2.5 bg-amber-50 border-2 border-amber-400 rounded-lg font-extrabold text-base text-amber-950 outline-none">
+              <span class="absolute right-3 top-2.5 text-amber-600 font-bold text-xs">pcs</span>
+            </div>
+            <p class="text-[9px] text-amber-700 mt-0.5">Pesanan diproses</p>
+          </div>
+        </div>
           <p class="text-[10px] text-slate-500 mt-1">Ubah stok fisik jika ada barang masuk (restock) atau opname fisik
             gudang.</p>
         </div>
@@ -5645,14 +5666,38 @@
       currentUser: null,
       currentRole: 'admin',
       trialOnlineOnly: true,
+      currentBranch: 'MJA Pusat (Semarang)',
+      officeBranches: {
+        'MJA Pusat (Semarang)': {
+          name: 'MJA Pusat (Semarang)',
+          address: 'Maju Jaya Autopart GENUIN PART, Blok E2 No.5, Jl. Kw. Industri Candi Tahap V, Ngaliyan, Kota Semarang 50181',
+          mapsUrl: 'https://maps.app.goo.gl/3Zi25tiZWPwCQW5KA?g_st=ic',
+          lat: -7.006970,
+          lng: 110.340500,
+          radius: 10,
+          maxCheckInTime: '08:30',
+          minCheckOutTime: '17:00'
+        },
+        'MJA Cabang 1 (Bekasi)': {
+          name: 'MJA Cabang 1 (Bekasi)',
+          address: '6°09\'07.6"S 106°59\'07.0"E, Bekasi, Jawa Barat',
+          mapsUrl: 'https://maps.app.goo.gl/yHwEcS9FPaVE7nt66',
+          lat: -6.1521162,
+          lng: 106.9852722,
+          radius: 10,
+          maxCheckInTime: '08:30',
+          minCheckOutTime: '17:00'
+        }
+      },
       officeSettings: {
-        name: 'Kantor Pusat MJA Semarang',
-        address: 'Semarang, Jawa Tengah',
-        lat: -6.9826,
-        lng: 110.4208,
-        radius: 50, // meter default tolerance
-        maxCheckInTime: '08:30', // batas max masuk
-        minCheckOutTime: '17:00' // batas min pulang
+        name: 'MJA Pusat (Semarang)',
+        address: 'Maju Jaya Autopart GENUIN PART, Blok E2 No.5, Jl. Kw. Industri Candi Tahap V, Ngaliyan, Kota Semarang 50181',
+        mapsUrl: 'https://maps.app.goo.gl/3Zi25tiZWPwCQW5KA?g_st=ic',
+        lat: -7.006970,
+        lng: 110.340500,
+        radius: 10, // Toleransi ketat: Maksimal 10 meter
+        maxCheckInTime: '08:30',
+        minCheckOutTime: '17:00'
       },
       data: {
         stores: [
@@ -6205,22 +6250,55 @@
       window.renderMobileBottomNav(role, window.appState.currentSection);
     };
 
-    // Branch Switcher
-    window.switchBranch = function () {
-      var current = window.appState.currentBranch || 'Cabang 1 (Pusat & Gudang Utama)';
-      var next = (current.indexOf('Cabang 1') !== -1) ? 'Cabang 2 (Gudang Hub Ekspedisi)' : 'Cabang 1 (Pusat & Gudang Utama)';
+    // Active Branch Settings Resolver
+    window.getActiveBranchSettings = function () {
+      var cur = window.appState.currentBranch || 'MJA Pusat (Semarang)';
+      if (cur.indexOf('Bekasi') !== -1 || cur.indexOf('Cabang 1') !== -1) {
+        return window.appState.officeBranches['MJA Cabang 1 (Bekasi)'];
+      }
+      return window.appState.officeBranches['MJA Pusat (Semarang)'];
+    };
+
+    // Branch Switcher (Semarang vs Bekasi)
+    window.switchBranch = function (targetBranch) {
+      var current = window.appState.currentBranch || 'MJA Pusat (Semarang)';
+      var next = targetBranch || ((current.indexOf('Bekasi') !== -1 || current.indexOf('Cabang 1') !== -1) ? 'MJA Pusat (Semarang)' : 'MJA Cabang 1 (Bekasi)');
       window.appState.currentBranch = next;
+      window.appState.officeSettings = window.getActiveBranchSettings();
 
       var topBranch = document.getElementById('topbar-branch-name');
-      if (topBranch) topBranch.textContent = next.indexOf('Cabang 2') !== -1 ? 'Cabang 2 (Hub)' : 'Cabang 1 (Pusat)';
+      if (topBranch) topBranch.textContent = next;
       var drawerBranch = document.getElementById('drawer-branch-info');
-      if (drawerBranch) drawerBranch.textContent = next.indexOf('Cabang 2') !== -1 ? 'Cabang 2 (Hub)' : 'Cabang 1 (Pusat)';
+      if (drawerBranch) drawerBranch.textContent = next;
       var qcBranch = document.getElementById('qc-active-branch');
       if (qcBranch) qcBranch.textContent = next;
       var attBranch = document.getElementById('attendance-active-branch');
       if (attBranch) attBranch.textContent = next;
 
+      // Update geofence setting form if present
+      var cfgBranch = document.getElementById('cfg-branch-selector');
+      if (cfgBranch) cfgBranch.value = next;
+      var nameEl = document.getElementById('cfg-office-name');
+      if (nameEl) nameEl.value = window.appState.officeSettings.name;
+      var latEl = document.getElementById('cfg-office-lat');
+      if (latEl) latEl.value = window.appState.officeSettings.lat;
+      var lngEl = document.getElementById('cfg-office-lng');
+      if (lngEl) lngEl.value = window.appState.officeSettings.lng;
+      var radEl = document.getElementById('cfg-office-radius');
+      if (radEl) radEl.value = window.appState.officeSettings.radius || 10;
+      var mapsLink = document.getElementById('cfg-branch-maps-link');
+      if (mapsLink) mapsLink.href = window.appState.officeSettings.mapsUrl;
+
+      // Re-evaluate GPS distance with the new branch
+      if (typeof window.fetchCurrentGPS === 'function') {
+        window.fetchCurrentGPS();
+      }
+
       window.showToast('Beralih ke operasional: ' + next, 'info');
+    };
+
+    window.selectGeofenceBranch = function (branchName) {
+      window.switchBranch(branchName);
     };
 
     window.switchOperationalBranch = window.switchBranch;
@@ -7158,109 +7236,7 @@
       });
     };
 
-    window.downloadInventoryExcelTemplate = function () {
-      var csv = 'SKU,Nama Produk Spion,Group / Kategori,HPP Modal (COGS),Harga Jual Normal,Stok Fisik\n' +
-        'SPN-MBL-AVZ,Spion Retract All New Avanza / Xenia,Spion Mobil,450000,685000,120\n' +
-        'SPN-MBL-INN,Spion Innova Reborn Type V/Q/Venturer,Spion Mobil,750000,1150000,85\n' +
-        'SPN-MTR-NMX,Spion Lipat NMAX All New Model Batman,Spion Motor,120000,195000,210\n' +
-        'SPN-MTR-PCX,Spion Lipat PCX 160 LED Sein,Spion Motor,145000,230000,165';
-
-      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      var link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'Template_Import_Stok_Spion_MJA.csv';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.showToast('Template Excel/CSV berhasil diunduh! Silakan buka & isi.', 'success');
-    };
-
-    window.handleInventoryExcelUpload = function (e) {
-      var file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      var reader = new FileReader();
-      reader.onload = function (evt) {
-        var text = evt.target.result;
-        var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
-        if (lines.length <= 1) {
-          window.showToast('Berkas Excel/CSV kosong atau hanya berisi judul kolom!', 'warning');
-          return;
-        }
-
-        var importedCount = 0;
-        var user = window.appState.currentUser || { name: 'Petugas Gudang' };
-        var opName = user.name || user.email.split('@')[0];
-        var now = new Date();
-        var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        var months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        var dayName = days[now.getDay()];
-        var monthName = months[now.getMonth()];
-        var dateNum = String(now.getDate()).padStart(2, '0');
-        var yearNum = now.getFullYear();
-        var timeStr = now.toTimeString().slice(0, 5) + ' WIB';
-
-        for (var i = 1; i < lines.length; i++) {
-          var row = lines[i].split(',');
-          if (row.length < 5) continue;
-
-          var sku = row[0].trim();
-          var name = row[1].trim();
-          var group = row[2].trim() || 'Spion Mobil';
-          var cogs = Number(row[3].trim().replace(/[^0-9]/g, '')) || 100000;
-          var price = Number(row[4].trim().replace(/[^0-9]/g, '')) || 150000;
-          var qty = Number(row[5] ? row[5].trim().replace(/[^0-9]/g, '') : '0') || 0;
-
-          var existing = window.appState.data.inventory.find(function (it) { return it.sku === sku; });
-          var diff = 0;
-          if (existing) {
-            diff = qty - existing.stock;
-            existing.name = name;
-            existing.group = group;
-            existing.cogs = cogs;
-            existing.price = price;
-            existing.stock = qty;
-          } else {
-            diff = qty;
-            window.appState.data.inventory.push({
-              id: 'PROD-' + Date.now() + '-' + i,
-              sku: sku,
-              name: name,
-              group: group,
-              cogs: cogs,
-              price: price,
-              stock: qty
-            });
-          }
-
-          window.appState.data.stockLogs.unshift({
-            id: 'LOG-' + Date.now() + '-' + i,
-            day: dayName,
-            date: dateNum,
-            month: monthName,
-            year: yearNum,
-            time: timeStr,
-            sku: sku,
-            name: name,
-            type: diff >= 0 ? 'Upload Excel (+' + diff + ')' : 'Upload Excel (' + diff + ')',
-            diff: diff,
-            finalStock: qty,
-            operator: opName + ' (Gudang)',
-            notes: 'Import berkas Excel massal (' + file.name + ')'
-          });
-
-          importedCount++;
-        }
-
-        window.renderInventory();
-        window.renderStockLogs();
-        window.populateCalcSKUSelect();
-        window.showToast('Sukses import ' + importedCount + ' produk spion dari file Excel!', 'success');
-        e.target.value = '';
-      };
-      reader.readAsText(file);
-    };
-
+    // Handlers for downloadInventoryExcelTemplate & handleInventoryExcelUpload are consolidated in Section 4 below.
     window.addEventListener('storage', function (e) {
       if (e.key === 'mja_attendance_sync' || e.key === 'mja_stock_sync') {
         window.renderAttendanceLogs();
@@ -8544,7 +8520,7 @@
       var spinner = document.getElementById('gps-spinner');
       if (spinner) spinner.classList.add('animate-spin');
 
-      var office = window.appState.officeSettings || { lat: -6.9826, lng: 110.4208, radius: 50 };
+      var office = (typeof window.getActiveBranchSettings === 'function') ? window.getActiveBranchSettings() : (window.appState.officeSettings || { lat: -7.006970, lng: 110.340500, radius: 10, name: 'MJA Pusat (Semarang)' });
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -8658,15 +8634,29 @@
         }
       }
 
-      var office = window.appState.officeSettings || { lat: -6.9826, lng: 110.4208, radius: 50, maxCheckInTime: '08:30', minCheckOutTime: '17:00' };
+      var office = (typeof window.getActiveBranchSettings === 'function') ? window.getActiveBranchSettings() : (window.appState.officeSettings || { lat: -7.006970, lng: 110.340500, radius: 10, name: 'MJA Pusat (Semarang)' });
       var isCourier = (type === 'courier');
       var dest = isCourier ? (document.getElementById('att-courier-destination') ? document.getElementById('att-courier-destination').value : 'Ekspedisi') : 'Kantor ' + branch;
       var manualInput = document.getElementById('att-courier-manual-notes');
       var manualText = (manualInput && manualInput.value.trim()) ? manualInput.value.trim() : '';
       var notes = isCourier ? (manualText ? manualText + ' (' + dest + ')' : 'Tugas Kirim: ' + dest) : (inOut === 'in' ? 'Hadir shift kantor' : 'Selesai shift kantor');
 
-      var dist = isCourier ? 1250 : (window.currentGPS.distance || 14);
-      var status = isCourier ? 'courier' : (dist <= office.radius ? 'valid' : 'warning');
+      var dist = isCourier ? 0 : (window.currentGPS.distance !== undefined ? window.currentGPS.distance : 0);
+      var radiusLimit = office.radius || 10;
+
+      // ATURAN MUTLAK USER: "buat radius dari kantor 10 meter baru bisa absen. lebih dari 10 meter ga bisa"
+      if (!isCourier && dist > radiusLimit) {
+        window.playBeep('error');
+        alert('❌ PRESENSI DITOLAK (DI LUAR RADIUS KANTOR):\n\n' +
+          'Cabang: ' + office.name + '\n' +
+          'Jarak Anda: ' + dist + ' Meter\n' +
+          'Batas Toleransi Maksimal: ' + radiusLimit + ' Meter\n\n' +
+          'Presensi tidak dapat dilakukan karena Anda berada lebih dari 10 meter dari kantor. Silakan mendekat ke lokasi kantor untuk melakukan presensi!');
+        window.showToast('Gagal: Di luar radius kantor (' + dist + 'm > ' + radiusLimit + 'm)!', 'error');
+        return;
+      }
+
+      var status = isCourier ? 'courier' : 'valid';
 
       // ATURAN 2: Evaluasi Batas Max Jam Masuk & Batas Min Jam Pulang
       var maxInTime = (office.maxCheckInTime || '08:30') + ':00';
@@ -9509,6 +9499,17 @@
     };
 
     // Render Grouped Inventory Table
+        // Auto-restore inventory from localStorage if customized
+    try {
+      var savedInv = localStorage.getItem('mja_inventory_data');
+      if (savedInv) {
+        var parsedInv = JSON.parse(savedInv);
+        if (Array.isArray(parsedInv) && parsedInv.length > 0) {
+          window.appState.data.inventory = parsedInv;
+        }
+      }
+    } catch (eInv) { }
+
     window.renderInventory = function () {
       var tbody = document.getElementById('table-inventory-body');
       if (!tbody) return;
@@ -9553,14 +9554,18 @@
         var tr = document.createElement('tr');
         tr.className = 'hover:bg-stone-50 transition-colors border-b border-stone-100';
 
-        var phys = i.physicalStock || i.stock || 85;
-        var alloc = i.allocatedStock || 0;
-        var avail = i.stock !== undefined ? i.stock : (phys - alloc);
+        var phys = i.physicalStock !== undefined ? i.physicalStock : (i.stock || 0);
+        var alloc = i.allocatedStock !== undefined ? i.allocatedStock : 0;
+        var avail = i.stock !== undefined ? i.stock : Math.max(0, phys - alloc);
 
-        var isLowStock = avail < 100;
-        var statusBadge = isLowStock
-          ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Stok Menipis</span>'
-          : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Tersedia Aman</span>';
+        var statusBadge = '';
+        if (avail <= 0) {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-300">Habis</span>';
+        } else if (avail <= 15) {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-300">Stok Menipis</span>';
+        } else {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300">Tersedia Aman</span>';
+        }
 
         var cogsDisplay = isWarehouseRole ? '<span class="text-stone-400 italic text-[11px] font-sans">Dirahasiakan</span>' : window.formatRupiah(i.cogs);
 
@@ -9587,7 +9592,7 @@
     // FEATURE: REAL INVENTORY & STOCK EDITING DENGAN GROUP
     // =========================================================================
     window.openEditStock = function (itemId) {
-      var item = window.appState.data.inventory.find(function (i) { return i.id === itemId; });
+      var item = (window.appState.data.inventory || []).find(function (i) { return i.id === itemId; });
       if (!item) return;
       window.populateGroupDropdowns();
       document.getElementById('edit-stock-id').value = item.id;
@@ -9596,7 +9601,10 @@
       document.getElementById('edit-stock-name').value = item.name;
       document.getElementById('edit-stock-cogs').value = item.cogs;
       document.getElementById('edit-stock-price').value = item.price;
-      document.getElementById('edit-stock-qty').value = item.stock;
+      document.getElementById('edit-stock-qty').value = item.physicalStock !== undefined ? item.physicalStock : item.stock;
+      if (document.getElementById('edit-stock-allocated')) {
+        document.getElementById('edit-stock-allocated').value = item.allocatedStock !== undefined ? item.allocatedStock : 0;
+      }
 
       // Sembunyikan isian finansial (HPP & Harga Jual) jika yang membuka adalah tim gudang
       var finRow = document.getElementById('edit-stock-financial-row');
@@ -9616,19 +9624,27 @@
       var name = document.getElementById('edit-stock-name').value.trim();
       var cogs = Number(document.getElementById('edit-stock-cogs').value);
       var price = Number(document.getElementById('edit-stock-price').value);
-      var qty = Number(document.getElementById('edit-stock-qty').value);
+      var physQty = Number(document.getElementById('edit-stock-qty').value) || 0;
+      var allocQty = Number(document.getElementById('edit-stock-allocated') ? document.getElementById('edit-stock-allocated').value : 0) || 0;
 
       var item = window.appState.data.inventory.find(function (i) { return i.id === id; });
       if (item) {
-        var oldQty = item.stock;
-        var diff = qty - oldQty;
+        var oldPhys = item.physicalStock !== undefined ? item.physicalStock : item.stock;
+        var diff = physQty - oldPhys;
 
         item.sku = sku;
         item.group = group;
         item.name = name;
         item.cogs = cogs;
         item.price = price;
-        item.stock = qty;
+        item.physicalStock = physQty;
+        item.allocatedStock = allocQty;
+        item.stock = Math.max(0, physQty - allocQty);
+
+        try {
+          localStorage.setItem('mja_inventory_data', JSON.stringify(window.appState.data.inventory));
+          localStorage.setItem('mja_inventory_customized', 'true');
+        } catch (err) { }
 
         // Catat Audit Mutasi Lengkap (Hari, Jam, Tanggal, Bulan, Tahun, Nama Karyawan - Req 5 Klien)
         var now = new Date();
@@ -15043,8 +15059,37 @@ window.handleSaveLiveSession = function (e) {
   };
 
   // ===========================================================================
-  // 4. REAL EXCEL & CSV UPLOAD UNTUK INVENTORY (REQ 8)
   // ===========================================================================
+  // 4. STANDAR UPLOAD & TEMPLATE EXCEL STOK SPION (FOTO 1 & FOTO 2)
+  // ===========================================================================
+  window.downloadInventoryExcelTemplate = function () {
+    var headers = ['SKU/KODE', 'Nama Produk Spion', 'Group / Kategori', 'HPP Modal (COGS)', 'Harga Jual Normal', 'Stok Fisik'];
+    var sampleRows = [
+      headers,
+      ['SPN-MBL-AVZ', 'Spion Retract All New Avanza / Xenia', 'Spion Mobil', 450000, 685000, 120],
+      ['SPN-MBL-INN', 'Spion Innova Reborn Type V/Q/Venturer', 'Spion Mobil', 750000, 1150000, 85],
+      ['SPN-MTR-NMX', 'Spion Lipat NMAX All New Model Batman', 'Spion Motor', 120000, 195000, 210],
+      ['SPN-MTR-PCX', 'Spion Lipat PCX 160 LED Sein', 'Spion Motor', 145000, 230000, 165]
+    ];
+
+    if (typeof XLSX !== 'undefined') {
+      var ws = XLSX.utils.aoa_to_sheet(sampleRows);
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Template_Import_Stok_Spion_MJA');
+      XLSX.writeFile(wb, 'Template_Import_Stok_Spion_MJA.xlsx');
+    } else {
+      var csvContent = 'data:text/csv;charset=utf-8,' + sampleRows.map(function (e) { return e.join(','); }).join('\n');
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'Template_Import_Stok_Spion_MJA.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    window.showToast('✅ Berkas Template Excel Stok Spion berhasil diunduh!', 'success');
+  };
+
   window.handleInventoryExcelUpload = function (e) {
     var file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -15059,56 +15104,72 @@ window.handleSaveLiveSession = function (e) {
       }
 
       var importedCount = 0;
-      var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
+      var newInventory = [];
 
-      rows.forEach(function (row) {
-        var sku = (row.sku || row.SKU || row['Kode SKU'] || row['Kode'] || row[0] || '').toString().trim();
-        var name = (row.name || row.Nama || row['Nama Produk'] || row['Nama Spion'] || row[1] || '').toString().trim();
-        var group = (row.group || row.Group || row['Kategori'] || row[2] || 'Spion Mobil').toString().trim();
-        var cogs = Number((row.cogs || row.HPP || row['Modal'] || row['Harga Beli'] || row[3] || '0').toString().replace(/[^0-9]/g, '')) || 100000;
-        var price = Number((row.price || row.Harga || row['Harga Jual'] || row[4] || '0').toString().replace(/[^0-9]/g, '')) || 150000;
+      rows.forEach(function (row, idx) {
+        var sku = (row.sku || row.SKU || row['SKU/KODE'] || row['Kode SKU'] || row['Kode'] || row[0] || '').toString().trim();
+        var name = (row.name || row.Nama || row['Nama Produk Spion'] || row['Nama Produk'] || row['Nama Spion'] || row[1] || '').toString().trim();
+        var group = (row.group || row.Group || row['Group / Kategori'] || row['Kategori'] || row[2] || 'Spion Mobil').toString().trim();
+        var cogs = Number((row.cogs || row.HPP || row['HPP Modal (COGS)'] || row['Modal'] || row['Harga Beli'] || row[3] || '0').toString().replace(/[^0-9]/g, '')) || 0;
+        var price = Number((row.price || row.Harga || row['Harga Jual Normal'] || row['Harga Jual'] || row[4] || '0').toString().replace(/[^0-9]/g, '')) || 0;
         var qty = Number((row.qty || row.stock || row.Stok || row['Stok Fisik'] || row[5] || '0').toString().replace(/[^0-9]/g, '')) || 0;
 
-        if (!sku || sku === 'SKU' || sku === 'Kode SKU') return; // Skip header row
+        if (!sku || sku === 'SKU' || sku === 'Kode SKU' || sku === 'SKU/KODE') return; // Skip header row
 
-        var existing = inventory.find(function (it) { return it.sku === sku; });
-        if (existing) {
-          existing.name = name || existing.name;
-          existing.group = group || existing.group;
-          existing.cogs = cogs || existing.cogs;
-          existing.price = price || existing.price;
-          existing.stock = qty;
-          existing.physicalStock = qty;
-        } else {
-          inventory.push({
-            id: 'SPN-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-            sku: sku,
-            name: name || ('Spion ' + sku),
-            group: group,
-            stock: qty,
-            physicalStock: qty,
-            allocatedStock: 0,
-            safetyStock: 10,
-            cogs: cogs,
-            price: price
-          });
-        }
+        newInventory.push({
+          id: 'SPN-' + Date.now() + '-' + idx,
+          sku: sku,
+          name: name || ('Spion ' + sku),
+          group: group,
+          physicalStock: qty,
+          allocatedStock: 0,
+          stock: qty,
+          safetyStock: 10,
+          cogs: cogs,
+          price: price
+        });
         importedCount++;
       });
 
-      if (window.appState && window.appState.data) {
-        window.appState.data.inventory = inventory;
+      if (importedCount === 0) {
+        window.showToast('Gagal: Tidak ada baris produk valid yang dapat diimpor!', 'error');
+        return;
       }
 
+      // PERMINTAAN USER: Gantikan katalog aktif secara total dengan file Excel yang diunggah!
+      // Menghilangkan stok mock lama sehingga hanya produk dari Excel yang ada.
+      window.appState.data.inventory = newInventory;
+
       try {
-        localStorage.setItem('mja_inventory_data', JSON.stringify(inventory));
+        localStorage.setItem('mja_inventory_data', JSON.stringify(newInventory));
+        localStorage.setItem('mja_inventory_customized', 'true');
       } catch (err) { }
+
+      // Update groups jika ada grup baru dari Excel
+      var currentGroups = window.appState.data.inventoryGroups || ['Spion Mobil', 'Spion Motor', 'Aksesoris & Sparepart'];
+      newInventory.forEach(function (it) {
+        if (it.group && currentGroups.indexOf(it.group) === -1) currentGroups.push(it.group);
+      });
+      window.appState.data.inventoryGroups = currentGroups;
 
       if (typeof window.renderInventory === 'function') window.renderInventory();
       if (typeof window.renderStockLogs === 'function') window.renderStockLogs();
       if (typeof window.populateCalcSKUSelect === 'function') window.populateCalcSKUSelect();
+      if (typeof window.populateGroupDropdowns === 'function') window.populateGroupDropdowns();
 
-      window.showToast('✅ Sukses import ' + importedCount + ' produk spion dari file ' + file.name + '!', 'success');
+      // Log ke mutasi stok
+      window.appState.data.stockLogs.unshift({
+        id: 'LOG-' + Date.now(),
+        sku: 'EXCEL-IMPORT',
+        name: 'Impor Katalog Excel (' + importedCount + ' Produk)',
+        type: 'in',
+        qty: importedCount,
+        note: 'Sinkronisasi Katalog Excel Stok Spion (' + file.name + ')',
+        officer: (window.appState.currentUser ? (window.appState.currentUser.name || window.appState.currentUser.email) : 'Gudang'),
+        timestamp: new Date().toISOString()
+      });
+
+      window.showToast('✅ Berhasil mengimpor ' + importedCount + ' produk spion dari ' + file.name + '! Stok lama telah digantikan sesuai Excel.', 'success');
       e.target.value = '';
     }
 
@@ -15122,66 +15183,53 @@ window.handleSaveLiveSession = function (e) {
           var worksheet = workbook.Sheets[sheetName];
           var jsonRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-          // Convert array of arrays to objects
           var mappedRows = [];
           if (jsonRows.length > 1) {
-            var header = jsonRows[0].map(function (h) { return String(h).toLowerCase().trim(); });
             for (var r = 1; r < jsonRows.length; r++) {
               var rData = jsonRows[r];
               if (!rData || rData.length === 0) continue;
               mappedRows.push({
-                sku: rData[0] || '',
-                name: rData[1] || '',
-                group: rData[2] || '',
-                cogs: rData[3] || 0,
-                price: rData[4] || 0,
-                qty: rData[5] || 0
+                sku: rData[0],
+                name: rData[1],
+                group: rData[2],
+                cogs: rData[3],
+                price: rData[4],
+                qty: rData[5]
               });
             }
           }
           processRows(mappedRows);
         } catch (err) {
-          console.error('Error parse Excel:', err);
-          window.showToast('Gagal memproses file Excel: ' + err.message, 'error');
+          console.error('Error parse XLSX:', err);
+          window.showToast('Gagal membaca berkas Excel: ' + err.message, 'error');
         }
       };
       reader.readAsArrayBuffer(file);
     } else {
-      // Fallback CSV with multi-delimiter detection (, or ; or tab)
       var textReader = new FileReader();
       textReader.onload = function (evt) {
         var text = evt.target.result;
         var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
-        if (lines.length <= 1) {
-          window.showToast('File CSV kosong atau hanya judul kolom!', 'warning');
-          return;
-        }
-
-        var delimiter = ',';
-        var firstLine = lines[0];
-        if (firstLine.indexOf(';') !== -1) delimiter = ';';
-        else if (firstLine.indexOf('\t') !== -1) delimiter = '\t';
-
-        var mappedRows = [];
+        var rows = [];
         for (var i = 1; i < lines.length; i++) {
-          var cols = lines[i].split(delimiter);
-          if (cols.length < 2) continue;
-          mappedRows.push({
-            sku: cols[0] ? cols[0].trim() : '',
-            name: cols[1] ? cols[1].trim() : '',
-            group: cols[2] ? cols[2].trim() : 'Spion Mobil',
-            cogs: cols[3] ? cols[3].trim() : 0,
-            price: cols[4] ? cols[4].trim() : 0,
-            qty: cols[5] ? cols[5].trim() : 0
-          });
+          var cols = lines[i].split(',');
+          if (cols.length >= 2) {
+            rows.push({
+              sku: cols[0],
+              name: cols[1],
+              group: cols[2],
+              cogs: cols[3],
+              price: cols[4],
+              qty: cols[5]
+            });
+          }
         }
-        processRows(mappedRows);
+        processRows(rows);
       };
       textReader.readAsText(file);
     }
   };
 
-  // ===========================================================================
   // 5. SESSION PERSISTENCE & AUTO-LOGIN ON F5 REFRESH (REQ 6A)
   // ===========================================================================
   window.checkAndRestoreUserSession = function () {
