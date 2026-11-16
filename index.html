@@ -250,7 +250,7 @@
                   d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
               </svg>
             </span>
-            <input type="email" id="login-email" required placeholder="admin@demo.com" value="admin@demo.com"
+            <input type="text" id="login-email" required placeholder="admin@mja.co.id atau bambang@mja.co.id" value=""
               class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none">
           </div>
         </div>
@@ -281,25 +281,6 @@
                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
             </button>
-          </div>
-        </div>
-
-        <!-- Quick Demo Switcher -->
-        <div class="pt-1">
-          <p class="text-[11px] font-semibold uppercase text-slate-400 mb-1.5">Pilih Akun Demo Cepat:</p>
-          <div class="grid grid-cols-3 gap-1.5 text-xs">
-            <button type="button" onclick="window.fillDemo('admin@demo.com', 'admin')"
-              class="py-1 px-2 text-center rounded bg-slate-100 hover:bg-slate-200 font-medium text-slate-700">IT
-              Admin</button>
-            <button type="button" onclick="window.fillDemo('owner@demo.com', 'owner')"
-              class="py-1 px-2 text-center rounded bg-slate-100 hover:bg-slate-200 font-medium text-slate-700">Owner</button>
-            <button type="button" onclick="window.fillDemo('finance@demo.com', 'finance')"
-              class="py-1 px-2 text-center rounded bg-slate-100 hover:bg-slate-200 font-medium text-slate-700">Finance</button>
-            <button type="button" onclick="window.fillDemo('host@demo.com', 'host')"
-              class="py-1 px-2 text-center rounded bg-amber-100 hover:bg-amber-200 font-bold text-amber-800 border border-amber-300">Host
-              Live</button>
-            <button type="button" onclick="window.fillDemo('warehouse@demo.com', 'warehouse')"
-              class="py-1 px-2 text-center rounded bg-blue-100 hover:bg-blue-200 font-bold text-blue-800 border border-blue-300">Gudang</button>
           </div>
         </div>
 
@@ -2628,11 +2609,11 @@
                   <span>Export Rekap CSV</span>
                 </button>
                 <button type="button" onclick="window.openResetAttendanceModal()"
-                  class="h-11 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-md shadow transition-all flex items-center space-x-1.5 cursor-pointer" title="Bersihkan Data Presensi Demo">
+                  class="h-11 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-md shadow transition-all flex items-center space-x-1.5 cursor-pointer" title="Reset & Bersihkan Presensi">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  <span>Reset Absen Demo</span>
+                  <span>Reset Presensi</span>
                 </button>
               </div>
             </div>
@@ -3694,9 +3675,6 @@
                 <p class="text-[11px] text-rose-700 mt-0.5">Tindakan ini akan mengosongkan riwayat pesanan, log QC packing, presensi, sesi live, dan mutasi stok agar bersih siap pakai.</p>
               </div>
               <div class="flex items-center space-x-2 shrink-0">
-                <button type="button" onclick="window.restoreDemoData()" class="h-10 px-3 bg-white hover:bg-slate-100 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 transition-all shadow-xs">
-                  Isi Data Demo Uji Coba
-                </button>
                 <button type="button" onclick="window.openResetConfirmationModal()" class="h-10 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5 active:scale-95">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   <span>Reset Sistem ke Nol (Mulai Awal)</span>
@@ -3713,7 +3691,7 @@
               <p class="text-xs text-slate-500">Atur hak akses akun berdasarkan peran (Owner, Finance, Live Host,
                 Gudang)</p>
             </div>
-            <button onclick="window.showToast('Gunakan formulir tambah user di Supabase Auth atau klik demo!', 'info')"
+            <button onclick="window.showToast('Gunakan tab Registrasi Karyawan untuk mendaftarkan akun baru.', 'info')"
               class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-sm flex items-center space-x-1.5">
               <span>+ Tambah Pengguna Baru</span>
             </button>
@@ -3850,7 +3828,7 @@
       <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between text-xs">
         <div class="flex items-center space-x-2 min-w-0">
           <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
-          <span class="font-bold text-slate-700 truncate" id="drawer-user-info">admin@demo.com</span>
+          <span class="font-bold text-slate-700 truncate" id="drawer-user-info">admin@mja.co.id</span>
         </div>
         <button onclick="window.switchOperationalBranch()"
           class="flex-shrink-0 text-indigo-700 font-bold bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200 text-[11px]">
@@ -4703,7 +4681,7 @@
             </svg>
           </div>
           <div>
-            <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Reset &amp; Bersihkan Absensi Demo</h4>
+            <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Reset &amp; Bersihkan Presensi</h4>
             <p class="text-[10px] text-[#6E655F]">Persiapan kondisi bersih untuk presentasi klien besok</p>
           </div>
         </div>
@@ -5680,268 +5658,12 @@
           { id: 'TTK-B2', branch: 'Cabang B (Solo)', name: 'TikTok Modifikasi B2 (Solo)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
           { id: 'TTK-B3', branch: 'Cabang B (Solo)', name: 'TikTok Flash Sale B3 (Solo)', platform: 'tiktok', feeAdmin: 7.0, feeOngkir: 3.0, feeService: 1.0 }
         ],
-        liveSessions: [
-          { id: 'LS-01', store: 'TikTok Shop Live Official', host: 'Rina', date: '2026-11-05', omset: 18500000, fee: 1942500, ads: 1500000, cogs: 6400000, margin: 8657500, items: 210 },
-          { id: 'LS-02', store: 'Shopee Live Toko 1 (Official)', host: 'Sarah', date: '2026-11-04', omset: 24200000, fee: 2057000, ads: 2200000, cogs: 8200000, margin: 11743000, items: 340 },
-          { id: 'LS-03', store: 'Shopee Live Toko 2 (Mall)', host: 'Maya', date: '2026-11-04', omset: 16800000, fee: 1512000, ads: 1200000, cogs: 5900000, margin: 8188000, items: 195 },
-          { id: 'LS-04', store: 'Shopee Live Toko 3 (Grosir)', host: 'Dika', date: '2026-11-03', omset: 31500000, fee: 2362500, ads: 2800000, cogs: 11500000, margin: 14837500, items: 480 }
-        ],
-        qcProofPhotos: [
-        {
-          id: 'PROOF-001',
-          resi: 'CM75705456362',
-          store: 'Shopee (sewangi jiwa)',
-          courier: 'JNE Express Reguler (TGR10056)',
-          product: 'Sewangi Jiwa BINAR Parfum Unisex 30ml (1 pcs)',
-          buyer: 'Wiryo (Kota Tangerang)',
-          time: '14:20 WIB',
-          date: '2026-11-11',
-          operator: 'Ahmad Fauzi (Gudang)',
-          photo: ''
-        }
-      ],
-        orders: [
-          // Order 1: Test Resi Klien Shopee JNE (Lolos QC 1, Menunggu QC 2)
-          {
-            id: 'ORD-261110VRD',
-            orderNo: '261110VRD4AUAR',
-            resi: 'CM75705456362',
-            store: 'Shopee Official Store A1 (Pusat)',
-            branch: 'Cabang A (Pusat)',
-            platform: 'shopee',
-            buyer: 'Wiryo (Kota Tangerang)',
-            courier: 'JNE Express Reguler (TGR10056)',
-            product: 'Sewangi Jiwa BINAR Parfum Unisex 30ml (1 pcs)',
-            sku: 'PRFM-BNR-030',
-            qty: 1,
-            total: 135000,
-            feeAdmin: 8775,
-            feeOngkir: 5400,
-            feeService: 1350,
-            netIncome: 119475,
-            status: 'qc1_passed',
-            printed: true,
-            stage1Passed: true,
-            qcPassed: false,
-            handedOver: false,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order 2: Resi SPX Cabang A (Lolos QC 2 / Siap Diserahkan)
-          {
-            id: 'ORD-SHP-901',
-            orderNo: '261114SHPA901',
-            resi: 'SPXID029182390',
-            store: 'Shopee Official Store A1 (Pusat)',
-            branch: 'Cabang A (Pusat)',
-            platform: 'shopee',
-            buyer: 'Budi Darmawan (Semarang Barat)',
-            courier: 'SPX Express Reguler',
-            product: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)',
-            sku: 'SPN-MBL-001',
-            qty: 1,
-            total: 1150000,
-            feeAdmin: 74750,
-            feeOngkir: 46000,
-            feeService: 11500,
-            netIncome: 1017750,
-            status: 'qc2_passed',
-            printed: true,
-            stage1Passed: true,
-            qcPassed: true,
-            handedOver: false,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order 3: Resi Dobel Kemarin (SUDAH DISERAHKAN KE EKSPEDISI / HANDED OVER - Anti Dobel Kirim Hari Ini)
-          {
-            id: 'ORD-SHP-902',
-            orderNo: '261113SHP902',
-            resi: 'JT9812491209',
-            store: 'Shopee Mall Store A2 (Pusat)',
-            branch: 'Cabang A (Pusat)',
-            platform: 'shopee',
-            buyer: 'Hendri Gunawan (Surabaya)',
-            courier: 'J&T Express Reguler',
-            product: 'Spion Innova Reborn / Venturer Chrome Lipat Otomatis',
-            sku: 'SPN-MBL-002',
-            qty: 1,
-            total: 1450000,
-            feeAdmin: 101500,
-            feeOngkir: 58000,
-            feeService: 14500,
-            netIncome: 1276000,
-            status: 'handed_over',
-            manifestId: 'MAN-20261113-001',
-            printed: true,
-            stage1Passed: true,
-            qcPassed: true,
-            handedOver: true,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order 4: TikTok Live Pusat (Sudah Dicetak tapi BELUM QC 1)
-          {
-            id: 'ORD-TTK-801',
-            orderNo: '261114TTK801',
-            resi: 'TKID82910248',
-            store: 'TikTok Shop Live A1 (Pusat)',
-            branch: 'Cabang A (Pusat)',
-            platform: 'tiktok',
-            buyer: 'Rina Melati (Bandung)',
-            courier: 'J&T Express Reguler',
-            product: 'Kaca Spion Honda Brio / Mobilio Cembung Original (Kanan)',
-            sku: 'SPN-MBL-003',
-            qty: 2,
-            total: 370000,
-            feeAdmin: 27750,
-            feeOngkir: 11100,
-            feeService: 3700,
-            netIncome: 327450,
-            status: 'printed',
-            printed: true,
-            stage1Passed: false,
-            qcPassed: false,
-            handedOver: false,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order 5: Cabang B Solo Grosir (Lolos QC 1)
-          {
-            id: 'ORD-SHP-B01',
-            orderNo: '261114SHPB01',
-            resi: 'JNE81920194',
-            store: 'Shopee Grosir Store B2 (Solo)',
-            branch: 'Cabang B (Solo)',
-            platform: 'shopee',
-            buyer: 'Toko Variasi Motor Jaya (Solo)',
-            courier: 'JNE Reguler',
-            product: 'Spion Jalu Bar End CNC Universal NMAX / Aerox / PCX',
-            sku: 'SPN-MTR-002',
-            qty: 5,
-            total: 490000,
-            feeAdmin: 29400,
-            feeOngkir: 17150,
-            feeService: 4900,
-            netIncome: 438550,
-            status: 'qc1_passed',
-            printed: true,
-            stage1Passed: true,
-            qcPassed: false,
-            handedOver: false,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order 6: TikTok Solo Live 1 (Sudah Dicetak tapi BELUM QC 1)
-          {
-            id: 'ORD-TTK-B01',
-            orderNo: '261114TTKB01',
-            resi: 'TKID99210455',
-            store: 'TikTok Shop Live B1 (Solo)',
-            branch: 'Cabang B (Solo)',
-            platform: 'tiktok',
-            buyer: 'Dewi Anggraini (Yogyakarta)',
-            courier: 'SiCepat Reguler',
-            product: 'Spion Model Circuit Tomok 2.0 Full CNC Universal',
-            sku: 'SPN-MTR-003',
-            qty: 1,
-            total: 135000,
-            feeAdmin: 10125,
-            feeOngkir: 4050,
-            feeService: 1350,
-            netIncome: 119475,
-            status: 'printed',
-            printed: true,
-            stage1Passed: false,
-            qcPassed: false,
-            handedOver: false,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order 7: Order Batal Pembeli (CANCELLED)
-          {
-            id: 'ORD-TTK-CAN',
-            orderNo: '261114CAN990',
-            resi: 'CANCEL-TK-990',
-            store: 'TikTok Shop Live A1 (Pusat)',
-            branch: 'Cabang A (Pusat)',
-            platform: 'tiktok',
-            buyer: 'Rizal Fahmi (Jakarta Selatan)',
-            courier: 'J&T Express',
-            product: 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome',
-            sku: 'SPN-MTR-004',
-            qty: 1,
-            total: 175000,
-            feeAdmin: 0,
-            feeOngkir: 0,
-            feeService: 0,
-            netIncome: 0,
-            status: 'cancelled',
-            printed: true,
-            stage1Passed: false,
-            qcPassed: false,
-            handedOver: false,
-            isInstant: false,
-            reprintHistory: []
-          },
-          // Order Kilat (Instant / Sameday) - Pengecualian SOP Gudang
-          {
-            id: 'ORD-SHP-904',
-            orderNo: '261114INST904',
-            resi: 'INST-SPX-88210',
-            store: 'Shopee Official Store A1 (Pusat)',
-            branch: 'Cabang A (Pusat)',
-            platform: 'shopee',
-            buyer: 'Bambang Santoso (Semarang Tengah)',
-            courier: 'Shopee Xpress Instant',
-            product: 'Cover Spion Fortuner VRZ / Hilux Hitam Glossy',
-            sku: 'SPN-MBL-004',
-            qty: 1,
-            total: 320000,
-            feeAdmin: 20800,
-            feeOngkir: 12800,
-            feeService: 3200,
-            netIncome: 283200,
-            status: 'new_order',
-            isInstant: true,
-            printed: false,
-            stage1Passed: false,
-            qcPassed: false,
-            handedOver: false,
-            reprintHistory: []
-          }
-        ],
-        manifests: [
-          {
-            id: 'MAN-20261113-001',
-            branch: 'Cabang A (Pusat)',
-            courier: 'J&T Express',
-            driverName: 'Pak Joko (Driver J&T Semarang)',
-            vehicleNo: 'H 8192 ZA',
-            time: '17:15 WIB',
-            date: '2026-11-13',
-            totalPackages: 18,
-            resiList: ['JT9812491209']
-          }
-        ],
-        stockTransfers: [
-          {
-            id: 'TRF-001',
-            fromBranch: 'Cabang A (Pusat)',
-            toBranch: 'Cabang B (Solo)',
-            sku: 'SPN-MBL-001',
-            productName: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)',
-            qty: 15,
-            suratJalan: 'SJ-TRF-261114-01',
-            driver: 'Agus Ekspedisi Logistik',
-            time: '09:30 WIB',
-            date: '2026-11-14',
-            status: 'Selesai'
-          }
-        ],
-        returns: [
-          { id: 'RET-001', resi: 'SPXID029182390', condition: 'restock_good', effect: 'Stok Gudang +1 (Restock), Omset Batal', time: '10:30', notes: 'Salah tipe spion dari pembeli' }
-        ],
+        liveSessions: [],
+        qcProofPhotos: [],
+        orders: [],
+        manifests: [],
+        stockTransfers: [],
+        returns: [],
         productGroups: ['Spion Mobil', 'Spion Motor', 'Aksesoris & Sparepart'],
         inventory: [
           { id: 'INV-1', group: 'Spion Mobil', sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)', cogs: 650000, price: 1150000, physicalStock: 85, allocatedStock: 2, stock: 83 },
@@ -5957,115 +5679,16 @@
           { id: 'INV-11', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-003', name: 'Saklar Switch Spion Retract Tombol Lipat Toyota', cogs: 55000, price: 120000, physicalStock: 110, allocatedStock: 0, stock: 110 }
         ],
         users: [
-          { id: '1', name: 'Super IT Admin', email: 'admin@demo.com', role: 'admin', active: true },
-          { id: '2', name: 'Owner / Direksi', email: 'owner@demo.com', role: 'owner', active: true },
-          { id: '3', name: 'Staff Finance', email: 'finance@demo.com', role: 'finance', active: true },
-          { id: '4', name: 'Host Live Stream', email: 'host@demo.com', role: 'host', active: true },
-          { id: '5', name: 'Kepala Gudang', email: 'warehouse@demo.com', role: 'warehouse', active: true }
+          { id: '1', name: 'Ahmad Fauzi (IT Admin)', email: 'admin@mja.co.id', role: 'admin', active: true },
+          { id: '2', name: 'H. Sudirman (Owner)', email: 'owner@mja.co.id', role: 'owner', active: true },
+          { id: '3', name: 'Dewi Anggraini (Finance)', email: 'finance@mja.co.id', role: 'finance', active: true },
+          { id: '4', name: 'Bambang Santoso (Host Live)', email: 'bambang@mja.co.id', role: 'host', active: true },
+          { id: '5', name: 'Budi Santoso (Gudang)', email: 'gudang@mja.co.id', role: 'warehouse', active: true }
         ],
-        qcLogs: [
-          { time: '14:15', resi: 'SPXID029182390', store: 'Shopee Official 1', status: 'valid', action: 'Lolos QC (Siap Kirim)', product: 'Spion Retract Avanza Set Kanan-Kiri' },
-          { time: '13:50', resi: 'JT9812491209', store: 'Shopee Mall 2', status: 'double', action: 'Dicegah (Resi Dobel Cetak)', product: 'Spion Innova Reborn Chrome' },
-          { time: '11:20', resi: 'CANCEL-TK-990', store: 'TikTok Shop Live', status: 'cancelled', action: 'Dicegah (Batal Pembeli)', product: 'Kaca Spion Vespa Matic Bulat' }
-        ],
-        attendanceLogs: [
-          {
-            id: 'ATT-20261106-001',
-            date: '2026-11-06',
-            time: '08:02',
-            name: 'Ahmad Fauzi',
-            email: 'warehouse@demo.com',
-            role: 'warehouse',
-            branch: 'Cabang 1 (Pusat & Gudang Utama)',
-            type: 'office',
-            inOut: 'Masuk',
-            coords: '-6.9827, 110.4209',
-            distance: 14,
-            status: 'valid',
-            notes: 'Hadir tepat waktu di gudang',
-            photo: window.createMockAvatarSvg('Ahmad Fauzi', 'GUDANG', '08:02 WIB', '-6.9827, 110.4209')
-          },
-          {
-            id: 'ATT-20261106-002',
-            date: '2026-11-06',
-            time: '08:15',
-            name: 'Sarah Amanda',
-            email: 'host@demo.com',
-            role: 'host',
-            branch: 'Cabang 1 (Pusat & Gudang Utama)',
-            type: 'office',
-            inOut: 'Masuk',
-            coords: '-6.9825, 110.4206',
-            distance: 21,
-            status: 'valid',
-            notes: 'Persiapan live shopping pagi',
-            photo: window.createMockAvatarSvg('Sarah Amanda', 'HOST LIVE', '08:15 WIB', '-6.9825, 110.4206')
-          },
-          {
-            id: 'ATT-20261106-003',
-            date: '2026-11-06',
-            time: '09:30',
-            name: 'Budi Santoso',
-            email: 'warehouse@demo.com',
-            role: 'warehouse',
-            branch: 'Cabang 1 (Pusat & Gudang Utama)',
-            type: 'courier',
-            inOut: 'Masuk',
-            coords: '-6.9950, 110.4310',
-            distance: 1420,
-            status: 'courier',
-            notes: 'Drop paket spion ke ekspedisi',
-            photo: window.createMockAvatarSvg('Budi Santoso', 'KURIR / GUDANG', '09:30 WIB', '-6.9950, 110.4310')
-          },
-          {
-            id: 'ATT-20261106-004',
-            date: '2026-11-06',
-            time: '08:05',
-            name: 'Dedi Kurniawan',
-            email: 'warehouse@demo.com',
-            role: 'warehouse',
-            branch: 'Cabang 2 (Gudang Hub Ekspedisi)',
-            type: 'office',
-            inOut: 'Masuk',
-            coords: '-7.2575, 112.7521',
-            distance: 12,
-            status: 'valid',
-            notes: 'Standby packing cabang 2',
-            photo: window.createMockAvatarSvg('Dedi Kurniawan', 'GUDANG CABANG 2', '08:05 WIB', '-7.2575, 112.7521')
-          },
-          {
-            id: 'ATT-20261105-001',
-            date: '2026-11-05',
-            time: '08:00',
-            name: 'Ahmad Fauzi',
-            email: 'warehouse@demo.com',
-            role: 'warehouse',
-            branch: 'Cabang 1 (Pusat & Gudang Utama)',
-            type: 'office',
-            inOut: 'Masuk',
-            coords: '-6.9826, 110.4208',
-            distance: 11,
-            status: 'valid',
-            notes: 'Shift pagi',
-            photo: window.createMockAvatarSvg('Ahmad Fauzi', 'GUDANG', '08:00 WIB', '-6.9826, 110.4208')
-          },
-          {
-            id: 'ATT-20261105-002',
-            date: '2026-11-05',
-            time: '17:05',
-            name: 'Ahmad Fauzi',
-            email: 'warehouse@demo.com',
-            role: 'warehouse',
-            branch: 'Cabang 1 (Pusat & Gudang Utama)',
-            type: 'office',
-            inOut: 'Pulang',
-            coords: '-6.9826, 110.4208',
-            distance: 15,
-            status: 'valid',
-            notes: 'Selesai shift gudang',
-            photo: window.createMockAvatarSvg('Ahmad Fauzi', 'GUDANG', '17:05 WIB', '-6.9826, 110.4208')
-          }
-        ]
+        qcLogs: [],
+        stockLogs: [],
+        isResetMetrics: true,
+        attendanceLogs: []
       }
     };
 
@@ -6081,7 +5704,10 @@
         .then(function (res) { return res.json(); })
         .then(function (data) {
           if (data && data.success && Array.isArray(data.logs)) {
-            // Ambil daftar ID yang pernah dihapus / direset secara lokal
+            // SPREADSHEET ADALAH SINGLE SOURCE OF TRUTH:
+            // Apabila data di Google Sheets dihapus, di webapp langsung terhapus juga!
+            var remoteLogs = data.logs;
+
             var deletedIds = [];
             try {
               deletedIds = JSON.parse(localStorage.getItem('mja_deleted_attendance_ids') || '[]');
@@ -6089,69 +5715,32 @@
             var deletedMap = {};
             deletedIds.forEach(function (id) { deletedMap[id] = true; });
 
-            // Saring agar data yang sudah di-reset/delete tidak pernah muncul lagi
-            var validRemoteLogs = data.logs.filter(function (l) {
+            var validLogs = remoteLogs.filter(function (l) {
               return l.id && !deletedMap[l.id];
             });
 
-            // Jika Google Sheets kosong (0 data) atau semua log yang datang masuk blacklist reset
-            if (validRemoteLogs.length === 0 && (data.logs.length === 0 || deletedIds.length > 0)) {
-              var cur = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
-              var filteredCur = cur.filter(function (l) { return l.id && !deletedMap[l.id]; });
-              if (data.logs.length === 0) filteredCur = [];
-
-              if (window.appState && window.appState.data) {
-                window.appState.data.attendanceLogs = filteredCur;
-              }
-              try {
-                localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(filteredCur));
-              } catch (eSet) { }
-
-              if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
-              if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
-              if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
-              if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus();
-              return;
-            }
-
-            var currentLogs = (window.appState && window.appState.data && window.appState.data.attendanceLogs) || [];
-            var existingIds = {};
-            validRemoteLogs.forEach(function (l) { if (l.id) existingIds[l.id] = true; });
-
-            var merged = validRemoteLogs.slice();
-            currentLogs.forEach(function (localLog) {
-              if (localLog.id && !existingIds[localLog.id] && !deletedMap[localLog.id]) {
-                merged.unshift(localLog);
-                existingIds[localLog.id] = true;
-              }
-            });
-
-            // Urutkan selalu dari yang paling baru (terkini di atas)
-            merged.sort(function (a, b) {
+            validLogs.sort(function (a, b) {
               var da = (a.date || '') + ' ' + (a.time || '');
               var db = (b.date || '') + ' ' + (b.time || '');
               return db.localeCompare(da);
             });
 
             if (window.appState && window.appState.data) {
-              window.appState.data.attendanceLogs = merged;
+              window.appState.data.attendanceLogs = validLogs;
             }
             try {
-              localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(merged.slice(0, 150)));
+              localStorage.setItem('mja_persistent_attendanceLogs', JSON.stringify(validLogs.slice(0, 150)));
+              localStorage.setItem('mja_clean_attendanceLogs', JSON.stringify(validLogs.slice(0, 150)));
             } catch (e) { }
 
             if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs();
             if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
             if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
             if (typeof window.updateTodayAttendanceStatus === 'function') window.updateTodayAttendanceStatus();
-
-            if (!silent) {
-              window.showToast('Data presensi berhasil disinkronkan dari Google Sheets (' + merged.length + ' log)', 'success');
-            }
           }
         })
         .catch(function (err) {
-          if (!silent) console.warn('Gagal sinkronisasi presensi remote:', err);
+          console.warn('Gagal ambil data presensi dari Google Sheets:', err);
         });
     };
 
@@ -6841,7 +6430,7 @@
     };
 
     window.openProfileSettingsModal = function () {
-      var user = window.appState.currentUser || { email: 'admin@demo.com', role: 'admin', branch: 'Cabang 1' };
+      var user = window.appState.currentUser || { email: 'admin@mja.co.id', role: 'admin', branch: 'Cabang 1 (Pusat)' };
       var nameEl = document.getElementById('prof-input-name');
       var emailEl = document.getElementById('prof-input-email');
       var roleEl = document.getElementById('prof-current-role');
@@ -7687,60 +7276,56 @@
         return;
       }
 
-      var chkQc = document.getElementById('chk-reset-qc') ? document.getElementById('chk-reset-qc').checked : true;
-      var chkAtt = document.getElementById('chk-reset-att') ? document.getElementById('chk-reset-att').checked : true;
-      var chkOrd = document.getElementById('chk-reset-orders') ? document.getElementById('chk-reset-orders').checked : true;
-      var chkLive = document.getElementById('chk-reset-live') ? document.getElementById('chk-reset-live').checked : true;
-      var chkLogs = document.getElementById('chk-reset-stocklogs') ? document.getElementById('chk-reset-stocklogs').checked : true;
-      var chkMetrics = document.getElementById('chk-reset-metrics') ? document.getElementById('chk-reset-metrics').checked : true;
+      var resetEpoch = Date.now();
+      var resetMarkerId = 'RESET_MARKER_' + resetEpoch;
 
-      if (chkQc) {
-        window.appState.data.qcLogs = [];
-      }
-      if (chkAtt) {
-        window.appState.data.attendanceLogs = [];
-      }
-      if (chkOrd) {
-        window.appState.data.orders = [];
-        window.appState.data.returns = [];
-      }
-      if (chkLive) {
-        window.appState.data.liveSessions = [];
-      }
-      if (chkLogs) {
-        window.appState.data.stockLogs = [];
-      }
-      if (chkMetrics) {
-        window.appState.data.isResetMetrics = true;
-      }
+      window.appState.data.qcLogs = [];
+      window.appState.data.attendanceLogs = [];
+      window.appState.data.orders = [];
+      window.appState.data.returns = [];
+      window.appState.data.liveSessions = [];
+      window.appState.data.stockLogs = [];
+      window.appState.data.isResetMetrics = true;
 
-      // Simpan flag reset di localStorage agar tersimpan
+      // Simpan flag reset lokal
       try {
         localStorage.setItem('mja_system_was_reset', 'true');
-        localStorage.setItem('mja_clean_qcLogs', JSON.stringify(window.appState.data.qcLogs));
-        localStorage.setItem('mja_clean_attendanceLogs', JSON.stringify(window.appState.data.attendanceLogs));
-        localStorage.setItem('mja_clean_orders', JSON.stringify(window.appState.data.orders));
-        localStorage.setItem('mja_clean_liveSessions', JSON.stringify(window.appState.data.liveSessions));
-        localStorage.setItem('mja_clean_stockLogs', JSON.stringify(window.appState.data.stockLogs));
+        localStorage.setItem('mja_metrics_is_reset', 'true');
+        localStorage.setItem('mja_last_applied_reset_marker', resetEpoch.toString());
+        localStorage.setItem('mja_clean_qcLogs', '[]');
+        localStorage.setItem('mja_clean_attendanceLogs', '[]');
+        localStorage.setItem('mja_persistent_attendanceLogs', '[]');
+        localStorage.setItem('mja_clean_orders', '[]');
+        localStorage.setItem('mja_clean_returns', '[]');
+        localStorage.setItem('mja_clean_liveSessions', '[]');
+        localStorage.setItem('mja_clean_stockLogs', '[]');
       } catch (e) {}
+
+      // KIRIM MARKER RESET KE GOOGLE SHEETS CLOUD (Agar HP karyawan otomatis ter-reset dalam hitungan detik)
+      if (window.GAS_ENDPOINT_URL) {
+        // 1. Simpan marker reset di sheet Live_Sessions
+        var resetUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
+          'action=saveLiveSession&id=' + encodeURIComponent(resetMarkerId) +
+          '&store=SYSTEM_RESET&host=SYSTEM&omset=0&fee=0&ads=0&cogs=0&margin=0&items=0' +
+          '&notes=' + encodeURIComponent('SYSTEM_RESET_' + resetEpoch) +
+          '&t=' + resetEpoch;
+        fetch(resetUrl).catch(function(err){ console.warn('Reset live marker error:', err); });
+
+        // 2. Kosongkan seluruh riwayat presensi di Google Sheets
+        var resetAttUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
+          'action=resetAttendance&scope=all&t=' + resetEpoch;
+        fetch(resetAttUrl).catch(function(err){ console.warn('Reset attendance error:', err); });
+      }
 
       window.closeModal('modal-confirm-reset');
 
       // Refresh seluruh tampilan & tabel
-      window.renderQCStats();
-      window.renderQCLogs();
-      window.renderAttendanceLogs();
-      if (typeof window.renderAllAttendanceReport === 'function') {
-        window.renderAllAttendanceReport();
-      }
-      window.renderStockLogs();
-      window.renderLiveSessions();
-      window.renderOrderTable();
-      window.renderReturnsHistory();
-      window.renderDashboardMetrics();
+      window.renderAllData();
+      if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+      if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
       window.updateResetStats();
 
-      window.showToast('SISTEM BERHASIL DI-RESET KE AWAL! Siap digunakan untuk operasional riil klien.', 'success');
+      window.showToast('SISTEM BERHASIL DI-RESET KE AWAL! Seluruh HP karyawan otomatis ter-reset.', 'success');
     };
 
     window.restoreDemoData = function () {
@@ -9457,7 +9042,7 @@
         return;
       }
 
-      var adminUser = window.appState.currentUser || { email: 'admin@demo.com', name: 'Admin IT' };
+      var adminUser = window.appState.currentUser || { email: 'admin@mja.co.id', name: 'Ahmad Fauzi (IT Admin)' };
 
       log.date = newDate;
       log.time = newTime;
@@ -12855,17 +12440,52 @@
         if (data && data.success) {
           var rawSessions = data.sessions || [];
 
-          // CARI MARKER RESET TERAKHIR DARI GOOGLE SHEETS
+          // DETEKSI MARKER RESET TERAKHIR DARI GOOGLE SHEETS
           var lastResetIdx = -1;
+          var latestMarkerEpoch = 0;
           for (var i = rawSessions.length - 1; i >= 0; i--) {
             var sItem = rawSessions[i];
             if (sItem.store === 'SYSTEM_RESET' || (sItem.id && sItem.id.indexOf('RESET_MARKER') !== -1)) {
-              lastResetIdx = i;
-              break;
+              if (lastResetIdx === -1) {
+                lastResetIdx = i;
+                var parsedEpoch = Number((sItem.id || '').replace('RESET_MARKER_', ''));
+                if (parsedEpoch > 0) latestMarkerEpoch = parsedEpoch;
+              }
             }
           }
 
-          // Hanya ambil sesi live yang diinput SETELAH reset terakhir (bersih dari data Rina, Sarah, Maya & tes lama)
+          // CEK SINKRONISASI RESET KE PERANGKAT HP:
+          // Apabila Admin baru saja klik Reset di PC, HP otomatis mengenali dan mengosongkan seluruh data!
+          var localLastReset = Number(localStorage.getItem('mja_last_applied_reset_marker') || 0);
+          if (latestMarkerEpoch > localLastReset) {
+            window.appState.data.liveSessions = [];
+            window.appState.data.qcLogs = [];
+            window.appState.data.orders = [];
+            window.appState.data.returns = [];
+            window.appState.data.stockLogs = [];
+            window.appState.data.attendanceLogs = [];
+            window.appState.data.isResetMetrics = true;
+
+            try {
+              localStorage.setItem('mja_last_applied_reset_marker', latestMarkerEpoch.toString());
+              localStorage.setItem('mja_system_was_reset', 'true');
+              localStorage.setItem('mja_metrics_is_reset', 'true');
+              localStorage.setItem('mja_clean_liveSessions', '[]');
+              localStorage.setItem('mja_clean_qcLogs', '[]');
+              localStorage.setItem('mja_clean_orders', '[]');
+              localStorage.setItem('mja_clean_returns', '[]');
+              localStorage.setItem('mja_clean_stockLogs', '[]');
+              localStorage.setItem('mja_clean_attendanceLogs', '[]');
+              localStorage.setItem('mja_persistent_attendanceLogs', '[]');
+            } catch (eR) { }
+
+            if (typeof window.renderAllData === 'function') window.renderAllData();
+            if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
+            if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+            if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
+          }
+
+          // Hanya ambil sesi live yang diinput SETELAH reset terakhir (bersih dari data lama)
           var remoteSessions = (lastResetIdx !== -1) ? rawSessions.slice(lastResetIdx + 1) : rawSessions;
 
           // Parse soldProducts dari kolom notes jika tersedia
@@ -12899,15 +12519,18 @@
             }
           });
 
-          // Perbarui local state & localStorage permanen
+          // SPREADSHEET ADALAH SINGLE SOURCE OF TRUTH:
+          // Jika sebuah baris dihapus di Google Sheets, remoteSessions tidak lagi memuatnya,
+          // sehingga di WebApp baris tersebut otomatis terhapus!
           window.appState.data.liveSessions = remoteSessions;
           try {
             localStorage.setItem('mja_clean_liveSessions', JSON.stringify(remoteSessions));
             localStorage.setItem('mja_live_sessions', JSON.stringify(remoteSessions));
           } catch (eLs) { }
 
-          // Jika ada sesi aktif, otomatis hilangkan status blokir reset di dasbor
-          if (remoteSessions.length > 0) {
+          if (remoteSessions.length === 0) {
+            window.appState.data.isResetMetrics = true;
+          } else {
             try {
               localStorage.removeItem('mja_metrics_is_reset');
             } catch (eR) { }
@@ -13382,7 +13005,7 @@
           </div>
           <div>
             <h4 class="font-heading font-bold text-sm text-white">Ganti Kata Sandi Akun</h4>
-            <p class="text-[11px] text-slate-400" id="cp-user-email-display">user@demo.com</p>
+            <p class="text-[11px] text-slate-400" id="cp-user-email-display">admin@mja.co.id</p>
           </div>
         </div>
         <button onclick="window.closeModal('modal-change-password')"
@@ -13532,12 +13155,13 @@
   // 2. SISTEM PENGGUNA & AUTENTIKASI DENGAN NIK DAN PASSWORD 123456
   window.initUserDatabase = function () {
     var defaultUsers = [
-      { email: 'admin@demo.com', name: 'Ahmad Fauzi (IT Admin)', role: 'admin', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-ADM01' },
-      { email: 'owner@demo.com', name: 'H. Sudirman (Owner)', role: 'owner', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-OWN01' },
-      { email: 'finance@demo.com', name: 'Dewi Anggraini (Finance)', role: 'finance', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-FIN01' },
-      { email: 'bambang@demo.com', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
-      { email: 'host@demo.com', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
-      { email: 'warehouse@demo.com', name: 'Budi Santoso (Gudang)', role: 'warehouse', branch: 'Cabang 2 (Gudang Hub Ekspedisi)', password: '123456', nik: 'MJA-2026-GDG01' }
+      { email: 'admin@mja.co.id', name: 'Ahmad Fauzi (IT Admin)', role: 'admin', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-ADM01' },
+      { email: 'owner@mja.co.id', name: 'H. Sudirman (Owner)', role: 'owner', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-OWN01' },
+      { email: 'finance@mja.co.id', name: 'Dewi Anggraini (Finance)', role: 'finance', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-FIN01' },
+      { email: 'bambang@mja.co.id', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
+      { email: 'host@mja.co.id', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
+      { email: 'gudang@mja.co.id', name: 'Budi Santoso (Gudang)', role: 'warehouse', branch: 'Cabang 2 (Gudang Hub Ekspedisi)', password: '123456', nik: 'MJA-2026-GDG01' },
+      { email: 'warehouse@mja.co.id', name: 'Budi Santoso (Gudang)', role: 'warehouse', branch: 'Cabang 2 (Gudang Hub Ekspedisi)', password: '123456', nik: 'MJA-2026-GDG01' }
     ];
 
     var saved = localStorage.getItem('mja_registered_users');
@@ -13545,6 +13169,12 @@
       try {
         var parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          parsed = parsed.map(function(u) {
+            if (u.email && u.email.indexOf('@demo.com') !== -1) {
+              u.email = u.email.replace('@demo.com', '@mja.co.id');
+            }
+            return u;
+          });
           defaultUsers.forEach(function (defU) {
             var exist = parsed.find(function (u) { return (u.email || '').toLowerCase() === defU.email.toLowerCase(); });
             if (!exist) parsed.push(defU);
@@ -13607,29 +13237,47 @@
 
   window.handleLogin = function (e) {
     if (e && e.preventDefault) e.preventDefault();
-    var email = (document.getElementById('login-email') ? document.getElementById('login-email').value : '').trim().toLowerCase();
+    var rawInput = (document.getElementById('login-email') ? document.getElementById('login-email').value : '').trim().toLowerCase();
     var password = (document.getElementById('login-password') ? document.getElementById('login-password').value : '').trim();
     var branch = document.getElementById('login-branch') ? document.getElementById('login-branch').value : 'Cabang 1 (Pusat & Gudang Utama)';
 
-    if (!email) {
-      window.showToast('Masukkan alamat email Anda!', 'warning');
+    if (!rawInput) {
+      window.showToast('Masukkan alamat email atau username Anda!', 'warning');
       return;
     }
 
+    // Normalisasi input jika user mengetik username / nama akun saja
+    var email = rawInput;
+    if (email.indexOf('@') === -1) {
+      if (email === 'admin' || email === 'fauzi') email = 'admin@mja.co.id';
+      else if (email === 'owner' || email === 'sudirman') email = 'owner@mja.co.id';
+      else if (email === 'finance' || email === 'dewi') email = 'finance@mja.co.id';
+      else if (email === 'bambang' || email === 'host') email = 'bambang@mja.co.id';
+      else if (email === 'gudang' || email === 'warehouse' || email === 'budi') email = 'gudang@mja.co.id';
+      else email = email + '@mja.co.id';
+    } else if (email.indexOf('@demo.com') !== -1) {
+      email = email.replace('@demo.com', '@mja.co.id');
+    }
+
     var users = window.appState.data.users || [];
-    var matchedUser = users.find(function (u) { return (u.email || '').toLowerCase() === email; });
+    var matchedUser = users.find(function (u) {
+      var uEmail = (u.email || '').toLowerCase();
+      return uEmail === email || uEmail.split('@')[0] === rawInput;
+    });
 
     if (!matchedUser) {
       var fallbackRole = 'warehouse';
-      if (email.indexOf('admin') !== -1) fallbackRole = 'admin';
-      else if (email.indexOf('owner') !== -1) fallbackRole = 'owner';
-      else if (email.indexOf('finance') !== -1) fallbackRole = 'finance';
-      else if (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) fallbackRole = 'host';
+      var fallbackName = 'Budi Santoso (Gudang)';
+      if (email.indexOf('admin') !== -1) { fallbackRole = 'admin'; fallbackName = 'Ahmad Fauzi (IT Admin)'; }
+      else if (email.indexOf('owner') !== -1) { fallbackRole = 'owner'; fallbackName = 'H. Sudirman (Owner)'; }
+      else if (email.indexOf('finance') !== -1) { fallbackRole = 'finance'; fallbackName = 'Dewi Anggraini (Finance)'; }
+      else if (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) { fallbackRole = 'host'; fallbackName = 'Bambang Santoso (Host Live)'; }
+      else if (email.indexOf('gudang') !== -1 || email.indexOf('warehouse') !== -1) { fallbackRole = 'warehouse'; fallbackName = 'Budi Santoso (Gudang)'; }
 
       matchedUser = {
         email: email,
-        name: email.split('@')[0].toUpperCase(),
-        nik: 'NIK-' + Math.floor(100000 + Math.random() * 900000),
+        name: fallbackName,
+        nik: 'MJA-2026-' + Math.floor(1000 + Math.random() * 9000),
         role: fallbackRole,
         branch: branch,
         password: password || '123456'
