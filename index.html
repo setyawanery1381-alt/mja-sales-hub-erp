@@ -223,6 +223,16 @@
 
       <!-- Form 1: Login Body -->
       <form id="form-login" onsubmit="window.handleLogin(event)" class="p-6 space-y-3.5">
+        <!-- Error Alert Banner (Peringatan Akun Tidak Terdaftar / Sandi Salah) -->
+        <div id="login-error-alert"
+          class="hidden p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start space-x-2">
+          <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span id="login-error-msg">Email atau username belum terdaftar! Silakan periksa kembali.</span>
+        </div>
+
         <!-- Pilihan Cabang 1 & 2 (Permintaan Klien) -->
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Pilih Cabang Operasional</label>
@@ -251,6 +261,7 @@
               </svg>
             </span>
             <input type="text" id="login-email" required placeholder="admin@mja.co.id atau bambang@mja.co.id" value=""
+              oninput="var el = document.getElementById('login-error-alert'); if (el) el.classList.add('hidden');"
               class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none">
           </div>
         </div>
@@ -5680,7 +5691,7 @@
         ],
         users: [
           { id: '1', name: 'Ahmad Fauzi (IT Admin)', email: 'admin@mja.co.id', role: 'admin', active: true },
-          { id: '2', name: 'H. Sudirman (Owner)', email: 'owner@mja.co.id', role: 'owner', active: true },
+          { id: '2', name: 'Owner', email: 'owner@mja.co.id', role: 'owner', active: true },
           { id: '3', name: 'Dewi Anggraini (Finance)', email: 'finance@mja.co.id', role: 'finance', active: true },
           { id: '4', name: 'Bambang Santoso (Host Live)', email: 'bambang@mja.co.id', role: 'host', active: true },
           { id: '5', name: 'Budi Santoso (Gudang)', email: 'gudang@mja.co.id', role: 'warehouse', active: true }
@@ -13156,7 +13167,7 @@
   window.initUserDatabase = function () {
     var defaultUsers = [
       { email: 'admin@mja.co.id', name: 'Ahmad Fauzi (IT Admin)', role: 'admin', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-ADM01' },
-      { email: 'owner@mja.co.id', name: 'H. Sudirman (Owner)', role: 'owner', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-OWN01' },
+      { email: 'owner@mja.co.id', name: 'Owner', role: 'owner', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-OWN01' },
       { email: 'finance@mja.co.id', name: 'Dewi Anggraini (Finance)', role: 'finance', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-FIN01' },
       { email: 'bambang@mja.co.id', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
       { email: 'host@mja.co.id', name: 'Bambang Santoso (Host Live)', role: 'host', branch: 'Cabang 1 (Pusat & Gudang Utama)', password: '123456', nik: 'MJA-2026-HST01' },
@@ -13169,9 +13180,18 @@
       try {
         var parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          parsed = parsed.map(function(u) {
+          // Bersihkan akun palsu / fallback Budi Santoso yang tidak sengaja terbuat saat testing ketik nama asal
+          parsed = parsed.filter(function(u) {
+            if (u.name === 'Budi Santoso (Gudang)' && u.email !== 'gudang@mja.co.id' && u.email !== 'warehouse@mja.co.id') {
+              return false;
+            }
+            return true;
+          }).map(function(u) {
             if (u.email && u.email.indexOf('@demo.com') !== -1) {
               u.email = u.email.replace('@demo.com', '@mja.co.id');
+            }
+            if (u.role === 'owner' || (u.email && u.email.toLowerCase().indexOf('owner') !== -1)) {
+              u.name = 'Owner';
             }
             return u;
           });
@@ -13241,57 +13261,65 @@
     var password = (document.getElementById('login-password') ? document.getElementById('login-password').value : '').trim();
     var branch = document.getElementById('login-branch') ? document.getElementById('login-branch').value : 'Cabang 1 (Pusat & Gudang Utama)';
 
+    var alertEl = document.getElementById('login-error-alert');
+    var msgEl = document.getElementById('login-error-msg');
+    if (alertEl) alertEl.classList.add('hidden');
+
     if (!rawInput) {
       window.showToast('Masukkan alamat email atau username Anda!', 'warning');
       return;
     }
 
-    // Normalisasi input jika user mengetik username / nama akun saja
-    var email = rawInput;
-    if (email.indexOf('@') === -1) {
-      if (email === 'admin' || email === 'fauzi') email = 'admin@mja.co.id';
-      else if (email === 'owner' || email === 'sudirman') email = 'owner@mja.co.id';
-      else if (email === 'finance' || email === 'dewi') email = 'finance@mja.co.id';
-      else if (email === 'bambang' || email === 'host') email = 'bambang@mja.co.id';
-      else if (email === 'gudang' || email === 'warehouse' || email === 'budi') email = 'gudang@mja.co.id';
-      else email = email + '@mja.co.id';
-    } else if (email.indexOf('@demo.com') !== -1) {
-      email = email.replace('@demo.com', '@mja.co.id');
+    // Normalisasi input jika user mengetik username / shortcut nama
+    var targetEmail = rawInput;
+    if (targetEmail.indexOf('@') === -1) {
+      if (targetEmail === 'admin' || targetEmail === 'fauzi') targetEmail = 'admin@mja.co.id';
+      else if (targetEmail === 'owner') targetEmail = 'owner@mja.co.id';
+      else if (targetEmail === 'finance' || targetEmail === 'dewi') targetEmail = 'finance@mja.co.id';
+      else if (targetEmail === 'bambang' || targetEmail === 'host') targetEmail = 'bambang@mja.co.id';
+      else if (targetEmail === 'gudang' || targetEmail === 'warehouse' || targetEmail === 'budi') targetEmail = 'gudang@mja.co.id';
+      else targetEmail = targetEmail + '@mja.co.id';
+    } else if (targetEmail.indexOf('@demo.com') !== -1) {
+      targetEmail = targetEmail.replace('@demo.com', '@mja.co.id');
     }
 
     var users = window.appState.data.users || [];
     var matchedUser = users.find(function (u) {
-      var uEmail = (u.email || '').toLowerCase();
-      return uEmail === email || uEmail.split('@')[0] === rawInput;
+      var uEmail = (u.email || '').toLowerCase().trim();
+      var uName = (u.name || '').toLowerCase().trim();
+      var uNik = (u.nik || '').toLowerCase().trim();
+      var uUsername = uEmail.split('@')[0];
+
+      return uEmail === rawInput ||
+             uEmail === targetEmail ||
+             uUsername === rawInput ||
+             uName === rawInput ||
+             (uNik && uNik === rawInput);
     });
 
+    // JIKA USER TIDAK DITEMUKAN: TOLAK LOGIN & BERIKAN PERINGATAN! (TIDAK BOLEH AUTO-LOGIN / FALLBACK KE BUDI SANTOSO)
     if (!matchedUser) {
-      var fallbackRole = 'warehouse';
-      var fallbackName = 'Budi Santoso (Gudang)';
-      if (email.indexOf('admin') !== -1) { fallbackRole = 'admin'; fallbackName = 'Ahmad Fauzi (IT Admin)'; }
-      else if (email.indexOf('owner') !== -1) { fallbackRole = 'owner'; fallbackName = 'H. Sudirman (Owner)'; }
-      else if (email.indexOf('finance') !== -1) { fallbackRole = 'finance'; fallbackName = 'Dewi Anggraini (Finance)'; }
-      else if (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) { fallbackRole = 'host'; fallbackName = 'Bambang Santoso (Host Live)'; }
-      else if (email.indexOf('gudang') !== -1 || email.indexOf('warehouse') !== -1) { fallbackRole = 'warehouse'; fallbackName = 'Budi Santoso (Gudang)'; }
-
-      matchedUser = {
-        email: email,
-        name: fallbackName,
-        nik: 'MJA-2026-' + Math.floor(1000 + Math.random() * 9000),
-        role: fallbackRole,
-        branch: branch,
-        password: password || '123456'
-      };
-      users.push(matchedUser);
-      window.appState.data.users = users;
-      localStorage.setItem('mja_registered_users', JSON.stringify(users));
-    }
-
-    if (matchedUser.password && password && matchedUser.password !== password) {
-      window.showToast('Kata sandi salah! Cek kembali atau gunakan sandi default 123456.', 'error');
+      var alertText = 'Akun "' + rawInput + '" tidak terdaftar di sistem! Periksa kembali email atau username yang telah didaftarkan.';
+      if (alertEl && msgEl) {
+        msgEl.textContent = alertText;
+        alertEl.classList.remove('hidden');
+      }
+      window.showToast(alertText, 'error');
       return;
     }
 
+    // VALIDASI KATA SANDI
+    if (matchedUser.password && password && matchedUser.password !== password) {
+      var passErrText = 'Kata sandi salah! Cek kembali atau hubungi IT Administrator.';
+      if (alertEl && msgEl) {
+        msgEl.textContent = passErrText;
+        alertEl.classList.remove('hidden');
+      }
+      window.showToast(passErrText, 'error');
+      return;
+    }
+
+    if (alertEl) alertEl.classList.add('hidden');
     window.authenticateSuccess(matchedUser);
   };
 
@@ -13310,9 +13338,9 @@
         userObj = {
           email: email,
           name: email.indexOf('admin') !== -1 ? 'Ahmad Fauzi (IT Admin)' :
-                email.indexOf('owner') !== -1 ? 'H. Sudirman (Owner)' :
+                email.indexOf('owner') !== -1 ? 'Owner' :
                 email.indexOf('finance') !== -1 ? 'Dewi Anggraini (Finance)' :
-                (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) ? 'Bambang Santoso (Host Live)' : 'Budi Santoso',
+                (email.indexOf('host') !== -1 || email.indexOf('bambang') !== -1) ? 'Bambang Santoso (Host Live)' : 'Budi Santoso (Gudang)',
           role: fallbackRole || 'admin',
           branch: 'Cabang 1 (Pusat & Gudang Utama)',
           nik: 'MJA-2026-001',
@@ -13333,7 +13361,7 @@
     var topbarAvatar = document.getElementById('topbar-user-avatar');
     var roleLabelMap = {
       'admin': 'Administrator',
-      'owner': 'Owner / Manajemen',
+      'owner': 'Owner',
       'finance': 'Finance & Akuntansi',
       'host': 'Host Live Shopping',
       'warehouse': 'Gudang & QC Spion'
@@ -15036,6 +15064,22 @@ window.handleSaveLiveSession = function (e) {
       if (savedUser) {
         var u = JSON.parse(savedUser);
         if (u && u.email && u.role) {
+          // Normalisasi nama owner menjadi 'Owner' saja
+          if (u.role === 'owner' || (u.email && u.email.toLowerCase().indexOf('owner') !== -1)) {
+            u.name = 'Owner';
+            try { localStorage.setItem('mja_auth_user', JSON.stringify(u)); } catch(e){}
+          }
+          // Bersihkan sesi tidak valid dari pengujian sebelumnya yang sempat fallback ke Budi Santoso
+          var users = window.appState.data.users || [];
+          var isValidUser = users.some(function(registered) {
+            return (registered.email || '').toLowerCase() === (u.email || '').toLowerCase();
+          });
+          if (!isValidUser && u.name === 'Budi Santoso (Gudang)' && u.email !== 'gudang@mja.co.id' && u.email !== 'warehouse@mja.co.id') {
+            console.log('🧹 Membersihkan sesi tidak valid dari pengujian sebelumnya');
+            localStorage.removeItem('mja_auth_user');
+            return;
+          }
+
           window.authenticateSuccess(u);
           var lastSec = localStorage.getItem('mja_current_section');
           if (lastSec) {
