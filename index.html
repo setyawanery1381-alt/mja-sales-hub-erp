@@ -166,6 +166,24 @@
     body.modal-open #mobile-bottom-nav {
       display: none !important;
     }
+      /* AppsGeyser & Mobile Viewport Comfort (Mencegah menu tertutup iklan atau terpotong) */
+    @media (max-width: 768px) {
+      body.appsgeyser-app #mobile-bottom-nav,
+      body.bnav-lifted #mobile-bottom-nav {
+        bottom: 50px !important;
+      }
+      body.appsgeyser-app main,
+      body.bnav-lifted main {
+        padding-bottom: 165px !important;
+      }
+      /* Ruang scroll nyaman di HP agar kartu paling bawah tidak tertutup menu */
+      main {
+        padding-bottom: 125px !important;
+      }
+      #mobile-bottom-nav {
+        padding-bottom: max(env(safe-area-inset-bottom, 0px), 18px) !important;
+      }
+    }
   </style>
 </head>
 
@@ -2362,9 +2380,7 @@
                   <img id="att-camera-preview" class="hidden w-full h-full object-cover absolute inset-0 z-30"
                     alt="Hasil Foto Live">
 
-                  <!-- Hidden Native Camera Capture Input (Fallback HP & In-App Browser) -->
-                  <input type="file" id="att-native-camera-input" accept="image/*" capture="user" class="hidden"
-                    onchange="window.handleNativeSelfieCapture(event)">
+                  
 
                   <!-- Placeholder if camera not yet triggered or permission required -->
                   <div id="att-camera-placeholder"
@@ -2381,12 +2397,9 @@
                     <div class="flex flex-col sm:flex-row items-center gap-2 w-full max-w-[280px]">
                       <button type="button" onclick="window.startAttendanceCamera()"
                         class="w-full h-10 px-3 bg-[#2F5D50] hover:bg-[#254A40] text-white rounded-md text-xs font-bold shadow-md flex items-center justify-center space-x-1 active:scale-95 transition-all">
-                        <span>📷 Buka Kamera Selfie</span>
+                        <span>📷 Buka Kamera Selfie Langsung</span>
                       </button>
-                      <button type="button" onclick="document.getElementById('att-native-camera-input').click()"
-                        class="w-full h-10 px-3 bg-[#B4532A] hover:bg-[#96421F] text-white rounded-md text-xs font-bold shadow-md flex items-center justify-center space-x-1 active:scale-95 transition-all">
-                        <span>📸 Kamera Bawaan HP</span>
-                      </button>
+                      
                     </div>
                   </div>
 
@@ -2397,9 +2410,7 @@
                       <span class="text-emerald-400 font-bold block" id="att-watermark-time">--:--:-- WIB</span>
                       <span class="text-slate-300 text-[9px]" id="att-watermark-gps">GPS: -6.9826, 110.4208</span>
                     </div>
-                    <span
-                      class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-[9px] font-bold">KAMERA
-                      ASLI</span>
+                    
                   </div>
                 </div>
 
@@ -2440,17 +2451,7 @@
                     </button>
                   </div>
 
-                  <!-- Direct Native Camera Button for HP -->
-                  <button type="button" onclick="document.getElementById('att-native-camera-input').click()"
-                    class="w-full h-11 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#B4532A] font-bold text-xs rounded-md border-2 border-[#B4532A]/50 transition-all flex items-center justify-center space-x-2 active:scale-95 shadow-xs">
-                    <svg class="w-4 h-4 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>📸 Buka Kamera HP Bawaan (Pasti Bisa)</span>
-                  </button>
+                  
                 </div>
               </div>
 
@@ -2899,8 +2900,16 @@
               </div>
               <div class="flex items-center space-x-2 text-xs">
                 <span class="text-slate-400 text-[11px]" id="lr-last-sync-time">Sinkronisasi Realtime</span>
-                <button type="button" onclick="window.openLiveTargetModal()" class="h-8 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg shadow-2xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95" title="Ubah Pengaturan Target Omset Live">
-                  <span>🎯 Ubah Target Omset</span>
+                <button type="button" onclick="window.refreshLiveReportsData(this)"
+                  class="h-8 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg shadow-2xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                  title="Segarkan data laporan live & transaksi terbaru dari Google Sheets">
+                  <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Segarkan Data</span>
+                </button>
+                <button type="button" onclick="window.openLiveTargetModal()" class="h-8 px-2.5 bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold rounded-lg border border-amber-300 transition-colors flex items-center space-x-1 cursor-pointer" title="Ubah Pengaturan Target Omset Live">
+                  <span>🎯 Ubah Target</span>
                 </button>
                 <button type="button" onclick="window.exportLiveReportExcel()" class="px-2.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Unduh File CSV / Excel">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -3453,18 +3462,7 @@
                   </svg>
                   <span>Segarkan Data</span>
                 </button>
-                <button type="button" onclick="window.openLiveTargetModal()"
-                  class="h-8 px-2.5 bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold rounded-lg border border-amber-300 transition-colors flex items-center space-x-1 cursor-pointer"
-                  title="Ubah Target Omset Penjualan Live">
-                  <span>🎯 Ubah Target</span>
-                </button>
-                <button type="button" onclick="window.syncLiveSessionsFromGAS(true)"
-                  class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg border border-slate-300 transition-colors flex items-center space-x-1 cursor-pointer">
-                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <span>Sinkronkan Spreadsheet</span>
-                </button>
+                
                 <button type="button" onclick="window.exportSalesDetailCSV()"
                   class="h-8 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4018,6 +4016,14 @@
           </span>
           <span class="font-bold text-amber-950">Laporan Live</span>
           <span class="text-[10px] text-amber-800">Khusus Manajemen</span>
+        </button>
+      </div>
+
+      <!-- AppsGeyser & Mobile View Adjuster -->
+      <div class="pt-2">
+        <button type="button" onclick="window.toggleBottomNavLift()"
+          class="w-full py-2 px-3 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold rounded-xl text-xs flex items-center justify-center space-x-2 active:scale-95 transition-all cursor-pointer">
+          <span>📱 Sesuaikan Posisi Menu Bawah (AppsGeyser Mode)</span>
         </button>
       </div>
 
@@ -4673,8 +4679,7 @@
       </div>
       <div class="bg-[#FAF6F0] p-2.5 rounded-md border border-[#E8E2D9]">
         <p class="text-[11px] text-[#1F1A17] text-center font-mono font-bold" id="modal-photo-meta"></p>
-        <p class="text-[10px] text-[#6E655F] text-center mt-0.5">Watermark Anti-Pemalsuan &amp; Tag Koordinat GPS Asli
-        </p>
+        
       </div>
     </div>
   </div>
@@ -6325,7 +6330,23 @@
     };
 
     // Mobile Navigation Drawer Helpers
-    window.toggleMobileDrawer = function () {
+    window.toggleBottomNavLift = function () {
+    var isLifted = document.body.classList.toggle('bnav-lifted');
+    try {
+      localStorage.setItem('mja_bnav_lifted', isLifted ? '1' : '0');
+    } catch (e) { }
+    window.showToast(isLifted ? '📱 Posisi menu bawah dinaikkan (AppsGeyser Mode Aktif)' : '📱 Posisi menu bawah dinormalkan', 'info');
+  };
+
+  try {
+    var ua = navigator.userAgent || '';
+    var isApp = /wv|AppsGeyser|Android.*Version\/[0-9\.]+/i.test(ua);
+    if (isApp || localStorage.getItem('mja_bnav_lifted') === '1') {
+      document.body.classList.add('bnav-lifted');
+    }
+  } catch (eUa) { }
+
+  window.toggleMobileDrawer = function () {
       var d = document.getElementById('modal-mobile-menu');
       if (!d) return;
       if (d.classList.contains('hidden')) {
@@ -10924,7 +10945,7 @@
   window.activeLiveReportTab = 'lr-tab-executive';
   window.currentSelectedLiveSessionId = null;
 
-  // Inisialisasi awal saat membuka menu Laporan Live
+  // Inisialisasi awal saat membuka menu Laporan Live (Otomatis Muat & Sinkronkan Data Live)
   window.initLiveReportsDashboard = function () {
     var user = window.appState.currentUser;
     var role = user ? user.role : 'admin';
@@ -10934,6 +10955,33 @@
       window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen & Admin!', 'warning');
       window.navigateTo('section-dashboard');
       return;
+    }
+
+    // 1. Muat data liveSessions terbaru dari local storage
+    try {
+      var savedLive = localStorage.getItem('mja_clean_liveSessions') || localStorage.getItem('mja_live_sessions');
+      if (savedLive) {
+        var parsedLive = JSON.parse(savedLive);
+        if (Array.isArray(parsedLive) && parsedLive.length > 0) {
+          window.appState.data.liveSessions = parsedLive;
+        }
+      }
+    } catch (eLs) { }
+
+    // 2. Normalisasi & kalkulasi ulang data sesi live
+    if (typeof window.autoFixLiveSessionsData === 'function') {
+      window.autoFixLiveSessionsData();
+    }
+
+    // 3. Batalkan status reset jika sudah ada sesi live yang diinput
+    if (window.appState && window.appState.data && window.appState.data.liveSessions && window.appState.data.liveSessions.length > 0) {
+      window.appState.data.isResetMetrics = false;
+      try { localStorage.removeItem('mja_metrics_is_reset'); } catch (eR) { }
+    }
+
+    // 4. Fetch background sync dari Google Sheets otomatis
+    if (typeof window.syncLiveSessionsFromGAS === 'function') {
+      window.syncLiveSessionsFromGAS(false);
     }
 
     // Set filter default
@@ -10947,6 +10995,49 @@
 
     // Jalankan kalkulasi dan filter
     window.handleLiveReportFilterChange();
+  };
+
+  // Handler tombol Segarkan Data pada menu Laporan Live
+  window.refreshLiveReportsData = function (btnEl) {
+    var svg = btnEl ? btnEl.querySelector('svg') : null;
+    if (svg) svg.classList.add('animate-spin');
+
+    // 1. Reload local storage
+    try {
+      var savedLive = localStorage.getItem('mja_clean_liveSessions') || localStorage.getItem('mja_live_sessions');
+      if (savedLive) {
+        var parsedLive = JSON.parse(savedLive);
+        if (Array.isArray(parsedLive) && parsedLive.length > 0) {
+          window.appState.data.liveSessions = parsedLive;
+        }
+      }
+    } catch (eLs) { }
+
+    if (typeof window.autoFixLiveSessionsData === 'function') {
+      window.autoFixLiveSessionsData();
+    }
+
+    // 2. Batalkan status reset jika sudah ada data
+    if (window.appState && window.appState.data && window.appState.data.liveSessions && window.appState.data.liveSessions.length > 0) {
+      window.appState.data.isResetMetrics = false;
+      try { localStorage.removeItem('mja_metrics_is_reset'); } catch (eR) { }
+    }
+
+    // 3. Fetch remote live sessions from Google Sheets (Auto-Sync)
+    if (typeof window.syncLiveSessionsFromGAS === 'function') {
+      window.syncLiveSessionsFromGAS(true);
+    }
+
+    // 4. Re-render
+    window.populateLiveReportFilterOptions();
+    window.handleLiveReportFilterChange();
+    if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+    if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+
+    setTimeout(function () {
+      if (svg) svg.classList.remove('animate-spin');
+      window.showToast('✅ Data laporan live berhasil diperbarui dan tersinkron!', 'success');
+    }, 800);
   };
 
   // Populate dynamic dropdown filter options
@@ -11054,9 +11145,22 @@
     }
   };
 
-  // Helper: Filter Sessions berdasarkan periode & dropdown
+  // Helper: Filter Sessions berdasarkan periode & dropdown (Toleran Format Tanggal & Sinkron Storage)
   window.getFilteredLiveSessions = function () {
-    var raw = window.appState.data.liveSessions || [];
+    var raw = (window.appState && window.appState.data && window.appState.data.liveSessions) || [];
+    if (raw.length === 0) {
+      try {
+        var saved = localStorage.getItem('mja_clean_liveSessions') || localStorage.getItem('mja_live_sessions');
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            raw = parsed;
+            window.appState.data.liveSessions = parsed;
+          }
+        }
+      } catch (eLs) { }
+    }
+
     var period = (document.getElementById('lr-filter-period') && document.getElementById('lr-filter-period').value) || 'month';
     var branch = (document.getElementById('lr-filter-branch') && document.getElementById('lr-filter-branch').value) || 'all';
     var platform = (document.getElementById('lr-filter-platform') && document.getElementById('lr-filter-platform').value) || 'all';
@@ -11086,7 +11190,6 @@
       var ym = todayStr.slice(0, 7);
       curStart = ym + '-01';
       curEnd = ym + '-31';
-      // Previous month
       var prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       var prevYm = prevMonthDate.toISOString().slice(0, 7);
       prevStart = prevYm + '-01';
@@ -11115,7 +11218,8 @@
     }
 
     var filterFunc = function (s, start, end) {
-      var d = s.date || '';
+      var d = window.cleanWibDate ? window.cleanWibDate(s.date) : (s.date || '').slice(0, 10);
+      if (!d) d = todayStr;
       if (d < start || d > end) return false;
 
       // Platform check
@@ -11125,11 +11229,19 @@
         if (platform === 'tiktok' && sStore.indexOf('tiktok') === -1) return false;
       }
 
-      // Branch check (if session contains branch info, or default to all)
-      if (branch !== 'all' && s.branch && s.branch !== branch) return false;
+      // Branch check (fleksibel matching Cabang 1 atau Cabang 2)
+      if (branch !== 'all') {
+        var sBranch = s.branch || 'Cabang 1';
+        if (branch.indexOf('Cabang 1') !== -1 && sBranch.indexOf('Cabang 1') === -1) return false;
+        if (branch.indexOf('Cabang 2') !== -1 && sBranch.indexOf('Cabang 2') === -1) return false;
+      }
 
-      // Host check
-      if (host !== 'all' && s.host !== host) return false;
+      // Host check (fleksibel matching nama host)
+      if (host !== 'all') {
+        var sHost = (s.host || '').toLowerCase();
+        var fHost = host.toLowerCase();
+        if (sHost.indexOf(fHost) === -1 && fHost.indexOf(sHost) === -1) return false;
+      }
 
       // Store check
       if (store !== 'all' && s.store !== store) return false;
@@ -14117,18 +14229,18 @@
 
   
   // ===========================================================================
-  // REFRESH SALES DETAIL DATA (INSTANT SYNC FOR ADMIN, OWNER, FINANCE)
+  // REFRESH SALES DETAIL DATA (OTOMATIS TERSINKRON DENGAN SPREADSHEET & SEMUA MENU)
   // ===========================================================================
   window.refreshSalesDetailData = function (btnEl) {
     var svg = btnEl ? btnEl.querySelector('svg') : null;
     if (svg) svg.classList.add('animate-spin');
 
-    // 1. Reload latest liveSessions from localStorage (in case host inputted in another tab/session)
+    // 1. Reload latest liveSessions from localStorage
     try {
-      var savedLive = localStorage.getItem('mja_clean_liveSessions');
+      var savedLive = localStorage.getItem('mja_clean_liveSessions') || localStorage.getItem('mja_live_sessions');
       if (savedLive) {
         var parsedLive = JSON.parse(savedLive);
-        if (Array.isArray(parsedLive)) {
+        if (Array.isArray(parsedLive) && parsedLive.length > 0) {
           window.appState.data.liveSessions = parsedLive;
         }
       }
@@ -14136,24 +14248,38 @@
       console.warn('Refresh local storage read warning:', e);
     }
 
-    // 2. Fetch remote live sessions from Google Sheets if configured
+    if (typeof window.autoFixLiveSessionsData === 'function') {
+      window.autoFixLiveSessionsData();
+    }
+
+    // 2. Batalkan status reset jika ada data
+    if (window.appState && window.appState.data && window.appState.data.liveSessions && window.appState.data.liveSessions.length > 0) {
+      window.appState.data.isResetMetrics = false;
+      try { localStorage.removeItem('mja_metrics_is_reset'); } catch (eR) { }
+    }
+
+    // 3. Otomatis sinkronkan dua arah dengan Google Sheets
     if (typeof window.syncLiveSessionsFromGAS === 'function') {
       window.syncLiveSessionsFromGAS(true);
     }
 
-    // 3. Update filter options (in case new host or store appeared)
+    // 4. Update filter options & render laporan
     if (typeof window.populateSalesDetailFilterOptions === 'function') {
       window.populateSalesDetailFilterOptions();
     }
-
-    // 4. Re-render sales detail table & 4 KPI cards
     if (typeof window.renderSalesDetailReport === 'function') {
       window.renderSalesDetailReport();
+    }
+    if (typeof window.handleLiveReportFilterChange === 'function') {
+      window.handleLiveReportFilterChange();
+    }
+    if (typeof window.renderDashboardMetrics === 'function') {
+      window.renderDashboardMetrics();
     }
 
     setTimeout(function () {
       if (svg) svg.classList.remove('animate-spin');
-      window.showToast('✅ Data laporan host live berhasil disegarkan!', 'success');
+      window.showToast('✅ Data penjualan & spreadsheet berhasil disegarkan dan tersinkron!', 'success');
     }, 600);
   };
 
@@ -15226,6 +15352,7 @@ window.handleSaveLiveSession = function (e) {
     });
     if (updated) {
       try {
+        localStorage.setItem('mja_clean_liveSessions', JSON.stringify(sessions));
         localStorage.setItem('mja_live_sessions', JSON.stringify(sessions));
       } catch (e) { }
     }
