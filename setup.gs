@@ -60,6 +60,13 @@ function setupDatabase() {
       ]
     },
     {
+      name: 'QC_Stage1',
+      headers: ['ID Bukti', 'Tanggal', 'Jam', 'No. Resi', 'Toko Pengirim', 'Kurir', 'Nama Produk', 'Petugas', 'Foto Bukti'],
+      sampleRows: [
+        ['PROOF-001', '2026-11-06', '08:30:00', 'CM75705456362', 'MJA Semarang', 'JNE Express Reguler', 'Spion Retract Avanza Set Kanan-Kiri', 'Petugas Gudang', 'https://drive.google.com/thumbnail?id=sample1']
+      ]
+    },
+    {
       name: 'QC_Logs',
       headers: ['Log ID', 'Waktu', 'No. Resi', 'Toko Marketplace', 'Status QC', 'Aksi Logistik', 'Nama Produk'],
       sampleRows: [

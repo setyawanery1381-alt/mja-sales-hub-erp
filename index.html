@@ -11,6 +11,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- High-Performance 1D & 2D Barcode Scanner Library for Logistics Resi -->
+  <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
   <!-- Firebase JS SDK (compat, 10.12.5) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -1465,12 +1467,18 @@
               </p>
             </div>
             <div class="flex items-center space-x-2 text-xs font-semibold flex-wrap gap-2">
+              <button type="button" onclick="window.syncAllQCAndReturns(true)"
+                class="h-9 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-md shadow-sm transition-all flex items-center space-x-1.5 active:scale-95 cursor-pointer"
+                title="Sinkronkan data QC & Retur dari seluruh perangkat (HP & Laptop)">
+                <svg class="w-4 h-4 text-emerald-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                <span>🔄 Segarkan Cloud</span>
+              </button>
               <button type="button" onclick="window.exportQCManifest()"
                 class="h-9 px-3 bg-[#2F5D50] hover:bg-[#254A40] text-white font-bold text-xs rounded-md shadow-sm transition-all flex items-center space-x-1.5 active:scale-95">
                 <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span>Export Rekap Manifest (PDF / Sheet)</span>
+                <span>Export Rekap Manifest</span>
               </button>
               <span class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-xl border border-slate-200">
                 Gudang: <strong id="qc-active-branch">MJA Pusat (Semarang)</strong>
@@ -1577,12 +1585,34 @@
 
                   <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Resi Paket</label>
-                    <div class="flex gap-2">
-                      <input type="text" id="qc-stage1-resi" required placeholder="Contoh: CM75705456362" oninput="window.autoDetectStage1Resi(this.value)"
-                        class="flex-1 p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-sm outline-none focus:ring-2 focus:ring-emerald-500 uppercase">
-                      <button type="button" onclick="window.fillSampleStage1Resi()" class="px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">
-                        Sample Resi JNE
+                    <div class="flex flex-wrap gap-2">
+                      <input type="text" id="qc-stage1-resi" required placeholder="Scan barcode resi atau ketik..." oninput="window.autoDetectStage1Resi(this.value)"
+                        class="flex-1 min-w-[180px] p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-sm outline-none focus:ring-2 focus:ring-emerald-500 uppercase">
+                      <button type="button" onclick="window.startStage1BarcodeScan()"
+                        class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center space-x-1.5 active:scale-95 cursor-pointer"
+                        title="Scan barcode pada label paket resi secara instan menggunakan kamera HP">
+                        <svg class="w-4 h-4 text-emerald-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                        <span>📷 Scan Barcode Resi</span>
                       </button>
+                      <button type="button" onclick="window.fillSampleStage1Resi()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium">
+                        Sample Resi
+                      </button>
+                    </div>
+
+                    <!-- Dedicated Barcode Scanner Viewport for Stage 1 -->
+                    <div id="qc-stage1-scanner-viewport" class="hidden relative bg-slate-950 rounded-xl overflow-hidden border-2 border-emerald-500 aspect-[16/9] max-h-56 mt-2 flex flex-col items-center justify-center text-center shadow-md">
+                      <video id="qc-stage1-scanner-video" autoplay playsinline webkit-playsinline muted class="w-full h-full object-cover"></video>
+                      <div class="absolute inset-x-0 top-1/2 h-0.5 bg-rose-500 shadow-[0_0_12px_#EF4444] animate-pulse z-10"></div>
+                      <div class="absolute top-2 inset-x-2 flex items-center justify-between z-20 bg-slate-900/80 backdrop-blur px-2.5 py-1.5 rounded-lg text-white text-[11px]">
+                        <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                          <span>Arahkan Garis Merah ke Barcode Resi</span>
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                          <button type="button" onclick="window.flipStage1BarcodeCamera()" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-semibold border border-slate-700">Balik Kamera</button>
+                          <button type="button" onclick="window.stopStage1BarcodeScan()" class="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold">Tutup</button>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -1590,7 +1620,7 @@
                   <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
                       <span class="text-[10px] text-slate-400 font-bold uppercase block">Toko Pengirim</span>
-                      <span class="font-bold text-slate-900" id="qc-stage1-store">Shopee (sewangi jiwa)</span>
+                      <span class="font-bold text-slate-900" id="qc-stage1-store">MJA Semarang</span>
                     </div>
                     <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
                       <span class="text-[10px] text-slate-400 font-bold uppercase block">Jasa Kirim (Ekspedisi)</span>
@@ -1601,7 +1631,7 @@
                   <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Produk Spion yang Dikemas</label>
                     <select id="qc-stage1-product" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 outline-none">
-                      <option value="Sewangi Jiwa BINAR Parfum Unisex 30ml (Trial Klien)">Sewangi Jiwa BINAR Parfum 30ml (Trial Klien)</option>
+                      <option value="Spion Retract All New Avanza / Xenia (Set Kiri-Kanan)">Spion Retract All New Avanza / Xenia (Set Kiri-Kanan)</option>
                       <option value="Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)">Spion Retract All New Avanza / Xenia 2022+ (Set Kiri-Kanan)</option>
                       <option value="Spion Innova Reborn Type V/Q/Venturer Chrome">Spion Innova Reborn Type V/Q/Venturer Chrome</option>
                       <option value="Spion Lipat NMAX All New Model Batman">Spion Lipat NMAX All New Model Batman</option>
@@ -1915,10 +1945,17 @@
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left: Barcode Scanner / Input Form -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-              <div class="border-b border-slate-100 pb-3">
-                <h3 class="text-base font-bold text-slate-900">Scan Barcode Resi Retur</h3>
-                <p class="text-xs text-slate-500">Scan resi paket retur. Kondisi bagus otomatis menambah kembali stok
-                  (+1).</p>
+              <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-slate-900">Scan Barcode Resi Retur</h3>
+                  <p class="text-xs text-slate-500">Scan resi paket retur. Kondisi bagus otomatis restock (+1).</p>
+                </div>
+                <button type="button" onclick="window.syncAllQCAndReturns(true)"
+                  class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center space-x-1 cursor-pointer"
+                  title="Segarkan data retur dari cloud database">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                  <span>🔄 Segarkan</span>
+                </button>
               </div>
 
               <!-- Live Camera Barcode Scanner Viewport -->
@@ -6790,34 +6827,63 @@
       window.showToast('Foto bukti packing berhasil dijepret & di-watermark!', 'success');
     };
 
+    window.getActiveStoreName = function () {
+      var cur = window.appState.currentBranch || 'MJA Pusat (Semarang)';
+      return (cur.indexOf('Bekasi') !== -1 || cur.indexOf('Cabang 1') !== -1) ? 'MJA Bekasi' : 'MJA Semarang';
+    };
+
     window.autoDetectStage1Resi = function (val) {
       val = val.trim().toUpperCase();
       var storeEl = document.getElementById('qc-stage1-store');
       var courierEl = document.getElementById('qc-stage1-courier');
+      var prodEl = document.getElementById('qc-stage1-product');
       if (!storeEl || !courierEl) return;
 
-      var matched = window.appState.data.orders.find(function (o) { return o.resi.toUpperCase() === val; });
-      if (matched) {
-        storeEl.textContent = matched.store;
-        courierEl.textContent = matched.courier;
-        return;
-      }
+      // REVISI USER: Toko Pengirim MJA Semarang / MJA Bekasi
+      var activeStore = window.getActiveStoreName();
+      storeEl.textContent = activeStore;
 
-      if (val.indexOf('CM') === 0 || val.indexOf('JNE') !== -1) {
-        storeEl.textContent = 'Shopee (sewangi jiwa)';
-        courierEl.textContent = 'JNE Express Reguler (TGR10056)';
+      // Deteksi Kurir
+      var courierName = 'Ekspedisi Reguler';
+      if (val.indexOf('CM') === 0 || val.indexOf('JNE') !== -1 || /^[0-9]{15,16}$/.test(val)) {
+        courierName = 'JNE Express Reguler';
       } else if (val.indexOf('SPX') === 0) {
-        storeEl.textContent = 'Shopee Official Store 1';
-        courierEl.textContent = 'SPX Express Reguler';
-      } else if (val.indexOf('JT') === 0) {
-        storeEl.textContent = 'Shopee Mall Store 2';
-        courierEl.textContent = 'J&T Express Reguler';
-      } else if (val.indexOf('TK') === 0 || val.indexOf('TT') === 0) {
-        storeEl.textContent = 'TikTok Shop Live Official';
-        courierEl.textContent = 'J&T Cargo / Express';
-      } else {
-        storeEl.textContent = 'Shopee Official Store';
-        courierEl.textContent = 'Ekspedisi Reguler';
+        courierName = 'Shopee Xpress (SPX)';
+      } else if (val.indexOf('JT') === 0 || val.indexOf('JP') === 0) {
+        courierName = 'J&T Express';
+      } else if (val.indexOf('00') === 0 || val.indexOf('TKP') === 0) {
+        courierName = 'SiCepat Express';
+      } else if (val.indexOf('NINJA') === 0 || val.indexOf('NLID') === 0) {
+        courierName = 'Ninja Xpress';
+      } else if (val.indexOf('ANTERAJA') === 0 || val.indexOf('100') === 0) {
+        courierName = 'Anteraja';
+      }
+      courierEl.textContent = courierName;
+
+      // DETEKSI PRODUK DARI DATABASE PESANAN / INVENTORI
+      if (prodEl && val) {
+        var matchedOrder = (window.appState.data.orders || []).find(function (o) {
+          return (o.resi && o.resi.toUpperCase() === val) || (o.id && o.id.toUpperCase() === val);
+        });
+
+        if (matchedOrder && matchedOrder.product) {
+          var found = false;
+          for (var i = 0; i < prodEl.options.length; i++) {
+            if (prodEl.options[i].value === matchedOrder.product || prodEl.options[i].text.indexOf(matchedOrder.product) !== -1) {
+              prodEl.selectedIndex = i;
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            var newOpt = document.createElement('option');
+            newOpt.value = matchedOrder.product;
+            newOpt.textContent = matchedOrder.product;
+            newOpt.selected = true;
+            prodEl.prepend(newOpt);
+          }
+          window.showToast('Produk terdeteksi: ' + matchedOrder.product, 'info');
+        }
       }
     };
 
@@ -6833,7 +6899,7 @@
     window.handleStage1Submit = function (e) {
       e.preventDefault();
       var resi = document.getElementById('qc-stage1-resi').value.trim().toUpperCase();
-      var store = document.getElementById('qc-stage1-store').textContent;
+      var store = document.getElementById('qc-stage1-store').textContent || window.getActiveStoreName();
       var courier = document.getElementById('qc-stage1-courier').textContent;
       var product = document.getElementById('qc-stage1-product').value;
       var user = window.appState.currentUser || { name: 'Petugas Gudang' };
@@ -6863,12 +6929,41 @@
       if (!window.appState.data.qcProofPhotos) window.appState.data.qcProofPhotos = [];
       window.appState.data.qcProofPhotos.unshift(newProof);
 
+      // Simpan permanen ke localStorage perangkat
+      try {
+        localStorage.setItem('mja_qc_stage1_photos', JSON.stringify(window.appState.data.qcProofPhotos.slice(0, 50)));
+      } catch (eLS) { }
+
+      // Sinkronisasi Multi-Perangkat (Kirim ke Cloud Google Apps Script)
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          var pParams = new URLSearchParams({
+            action: 'saveQCStage1',
+            id: newProof.id,
+            date: newProof.date,
+            time: newProof.time,
+            resi: newProof.resi,
+            store: newProof.store,
+            courier: newProof.courier,
+            product: newProof.product,
+            operator: newProof.operator,
+            photo: newProof.photo
+          });
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: pParams.toString()
+          }).catch(function (eG) { console.warn('GAS QC1 error:', eG); });
+        } catch (eP) { }
+      }
+
       document.getElementById('qc-stage1-resi').value = '';
       window.capturedStage1Photo = null;
       window.startQCStage1Camera();
       window.renderStage1Logs();
 
-      window.showToast('SUKSES! Bukti foto packing ' + resi + ' tersimpan ke arsip Cloud Drive!', 'success');
+      window.showToast('✅ SUKSES! Foto packing ' + resi + ' tersimpan & sinkron ke seluruh perangkat!', 'success');
     };
 
     window.renderStage1Logs = function () {
@@ -7237,6 +7332,213 @@
     };
 
     // Handlers for downloadInventoryExcelTemplate & handleInventoryExcelUpload are consolidated in Section 4 below.
+    
+  // =========================================================================
+  // FITUR: SCANNER BARCODE LANGSUNG UNTUK QC TAHAP 1
+  // =========================================================================
+  window.stage1ZxingReader = null;
+  window.stage1FacingMode = 'environment';
+
+  window.startStage1BarcodeScan = function () {
+    var vp = document.getElementById('qc-stage1-scanner-viewport');
+    var video = document.getElementById('qc-stage1-scanner-video');
+    if (!vp || !video) return;
+
+    vp.classList.remove('hidden');
+
+    if (typeof ZXing !== 'undefined') {
+      try {
+        if (window.stage1ZxingReader) window.stage1ZxingReader.reset();
+        window.stage1ZxingReader = new ZXing.BrowserMultiFormatReader();
+        window.stage1ZxingReader.decodeFromVideoDevice(null, video, function (result, err) {
+          if (result && result.getText()) {
+            var scannedResi = result.getText().trim();
+            if (scannedResi) {
+              window.onStage1BarcodeScanned(scannedResi);
+            }
+          }
+        });
+        window.showToast('📷 Scanner barcode resi aktif! Arahkan ke label paket.', 'success');
+        return;
+      } catch (eZ) {
+        console.warn('ZXing Stage 1 error:', eZ);
+      }
+    }
+
+    // Fallback getUserMedia
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: window.stage1FacingMode } },
+      audio: false
+    }).then(function (stream) {
+      window.stage1ScannerStream = stream;
+      video.srcObject = stream;
+      video.play();
+      window.runStage1NativeScanLoop();
+      window.showToast('📷 Scanner barcode resi aktif! Arahkan ke label paket.', 'success');
+    }).catch(function (err) {
+      window.showToast('Gagal membuka kamera scanner: ' + err.message, 'error');
+      vp.classList.add('hidden');
+    });
+  };
+
+  window.runStage1NativeScanLoop = function () {
+    var video = document.getElementById('qc-stage1-scanner-video');
+    var vp = document.getElementById('qc-stage1-scanner-viewport');
+    if (!video || !vp || vp.classList.contains('hidden')) return;
+
+    if (window.qcBarcodeDetector && video.readyState >= 2) {
+      window.qcBarcodeDetector.detect(video).then(function (barcodes) {
+        if (barcodes && barcodes.length > 0) {
+          var resi = barcodes[0].rawValue.trim();
+          if (resi) {
+            window.onStage1BarcodeScanned(resi);
+          }
+        }
+      }).catch(function () {});
+    }
+
+    if (!vp.classList.contains('hidden')) {
+      requestAnimationFrame(window.runStage1NativeScanLoop);
+    }
+  };
+
+  window.onStage1BarcodeScanned = function (resi) {
+    window.playBeep('beep');
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    var rInput = document.getElementById('qc-stage1-resi');
+    if (rInput) {
+      rInput.value = resi;
+      window.autoDetectStage1Resi(resi);
+    }
+
+    window.stopStage1BarcodeScan();
+    window.showToast('✅ Barcode resi berhasil discan: ' + resi + '!', 'success');
+  };
+
+  window.stopStage1BarcodeScan = function () {
+    if (window.stage1ZxingReader) {
+      try { window.stage1ZxingReader.reset(); } catch (e) { }
+      window.stage1ZxingReader = null;
+    }
+    if (window.stage1ScannerStream) {
+      try { window.stage1ScannerStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.stage1ScannerStream = null;
+    }
+    var vp = document.getElementById('qc-stage1-scanner-viewport');
+    if (vp) vp.classList.add('hidden');
+  };
+
+  window.flipStage1BarcodeCamera = function () {
+    window.stage1FacingMode = (window.stage1FacingMode === 'environment') ? 'user' : 'environment';
+    window.stopStage1BarcodeScan();
+    window.startStage1BarcodeScan();
+  };
+
+  // =========================================================================
+  // MULTI-DEVICE CLOUD SYNC FOR QC & RETURNS (HP <-> LAPTOP REAL-TIME)
+  // =========================================================================
+  window.syncRemoteQCStage1 = function (showToast) {
+    if (!window.GAS_ENDPOINT_URL) return;
+    var url = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=getQCStage1&t=' + Date.now();
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.success && Array.isArray(data.photos)) {
+          var remotePhotos = data.photos;
+          var localPhotos = window.appState.data.qcProofPhotos || [];
+          var merged = [];
+          var map = {};
+
+          localPhotos.forEach(function (p) { if (p.id) { map[p.id] = true; merged.push(p); } });
+          remotePhotos.forEach(function (rp) {
+            if (!map[rp.id]) { map[rp.id] = true; merged.push(rp); }
+          });
+
+          window.appState.data.qcProofPhotos = merged;
+          try { localStorage.setItem('mja_qc_stage1_photos', JSON.stringify(merged.slice(0, 50))); } catch (e) { }
+          window.renderStage1Logs();
+          if (showToast) window.showToast('✅ Arsip foto QC Tahap 1 terupdate (' + merged.length + ' foto)!', 'success');
+        }
+      }).catch(function (err) { console.warn('Sync QC1 error:', err); });
+  };
+
+  window.syncRemoteQCLogs = function (showToast) {
+    if (!window.GAS_ENDPOINT_URL) return;
+    var url = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=getQCLogs&t=' + Date.now();
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.success && Array.isArray(data.logs)) {
+          var remoteLogs = data.logs;
+          var localLogs = window.appState.data.qcLogs || [];
+          var merged = [];
+          var map = {};
+
+          localLogs.forEach(function (l) { if (l.id) { map[l.id] = true; merged.push(l); } });
+          remoteLogs.forEach(function (rl) {
+            if (!map[rl.id]) { map[rl.id] = true; merged.push(rl); }
+          });
+
+          window.appState.data.qcLogs = merged;
+          try { localStorage.setItem('mja_qc_logs', JSON.stringify(merged.slice(0, 100))); } catch (e) { }
+          window.renderQCLogs();
+          if (typeof window.renderQCStats === 'function') window.renderQCStats();
+          if (showToast) window.showToast('✅ Log QC Tahap 2 terupdate (' + merged.length + ' paket)!', 'success');
+        }
+      }).catch(function (err) { console.warn('Sync QC2 error:', err); });
+  };
+
+  window.syncRemoteReturns = function (showToast) {
+    if (!window.GAS_ENDPOINT_URL) return;
+    var url = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=getReturns&t=' + Date.now();
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.success && Array.isArray(data.returns)) {
+          var remoteReturns = data.returns;
+          var localReturns = window.appState.data.returns || [];
+          var merged = [];
+          var map = {};
+
+          localReturns.forEach(function (r) { if (r.id) { map[r.id] = true; merged.push(r); } });
+          remoteReturns.forEach(function (rr) {
+            if (!map[rr.id]) { map[rr.id] = true; merged.push(rr); }
+          });
+
+          window.appState.data.returns = merged;
+          try { localStorage.setItem('mja_returns_history', JSON.stringify(merged.slice(0, 100))); } catch (e) { }
+          window.renderReturnsHistory();
+          if (showToast) window.showToast('✅ Riwayat retur terupdate (' + merged.length + ' paket retur)!', 'success');
+        }
+      }).catch(function (err) { console.warn('Sync Retur error:', err); });
+  };
+
+  window.syncAllQCAndReturns = function (showToast) {
+    window.syncRemoteQCStage1(showToast);
+    window.syncRemoteQCLogs(showToast);
+    window.syncRemoteReturns(showToast);
+  };
+
+  // Restore local data immediately on startup
+  try {
+    var savedQC1 = localStorage.getItem('mja_qc_stage1_photos');
+    if (savedQC1) window.appState.data.qcProofPhotos = JSON.parse(savedQC1);
+    var savedQC2 = localStorage.getItem('mja_qc_logs');
+    if (savedQC2) window.appState.data.qcLogs = JSON.parse(savedQC2);
+    var savedRet = localStorage.getItem('mja_returns_history');
+    if (savedRet) window.appState.data.returns = JSON.parse(savedRet);
+  } catch (eInitRestore) { }
+
+  // Initial cloud fetch & 10s polling interval
+  setTimeout(function () {
+    window.syncAllQCAndReturns(false);
+  }, 1000);
+
+  setInterval(function () {
+    window.syncAllQCAndReturns(false);
+  }, 10000);
+
     window.addEventListener('storage', function (e) {
       if (e.key === 'mja_attendance_sync' || e.key === 'mja_stock_sync') {
         window.renderAttendanceLogs();
@@ -7922,6 +8224,33 @@
           action: 'Lolos QC Akhir (Siap Pickup)',
           product: 'Spion Retract Avanza'
         });
+      }
+
+      // Simpan permanen ke localStorage
+      try {
+        localStorage.setItem('mja_qc_logs', JSON.stringify(logs.slice(0, 100)));
+      } catch (eLS) { }
+
+      // Sinkronisasi Multi-Perangkat (Kirim ke Cloud Google Apps Script)
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          var qcParams = new URLSearchParams({
+            action: 'saveQCLog',
+            id: 'QC-' + Date.now(),
+            time: timeNow + ' WIB',
+            resi: resi,
+            store: storeEl.textContent,
+            status: 'valid',
+            actionDesc: 'Lolos QC Akhir (Siap Pickup)',
+            product: prodEl.textContent
+          });
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: qcParams.toString()
+          }).catch(function (eG) { console.warn('GAS QC2 error:', eG); });
+        } catch (eQ) { }
       }
 
       window.renderQCStats();
@@ -9880,6 +10209,36 @@
       };
 
       window.appState.data.returns.unshift(newRetur);
+
+      // Simpan permanen ke localStorage
+      try {
+        localStorage.setItem('mja_returns_history', JSON.stringify(window.appState.data.returns.slice(0, 100)));
+      } catch (eLS) { }
+
+      // Sinkronisasi Multi-Perangkat (Kirim ke Cloud Google Apps Script)
+      if (window.GAS_ENDPOINT_URL) {
+        try {
+          var rParams = new URLSearchParams({
+            action: 'saveReturn',
+            id: newRetur.id,
+            time: newRetur.time,
+            resi: newRetur.resi,
+            store: window.getActiveStoreName ? window.getActiveStoreName() : 'MJA Semarang',
+            buyer: 'Pembeli Marketplace',
+            reason: 'Retur Paket',
+            condition: newRetur.condition,
+            effect: newRetur.effect,
+            notes: newRetur.notes
+          });
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: rParams.toString()
+          }).catch(function (eR) { console.warn('GAS Retur error:', eR); });
+        } catch (eR) { }
+      }
+
       window.renderReturnsHistory();
       document.getElementById('form-retur-input').reset();
       window.showToast('Retur diproses: ' + effectText, isRestock ? 'success' : 'warning');
@@ -14947,6 +15306,38 @@ window.handleSaveLiveSession = function (e) {
   // ===========================================================================
   window.returCameraStream = null;
 
+  window.returZxingReader = null;
+  window.lastScannedReturResi = null;
+
+  window.onReturBarcodeDetected = function (resi) {
+    if (!resi) return;
+    window.playBeep('beep');
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    var rInput = document.getElementById('retur-resi-input');
+    if (rInput) {
+      rInput.value = resi;
+      rInput.focus();
+    }
+
+    var laser = document.getElementById('retur-laser-line');
+    if (laser) {
+      laser.classList.remove('bg-rose-500');
+      laser.classList.add('bg-emerald-400');
+      setTimeout(function () {
+        laser.classList.remove('bg-emerald-400');
+        laser.classList.add('bg-rose-500');
+      }, 1500);
+    }
+
+    window.showToast('✅ Barcode resi retur terdeteksi: ' + resi + '!', 'success');
+
+    // Debounce 3 detik agar tidak memicu dobel scan berturut-turut
+    setTimeout(function () {
+      window.lastScannedReturResi = null;
+    }, 3000);
+  };
+
   window.startReturCamera = function () {
     var video = document.getElementById('retur-camera-video');
     var placeholder = document.getElementById('retur-camera-placeholder');
@@ -14959,29 +15350,78 @@ window.handleSaveLiveSession = function (e) {
       return;
     }
 
+    window.stopReturCamera();
+
+    if (video) video.classList.remove('hidden');
+    if (placeholder) placeholder.classList.add('hidden');
+    if (controls) controls.classList.remove('hidden');
+    if (laser) laser.classList.remove('hidden');
+
+    // Prioritas 1: Gunakan ZXing MultiFormat Reader untuk membaca Barcode 1D (Code 128 / Code 39)
+    if (typeof ZXing !== 'undefined') {
+      try {
+        window.returZxingReader = new ZXing.BrowserMultiFormatReader();
+        window.returZxingReader.decodeFromVideoDevice(null, video, function (result, err) {
+          if (result && result.getText()) {
+            var raw = result.getText().trim();
+            if (raw && raw !== window.lastScannedReturResi) {
+              window.lastScannedReturResi = raw;
+              window.onReturBarcodeDetected(raw);
+            }
+          }
+        });
+        window.showToast('📷 Scanner barcode retur aktif! Arahkan barcode ke layar.', 'success');
+        return;
+      } catch (eZ) {
+        console.warn('ZXing init error, fallback to getUserMedia:', eZ);
+      }
+    }
+
+    // Prioritas 2: Fallback ke Native MediaDevices + BarcodeDetector
     navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: 'environment' } },
       audio: false
-    })
-      .then(function (stream) {
-        window.returCameraStream = stream;
-        if (video) {
-          video.srcObject = stream;
-          video.classList.remove('hidden');
+    }).then(function (stream) {
+      window.returCameraStream = stream;
+      if (video) {
+        video.srcObject = stream;
+        video.play();
+      }
+      window.runReturNativeScanLoop();
+      window.showToast('📷 Scanner retur aktif! Arahkan barcode ke layar.', 'success');
+    }).catch(function (err) {
+      console.warn('Gagal akses kamera retur:', err);
+      window.showToast('Izin kamera ditolak. Silakan gunakan input resi atau simulasi scan.', 'info');
+      window.stopReturCamera();
+    });
+  };
+
+  window.runReturNativeScanLoop = function () {
+    var video = document.getElementById('retur-camera-video');
+    if (!video || !window.returCameraStream) return;
+
+    if (window.qcBarcodeDetector && video.readyState >= 2) {
+      window.qcBarcodeDetector.detect(video).then(function (barcodes) {
+        if (barcodes && barcodes.length > 0) {
+          var resi = barcodes[0].rawValue.trim();
+          if (resi && resi !== window.lastScannedReturResi) {
+            window.lastScannedReturResi = resi;
+            window.onReturBarcodeDetected(resi);
+          }
         }
-        if (placeholder) placeholder.classList.add('hidden');
-        if (controls) controls.classList.remove('hidden');
-        if (laser) laser.classList.remove('hidden');
-        window.showToast('📷 Kamera scanner retur aktif! Arahkan barcode ke layar.', 'success');
-      })
-      .catch(function (err) {
-        console.warn('Gagal akses kamera retur:', err);
-        window.showToast('Izin kamera ditolak. Silakan gunakan input resi atau simulasi scan.', 'info');
-        window.simulateQuickScanRetur();
-      });
+      }).catch(function () {});
+    }
+
+    if (window.returCameraStream) {
+      requestAnimationFrame(window.runReturNativeScanLoop);
+    }
   };
 
   window.stopReturCamera = function () {
+    if (window.returZxingReader) {
+      try { window.returZxingReader.reset(); } catch (e) { }
+      window.returZxingReader = null;
+    }
     if (window.returCameraStream) {
       try {
         window.returCameraStream.getTracks().forEach(function (t) { t.stop(); });

@@ -251,11 +251,151 @@ function doGet(e) {
     });
   }
 
+  // =========================================================================
+  // 9. GET QC TAHAP 1 (FOTO BUKTI PACKING ANTI-RETUR)
+  // =========================================================================
+  if (action === 'getQCStage1') {
+    var sheet = ss.getSheetByName('QC_Stage1');
+    if (!sheet) return jsonResponse_({ success: true, photos: [] });
+    var data = sheet.getDataRange().getValues();
+    var photos = [];
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (row[0]) {
+        photos.push({
+          id: String(row[0]),
+          date: String(row[1] || ''),
+          time: String(row[2] || ''),
+          resi: String(row[3] || ''),
+          store: String(row[4] || ''),
+          courier: String(row[5] || ''),
+          product: String(row[6] || ''),
+          operator: String(row[7] || ''),
+          photo: String(row[8] || '')
+        });
+      }
+    }
+    return jsonResponse_({ success: true, photos: photos.reverse() });
+  }
+
+  // SAVE QC TAHAP 1 (GET / CORS support)
+  if (action === 'saveQCStage1') {
+    var sheet = ss.getSheetByName('QC_Stage1');
+    if (!sheet) {
+      sheet = ss.insertSheet('QC_Stage1');
+      sheet.appendRow(['ID Bukti', 'Tanggal', 'Jam', 'No. Resi', 'Toko Pengirim', 'Kurir', 'Nama Produk', 'Petugas', 'Foto Bukti']);
+    }
+    var id = String(e.parameter.id || ('PROOF-' + Date.now()));
+    var date = String(e.parameter.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'));
+    var time = String(e.parameter.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss'));
+    var resi = String(e.parameter.resi || '');
+    var store = String(e.parameter.store || 'MJA Semarang');
+    var courier = String(e.parameter.courier || 'Ekspedisi Reguler');
+    var product = String(e.parameter.product || '');
+    var operator = String(e.parameter.operator || 'Gudang');
+    var photo = String(e.parameter.photo || '');
+
+    sheet.appendRow([id, date, "'" + time, resi, store, courier, product, operator, photo]);
+    return jsonResponse_({ success: true, id: id, message: 'Foto bukti packing berhasil disimpan ke Google Sheets' });
+  }
+
+  // =========================================================================
+  // 10. GET QC TAHAP 2 (LOG SCAN AKHIR KURIR ANTI-DOBEL)
+  // =========================================================================
+  if (action === 'getQCLogs') {
+    var sheet = ss.getSheetByName('QC_Logs');
+    if (!sheet) return jsonResponse_({ success: true, logs: [] });
+    var data = sheet.getDataRange().getValues();
+    var qcLogs = [];
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (row[0]) {
+        qcLogs.push({
+          id: String(row[0]),
+          time: String(row[1] || ''),
+          resi: String(row[2] || ''),
+          store: String(row[3] || ''),
+          status: String(row[4] || 'valid'),
+          action: String(row[5] || ''),
+          product: String(row[6] || '')
+        });
+      }
+    }
+    return jsonResponse_({ success: true, logs: qcLogs.reverse() });
+  }
+
+  // SAVE QC TAHAP 2 (GET / CORS support)
+  if (action === 'saveQCLog') {
+    var sheet = ss.getSheetByName('QC_Logs');
+    if (!sheet) {
+      sheet = ss.insertSheet('QC_Logs');
+      sheet.appendRow(['Log ID', 'Waktu', 'No. Resi', 'Toko Marketplace', 'Status QC', 'Aksi Logistik', 'Nama Produk']);
+    }
+    var id = String(e.parameter.id || ('QC-' + Date.now()));
+    var time = String(e.parameter.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm'));
+    var resi = String(e.parameter.resi || '');
+    var store = String(e.parameter.store || 'MJA Semarang');
+    var status = String(e.parameter.status || 'valid');
+    var actionDesc = String(e.parameter.actionDesc || '');
+    var product = String(e.parameter.product || '');
+
+    sheet.appendRow([id, "'" + time, resi, store, status, actionDesc, product]);
+    return jsonResponse_({ success: true, id: id, message: 'Log QC Scan berhasil disimpan ke Google Sheets' });
+  }
+
+  // =========================================================================
+  // 11. GET RETURNS (PENERIMAAN RETUR & RESTOCK)
+  // =========================================================================
+  if (action === 'getReturns') {
+    var sheet = ss.getSheetByName('Returns');
+    if (!sheet) return jsonResponse_({ success: true, returns: [] });
+    var data = sheet.getDataRange().getValues();
+    var returnsList = [];
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (row[0]) {
+        returnsList.push({
+          id: String(row[0]),
+          time: String(row[1] || ''),
+          resi: String(row[2] || ''),
+          store: String(row[3] || ''),
+          buyer: String(row[4] || ''),
+          reason: String(row[5] || ''),
+          condition: String(row[6] || 'layak_jual'),
+          effect: String(row[7] || ''),
+          notes: String(row[8] || '')
+        });
+      }
+    }
+    return jsonResponse_({ success: true, returns: returnsList.reverse() });
+  }
+
+  // SAVE RETURN (GET / CORS support)
+  if (action === 'saveReturn') {
+    var sheet = ss.getSheetByName('Returns');
+    if (!sheet) {
+      sheet = ss.insertSheet('Returns');
+      sheet.appendRow(['Retur ID', 'Waktu', 'No. Resi', 'Toko', 'Nama Pembeli', 'Alasan Retur', 'Kondisi Barang', 'Tindakan Stok', 'Catatan']);
+    }
+    var id = String(e.parameter.id || ('RET-' + Date.now()));
+    var time = String(e.parameter.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm'));
+    var resi = String(e.parameter.resi || '');
+    var store = String(e.parameter.store || 'MJA Semarang');
+    var buyer = String(e.parameter.buyer || 'Pembeli Marketplace');
+    var reason = String(e.parameter.reason || 'Retur');
+    var condition = String(e.parameter.condition || 'layak_jual');
+    var effect = String(e.parameter.effect || '');
+    var notes = String(e.parameter.notes || '-');
+
+    sheet.appendRow([id, "'" + time, resi, store, buyer, reason, condition, effect, notes]);
+    return jsonResponse_({ success: true, id: id, message: 'Data retur berhasil disimpan ke Google Sheets' });
+  }
+
   // 7. PING / STATUS
   return jsonResponse_({
     status: 'ONLINE',
     service: 'MJA Sales Hub ERP — Google Sheets Live Gateway',
-    version: '2.5-live-sessions-ready',
+    version: '3.0-qc-returns-multi-device',
     timestamp: new Date().toISOString()
   });
 }
@@ -461,6 +601,74 @@ function doPost(e) {
         success: true,
         message: 'Rekap sesi live berhasil disimpan ke Google Sheets'
       });
+    }
+
+    // 5. SAVE QC STAGE 1 via POST
+    if (action === 'saveQCStage1') {
+      var sheet = ss.getSheetByName('QC_Stage1');
+      if (!sheet) {
+        sheet = ss.insertSheet('QC_Stage1');
+        sheet.appendRow(['ID Bukti', 'Tanggal', 'Jam', 'No. Resi', 'Toko Pengirim', 'Kurir', 'Nama Produk', 'Petugas', 'Foto Bukti']);
+      }
+      var pId = payload.id || ('PROOF-' + Date.now());
+      var pDate = payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd');
+      var pTime = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss');
+      sheet.appendRow([
+        pId,
+        pDate,
+        "'" + pTime,
+        payload.resi || '',
+        payload.store || 'MJA Semarang',
+        payload.courier || 'Ekspedisi Reguler',
+        payload.product || '',
+        payload.operator || 'Gudang',
+        payload.photo || ''
+      ]);
+      return jsonResponse_({ success: true, id: pId, message: 'Foto bukti QC Tahap 1 berhasil disimpan ke Google Sheets' });
+    }
+
+    // 6. SAVE QC STAGE 2 via POST
+    if (action === 'saveQCLog') {
+      var sheet = ss.getSheetByName('QC_Logs');
+      if (!sheet) {
+        sheet = ss.insertSheet('QC_Logs');
+        sheet.appendRow(['Log ID', 'Waktu', 'No. Resi', 'Toko Marketplace', 'Status QC', 'Aksi Logistik', 'Nama Produk']);
+      }
+      var lId = payload.id || ('QC-' + Date.now());
+      var lTime = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm');
+      sheet.appendRow([
+        lId,
+        "'" + lTime,
+        payload.resi || '',
+        payload.store || 'MJA Semarang',
+        payload.status || 'valid',
+        payload.actionDesc || payload.action || '',
+        payload.product || ''
+      ]);
+      return jsonResponse_({ success: true, id: lId, message: 'Log QC Scan berhasil disimpan ke Google Sheets' });
+    }
+
+    // 7. SAVE RETURN via POST
+    if (action === 'saveReturn') {
+      var sheet = ss.getSheetByName('Returns');
+      if (!sheet) {
+        sheet = ss.insertSheet('Returns');
+        sheet.appendRow(['Retur ID', 'Waktu', 'No. Resi', 'Toko', 'Nama Pembeli', 'Alasan Retur', 'Kondisi Barang', 'Tindakan Stok', 'Catatan']);
+      }
+      var rId = payload.id || ('RET-' + Date.now());
+      var rTime = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm');
+      sheet.appendRow([
+        rId,
+        "'" + rTime,
+        payload.resi || '',
+        payload.store || 'MJA Semarang',
+        payload.buyer || 'Pembeli Marketplace',
+        payload.reason || 'Retur',
+        payload.condition || 'layak_jual',
+        payload.effect || '',
+        payload.notes || '-'
+      ]);
+      return jsonResponse_({ success: true, id: rId, message: 'Data retur berhasil disimpan ke Google Sheets' });
     }
 
     return jsonResponse_({ success: false, message: 'Action tidak dikenali: ' + action });
