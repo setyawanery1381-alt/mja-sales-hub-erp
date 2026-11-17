@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MJA Sales Hub — Multi-Store ERP & Financials</title>
     <!-- SheetJS / XLSX for Real Excel Upload & Export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -20,37 +20,46 @@
   <!-- Google Fonts: Fraunces (Headings) & DM Sans (Body, Labels, Tabular Numbers) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            heading: ['"Fraunces"', 'serif'],
-            sans: ['"DM Sans"', 'sans-serif'],
+            heading: ['"Inter"', 'system-ui', 'sans-serif'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
           },
           colors: {
             brand: {
-              primary: '#B4532A',
-              accent: '#2F5D50',
-              text: '#1F1A17',
-              bg: '#FAF6F0',
+              primary: '#2B3A9F',
+              accent: '#1E2B7B',
+              text: '#1F2937',
+              bg: '#F9FAFB',
               surface: '#FFFFFF',
-              surfaceAlt: '#F5EFE6',
-              border: '#E8E2D9',
-              muted: '#6E655F',
-              danger: '#A83220',
+              surfaceAlt: '#F3F4F6',
+              border: '#E5E7EB',
+              muted: '#6B7280',
+              danger: '#DC2626',
+              success: '#16A34A',
             }
           }
         }
       }
-    }
+    };
   </script>
   <style>
-    /* Mobile-first strict responsive reset (320px - 430px compliance) */
+    /* Strict Developer ERP & Cashier Professional Design System */
     :root {
+      --primary: #2B3A9F;
+      --primary-hover: #1E2B7B;
+      --primary-light: #EEF2FF;
+      --text-main: #1F2937;
+      --text-secondary: #6B7280;
+      --border-color: #E5E7EB;
+      --bg-page: #F9FAFB;
+      --bg-card: #FFFFFF;
+      --status-success: #16A34A;
+      --status-danger: #DC2626;
       --sat: env(safe-area-inset-top, 0px);
       --sab: env(safe-area-inset-bottom, 0px);
       --sal: env(safe-area-inset-left, 0px);
@@ -67,27 +76,18 @@
       max-width: 100vw;
       overflow-x: hidden;
       font-size: 14px;
-      font-family: 'DM Sans', sans-serif;
-      background-color: #FAF6F0;
-      color: #1F1A17;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+      background-color: #F9FAFB;
+      color: #1F2937;
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Flex and Grid text-child boundary constraint to prevent layout push */
-    .flex>*,
-    .grid>* {
-      min-width: 0;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    .font-heading {
-      font-family: 'Fraunces', serif !important;
-      letter-spacing: -0.02em;
+    /* Force Inter across all typography, completely eliminating decorative serifs */
+    h1, h2, h3, h4, h5, h6, .font-heading, .font-serif {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+      letter-spacing: -0.01em;
     }
 
     .tabular-nums,
@@ -97,58 +97,54 @@
       font-feature-settings: 'tnum';
     }
 
-    /* Label font >= 12px, Input font >= 16px to prevent auto-zoom in iPhone Safari */
+    /* Clean Developer Form Standards */
     label {
-      font-size: 12px;
-      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1F2937;
+      font-family: 'Inter', sans-serif;
+      text-transform: none !important;
+      letter-spacing: normal !important;
     }
 
     input,
     select,
     textarea {
-      font-size: 16px !important;
-      font-family: 'DM Sans', sans-serif;
+      font-size: 14px !important;
+      font-family: 'Inter', sans-serif;
       max-width: 100%;
+      border-color: #D1D5DB;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2B3A9F !important;
+      outline: none !important;
+      box-shadow: 0 0 0 1.5px #2B3A9F !important;
     }
 
     button {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
-    /* Mobile Bottom Navigation Bar & Safe Area */
+    /* Laser scanner animation */
     @keyframes scanLaser {
-      0% {
-        top: 12%;
-        opacity: 0.4;
-      }
-
-      50% {
-        top: 82%;
-        opacity: 1;
-      }
-
-      100% {
-        top: 12%;
-        opacity: 0.4;
-      }
+      0% { top: 12%; opacity: 0.4; }
+      50% { top: 82%; opacity: 1; }
+      100% { top: 12%; opacity: 0.4; }
     }
-
     .laser-line {
       animation: scanLaser 2s ease-in-out infinite;
     }
 
-    .mobile-bottom-bar {
-      padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
-      z-index: 9999 !important;
+    /* Bottom sheet slide-up animation */
+    @keyframes slideUpSheet {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
     }
-
-    /* Lift Netlify floating badge above bottom nav bar */
-    [class*="netlify"],
-    [id*="netlify"],
-    iframe[src*="netlify"],
-    .netlify-badge {
-      bottom: 70px !important;
-      z-index: 9000 !important;
+    .animate-slide-up {
+      animation: slideUpSheet 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     /* Hide scrollbars cleanly */
@@ -156,20 +152,19 @@
     .hide-scrollbar::-webkit-scrollbar {
       display: none;
     }
-
     .no-scrollbar,
     .hide-scrollbar {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
   
-    /* Sembunyikan mobile bottom nav bila ada modal terbuka */
+    /* Sembunyikan mobile bottom nav bila modal terbuka */
     body:has(.fixed.inset-0:not(.hidden):not(#mobile-drawer)) #mobile-bottom-nav,
     body.modal-open #mobile-bottom-nav {
       display: none !important;
     }
 
-    /* Mobile Bottom Navigation Solid & Rapat Garis Bawah Layar HP (Tidak Transparan & Tidak Mengambang) */
+    /* Mobile Bottom Navigation Solid & Rapat Garis Bawah Layar HP */
     #mobile-bottom-nav {
       position: fixed !important;
       bottom: 0 !important;
@@ -181,26 +176,75 @@
       opacity: 1 !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-      border-top: 1.5px solid #E2E8F0 !important;
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
+      border-top: 1px solid #E5E7EB !important;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04) !important;
       z-index: 9999 !important;
-      padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px) !important;
+      min-height: 60px !important;
+      padding-bottom: max(env(safe-area-inset-bottom, 0px), 4px) !important;
     }
+
+    /* Mobile-first adjustments (Max-width 768px: Staff & Employee View) */
     @media (max-width: 768px) {
-      body.appsgeyser-app #mobile-bottom-nav,
-      body.bnav-lifted #mobile-bottom-nav {
-        bottom: 0 !important;
+      /* Anti-overlap & layout protection */
+      .flex > *, .grid > * {
+        min-width: 0;
+        overflow-wrap: anywhere;
       }
-      body.appsgeyser-app main,
-      body.bnav-lifted main,
+
+      /* Viewport height with 100dvh support */
+      .min-h-screen {
+        min-height: 100dvh !important;
+      }
+
+      /* Main container padding so content is never obscured by bottom nav */
       main {
-        padding-bottom: 96px !important;
+        padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 32px) !important;
+      }
+
+      /* Sticky header with safe area inset */
+      header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 40 !important;
+        background-color: #FFFFFF !important;
+        padding-top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+      }
+
+      /* Responsive Modal formatting on mobile: full width, clean scroll */
+      .fixed.inset-0 > .bg-white.rounded-2xl,
+      .fixed.inset-0 > .bg-white.rounded-xl,
+      .fixed.inset-0 > div > .bg-white {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 92dvh !important;
+        border-radius: 20px 20px 0 0 !important;
+        margin-top: auto !important;
+        margin-bottom: 0 !important;
+      }
+
+      /* Form inputs & buttons touch ergonomics */
+      input, select {
+        height: 44px !important;
+        border-radius: 8px !important;
+      }
+    }
+
+    /* Desktop View (Min-width 769px: Administrator & Management View) */
+    @media (min-width: 769px) {
+      #mobile-bottom-nav {
+        display: none !important;
+      }
+      #modal-mobile-menu {
+        display: none !important;
+      }
+      main {
+        padding-bottom: 32px !important;
       }
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-[#FAF6F0] text-[#1F1A17] antialiased selection:bg-[#B4532A] selection:text-white">
+<body class="min-h-screen bg-[#F9FAFB] text-[#1F2937] antialiased selection:bg-[#2B3A9F] selection:text-white">
 
   <!-- ========================================================================= -->
   <!-- TOAST NOTIFICATION CONTAINER -->
@@ -211,50 +255,30 @@
   <!-- VIEW 1: AUTHENTICATION / LOGIN (PRIVATE PORTAL) -->
   <!-- ========================================================================= -->
   <section id="login-view"
-    class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-      <!-- Header Card -->
-      <div class="bg-slate-900 p-6 text-white text-center relative">
-        <div
-          class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-3">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#F9FAFB]">
+    <div class="w-full max-w-[400px] mx-auto py-6 sm:py-8 space-y-6">
+      
+      <!-- Top Branding (Simple & Professional) -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EEF2FF] text-[#2B3A9F] mb-1">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
         </div>
-        <h1 class="text-2xl font-bold tracking-tight">MJA Sales Hub</h1>
-        <p class="text-xs text-slate-400 mt-1">Multi-Store ERP, Live Shopping & Financials</p>
-
-        <!-- Trial Status Badge -->
-        <div id="auth-env-badge"
-          class="mt-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
-          <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          Trial Kantor: 100% Cloud Online
-        </div>
+        <h1 class="text-[22px] font-bold tracking-tight text-[#1F2937]">MJA Sales Hub</h1>
+        <p class="text-[13px] text-[#6B7280]">Masuk untuk melanjutkan</p>
       </div>
 
-      <!-- Auth Tab Switcher (Masuk Portal vs Daftar Akun Karyawan Baru) -->
-      <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
-        <button type="button" id="tab-auth-login" onclick="window.switchAuthTab('login')"
-          class="flex-1 py-3 text-center border-b-2 border-emerald-600 text-emerald-800 bg-white transition-all flex items-center justify-center space-x-1.5">
-          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-          </svg>
-          <span>Masuk Portal</span>
-        </button>
-        <button type="button" id="tab-auth-register" onclick="window.switchAuthTab('register')"
-          class="flex-1 py-3 text-center text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center space-x-1.5">
-          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-          </svg>
-          <span>Daftar Akun Baru</span>
-        </button>
+      <!-- Hidden compatibility tab elements to prevent any JS breakage -->
+      <div class="hidden">
+        <button type="button" id="tab-auth-login" onclick="window.switchAuthTab('login')">Login</button>
+        <button type="button" id="tab-auth-register" onclick="window.switchAuthTab('register')">Register</button>
+        <div id="auth-env-badge"></div>
       </div>
 
       <!-- Form 1: Login Body -->
-      <form id="form-login" onsubmit="window.handleLogin(event)" class="p-6 space-y-3.5">
-        <!-- Error Alert Banner (Peringatan Akun Tidak Terdaftar / Sandi Salah) -->
+      <form id="form-login" onsubmit="window.handleLogin(event)" class="bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] space-y-4 shadow-xs">
+        <!-- Error Alert Banner -->
         <div id="login-error-alert"
           class="hidden p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start space-x-2">
           <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,55 +288,35 @@
           <span id="login-error-msg">Email atau username belum terdaftar! Silakan periksa kembali.</span>
         </div>
 
-        <!-- Pilihan Cabang 1 & 2 (Permintaan Klien) -->
-        <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Pilih Cabang Operasional</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              </svg>
-            </span>
-            <select id="login-branch"
-              class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-slate-800 outline-none">
-              <option value="MJA Pusat (Semarang)">1. MJA Pusat (Semarang)</option>
-              <option value="MJA Cabang 1 (Bekasi)">2. MJA Cabang 1 (Bekasi)</option>
-            </select>
-          </div>
+        <!-- Pilihan Cabang -->
+        <div class="space-y-1">
+          <label for="login-branch" class="block text-[13px] font-semibold text-[#1F2937]">Cabang operasional</label>
+          <select id="login-branch"
+            class="w-full h-12 px-3 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-medium text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
+            <option value="MJA Pusat (Semarang)">MJA Pusat (Semarang)</option>
+            <option value="MJA Cabang 1 (Bekasi)">MJA Cabang 1 (Bekasi)</option>
+          </select>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Email / Username</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-              </svg>
-            </span>
-            <input type="text" id="login-email" required placeholder="admin@mja.co.id atau bambang@mja.co.id" value=""
-              oninput="var el = document.getElementById('login-error-alert'); if (el) el.classList.add('hidden');"
-              class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none">
-          </div>
+        <!-- Email / Username -->
+        <div class="space-y-1">
+          <label for="login-email" class="block text-[13px] font-semibold text-[#1F2937]">Email atau username</label>
+          <input type="text" id="login-email" required placeholder="nama@mja.co.id" value=""
+            oninput="var el = document.getElementById('login-error-alert'); if (el) el.classList.add('hidden');"
+            class="w-full h-12 px-3 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-normal text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
         </div>
 
-        <div>
-          <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-semibold uppercase text-slate-500">Kata Sandi</label>
+        <!-- Kata Sandi -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <label for="login-password" class="block text-[13px] font-semibold text-[#1F2937]">Kata sandi</label>
             <a href="javascript:void(0)"
               onclick="window.showToast('Silakan hubungi IT Administrator untuk reset kata sandi.', 'info')"
-              class="text-xs text-emerald-600 hover:underline">Lupa sandi?</a>
+              class="text-xs text-[#2B3A9F] hover:underline font-medium">Lupa sandi?</a>
           </div>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </span>
-            <input type="password" id="login-password" required placeholder="******" value="123456"
-              class="w-full pl-9 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none">
+            <input type="password" id="login-password" required placeholder="Masukkan kata sandi" value="123456"
+              class="w-full h-12 pl-3 pr-10 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-normal text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
             <button type="button" onclick="window.togglePasswordVisibility('login-password', 'eye-icon-login')"
               class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
               title="Lihat/Sembunyikan Password">
@@ -326,76 +330,101 @@
           </div>
         </div>
 
+        <!-- Tombol Masuk (Biru Solid Full-Width, 48px, Tanpa Ikon Panah) -->
         <button type="submit" id="btn-login-submit"
-          class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2">
-          <span>Masuk ke Sistem</span>
-          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
+          class="w-full h-12 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-[15px] rounded-lg transition-all flex items-center justify-center cursor-pointer">
+          <span>Masuk</span>
         </button>
 
-        <p class="text-center text-[11px] text-slate-400 pt-2 border-t border-slate-100">
-          Dilindungi oleh Supabase Row Level Security &amp; Google Apps Script
+        <!-- Link Daftar Akun Baru -->
+        <p class="text-center text-xs text-[#6B7280] pt-1">
+          Belum punya akun? <a href="javascript:void(0)" onclick="window.switchAuthTab('register')"
+            class="text-[#2B3A9F] font-semibold hover:underline">Daftar</a>
         </p>
+
+        <!-- Akun Demo Cepat (Tautan Kecil Menampilkan Chip Netral Abu) -->
+        <div class="pt-3 border-t border-[#E5E7EB] text-center">
+          <button type="button" onclick="var el = document.getElementById('demo-accounts-box'); if (el) el.classList.toggle('hidden');"
+            class="text-xs text-[#6B7280] hover:text-[#1F2937] underline font-medium">
+            Gunakan akun demo
+          </button>
+          <div id="demo-accounts-box" class="hidden mt-2.5 flex flex-wrap gap-1.5 justify-center">
+            <button type="button" onclick="window.fillDemo('admin@mja.co.id', 'admin')"
+              class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium border border-slate-200">
+              IT Admin
+            </button>
+            <button type="button" onclick="window.fillDemo('owner@mja.co.id', 'owner')"
+              class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium border border-slate-200">
+              Owner
+            </button>
+            <button type="button" onclick="window.fillDemo('finance@mja.co.id', 'finance')"
+              class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium border border-slate-200">
+              Finance
+            </button>
+            <button type="button" onclick="window.fillDemo('bambang@mja.co.id', 'host')"
+              class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium border border-slate-200">
+              Host Live
+            </button>
+            <button type="button" onclick="window.fillDemo('budi@mja.co.id', 'warehouse')"
+              class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium border border-slate-200">
+              Gudang
+            </button>
+          </div>
+        </div>
       </form>
 
-      <!-- Form 2: Register Form (Req 1 & 2: Registrasi Karyawan Mandiri) -->
-      <form id="form-register" onsubmit="window.handleRegisterUser(event)" class="hidden p-6 space-y-3 text-xs">
-        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200 text-emerald-800">
-          <p class="font-bold text-xs flex items-center space-x-1">
-            <span>✨</span>
-            <span>Registrasi Akun Karyawan MJA</span>
-          </p>
-          <p class="text-[11px] text-emerald-700 mt-0.5">Daftarkan email dan password Anda untuk mendapatkan akses
-            portal dashboard sesuai divisi kerja.</p>
+      <!-- Form 2: Register Form (Preserving all IDs and functionality) -->
+      <form id="form-register" onsubmit="window.handleRegister(event)"
+        class="hidden bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] space-y-4 shadow-xs">
+        <div class="pb-1 border-b border-[#E5E7EB]">
+          <h2 class="text-base font-bold text-[#1F2937]">Registrasi akun karyawan</h2>
+          <p class="text-xs text-[#6B7280] mt-0.5">Daftarkan akun untuk akses portal operasional.</p>
         </div>
 
-        <div>
-          <label class="block font-semibold uppercase text-slate-500 mb-1">Nama Lengkap Karyawan</label>
+        <div class="space-y-1">
+          <label for="reg-name" class="block text-[13px] font-semibold text-[#1F2937]">Nama lengkap karyawan</label>
           <input type="text" id="reg-name" required placeholder="Contoh: Ahmad Fauzi / Maya Sari"
-            class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-semibold">
+            class="w-full h-12 px-3 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-medium text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
         </div>
 
-        <div>
-          <label class="block font-semibold uppercase text-slate-500 mb-1">Email Karyawan</label>
+        <div class="space-y-1">
+          <label for="reg-email" class="block text-[13px] font-semibold text-[#1F2937]">Email karyawan</label>
           <input type="email" id="reg-email" required placeholder="nama@mjasales.com"
-            class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-          <p class="text-[10px] text-slate-400 mt-0.5">Email ini akan digunakan untuk login presensi &amp; operasional
-            (bisa diubah nanti).</p>
+            class="w-full h-12 px-3 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-normal text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
         </div>
-        <div>
-          <label class="block font-semibold uppercase text-slate-500 mb-1">NIK Karyawan (Nomor Induk Karyawan)</label>
+
+        <div class="space-y-1">
+          <label for="reg-nik" class="block text-[13px] font-semibold text-[#1F2937]">Nomor Induk Karyawan (NIK)</label>
           <input type="text" id="reg-nik" required placeholder="Contoh: MJA-2026-088"
-            class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-mono">
-          <p class="text-[10px] text-slate-400 mt-0.5">Nomor NIK resmi dari HRD &amp; Manajemen.</p>
+            class="w-full h-12 px-3 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-mono text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-semibold uppercase text-slate-500 mb-1">Divisi / Tugas</label>
+          <div class="space-y-1">
+            <label for="reg-role" class="block text-[13px] font-semibold text-[#1F2937]">Divisi / tugas</label>
             <select id="reg-role"
-              class="w-full px-2.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 outline-none">
+              class="w-full h-12 px-2.5 text-[13px] bg-white border border-[#D1D5DB] rounded-lg font-medium text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
               <option value="warehouse">Gudang &amp; QC Spion</option>
               <option value="host">Host Live Shopping</option>
               <option value="finance">Finance &amp; Akuntansi</option>
               <option value="admin">Administrator Staff</option>
             </select>
           </div>
-          <div>
-            <label class="block font-semibold uppercase text-slate-500 mb-1">Cabang Penempatan</label>
+          <div class="space-y-1">
+            <label for="reg-branch" class="block text-[13px] font-semibold text-[#1F2937]">Cabang penempatan</label>
             <select id="reg-branch"
-              class="w-full px-2 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 outline-none">
+              class="w-full h-12 px-2 text-[13px] bg-white border border-[#D1D5DB] rounded-lg font-medium text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
               <option value="Cabang 1 (Pusat & Gudang Utama)">Cabang 1 (Pusat)</option>
               <option value="Cabang 2 (Gudang Hub Ekspedisi)">Cabang 2 (Semarang Hub)</option>
             </select>
           </div>
         </div>
 
-        <div>
-          <label class="block font-semibold uppercase text-slate-500 mb-1">Kata Sandi Awal</label>
+        <div class="space-y-1">
+          <label for="reg-password" class="block text-[13px] font-semibold text-[#1F2937]">Kata sandi</label>
           <div class="relative">
-            <input type="password" id="reg-password" required minlength="6" placeholder="Standar: 123456 (bisa diubah nanti)" value="123456"
-              class="w-full pl-3 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+            <input type="password" id="reg-password" required minlength="6" placeholder="Minimal 6 karakter" value="123456"
+              class="w-full h-12 pl-3 pr-10 text-[14px] bg-white border border-[#D1D5DB] rounded-lg font-normal text-[#1F2937] outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
             <button type="button" onclick="window.togglePasswordVisibility('reg-password', 'eye-icon-reg')"
               class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
               title="Lihat/Sembunyikan Password">
@@ -410,16 +439,13 @@
         </div>
 
         <button type="submit"
-          class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-md transition-all flex items-center justify-center space-x-2">
-          <span>Daftar &amp; Langsung Masuk Dashboard</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
+          class="w-full h-12 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-[15px] rounded-lg transition-all flex items-center justify-center cursor-pointer">
+          <span>Daftar akun</span>
         </button>
 
-        <p class="text-center text-[11px] text-slate-500">
+        <p class="text-center text-xs text-[#6B7280]">
           Sudah punya akun? <a href="javascript:void(0)" onclick="window.switchAuthTab('login')"
-            class="text-emerald-600 font-bold hover:underline">Masuk di sini</a>
+            class="text-[#2B3A9F] font-semibold hover:underline">Masuk</a>
         </p>
       </form>
     </div>
@@ -530,12 +556,12 @@
         <!-- KHUSUS ADMIN & OWNER: REKAP LAPORAN ABSENSI SEMUA KARYAWAN -->
         <button onclick="window.navigateTo('section-attendance-report')" id="nav-section-attendance-report"
           class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-          <svg class="w-5 h-5 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-[#2B3A9F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span class="font-medium flex-1 text-left">Rekap Laporan Absen</span>
-          <span class="px-1.5 py-0.2 bg-[#B4532A]/20 text-orange-300 text-[10px] font-bold rounded">Admin</span>
+          <span class="px-1.5 py-0.2 bg-[#2B3A9F]/20 text-orange-300 text-[10px] font-bold rounded">Admin</span>
         </button>
 
         <!-- LAPORAN PENJUALAN DETAIL (ADMIN, OWNER, FINANCE, HOST LIVE) -->
@@ -609,27 +635,27 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50 pb-24 md:pb-8">
 
       <!-- TOP NAVBAR (STRICT MOBILE 3-ELEMENT ROW 1 + SECONDARY ROW 2) -->
-      <header class="bg-white border-b border-[#E8E2D9] sticky top-0 z-30 px-4 py-2.5 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-xs" style="padding-top: max(env(safe-area-inset-top, 0px), 10px);">
+      <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-xs" style="padding-top: calc(env(safe-area-inset-top, 0px) + 8px);">
         <!-- ROW 1 (Maksimal 3 Elemen di Layar HP: [Logo/Menu] [Judul Singkat] [1 Tombol Aksi]) -->
         <div class="flex items-center justify-between w-full md:w-auto min-w-0 gap-2">
           <!-- Elemen 1: [Logo / Menu Drawer Button] (Area sentuh >= 44px) -->
           <button onclick="window.toggleMobileDrawer()"
-            class="md:hidden h-11 w-11 flex items-center justify-center rounded-md bg-[#FAF6F0] text-[#1F1A17] border border-[#E8E2D9] active:scale-95 transition-all flex-shrink-0"
+            class="md:hidden h-11 w-11 flex items-center justify-center rounded-md bg-[#F9FAFB] text-[#1F2937] border border-[#E5E7EB] active:scale-95 transition-all flex-shrink-0"
             title="Buka Menu Modul">
-            <svg class="w-5 h-5 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-[#2B3A9F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div class="hidden md:flex items-center space-x-2 flex-shrink-0">
             <div
-              class="w-8 h-8 rounded-md bg-[#1F1A17] text-[#FAF6F0] flex items-center justify-center font-heading font-bold text-sm">
+              class="w-8 h-8 rounded-md bg-[#1F2937] text-[#F9FAFB] flex items-center justify-center font-heading font-bold text-sm">
               M</div>
-            <span class="font-heading font-bold text-sm tracking-tight text-[#1F1A17]">MJA Hub</span>
+            <span class="font-heading font-bold text-sm tracking-tight text-[#1F2937]">MJA Hub</span>
           </div>
 
           <!-- Elemen 2: [Judul Halaman] (Satu Baris, Singkat, Maks 20 Karakter di HP) -->
           <div class="flex-1 min-w-0 flex items-center justify-between gap-2 px-1">
-            <h2 class="font-heading text-sm sm:text-base font-bold text-[#1F1A17] truncate leading-tight tracking-tight" id="topbar-page-title">
+            <h2 class="font-heading text-sm sm:text-base font-bold text-[#1F2937] truncate leading-tight tracking-tight" id="topbar-page-title">
               Dashboard
             </h2>
             <!-- USER BADGE ATAS (Muncul Nama Lengkap Pengguna & Role) -->
@@ -648,7 +674,7 @@
           <!-- Elemen 3: [1 Tombol Aksi] (Ikon Saja di HP, Area Sentuh >= 44px) -->
           <div class="flex items-center space-x-1.5 flex-shrink-0">
             <button onclick="window.handleLogout()"
-              class="md:hidden h-11 w-11 flex items-center justify-center text-[#6E655F] hover:text-[#A83220] hover:bg-[#FAF6F0] rounded-md border border-[#E8E2D9] active:scale-95 transition-all"
+              class="md:hidden h-11 w-11 flex items-center justify-center text-[#6B7280] hover:text-[#A83220] hover:bg-[#F9FAFB] rounded-md border border-[#E5E7EB] active:scale-95 transition-all"
               title="Keluar Akun">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
@@ -659,7 +685,7 @@
 
         <!-- ROW 2: Elemen Sekunder (Pilihan Cabang, Status Online, Tombol Ekspor) -->
         <div
-          class="flex items-center justify-between w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-[#E8E2D9] gap-2 min-w-0">
+          class="flex items-center justify-between w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-[#E5E7EB] gap-2 min-w-0">
           <!-- Pilihan Cabang (Truncated, Max Width Terjaga) -->
           <!-- WIDGET JAM DIGITAL REALTIME (WIB DENGAN DETIK) -->
           <div id="topbar-live-clock" class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-emerald-400 border border-slate-800 shadow-2xs whitespace-nowrap" title="Waktu Indonesia Barat (GMT+7)">
@@ -667,16 +693,16 @@
             <span class="font-mono font-bold text-white tracking-wider" id="clock-time-val">--:--:-- WIB</span>
           </div>
           <button onclick="window.switchOperationalBranch()"
-            class="h-9 px-2.5 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center space-x-1 min-w-0 max-w-[145px] sm:max-w-[200px] active:scale-95 transition-all"
+            class="h-9 px-2.5 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-md text-xs font-semibold flex items-center space-x-1 min-w-0 max-w-[145px] sm:max-w-[200px] active:scale-95 transition-all"
             title="Ganti Cabang">
             <span class="flex-shrink-0 text-xs">📍</span>
             <span id="topbar-branch-name" class="truncate font-semibold">MJA Pusat (Semarang)</span>
-            <span class="flex-shrink-0 text-[10px] text-[#6E655F]">▾</span>
+            <span class="flex-shrink-0 text-[10px] text-[#6B7280]">▾</span>
           </button>
 
           <!-- Status Online (Satu Baris, white-space: nowrap) -->
           <div id="network-status-badge"
-            class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded-md text-[11px] font-semibold bg-[#FAF6F0] text-[#2F5D50] border border-[#2F5D50]/30 whitespace-nowrap">
+            class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded-md text-[11px] font-semibold bg-[#F9FAFB] text-[#2F5D50] border border-[#2F5D50]/30 whitespace-nowrap">
             <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-[#2F5D50] animate-pulse"></span>
             <span id="network-status-text">100% Online</span>
           </div>
@@ -694,7 +720,7 @@
 
           <!-- Desktop Logout -->
           <button onclick="window.handleLogout()"
-            class="hidden md:inline-flex h-9 w-9 items-center justify-center text-[#6E655F] hover:text-[#A83220] hover:bg-[#FAF6F0] rounded-md border border-[#E8E2D9] transition-all ml-1"
+            class="hidden md:inline-flex h-9 w-9 items-center justify-center text-[#6B7280] hover:text-[#A83220] hover:bg-[#F9FAFB] rounded-md border border-[#E5E7EB] transition-all ml-1"
             title="Keluar">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
@@ -839,7 +865,7 @@
                   <p class="text-[11px] text-stone-500">Performa 7 hari terakhir (Shopee + TikTok Shop Cabang A &amp; B)</p>
                 </div>
                 <div class="flex items-center space-x-3 text-xs font-semibold">
-                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#B4532A]"></span><span class="text-stone-700">Omset Kotor</span></span>
+                  <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#2B3A9F]"></span><span class="text-stone-700">Omset Kotor</span></span>
                   <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#2F5D50]"></span><span class="text-stone-700">Margin Bersih</span></span>
                 </div>
               </div>
@@ -853,8 +879,8 @@
                   <svg viewBox="0 0 540 180" class="w-full h-full" preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="omsetGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#B4532A" stop-opacity="0.18"/>
-                        <stop offset="100%" stop-color="#B4532A" stop-opacity="0.0"/>
+                        <stop offset="0%" stop-color="#2B3A9F" stop-opacity="0.18"/>
+                        <stop offset="100%" stop-color="#2B3A9F" stop-opacity="0.0"/>
                       </linearGradient>
                       <linearGradient id="marginGradient" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="#2F5D50" stop-opacity="0.15"/>
@@ -863,7 +889,7 @@
                     </defs>
 
                     <!-- Horizontal Guide Lines -->
-                    <line x1="35" y1="150" x2="520" y2="150" stroke="#E8E2D9" stroke-width="1"/>
+                    <line x1="35" y1="150" x2="520" y2="150" stroke="#E5E7EB" stroke-width="1"/>
                     <line x1="35" y1="105" x2="520" y2="105" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>
                     <line x1="35" y1="60" x2="520" y2="60" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>
                     <line x1="35" y1="15" x2="520" y2="15" stroke="#F5EFE6" stroke-width="1" stroke-dasharray="4"/>
@@ -879,21 +905,21 @@
                     <!-- Margin Area Fill -->
                     <polygon fill="url(#marginGradient)" points="50,150 50,128 125,122 200,126 275,110 350,92 425,74 500,82 500,150"/>
 
-                    <!-- Omset Polyline (#B4532A Terracotta) -->
-                    <polyline fill="none" stroke="#B4532A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                    <!-- Omset Polyline (#2B3A9F Terracotta) -->
+                    <polyline fill="none" stroke="#2B3A9F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                       points="50,105 125,88 200,98 275,65 350,42 425,22 500,32"/>
                     <!-- Margin Polyline (#2F5D50 Forest Emerald) -->
                     <polyline fill="none" stroke="#2F5D50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                       points="50,128 125,122 200,126 275,110 350,92 425,74 500,82"/>
 
                     <!-- Interactive Dots -->
-                    <circle cx="50" cy="105" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
-                    <circle cx="125" cy="88" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
-                    <circle cx="200" cy="98" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
-                    <circle cx="275" cy="65" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
-                    <circle cx="350" cy="42" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
-                    <circle cx="425" cy="22" r="5" fill="#B4532A" stroke="#FFFFFF" stroke-width="2"/>
-                    <circle cx="500" cy="32" r="3.5" fill="#B4532A" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <circle cx="50" cy="105" r="3.5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <circle cx="125" cy="88" r="3.5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <circle cx="200" cy="98" r="3.5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <circle cx="275" cy="65" r="3.5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <circle cx="350" cy="42" r="3.5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <circle cx="425" cy="22" r="5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="2"/>
+                    <circle cx="500" cy="32" r="3.5" fill="#2B3A9F" stroke="#FFFFFF" stroke-width="1.5"/>
 
                     <circle cx="50" cy="128" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
                     <circle cx="125" cy="122" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
@@ -904,10 +930,10 @@
                     <circle cx="500" cy="82" r="3" fill="#2F5D50" stroke="#FFFFFF" stroke-width="1"/>
 
                     <!-- High Peak Callout -->
-                    <rect x="395" y="4" width="60" height="15" rx="3" fill="#1F1A17" opacity="0.9"/>
-                    <text x="425" y="14" font-family="DM Sans" font-size="8.5" font-weight="bold" fill="#FAF6F0" text-anchor="middle">Rp 42.1 Jt</text>
+                    <rect x="395" y="4" width="60" height="15" rx="3" fill="#1F2937" opacity="0.9"/>
+                    <text x="425" y="14" font-family="DM Sans" font-size="8.5" font-weight="bold" fill="#F9FAFB" text-anchor="middle">Rp 42.1 Jt</text>
                     <rect x="395" y="58" width="60" height="15" rx="3" fill="#2F5D50" opacity="0.9"/>
-                    <text x="425" y="68" font-family="DM Sans" font-size="8.5" font-weight="bold" fill="#FAF6F0" text-anchor="middle">Rp 16.5 Jt</text>
+                    <text x="425" y="68" font-family="DM Sans" font-size="8.5" font-weight="bold" fill="#F9FAFB" text-anchor="middle">Rp 16.5 Jt</text>
 
                     <!-- X-Axis Labels -->
                     <text x="50" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Sen</text>
@@ -915,7 +941,7 @@
                     <text x="200" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Rab</text>
                     <text x="275" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Kam</text>
                     <text x="350" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Jum</text>
-                    <text x="425" y="166" font-family="DM Sans" font-size="10" font-weight="bold" fill="#B4532A" text-anchor="middle">Sab</text>
+                    <text x="425" y="166" font-family="DM Sans" font-size="10" font-weight="bold" fill="#2B3A9F" text-anchor="middle">Sab</text>
                     <text x="500" y="166" font-family="DM Sans" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle">Min</text>
                   </svg>
                 </div>
@@ -935,7 +961,7 @@
                 
                 <!-- Center Cutout Text Overlay (For Chart.js Doughnut) -->
                 <div id="donut-center-label" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span class="font-heading font-bold text-xl text-[#1F1A17]">35.2%</span>
+                  <span class="font-heading font-bold text-xl text-[#1F2937]">35.2%</span>
                   <span class="text-[9px] font-bold text-[#2F5D50] tracking-wider uppercase">Laba Bersih</span>
                 </div>
 
@@ -947,7 +973,7 @@
                     <circle cx="80" cy="80" r="55" fill="none" stroke="#2F5D50" stroke-width="22"
                       stroke-dasharray="121.6 345.57" stroke-dashoffset="0"/>
                     <!-- HPP Spion: 43.1% -> 148.9 -->
-                    <circle cx="80" cy="80" r="55" fill="none" stroke="#B4532A" stroke-width="22"
+                    <circle cx="80" cy="80" r="55" fill="none" stroke="#2B3A9F" stroke-width="22"
                       stroke-dasharray="148.9 345.57" stroke-dashoffset="-121.6"/>
                     <!-- Fee Admin: 11.8% -> 40.8 -->
                     <circle cx="80" cy="80" r="55" fill="none" stroke="#D97706" stroke-width="22"
@@ -956,7 +982,7 @@
                     <circle cx="80" cy="80" r="55" fill="none" stroke="#64748B" stroke-width="22"
                       stroke-dasharray="34.2 345.57" stroke-dashoffset="-311.3"/>
                     
-                    <text x="80" y="76" font-family="Fraunces" font-size="18" font-weight="bold" fill="#1F1A17" text-anchor="middle">35.2%</text>
+                    <text x="80" y="76" font-family="Fraunces" font-size="18" font-weight="bold" fill="#1F2937" text-anchor="middle">35.2%</text>
                     <text x="80" y="92" font-family="DM Sans" font-size="9" font-weight="bold" fill="#2F5D50" text-anchor="middle">LABA BERSIH</text>
                   </svg>
                 </div>
@@ -965,7 +991,7 @@
               <!-- Donut Legend Pills -->
               <div class="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[10px] font-medium border-t border-stone-100 pt-2.5 text-stone-600">
                 <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#2F5D50]"></span><span>Margin (35.2%)</span></span>
-                <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#B4532A]"></span><span>HPP Modal (43.1%)</span></span>
+                <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#2B3A9F]"></span><span>HPP Modal (43.1%)</span></span>
                 <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#D97706]"></span><span>Fee Platform (11.8%)</span></span>
                 <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-[#64748B]"></span><span>Iklan &amp; Ops (9.9%)</span></span>
               </div>
@@ -1017,39 +1043,36 @@
         <!-- =================================================================== -->
         <div id="section-live" class="content-section hidden space-y-6">
           <!-- SOP BANNER HOST LIVE -->
-          <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 text-white p-5 rounded-2xl shadow-md">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 border-l-[3px] border-l-[#2B3A9F] shadow-xs">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3.5">
               <div class="space-y-1.5 max-w-2xl">
                 <div class="flex items-center space-x-2">
-                  <span class="px-2.5 py-0.5 bg-black/30 backdrop-blur-xs text-[10px] font-extrabold uppercase tracking-wider rounded-md border border-white/20">
-                    SOP RESMI HOST LIVE STREAM
+                  <span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded border border-slate-200">
+                    SOP Resmi Host Live
                   </span>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-white text-amber-900">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
                     Khusus Host Live
                   </span>
                 </div>
-                <h3 class="text-lg sm:text-xl font-heading font-black tracking-tight text-white">
-                  Rekapitulasi Sesi Live Shopping (Shopee &amp; TikTok)
+                <h3 class="text-[18px] font-bold text-[#1F2937] leading-tight">
+                  Rekapitulasi Sesi Live Shopping
                 </h3>
-                <p class="text-xs text-amber-100 leading-relaxed hidden sm:block">
-                  Setiap Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir untuk memotong stok fisik spion di gudang dan mengunci omset real-time.
+                <p class="text-[13px] text-[#6B7280] leading-normal line-clamp-3">
+                  Setiap Host Live wajib menginput rekapitulasi data penjualan langsung sehabis siaran berakhir untuk memotong stok fisik spion di gudang dan mengunci omset real-time.
                 </p>
               </div>
-              <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+              <div class="flex flex-col sm:flex-row md:flex-row items-stretch sm:items-center gap-2 shrink-0">
                 <button onclick="window.syncLiveSessionsToGoogleSheets()"
-                  class="px-4 py-3 bg-amber-950/40 hover:bg-amber-950/60 border border-white/20 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 shadow-sm active:scale-95 cursor-pointer"
-                  title="Kirim dan sinkronkan seluruh data rekap live ke tab Live_Sessions di Google Sheets">
-                  <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  class="w-full sm:w-auto h-11 px-4 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+                  title="Sinkronkan data live ke Google Sheets">
+                  <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
-                  <span>Sinkronkan ke Spreadsheet</span>
+                  <span>Sinkronkan Spreadsheet</span>
                 </button>
                 <button onclick="window.openNewLiveModal()"
-                  class="px-5 py-3 bg-white text-amber-950 hover:bg-amber-50 rounded-xl text-xs font-black shadow-lg active:scale-95 transition-all flex items-center justify-center space-x-2 cursor-pointer">
-                  <svg class="w-4 h-4 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                  </svg>
-                  <span>+ Input Rekap Pasca-Live (Wajib)</span>
+                  class="w-full sm:w-auto h-11 px-5 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white rounded-lg text-xs font-semibold shadow-xs active:scale-95 transition-all flex items-center justify-center space-x-1.5 cursor-pointer">
+                  <span>+ Input Rekap Sesi Live</span>
                 </button>
               </div>
             </div>
@@ -1752,7 +1775,7 @@
                   <span id="qc-reconciliation-status-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold font-mono">
                     STATUS REKONSILIASI
                   </span>
-                  <button type="button" onclick="window.openManifestModal()" class="px-3.5 py-2 bg-[#B4532A] hover:bg-[#96421F] text-white rounded-lg text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all">
+                  <button type="button" onclick="window.openManifestModal()" class="px-3.5 py-2 bg-[#2B3A9F] hover:bg-[#96421F] text-white rounded-lg text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>📦 Buat Manifest Serah Terima Kurir</span>
                   </button>
@@ -2121,7 +2144,7 @@
               <input type="file" id="inventory-excel-file" accept=".csv,.xlsx,.xls,.txt"
                 onchange="window.handleInventoryExcelUpload(event)" class="hidden">
               <button type="button" onclick="window.downloadInventoryExcelTemplate()"
-                class="py-2 px-3 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs transition-all"
+                class="py-2 px-3 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs transition-all"
                 title="Unduh Format Template Kolom Excel/CSV">
                 <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2156,7 +2179,7 @@
                 <span class="truncate">Tambah Produk</span>
               </button>
               <button onclick="window.openTransferStockModal()"
-                class="py-2 px-3 bg-[#B4532A] hover:bg-[#96421F] text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all">
+                class="py-2 px-3 bg-[#2B3A9F] hover:bg-[#96421F] text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all">
                 <svg class="w-3.5 h-3.5 text-orange-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
@@ -2284,10 +2307,10 @@
         <div id="section-attendance" class="content-section hidden space-y-6">
           <!-- Top Bar -->
           <div
-            class="bg-white p-4 rounded-md border border-[#E8E2D9] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            class="bg-white p-4 rounded-md border border-[#E5E7EB] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div>
               <div class="flex items-center space-x-2">
-                <span class="p-1.5 bg-[#FAF6F0] text-[#B4532A] rounded-md border border-[#E8E2D9]">
+                <span class="p-1.5 bg-[#F9FAFB] text-[#2B3A9F] rounded-md border border-[#E5E7EB]">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -2295,14 +2318,14 @@
                       d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </span>
-                <h3 class="text-xl font-heading font-bold text-[#1F1A17]">Presensi Karyawan & Kamera Selfie</h3>
+                <h3 class="text-xl font-heading font-bold text-[#1F2937]">Presensi Karyawan & Kamera Selfie</h3>
               </div>
-              <p class="text-xs text-[#6E655F] mt-1">Ambil foto live kamera dan verifikasi jarak ke kantor Semarang
+              <p class="text-xs text-[#6B7280] mt-1">Ambil foto live kamera dan verifikasi jarak ke kantor Semarang
                 (Maks. 50 meter)</p>
             </div>
             <div class="flex items-center space-x-2">
               <span
-                class="px-3 py-1.5 bg-[#FAF6F0] text-[#B4532A] rounded-md border border-[#E8E2D9] text-xs font-bold">
+                class="px-3 py-1.5 bg-[#F9FAFB] text-[#2B3A9F] rounded-md border border-[#E5E7EB] text-xs font-bold">
                 Cabang: <span id="attendance-active-branch">MJA Pusat (Semarang)</span>
               </span>
             </div>
@@ -2311,14 +2334,14 @@
           <!-- Main Attendance Form & Geolocation Card -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left Form Input -->
-            <div class="lg:col-span-5 bg-white p-5 rounded-md border border-[#E8E2D9] space-y-4">
-              <div class="border-b border-[#E8E2D9] pb-3 flex items-center justify-between">
+            <div class="lg:col-span-5 bg-white p-5 rounded-md border border-[#E5E7EB] space-y-4">
+              <div class="border-b border-[#E5E7EB] pb-3 flex items-center justify-between">
                 <div>
-                  <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Form Absensi & Geotagging</h4>
-                  <p class="text-xs text-[#6E655F]">Pilih tipe absensi dan ambil foto selfie langsung</p>
+                  <h4 class="font-heading font-bold text-sm text-[#1F2937]">Form Absensi & Geotagging</h4>
+                  <p class="text-xs text-[#6B7280]">Pilih tipe absensi dan ambil foto selfie langsung</p>
                 </div>
                 <button type="button" onclick="window.fetchCurrentGPS()"
-                  class="h-9 px-3 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-all"
+                  class="h-9 px-3 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-all"
                   title="Perbarui Titik GPS">
                   <svg class="w-4 h-4 text-[#2F5D50]" id="gps-spinner" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -2331,36 +2354,36 @@
 
               <!-- Tipe Absen Radio Buttons -->
               <div>
-                <label class="block text-xs font-semibold text-[#1F1A17] mb-1.5">Pilih Tipe Kehadiran:</label>
+                <label class="block text-xs font-semibold text-[#1F2937] mb-1.5">Pilih Tipe Kehadiran:</label>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <label
-                    class="border-2 border-[#2F5D50] bg-[#FAF6F0] p-3 rounded-md flex flex-col cursor-pointer transition-all">
+                    class="border-2 border-[#2F5D50] bg-[#F9FAFB] p-3 rounded-md flex flex-col cursor-pointer transition-all">
                     <div class="flex items-center space-x-2">
                       <input type="radio" name="att-type" value="office" checked
                         onchange="window.toggleAttendanceType(this.value)" class="text-[#2F5D50]">
                       <span class="font-bold text-[#2F5D50]">Dalam Kantor</span>
                     </div>
-                    <span class="text-[10px] text-[#6E655F] mt-1">Staf tetap (Maks radius 50m)</span>
+                    <span class="text-[10px] text-[#6B7280] mt-1">Staf tetap (Maks radius 50m)</span>
                   </label>
 
                   <label
-                    class="border border-[#E8E2D9] bg-white p-3 rounded-md flex flex-col cursor-pointer transition-all">
+                    class="border border-[#E5E7EB] bg-white p-3 rounded-md flex flex-col cursor-pointer transition-all">
                     <div class="flex items-center space-x-2">
                       <input type="radio" name="att-type" value="courier"
-                        onchange="window.toggleAttendanceType(this.value)" class="text-[#B4532A]">
-                      <span class="font-bold text-[#1F1A17]">Luar (Pengiriman)</span>
+                        onchange="window.toggleAttendanceType(this.value)" class="text-[#2B3A9F]">
+                      <span class="font-bold text-[#1F2937]">Luar (Pengiriman)</span>
                     </div>
-                    <span class="text-[10px] text-[#6E655F] mt-1">Kurir kirim paket / drop ekspedisi</span>
+                    <span class="text-[10px] text-[#6B7280] mt-1">Kurir kirim paket / drop ekspedisi</span>
                   </label>
                 </div>
               </div>
 
               <!-- Extra Input for Courier / Pengiriman -->
-              <div id="att-courier-box" class="hidden space-y-2 bg-[#FAF6F0] p-3 rounded-md border border-[#E8E2D9]">
-                <label class="block text-xs font-semibold text-[#1F1A17]">Tujuan Ekspedisi / Lokasi Tugas Luar
+              <div id="att-courier-box" class="hidden space-y-2 bg-[#F9FAFB] p-3 rounded-md border border-[#E5E7EB]">
+                <label class="block text-xs font-semibold text-[#1F2937]">Tujuan Ekspedisi / Lokasi Tugas Luar
                   Kantor</label>
                 <select id="att-courier-destination"
-                  class="w-full text-xs p-2.5 bg-white border border-[#E8E2D9] rounded-md font-medium text-[#1F1A17] outline-none">
+                  class="w-full text-xs p-2.5 bg-white border border-[#E5E7EB] rounded-md font-medium text-[#1F2937] outline-none">
                   <option value="Drop Point SPX Express Semarang">Drop Point SPX Express Semarang</option>
                   <option value="Gudang Hub J&T Express Semarang">Gudang Hub J&T Express Semarang</option>
                   <option value="Kantor JNE Express Utama Semarang">Kantor JNE Express Utama Semarang</option>
@@ -2371,32 +2394,32 @@
 
                 <!-- Keterangan Tugas Manual (Req 4 Klien) -->
                 <div>
-                  <label class="block text-xs font-semibold text-[#1F1A17] mb-1">Keterangan Tugas / Catatan Manual
+                  <label class="block text-xs font-semibold text-[#1F2937] mb-1">Keterangan Tugas / Catatan Manual
                     (Bebas Ditulis Karyawan):</label>
                   <textarea id="att-courier-manual-notes" rows="2"
                     placeholder="Tulis rincian tugas luar kantor di sini (contoh: Ambil retur paket spion di ekspedisi / Antar barang COD Genuk)..."
-                    class="w-full text-xs p-2.5 bg-white border border-[#E8E2D9] rounded-md outline-none focus:border-[#B4532A]"></textarea>
+                    class="w-full text-xs p-2.5 bg-white border border-[#E5E7EB] rounded-md outline-none focus:border-[#2B3A9F]"></textarea>
                 </div>
 
                 <input type="text" id="att-courier-resi" placeholder="No. Resi / Surat Jalan / No. Referensi (Opsional)"
-                  class="w-full text-xs p-2.5 bg-white border border-[#E8E2D9] rounded-md outline-none font-mono">
+                  class="w-full text-xs p-2.5 bg-white border border-[#E5E7EB] rounded-md outline-none font-mono">
               </div>
 
               <!-- BUKTI FOTO LIVE WEBCAM / KAMERA HP (WAJIB LANGSUNG DARI KAMERA - NO FILE UPLOAD) -->
-              <div class="space-y-2 pt-1 border-t border-[#E8E2D9]">
+              <div class="space-y-2 pt-1 border-t border-[#E5E7EB]">
                 <div class="flex items-center justify-between">
-                  <label class="block text-xs font-bold text-[#1F1A17] flex items-center space-x-1">
-                    <span class="text-[#B4532A]">*</span>
+                  <label class="block text-xs font-bold text-[#1F2937] flex items-center space-x-1">
+                    <span class="text-[#2B3A9F]">*</span>
                     <span>Bukti Foto Wajah / Selfie (Kamera Langsung)</span>
                   </label>
                   <span
-                    class="text-[10px] text-[#B4532A] bg-[#FAF6F0] border border-[#E8E2D9] px-2 py-0.5 rounded-md font-bold">Anti-Upload
+                    class="text-[10px] text-[#2B3A9F] bg-[#F9FAFB] border border-[#E5E7EB] px-2 py-0.5 rounded-md font-bold">Anti-Upload
                     Galeri</span>
                 </div>
 
                 <!-- Camera Viewport Box -->
                 <div
-                  class="relative bg-[#1F1A17] rounded-md overflow-hidden border-2 border-[#E8E2D9] aspect-[4/3] flex flex-col items-center justify-center text-center shadow-inner cursor-pointer"
+                  class="relative bg-[#1F2937] rounded-md overflow-hidden border-2 border-[#E5E7EB] aspect-[4/3] flex flex-col items-center justify-center text-center shadow-inner cursor-pointer"
                   onclick="if (!window.attCameraStream) window.startAttendanceCamera();">
                   <!-- Live Video Stream -->
                   <video id="att-camera-video" autoplay playsinline webkit-playsinline muted
@@ -2413,9 +2436,9 @@
                   <div id="att-camera-guide"
                     class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-3 z-10">
                     <div
-                      class="w-40 h-48 border-2 border-dashed border-[#B4532A]/70 rounded-full flex flex-col items-center justify-end pb-2 shadow-[0_0_20px_rgba(180,83,42,0.25)]">
+                      class="w-40 h-48 border-2 border-dashed border-[#2B3A9F]/70 rounded-full flex flex-col items-center justify-end pb-2 shadow-[0_0_20px_rgba(180,83,42,0.25)]">
                       <span
-                        class="text-[9px] font-mono font-bold text-white bg-[#1F1A17]/85 px-2 py-0.5 rounded border border-[#E8E2D9]/30">
+                        class="text-[9px] font-mono font-bold text-white bg-[#1F2937]/85 px-2 py-0.5 rounded border border-[#E5E7EB]/30">
                         POSISIKAN WAJAH ANDA
                       </span>
                     </div>
@@ -2467,7 +2490,7 @@
                   <div class="grid grid-cols-12 gap-2">
                     <!-- Snap Button -->
                     <button type="button" id="btn-snap-photo" onclick="window.snapAttendancePhoto()"
-                      class="col-span-8 h-12 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs sm:text-sm rounded-md transition-all flex items-center justify-center space-x-1.5 active:scale-95 shadow-md">
+                      class="col-span-8 h-12 bg-[#2B3A9F] hover:bg-[#96421F] text-white font-bold text-xs sm:text-sm rounded-md transition-all flex items-center justify-center space-x-1.5 active:scale-95 shadow-md">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -2479,8 +2502,8 @@
 
                     <!-- Retake Button (shown after snap) -->
                     <button type="button" id="btn-retake-photo" onclick="window.startAttendanceCamera()"
-                      class="hidden col-span-8 h-12 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] font-semibold text-xs rounded-md border border-[#E8E2D9] transition-all flex items-center justify-center space-x-1 active:scale-95 shadow-xs">
-                      <svg class="w-4 h-4 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      class="hidden col-span-8 h-12 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] font-semibold text-xs rounded-md border border-[#E5E7EB] transition-all flex items-center justify-center space-x-1 active:scale-95 shadow-xs">
+                      <svg class="w-4 h-4 text-[#2B3A9F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
@@ -2489,7 +2512,7 @@
 
                     <!-- Flip Camera Button (Depan / Belakang) -->
                     <button type="button" onclick="window.flipAttendanceCamera()"
-                      class="col-span-4 h-12 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] rounded-md text-xs font-semibold flex items-center justify-center space-x-1 transition-all active:scale-95 shadow-xs"
+                      class="col-span-4 h-12 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-md text-xs font-semibold flex items-center justify-center space-x-1 transition-all active:scale-95 shadow-xs"
                       title="Balik Arah Kamera Depan / Belakang">
                       <svg class="w-4 h-4 text-[#2F5D50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2504,17 +2527,17 @@
               </div>
 
               <!-- GPS Live Verification Status Display -->
-              <div class="p-3.5 rounded-md border border-[#E8E2D9] bg-[#FAF6F0] space-y-2 text-xs">
+              <div class="p-3.5 rounded-md border border-[#E5E7EB] bg-[#F9FAFB] space-y-2 text-xs">
                 <div class="flex items-center justify-between">
-                  <span class="text-[#6E655F]">Titik GPS Anda:</span>
-                  <span class="font-mono font-bold text-[#1F1A17]" id="att-gps-coords">-6.9826, 110.4208</span>
+                  <span class="text-[#6B7280]">Titik GPS Anda:</span>
+                  <span class="font-mono font-bold text-[#1F2937]" id="att-gps-coords">-6.9826, 110.4208</span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-[#6E655F]">Estimasi Jarak ke Kantor:</span>
+                  <span class="text-[#6B7280]">Estimasi Jarak ke Kantor:</span>
                   <span class="font-bold text-[#2F5D50]" id="att-gps-distance">14 Meter (Dalam Radius)</span>
                 </div>
-                <div class="flex items-center justify-between border-t border-[#E8E2D9] pt-2">
-                  <span class="text-[#6E655F]">Batas Radius Semarang:</span>
+                <div class="flex items-center justify-between border-t border-[#E5E7EB] pt-2">
+                  <span class="text-[#6B7280]">Batas Radius Semarang:</span>
                   <span id="att-gps-badge"
                     class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
                     RADIUS VALID (&le; 50M)
@@ -2523,12 +2546,12 @@
               </div>
 
               <!-- Status Presensi Hari Ini (Auto-Validation 1x Masuk per Hari) -->
-              <div id="att-today-status-card" class="p-2.5 rounded-md border text-xs font-semibold bg-[#FAF6F0] border-[#E8E2D9] text-[#1F1A17] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+              <div id="att-today-status-card" class="p-2.5 rounded-md border text-xs font-semibold bg-[#F9FAFB] border-[#E5E7EB] text-[#1F2937] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <div class="flex items-center space-x-2">
                   <span id="att-today-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                   <span id="att-today-status-text">Memeriksa status kehadiran hari ini...</span>
                 </div>
-                <span id="att-today-shift-rules" class="text-[10px] text-[#6E655F] font-mono">Batas Masuk: 08:30 | Min Pulang: 17:00</span>
+                <span id="att-today-shift-rules" class="text-[10px] text-[#6B7280] font-mono">Batas Masuk: 08:30 | Min Pulang: 17:00</span>
               </div>
 
               <!-- Action Submit Buttons -->
@@ -2542,7 +2565,7 @@
                   <span>Absen Masuk (1x Sehari)</span>
                 </button>
                 <button type="button" id="btn-att-checkout" onclick="window.submitAttendance('out')"
-                  class="h-11 bg-[#1F1A17] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5">
+                  class="h-11 bg-[#1F2937] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -2553,15 +2576,15 @@
             </div>
 
             <!-- Right: Log History Table (RIWAYAT SAYA DENGAN FILTER TANGGAL) -->
-            <div class="lg:col-span-7 bg-white rounded-md border border-[#E8E2D9] overflow-hidden flex flex-col">
-              <div class="p-3.5 bg-[#FAF6F0] border-b border-[#E8E2D9] space-y-2">
+            <div class="lg:col-span-7 bg-white rounded-md border border-[#E5E7EB] overflow-hidden flex flex-col">
+              <div class="p-3.5 bg-[#F9FAFB] border-b border-[#E5E7EB] space-y-2">
                 <div class="flex items-center justify-between">
                   <div>
-                    <h4 class="font-heading font-bold text-xs sm:text-sm text-[#1F1A17]">Riwayat Presensi Saya</h4>
-                    <p class="text-[10px] text-[#6E655F]">Catatan kehadiran Anda pribadi lengkap dengan bukti selfie</p>
+                    <h4 class="font-heading font-bold text-xs sm:text-sm text-[#1F2937]">Riwayat Presensi Saya</h4>
+                    <p class="text-[10px] text-[#6B7280]">Catatan kehadiran Anda pribadi lengkap dengan bukti selfie</p>
                   </div>
                   <span
-                    class="text-[10px] font-bold text-[#B4532A] bg-white border border-[#E8E2D9] px-2 py-0.5 rounded-md"
+                    class="text-[10px] font-bold text-[#2B3A9F] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded-md"
                     id="att-my-history-count">
                     0 Catatan
                   </span>
@@ -2570,17 +2593,17 @@
                 <!-- Date Filter Bar (Hari, Bulan, Tahun) -->
                 <div class="grid grid-cols-3 gap-1.5 text-xs">
                   <div>
-                    <label class="block text-[10px] font-semibold text-[#6E655F] mb-0.5">Tanggal</label>
+                    <label class="block text-[10px] font-semibold text-[#6B7280] mb-0.5">Tanggal</label>
                     <select id="att-my-filter-day" onchange="window.renderAttendanceLogs()"
-                      class="w-full p-1.5 bg-white border border-[#E8E2D9] rounded-md text-xs font-semibold text-[#1F1A17] outline-none">
+                      class="w-full p-1.5 bg-white border border-[#E5E7EB] rounded-md text-xs font-semibold text-[#1F2937] outline-none">
                       <option value="all">Semua</option>
                       <!-- 01 - 31 -->
                     </select>
                   </div>
                   <div>
-                    <label class="block text-[10px] font-semibold text-[#6E655F] mb-0.5">Bulan</label>
+                    <label class="block text-[10px] font-semibold text-[#6B7280] mb-0.5">Bulan</label>
                     <select id="att-my-filter-month" onchange="window.renderAttendanceLogs()"
-                      class="w-full p-1.5 bg-white border border-[#E8E2D9] rounded-md text-xs font-semibold text-[#1F1A17] outline-none">
+                      class="w-full p-1.5 bg-white border border-[#E5E7EB] rounded-md text-xs font-semibold text-[#1F2937] outline-none">
                       <option value="all" selected>Semua Bulan</option>
                       <option value="01">Jan</option>
                       <option value="02">Feb</option>
@@ -2597,9 +2620,9 @@
                     </select>
                   </div>
                   <div>
-                    <label class="block text-[10px] font-semibold text-[#6E655F] mb-0.5">Tahun</label>
+                    <label class="block text-[10px] font-semibold text-[#6B7280] mb-0.5">Tahun</label>
                     <select id="att-my-filter-year" onchange="window.renderAttendanceLogs()"
-                      class="w-full p-1.5 bg-white border border-[#E8E2D9] rounded-md text-xs font-semibold text-[#1F1A17] outline-none">
+                      class="w-full p-1.5 bg-white border border-[#E5E7EB] rounded-md text-xs font-semibold text-[#1F2937] outline-none">
                       <option value="all" selected>Semua Tahun</option>
                       <option value="2024">2024</option>
                       <option value="2025">2025</option>
@@ -2612,7 +2635,7 @@
 
               <div class="overflow-x-auto flex-1 w-full">
                 <table class="w-full text-left text-xs min-w-[550px]">
-                  <thead class="bg-[#FAF6F0] text-[#6E655F] font-semibold border-b border-[#E8E2D9]">
+                  <thead class="bg-[#F9FAFB] text-[#6B7280] font-semibold border-b border-[#E5E7EB]">
                     <tr>
                       <th class="p-2.5">Foto Wajah</th>
                       <th class="p-2.5">Waktu</th>
@@ -2622,7 +2645,7 @@
                       <th class="p-2.5">Jarak & Status</th>
                     </tr>
                   </thead>
-                  <tbody id="table-attendance-logs" class="divide-y divide-[#E8E2D9] font-medium">
+                  <tbody id="table-attendance-logs" class="divide-y divide-[#E5E7EB] font-medium">
                     <!-- Populated by JS -->
                   </tbody>
                 </table>
@@ -2636,24 +2659,24 @@
         <!-- =================================================================== -->
         <div id="section-attendance-report" class="content-section hidden space-y-6">
           <!-- Header Banner -->
-          <div class="bg-white p-4 sm:p-5 rounded-md border border-[#E8E2D9] space-y-2">
+          <div class="bg-white p-4 sm:p-5 rounded-md border border-[#E5E7EB] space-y-2">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span
-                  class="text-[10px] font-bold uppercase tracking-wider text-[#B4532A] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#E8E2D9]">
+                  class="text-[10px] font-bold uppercase tracking-wider text-[#2B3A9F] bg-[#F9FAFB] px-2 py-0.5 rounded-md border border-[#E5E7EB]">
                   Akses Khusus Admin, Owner &amp; Finance (Req 8)
                 </span>
-                <h3 class="font-heading text-lg sm:text-xl font-bold text-[#1F1A17] tracking-tight mt-1">
+                <h3 class="font-heading text-lg sm:text-xl font-bold text-[#1F2937] tracking-tight mt-1">
                   Rekap &amp; Laporan Presensi Seluruh Karyawan
                 </h3>
-                <p class="text-xs text-[#6E655F]">
+                <p class="text-xs text-[#6B7280]">
                   Audit bukti foto selfie kamera langsung, pelacakan GPS, dan pengaturan radius presensi kantor
                   Semarang.
                 </p>
               </div>
               <div class="flex items-center space-x-2">
                 <button type="button" onclick="window.fetchRemoteAttendance(false)"
-                  class="h-11 px-4 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] border border-[#E8E2D9] font-bold text-xs rounded-md transition-all flex items-center space-x-1.5">
+                  class="h-11 px-4 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] font-bold text-xs rounded-md transition-all flex items-center space-x-1.5">
                   <svg class="w-4 h-4 text-[#2F5D50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -2680,11 +2703,11 @@
           </div>
 
           <!-- GPS Office Setting Card (Semarang & 50 Meter Radius) -->
-          <div class="bg-white p-4 sm:p-5 rounded-md border border-[#E8E2D9] space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E2D9] pb-3">
+          <div class="bg-white p-4 sm:p-5 rounded-md border border-[#E5E7EB] space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E5E7EB] pb-3">
               <div class="flex items-center space-x-2">
                 <div
-                  class="w-8 h-8 rounded-md bg-[#FAF6F0] border border-[#E8E2D9] flex items-center justify-center text-[#B4532A]">
+                  class="w-8 h-8 rounded-md bg-[#F9FAFB] border border-[#E5E7EB] flex items-center justify-center text-[#2B3A9F]">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -2693,16 +2716,16 @@
                   </svg>
                 </div>
                 <div>
-                  <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Pengaturan Titik GPS Cabang (Semarang &amp; Bekasi) &amp; Batas Radius 10 Meter</h4>
-                  <p class="text-[11px] text-[#6E655F]">Tentukan koordinat kantor dan batas radius presensi (Wajib &le; 10 meter baru bisa absen)</p>
+                  <h4 class="font-heading font-bold text-sm text-[#1F2937]">Pengaturan Titik GPS Cabang (Semarang &amp; Bekasi) &amp; Batas Radius 10 Meter</h4>
+                  <p class="text-[11px] text-[#6B7280]">Tentukan koordinat kantor dan batas radius presensi (Wajib &le; 10 meter baru bisa absen)</p>
                 </div>
               </div>
               <span id="cfg-geofence-status-pill"
-                class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#FAF6F0] text-[#2F5D50] border border-[#E8E2D9]">
+                class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#F9FAFB] text-[#2F5D50] border border-[#E5E7EB]">
                 Status Geofence: Aktif (10m)
               </span>
               <select id="cfg-branch-selector" onchange="window.selectGeofenceBranch(this.value)"
-                class="ml-2 h-7 px-2 text-[11px] font-bold bg-[#FAF6F0] border border-[#B4532A]/40 rounded-md text-[#B4532A] focus:outline-none cursor-pointer">
+                class="ml-2 h-7 px-2 text-[11px] font-bold bg-[#F9FAFB] border border-[#2B3A9F]/40 rounded-md text-[#2B3A9F] focus:outline-none cursor-pointer">
                 <option value="MJA Pusat (Semarang)">1. MJA Pusat (Semarang)</option>
                 <option value="MJA Cabang 1 (Bekasi)">2. MJA Cabang 1 (Bekasi)</option>
               </select>
@@ -2710,46 +2733,46 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
               <div class="lg:col-span-2">
-                <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Nama Kantor / Lokasi</label>
+                <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Nama Kantor / Lokasi</label>
                 <input type="text" id="cfg-office-name" value="MJA Pusat (Semarang)"
-                  class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+                  class="w-full h-11 px-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md font-semibold text-[#1F2937] focus:outline-none focus:border-[#2B3A9F]">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Latitude Kantor</label>
+                <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Latitude Kantor</label>
                 <input type="text" id="cfg-office-lat" value="-7.006970"
-                  class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+                  class="w-full h-11 px-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md font-mono font-semibold text-[#1F2937] focus:outline-none focus:border-[#2B3A9F]">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Longitude Kantor</label>
+                <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Longitude Kantor</label>
                 <input type="text" id="cfg-office-lng" value="110.340500"
-                  class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+                  class="w-full h-11 px-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md font-mono font-semibold text-[#1F2937] focus:outline-none focus:border-[#2B3A9F]">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Radius (Meter)</label>
+                <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Radius (Meter)</label>
                 <input type="number" id="cfg-office-radius" value="10" min="5" max="1000"
-                  class="w-full h-11 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+                  class="w-full h-11 px-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md font-mono font-bold text-[#1F2937] focus:outline-none focus:border-[#2B3A9F]">
               </div>
               <div>
                 <label class="block text-[11px] font-bold text-[#2F5D50] mb-1">Batas Max Masuk</label>
                 <input type="time" id="cfg-att-max-in" value="08:30"
-                  class="w-full h-11 px-3 bg-white border-2 border-[#2F5D50]/50 rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+                  class="w-full h-11 px-3 bg-white border-2 border-[#2F5D50]/50 rounded-md font-mono font-bold text-[#1F2937] focus:outline-none focus:border-[#2F5D50]">
               </div>
               <div>
-                <label class="block text-[11px] font-bold text-[#B4532A] mb-1">Batas Min Pulang</label>
+                <label class="block text-[11px] font-bold text-[#2B3A9F] mb-1">Batas Min Pulang</label>
                 <input type="time" id="cfg-att-min-out" value="17:00"
-                  class="w-full h-11 px-3 bg-white border-2 border-[#B4532A]/50 rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
+                  class="w-full h-11 px-3 bg-white border-2 border-[#2B3A9F]/50 rounded-md font-mono font-bold text-[#1F2937] focus:outline-none focus:border-[#2B3A9F]">
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#E8E2D9]">
-              <p class="text-[11px] text-[#6E655F] flex items-center space-x-1">
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#E5E7EB]">
+              <p class="text-[11px] text-[#6B7280] flex items-center space-x-1">
                 <span>&bull; Semarang Default: Simpang Lima (-6.9826, 110.4208)</span>
                 <span>&bull; Radius: Presensi &gt; 50m ditandai otomatis sebagai "Di Luar Radius"</span>
               </p>
               <div class="flex items-center space-x-2">
                 <button type="button" onclick="window.setOfficeToCurrentGPS()"
-                  class="h-11 px-3 bg-white hover:bg-[#FAF6F0] text-[#1F1A17] border border-[#E8E2D9] font-semibold text-xs rounded-md transition-all flex items-center space-x-1.5">
-                  <svg class="w-4 h-4 text-[#B4532A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  class="h-11 px-3 bg-white hover:bg-[#F9FAFB] text-[#1F2937] border border-[#E5E7EB] font-semibold text-xs rounded-md transition-all flex items-center space-x-1.5">
+                  <svg class="w-4 h-4 text-[#2B3A9F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -2760,7 +2783,7 @@
                 <span>📍 Buka Titik Tag Google Maps Kantor</span>
               </a>
               <button type="button" onclick="window.saveOfficeGeofenceSettings()"
-                  class="h-11 px-4 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs rounded-md shadow transition-all flex items-center space-x-1.5">
+                  class="h-11 px-4 bg-[#2B3A9F] hover:bg-[#96421F] text-white font-bold text-xs rounded-md shadow transition-all flex items-center space-x-1.5">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
@@ -2771,16 +2794,16 @@
           </div>
 
           <!-- All Employee Filter Toolbar & Table -->
-          <div class="bg-white rounded-md border border-[#E8E2D9] overflow-hidden flex flex-col">
-            <div class="p-4 bg-[#FAF6F0] border-b border-[#E8E2D9] space-y-3">
+          <div class="bg-white rounded-md border border-[#E5E7EB] overflow-hidden flex flex-col">
+            <div class="p-4 bg-[#F9FAFB] border-b border-[#E5E7EB] space-y-3">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Log Presensi Seluruh Divisi &amp; Karyawan
+                  <h4 class="font-heading font-bold text-sm text-[#1F2937]">Log Presensi Seluruh Divisi &amp; Karyawan
                   </h4>
-                  <p class="text-[11px] text-[#6E655F]">Pencarian berdasarkan tanggal, bulan, tahun, cabang, dan nama
+                  <p class="text-[11px] text-[#6B7280]">Pencarian berdasarkan tanggal, bulan, tahun, cabang, dan nama
                     staf</p>
                 </div>
-                <span class="text-xs font-bold text-[#B4532A] bg-white border border-[#E8E2D9] px-2.5 py-1 rounded-md"
+                <span class="text-xs font-bold text-[#2B3A9F] bg-white border border-[#E5E7EB] px-2.5 py-1 rounded-md"
                   id="att-all-count-badge">
                   Menampilkan 0 Log
                 </span>
@@ -2789,16 +2812,16 @@
               <!-- Multi-Filter Row -->
               <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#6E655F] mb-1">Tanggal (Hari)</label>
+                  <label class="block text-[10px] font-semibold text-[#6B7280] mb-1">Tanggal (Hari)</label>
                   <select id="att-all-filter-day" onchange="window.renderAllAttendanceReport()"
-                    class="w-full h-11 px-2.5 bg-white border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] outline-none">
+                    class="w-full h-11 px-2.5 bg-white border border-[#E5E7EB] rounded-md font-semibold text-[#1F2937] outline-none">
                     <option value="all">Semua Tanggal</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#6E655F] mb-1">Bulan</label>
+                  <label class="block text-[10px] font-semibold text-[#6B7280] mb-1">Bulan</label>
                   <select id="att-all-filter-month" onchange="window.renderAllAttendanceReport()"
-                    class="w-full h-11 px-2.5 bg-white border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] outline-none">
+                    class="w-full h-11 px-2.5 bg-white border border-[#E5E7EB] rounded-md font-semibold text-[#1F2937] outline-none">
                     <option value="all" selected>Semua Bulan</option>
                     <option value="01">01 - Januari</option>
                     <option value="02">02 - Februari</option>
@@ -2815,9 +2838,9 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#6E655F] mb-1">Tahun</label>
+                  <label class="block text-[10px] font-semibold text-[#6B7280] mb-1">Tahun</label>
                   <select id="att-all-filter-year" onchange="window.renderAllAttendanceReport()"
-                    class="w-full h-11 px-2.5 bg-white border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] outline-none">
+                    class="w-full h-11 px-2.5 bg-white border border-[#E5E7EB] rounded-md font-semibold text-[#1F2937] outline-none">
                     <option value="all" selected>Semua Tahun</option>
                     <option value="2024">2024</option>
                     <option value="2025">2025</option>
@@ -2826,19 +2849,19 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#6E655F] mb-1">Cabang</label>
+                  <label class="block text-[10px] font-semibold text-[#6B7280] mb-1">Cabang</label>
                   <select id="att-all-filter-branch" onchange="window.renderAllAttendanceReport()"
-                    class="w-full h-11 px-2.5 bg-white border border-[#E8E2D9] rounded-md font-semibold text-[#1F1A17] outline-none">
+                    class="w-full h-11 px-2.5 bg-white border border-[#E5E7EB] rounded-md font-semibold text-[#1F2937] outline-none">
                     <option value="all">Semua Cabang</option>
                     <option value="Cabang 1 (Pusat & Gudang Utama)">Cabang 1 Semarang</option>
                     <option value="Cabang 2 (Gudang Hub Ekspedisi)">Cabang 2 Hub</option>
                   </select>
                 </div>
                 <div class="col-span-2">
-                  <label class="block text-[10px] font-semibold text-[#6E655F] mb-1">Cari Karyawan / Divisi</label>
+                  <label class="block text-[10px] font-semibold text-[#6B7280] mb-1">Cari Karyawan / Divisi</label>
                   <input type="text" id="att-all-search" oninput="window.renderAllAttendanceReport()"
                     placeholder="Ketik nama karyawan atau divisi..."
-                    class="w-full h-11 px-3 bg-white border border-[#E8E2D9] rounded-md font-medium text-[#1F1A17] outline-none placeholder:text-[#6E655F]/60">
+                    class="w-full h-11 px-3 bg-white border border-[#E5E7EB] rounded-md font-medium text-[#1F2937] outline-none placeholder:text-[#6B7280]/60">
                 </div>
               </div>
             </div>
@@ -2846,7 +2869,7 @@
             <!-- Table -->
             <div class="overflow-x-auto flex-1 w-full">
               <table class="w-full text-left text-xs min-w-[700px]">
-                <thead class="bg-[#FAF6F0] text-[#6E655F] font-semibold border-b border-[#E8E2D9]">
+                <thead class="bg-[#F9FAFB] text-[#6B7280] font-semibold border-b border-[#E5E7EB]">
                   <tr>
                     <th class="p-3">Foto Kamera</th>
                     <th class="p-3">Tanggal &amp; Waktu</th>
@@ -2859,7 +2882,7 @@
                     <th class="p-3 text-center">Aksi Revisi IT</th>
                   </tr>
                 </thead>
-                <tbody id="table-all-attendance-logs" class="divide-y divide-[#E8E2D9] font-medium">
+                <tbody id="table-all-attendance-logs" class="divide-y divide-[#E5E7EB] font-medium">
                   <!-- Rendered by JS -->
                 </tbody>
               </table>
@@ -3823,7 +3846,7 @@
       style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px); min-height: 56px; background-color: #FFFFFF !important; background: #FFFFFF !important; opacity: 1 !important; backdrop-filter: none !important;">
       <!-- 1. Home (4 karakter) -->
       <button onclick="window.navigateTo('section-dashboard')" id="bnav-section-dashboard"
-        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] transition-all">
+        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6B7280] transition-all">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
@@ -3833,7 +3856,7 @@
 
       <!-- 2. Stok Spion (4 karakter) -->
       <button onclick="window.navigateTo('section-inventory')" id="bnav-section-inventory"
-        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] transition-all">
+        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6B7280] transition-all">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -3843,7 +3866,7 @@
 
       <!-- 3. QC Kirim (2 karakter: QC) -->
       <button onclick="window.navigateTo('section-qc-scan')" id="bnav-section-qc-scan"
-        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] transition-all">
+        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6B7280] transition-all">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -3853,7 +3876,7 @@
 
       <!-- 4. Absensi GPS (5 karakter) -->
       <button onclick="window.navigateTo('section-attendance')" id="bnav-section-attendance"
-        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6E655F] transition-all">
+        class="bnav-item flex flex-col items-center justify-center h-full min-h-[44px] py-1 rounded-md text-[#6B7280] transition-all">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -3864,7 +3887,7 @@
 
       <!-- 5. Tombol Drawer Menu (4 karakter) -->
       <button onclick="window.toggleMobileDrawer()" id="bnav-btn-more-initial"
-        class="bnav-item flex flex-col items-center justify-start h-auto min-h-[46px] py-1 rounded-lg text-[#6E655F] active:scale-95 transition-all">
+        class="bnav-item flex flex-col items-center justify-start h-auto min-h-[46px] py-1 rounded-lg text-[#6B7280] active:scale-95 transition-all">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -3877,223 +3900,214 @@
   <!-- MODAL: MOBILE FULL NAVIGATION DRAWER (GRID 10 MODUL LENGKAP) -->
   <!-- ========================================================================= -->
   <div id="modal-mobile-menu"
-    class="fixed inset-0 bg-[#1F1A17]/80 backdrop-blur-sm z-[10000] hidden flex flex-col justify-end transition-opacity">
-    <div class="bg-white rounded-t-3xl max-h-[88vh] w-full p-4 sm:p-5 overflow-y-auto space-y-3.5 shadow-2xl">
-      <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-        <div>
-          <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Semua Menu Operasional</h3>
-          <p class="text-[11px] text-slate-500">Pilih modul ERP yang ingin Anda akses</p>
-        </div>
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[10000] hidden flex flex-col justify-end transition-opacity"
+    onclick="if(event.target === this) window.closeMobileDrawer()">
+    <div class="bg-white rounded-t-[20px] max-h-[85dvh] w-full p-4 sm:p-5 overflow-y-auto space-y-4 shadow-2xl animate-slide-up"
+      style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);">
+      
+      <!-- Drag Handle -->
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto -mt-1 mb-2"></div>
+
+      <!-- Header Sheet -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-[18px] text-[#1F2937]">Menu</h3>
         <button onclick="window.closeMobileDrawer()"
-          class="p-2 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full font-bold text-base">&times;</button>
+          class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full font-bold text-lg transition-all"
+          title="Tutup Menu">&times;</button>
       </div>
 
-      <!-- Quick Info Bar in Drawer -->
-      <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between text-xs">
-        <div class="flex items-center space-x-2 min-w-0">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
-          <span class="font-bold text-slate-700 truncate" id="drawer-user-info">admin@mja.co.id</span>
+      <!-- User Profile Card -->
+      <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between gap-2.5">
+        <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+          <div class="w-9 h-9 rounded-full bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center font-bold text-sm shrink-0">
+            A
+          </div>
+          <div class="min-w-0 flex-1 leading-tight">
+            <div class="font-semibold text-xs text-[#1F2937] truncate" id="drawer-user-info">admin@mja.co.id</div>
+            <div class="text-[11px] text-[#6B7280] truncate mt-0.5" id="drawer-user-role-label">Administrator</div>
+          </div>
         </div>
         <button onclick="window.switchOperationalBranch()"
-          class="flex-shrink-0 text-indigo-700 font-bold bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200 text-[11px]">
-          📍 <span id="drawer-branch-info">MJA Pusat (Semarang)</span> ▾
+          class="shrink-0 text-[#2B3A9F] font-semibold bg-[#EEF2FF] px-2.5 py-1.5 rounded-lg text-[11px] max-w-[130px] truncate"
+          title="Klik untuk Ganti Cabang Operasional">
+          📍 <span id="drawer-branch-info">MJA Pusat (Semarang)</span>
         </button>
       </div>
 
-      <!-- Grid of all modules (2 columns on mobile) -->
-      <div class="grid grid-cols-2 gap-2 text-xs">
+      <!-- 3-Column Module Grid (Clean Gojek/Bank Icon Grid) -->
+      <div class="grid grid-cols-3 gap-2 text-center">
         <!-- 1. Dashboard -->
         <button id="drawer-item-section-dashboard" onclick="window.navigateFromDrawer('section-dashboard')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Dashboard</span>
-          <span class="text-[10px] text-slate-500">Omset & Profit Toko</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Dashboard</span>
         </button>
 
         <!-- 2. Sesi Live -->
         <button id="drawer-item-section-live" onclick="window.navigateFromDrawer('section-live')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-amber-50 text-amber-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Rekap Live</span>
-          <span class="text-[10px] text-slate-500">Shopee & TikTok</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Rekap Live</span>
         </button>
 
         <!-- 3. Stok Spion -->
         <button id="drawer-item-section-inventory" onclick="window.navigateFromDrawer('section-inventory')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-purple-50 text-purple-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Stok Spion</span>
-          <span class="text-[10px] text-slate-500">Kelompok Mobil & Motor</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Stok Spion</span>
         </button>
 
         <!-- 4. Scan QC Validasi -->
         <button id="drawer-item-section-qc-scan" onclick="window.navigateFromDrawer('section-qc-scan')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Scan Validasi QC</span>
-          <span class="text-[10px] text-slate-500">Anti Resi Dobel/Batal</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Validasi QC</span>
         </button>
 
-        <!-- 5. Absensi GPS + Kamera -->
+        <!-- 5. Absensi GPS -->
         <button id="drawer-item-section-attendance" onclick="window.navigateFromDrawer('section-attendance')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-blue-50 text-blue-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Absensi GPS</span>
-          <span class="text-[10px] text-slate-500">Selfie Live Kamera</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Absensi GPS</span>
         </button>
 
         <!-- 6. Kalkulator Harga -->
         <button id="drawer-item-section-pricing" onclick="window.navigateFromDrawer('section-pricing')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-indigo-50 text-indigo-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Kalkulator</span>
-          <span class="text-[10px] text-slate-500">Harga Modal & Ads</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Kalkulator</span>
         </button>
 
         <!-- 7. Order & Resi -->
         <button id="drawer-item-section-orders" onclick="window.navigateFromDrawer('section-orders')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-cyan-50 text-cyan-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Order & Resi</span>
-          <span class="text-[10px] text-slate-500">Filter Kurir Kilat</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Order &amp; Resi</span>
         </button>
 
         <!-- 8. Retur Paket -->
         <button id="drawer-item-section-returns" onclick="window.navigateFromDrawer('section-returns')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-rose-50 text-rose-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M16 15v-1a4 4 0 00-4-4H4m0 0l4-4m-4 4l4 4" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Retur Paket</span>
-          <span class="text-[10px] text-slate-500">Restock Otomatis +1</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Retur Paket</span>
         </button>
 
         <!-- 9. Laporan Laba Rugi -->
         <button id="drawer-item-section-financial" onclick="window.navigateFromDrawer('section-financial')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Laba Rugi</span>
-          <span class="text-[10px] text-slate-500">P&L Riil Toko</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Laba Rugi</span>
         </button>
 
         <!-- 10. Pengguna IT -->
         <button id="drawer-item-section-users" onclick="window.navigateFromDrawer('section-users')"
-          class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-slate-200 text-slate-800 rounded-md mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-          </span>
-          <span class="font-bold text-slate-900">Manajemen IT</span>
-          <span class="text-[10px] text-slate-500">Akun & Hak Akses</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Manajemen IT</span>
         </button>
 
-        <!-- 11. Rekap Laporan Absensi (Khusus Admin & Owner) -->
-        <button onclick="window.navigateFromDrawer('section-attendance-report')" id="drawer-item-section-attendance-report"
-          class="p-3 bg-[#FAF6F0] hover:bg-[#E8E2D9] border border-[#B4532A]/30 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-[#B4532A]/15 text-[#B4532A] rounded-md mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- 11. Rekap Laporan Absensi -->
+        <button id="drawer-item-section-attendance-report" onclick="window.navigateFromDrawer('section-attendance-report')"
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-          </span>
-          <span class="font-bold text-[#B4532A]">Rekap Absensi</span>
-          <span class="text-[10px] text-[#6E655F]">Admin & Owner Saja</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Rekap Absensi</span>
         </button>
 
-        <!-- 13. Laporan Penjualan Detail (Semua Role) -->
-        <button onclick="window.navigateFromDrawer('section-sales-detail')" id="drawer-item-section-sales-detail"
-          class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-emerald-200 text-emerald-900 rounded-md mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- 12. Laporan Penjualan Detail -->
+        <button id="drawer-item-section-sales-detail" onclick="window.navigateFromDrawer('section-sales-detail')"
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-          </span>
-          <span class="font-bold text-emerald-950">Penjualan Detail</span>
-          <span class="text-[10px] text-emerald-800">Admin, Owner, Host</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Penjualan Detail</span>
         </button>
 
-        <!-- 12. Laporan Analitik Live (Khusus Manajemen, Admin, Finance) -->
-        <button onclick="window.navigateFromDrawer('section-live-reports')" id="drawer-item-section-live-reports"
-          class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-md flex flex-col items-start space-y-1 text-left active:scale-95 transition-all">
-          <span class="p-2 bg-amber-200 text-amber-900 rounded-md mb-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- 13. Laporan Analitik Live -->
+        <button id="drawer-item-section-live-reports" onclick="window.navigateFromDrawer('section-live-reports')"
+          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
+          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-          </span>
-          <span class="font-bold text-amber-950">Laporan Live</span>
-          <span class="text-[10px] text-amber-800">Khusus Manajemen</span>
+          </div>
+          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Laporan Live</span>
         </button>
       </div>
 
-      <!-- Mobile View Info -->
-      <div class="pt-2">
-        <div class="w-full py-2 px-3 bg-slate-50 text-slate-600 border border-slate-200 rounded-xl text-[11px] text-center font-medium">
-          <span>📱 Menu Bawah Solid Pas Garis Layar HP</span>
-        </div>
-      </div>
-
-      <!-- Action Footer in Drawer -->
-      <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+      <!-- Action Footer in Sheet (2 simple list rows) -->
+      <div class="pt-3 border-t border-slate-100 space-y-1">
         <button id="drawer-btn-export" onclick="window.triggerGoogleSheetsExport()"
-          class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 active:scale-95 transition-all">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="w-full py-2.5 px-3 hover:bg-slate-50 rounded-xl text-xs font-semibold text-[#1F2937] flex items-center space-x-2.5 transition-all cursor-pointer">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>Ekspor Sheets</span>
+          <span>Ekspor ke Spreadsheet</span>
         </button>
         <button onclick="window.handleLogout()"
-          class="py-2.5 px-4 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl text-xs font-bold flex items-center space-x-1 active:scale-95 transition-all">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="w-full py-2.5 px-3 hover:bg-rose-50 rounded-xl text-xs font-semibold text-[#DC2626] flex items-center space-x-2.5 transition-all cursor-pointer">
+          <svg class="w-4 h-4 text-[#DC2626]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
           </svg>
           <span>Keluar</span>
@@ -4255,27 +4269,29 @@
           </div>
 
         <!-- Input Rincian Produk Spion Terjual Saat Live (Wajib untuk Potong Stok Fisik Gudang) -->
-        <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-2">
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between">
-            <label class="block font-bold text-slate-900 text-xs">
-              Pilih Produk Spion Terjual Saat Live <span class="text-rose-600">*</span>:
+            <label class="block font-semibold text-slate-900 text-xs">
+              Pilih produk spion terjual saat live <span class="text-rose-600">*</span>
             </label>
-            <span class="text-[10px] font-bold text-amber-800">Otomatis Potong Stok Gudang</span>
+            <span class="text-[11px] font-medium text-slate-500">Otomatis potong stok gudang</span>
           </div>
-          <div class="grid grid-cols-12 gap-1.5">
+          <div class="space-y-2">
             <select id="modal-live-item-select"
-              class="col-span-7 h-9 px-2 bg-white border border-amber-300 rounded-lg text-xs font-semibold text-slate-800">
+              class="w-full h-11 px-3 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
               <!-- Populated dynamically -->
             </select>
-            <input type="number" id="modal-live-item-qty" placeholder="Qty" min="1" value="5"
-              class="col-span-2 h-9 px-1 bg-white border border-amber-300 rounded-lg text-xs text-center font-black">
-            <button type="button" onclick="window.addLiveSoldItem()"
-              class="col-span-3 h-9 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all shadow-xs flex items-center justify-center space-x-1 cursor-pointer">
-              <span>+ Tambah</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <input type="number" id="modal-live-item-qty" placeholder="Qty" min="1" value="5"
+                class="w-20 h-11 px-2 bg-white border border-slate-300 rounded-lg text-xs text-center font-bold text-slate-900 outline-none focus:border-[#2B3A9F] focus:ring-1 focus:ring-[#2B3A9F]">
+              <button type="button" onclick="window.addLiveSoldItem()"
+                class="flex-1 h-11 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-xs rounded-lg transition-all flex items-center justify-center space-x-1 cursor-pointer">
+                <span>+ Tambah</span>
+              </button>
+            </div>
           </div>
           <div id="modal-live-items-list"
-            class="space-y-1.5 max-h-28 overflow-y-auto pt-1 border-t border-amber-200/80 text-[11px]">
+            class="space-y-1.5 max-h-36 overflow-y-auto pt-1 border-t border-slate-200 text-[11px]">
             <!-- List of added items -->
           </div>
         </div>
@@ -4320,30 +4336,30 @@
         <!-- Pilihan Kendala Siaran Live (Checklist SOP) -->
         <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200 space-y-2">
           <label class="block font-bold text-amber-950 text-xs">Pilihan Kendala Selama Live (Bila Ada):</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px] text-slate-700">
-            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
-              <input type="checkbox" name="live-obstacle" value="Sinyal / Internet Lemot" class="rounded text-amber-600">
-              <span>Sinyal Lemot</span>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center space-x-2 px-3 py-2.5 min-h-[44px] rounded-lg border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:bg-[#EEF2FF] has-[:checked]:border-[#2B3A9F]">
+              <input type="checkbox" name="live-obstacle" value="Sinyal / Internet Lemot" class="rounded border-slate-300 text-[#2B3A9F] focus:ring-[#2B3A9F]">
+              <span class="text-xs font-medium text-slate-700">Sinyal Lemot</span>
             </label>
-            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
-              <input type="checkbox" name="live-obstacle" value="Stok Spion Habis" class="rounded text-amber-600">
-              <span>Stok Spion Habis</span>
+            <label class="flex items-center space-x-2 px-3 py-2.5 min-h-[44px] rounded-lg border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:bg-[#EEF2FF] has-[:checked]:border-[#2B3A9F]">
+              <input type="checkbox" name="live-obstacle" value="Stok Spion Habis" class="rounded border-slate-300 text-[#2B3A9F] focus:ring-[#2B3A9F]">
+              <span class="text-xs font-medium text-slate-700">Stok Spion Habis</span>
             </label>
-            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
-              <input type="checkbox" name="live-obstacle" value="Masalah Audio / Lampu" class="rounded text-amber-600">
-              <span>Audio / Lighting</span>
+            <label class="flex items-center space-x-2 px-3 py-2.5 min-h-[44px] rounded-lg border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:bg-[#EEF2FF] has-[:checked]:border-[#2B3A9F]">
+              <input type="checkbox" name="live-obstacle" value="Masalah Audio / Lampu" class="rounded border-slate-300 text-[#2B3A9F] focus:ring-[#2B3A9F]">
+              <span class="text-xs font-medium text-slate-700">Audio / Lighting</span>
             </label>
-            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
-              <input type="checkbox" name="live-obstacle" value="Peringatan Platform" class="rounded text-amber-600">
-              <span>Peringatan Sistem</span>
+            <label class="flex items-center space-x-2 px-3 py-2.5 min-h-[44px] rounded-lg border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:bg-[#EEF2FF] has-[:checked]:border-[#2B3A9F]">
+              <input type="checkbox" name="live-obstacle" value="Peringatan Platform" class="rounded border-slate-300 text-[#2B3A9F] focus:ring-[#2B3A9F]">
+              <span class="text-xs font-medium text-slate-700">Peringatan Sistem</span>
             </label>
-            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
-              <input type="checkbox" name="live-obstacle" value="Host Kurang Fit" class="rounded text-amber-600">
-              <span>Host Lelah / Kurang Fit</span>
+            <label class="flex items-center space-x-2 px-3 py-2.5 min-h-[44px] rounded-lg border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:bg-[#EEF2FF] has-[:checked]:border-[#2B3A9F]">
+              <input type="checkbox" name="live-obstacle" value="Host Kurang Fit" class="rounded border-slate-300 text-[#2B3A9F] focus:ring-[#2B3A9F]">
+              <span class="text-xs font-medium text-slate-700">Host Kurang Fit</span>
             </label>
-            <label class="flex items-center space-x-1.5 bg-white p-1.5 rounded border border-amber-200 cursor-pointer hover:bg-amber-100/50">
-              <input type="checkbox" name="live-obstacle" value="Aplikasi Marketplace Lag" class="rounded text-amber-600">
-              <span>App Marketplace Lag</span>
+            <label class="flex items-center space-x-2 px-3 py-2.5 min-h-[44px] rounded-lg border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:bg-[#EEF2FF] has-[:checked]:border-[#2B3A9F]">
+              <input type="checkbox" name="live-obstacle" value="Aplikasi Marketplace Lag" class="rounded border-slate-300 text-[#2B3A9F] focus:ring-[#2B3A9F]">
+              <span class="text-xs font-medium text-slate-700">App Marketplace Lag</span>
             </label>
           </div>
         </div>
@@ -4731,22 +4747,22 @@
     </div>
   </div>
   <div id="modal-view-photo"
-    class="fixed inset-0 bg-[#1F1A17]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-md max-w-sm w-full shadow-2xl overflow-hidden border border-[#E8E2D9] p-4 space-y-3">
-      <div class="flex justify-between items-center pb-2 border-b border-[#E8E2D9]">
+    class="fixed inset-0 bg-[#1F2937]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-md max-w-sm w-full shadow-2xl overflow-hidden border border-[#E5E7EB] p-4 space-y-3">
+      <div class="flex justify-between items-center pb-2 border-b border-[#E5E7EB]">
         <div class="flex items-center space-x-2">
           <span class="w-2.5 h-2.5 rounded-full bg-[#2F5D50]"></span>
-          <h4 class="font-heading font-bold text-xs text-[#1F1A17]">Bukti Foto Asli Kamera Live</h4>
+          <h4 class="font-heading font-bold text-xs text-[#1F2937]">Bukti Foto Asli Kamera Live</h4>
         </div>
         <button onclick="window.closeModal('modal-view-photo')"
-          class="h-8 w-8 flex items-center justify-center rounded-md bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] text-base font-bold">&times;</button>
+          class="h-8 w-8 flex items-center justify-center rounded-md bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] text-base font-bold">&times;</button>
       </div>
-      <div class="bg-[#FAF6F0] rounded-md overflow-hidden border border-[#E8E2D9] p-1">
+      <div class="bg-[#F9FAFB] rounded-md overflow-hidden border border-[#E5E7EB] p-1">
         <img id="modal-photo-img" src="" class="w-full rounded-md object-cover shadow-sm aspect-[4/3]"
           alt="Foto Kamera">
       </div>
-      <div class="bg-[#FAF6F0] p-2.5 rounded-md border border-[#E8E2D9]">
-        <p class="text-[11px] text-[#1F1A17] text-center font-mono font-bold" id="modal-photo-meta"></p>
+      <div class="bg-[#F9FAFB] p-2.5 rounded-md border border-[#E5E7EB]">
+        <p class="text-[11px] text-[#1F2937] text-center font-mono font-bold" id="modal-photo-meta"></p>
         
       </div>
     </div>
@@ -4755,9 +4771,9 @@
   <!-- ========================================================================= -->
   <!-- MODAL RESET & BERSIHKAN ABSENSI DEMO -->
   <!-- ========================================================================= -->
-  <div id="modal-reset-attendance" class="fixed inset-0 bg-[#1F1A17]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-md max-w-md w-full shadow-2xl overflow-hidden border border-[#E8E2D9] p-5 space-y-4">
-      <div class="flex justify-between items-center pb-3 border-b border-[#E8E2D9]">
+  <div id="modal-reset-attendance" class="fixed inset-0 bg-[#1F2937]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-md max-w-md w-full shadow-2xl overflow-hidden border border-[#E5E7EB] p-5 space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E5E7EB]">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 rounded-md bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4765,11 +4781,11 @@
             </svg>
           </div>
           <div>
-            <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Reset &amp; Bersihkan Presensi</h4>
-            <p class="text-[10px] text-[#6E655F]">Persiapan kondisi bersih untuk presentasi klien besok</p>
+            <h4 class="font-heading font-bold text-sm text-[#1F2937]">Reset &amp; Bersihkan Presensi</h4>
+            <p class="text-[10px] text-[#6B7280]">Persiapan kondisi bersih untuk presentasi klien besok</p>
           </div>
         </div>
-        <button onclick="window.closeModal('modal-reset-attendance')" class="h-8 w-8 flex items-center justify-center rounded-md bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] text-base font-bold">&times;</button>
+        <button onclick="window.closeModal('modal-reset-attendance')" class="h-8 w-8 flex items-center justify-center rounded-md bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] text-base font-bold">&times;</button>
       </div>
 
       <div class="bg-rose-50 border border-rose-200 rounded-md p-3 text-xs text-rose-900 space-y-1.5">
@@ -4782,28 +4798,28 @@
       </div>
 
       <div class="space-y-2 text-xs">
-        <label class="block text-[11px] font-bold text-[#1F1A17]">Pilih Lingkup Reset:</label>
+        <label class="block text-[11px] font-bold text-[#1F2937]">Pilih Lingkup Reset:</label>
         <div class="space-y-2">
-          <label class="flex items-center space-x-2.5 p-2.5 rounded-md border border-[#E8E2D9] hover:bg-[#FAF6F0] cursor-pointer">
+          <label class="flex items-center space-x-2.5 p-2.5 rounded-md border border-[#E5E7EB] hover:bg-[#F9FAFB] cursor-pointer">
             <input type="radio" name="reset-att-scope" value="all" checked class="text-[#2F5D50] focus:ring-[#2F5D50]">
             <div>
-              <span class="font-bold text-[#1F1A17]">Reset Total (Kosongkan Seluruh Absen)</span>
-              <p class="text-[10px] text-[#6E655F]">Menghapus seluruh log presensi di browser dan Google Sheets</p>
+              <span class="font-bold text-[#1F2937]">Reset Total (Kosongkan Seluruh Absen)</span>
+              <p class="text-[10px] text-[#6B7280]">Menghapus seluruh log presensi di browser dan Google Sheets</p>
             </div>
           </label>
-          <label class="flex items-center space-x-2.5 p-2.5 rounded-md border border-[#E8E2D9] hover:bg-[#FAF6F0] cursor-pointer">
+          <label class="flex items-center space-x-2.5 p-2.5 rounded-md border border-[#E5E7EB] hover:bg-[#F9FAFB] cursor-pointer">
             <input type="radio" name="reset-att-scope" value="today" class="text-[#2F5D50] focus:ring-[#2F5D50]">
             <div>
-              <span class="font-bold text-[#1F1A17]">Hapus Uji Coba Hari Ini Saja</span>
-              <p class="text-[10px] text-[#6E655F]">Hanya menghapus absensi hari ini, log lama tetap tersimpan</p>
+              <span class="font-bold text-[#1F2937]">Hapus Uji Coba Hari Ini Saja</span>
+              <p class="text-[10px] text-[#6B7280]">Hanya menghapus absensi hari ini, log lama tetap tersimpan</p>
             </div>
           </label>
         </div>
       </div>
 
-      <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#E8E2D9]">
+      <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#E5E7EB]">
         <button type="button" onclick="window.closeModal('modal-reset-attendance')"
-          class="h-10 px-4 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] font-semibold text-xs rounded-md transition-all">
+          class="h-10 px-4 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] font-semibold text-xs rounded-md transition-all">
           Batal
         </button>
         <button type="button" onclick="window.executeResetAttendance()"
@@ -4821,22 +4837,22 @@
   <!-- MODAL KHUSUS ADMIN IT: REVISI PRESENSI URGENT -->
   <!-- ========================================================================= -->
   <div id="modal-revision-attendance"
-    class="fixed inset-0 bg-[#1F1A17]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-md max-w-lg w-full shadow-2xl overflow-hidden border border-[#E8E2D9] p-5 space-y-4">
-      <div class="flex justify-between items-center pb-3 border-b border-[#E8E2D9]">
+    class="fixed inset-0 bg-[#1F2937]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-md max-w-lg w-full shadow-2xl overflow-hidden border border-[#E5E7EB] p-5 space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E5E7EB]">
         <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 rounded-md bg-[#FAF6F0] border border-[#E8E2D9] flex items-center justify-center text-[#B4532A]">
+          <div class="w-8 h-8 rounded-md bg-[#F9FAFB] border border-[#E5E7EB] flex items-center justify-center text-[#2B3A9F]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
           </div>
           <div>
-            <h4 class="font-heading font-bold text-sm text-[#1F1A17]">Revisi Data Presensi (Akses Khusus Admin IT)</h4>
-            <p class="text-[10px] text-[#6E655F]">Koreksi darurat catatan kehadiran staf dengan jejak audit resmi</p>
+            <h4 class="font-heading font-bold text-sm text-[#1F2937]">Revisi Data Presensi (Akses Khusus Admin IT)</h4>
+            <p class="text-[10px] text-[#6B7280]">Koreksi darurat catatan kehadiran staf dengan jejak audit resmi</p>
           </div>
         </div>
         <button onclick="window.closeModal('modal-revision-attendance')"
-          class="h-8 w-8 flex items-center justify-center rounded-md bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] text-base font-bold">&times;</button>
+          class="h-8 w-8 flex items-center justify-center rounded-md bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] text-base font-bold">&times;</button>
       </div>
 
       <input type="hidden" id="rev-log-id">
@@ -4848,39 +4864,39 @@
 
       <div class="grid grid-cols-2 gap-3 text-xs">
         <div>
-          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Nama Karyawan</label>
+          <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Nama Karyawan</label>
           <input type="text" id="rev-log-name" readonly
-            class="w-full h-10 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] opacity-80 cursor-not-allowed">
+            class="w-full h-10 px-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md font-bold text-[#1F2937] opacity-80 cursor-not-allowed">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Divisi / Role</label>
+          <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Divisi / Role</label>
           <input type="text" id="rev-log-role" readonly
-            class="w-full h-10 px-3 bg-[#FAF6F0] border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] opacity-80 cursor-not-allowed">
+            class="w-full h-10 px-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md font-bold text-[#1F2937] opacity-80 cursor-not-allowed">
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Tanggal Presensi</label>
+          <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Tanggal Presensi</label>
           <input type="date" id="rev-log-date"
-            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+            class="w-full h-10 px-3 bg-white border border-[#E5E7EB] rounded-md font-bold text-[#1F2937] focus:outline-none focus:border-[#2F5D50]">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Jam Waktu (HH:mm:ss)</label>
+          <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Jam Waktu (HH:mm:ss)</label>
           <input type="text" id="rev-log-time" placeholder="08:00:00"
-            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-mono font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+            class="w-full h-10 px-3 bg-white border border-[#E5E7EB] rounded-md font-mono font-bold text-[#1F2937] focus:outline-none focus:border-[#2F5D50]">
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Tipe Absen</label>
+          <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Tipe Absen</label>
           <select id="rev-log-inout"
-            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+            class="w-full h-10 px-3 bg-white border border-[#E5E7EB] rounded-md font-bold text-[#1F2937] focus:outline-none focus:border-[#2F5D50]">
             <option value="Masuk">Masuk (Check In)</option>
             <option value="Pulang">Pulang (Check Out)</option>
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Status Verifikasi</label>
+          <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Status Verifikasi</label>
           <select id="rev-log-status"
-            class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md font-bold text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+            class="w-full h-10 px-3 bg-white border border-[#E5E7EB] rounded-md font-bold text-[#1F2937] focus:outline-none focus:border-[#2F5D50]">
             <option value="valid">Hadir Tepat Waktu (Valid)</option>
             <option value="late">Terlambat</option>
             <option value="early_leave">Pulang Lebih Awal</option>
@@ -4891,21 +4907,21 @@
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-[#6E655F] mb-1">Catatan Presensi Asli</label>
+        <label class="block text-[11px] font-semibold text-[#6B7280] mb-1">Catatan Presensi Asli</label>
         <input type="text" id="rev-log-notes"
-          class="w-full h-10 px-3 bg-white border border-[#E8E2D9] rounded-md text-xs text-[#1F1A17] focus:outline-none focus:border-[#2F5D50]">
+          class="w-full h-10 px-3 bg-white border border-[#E5E7EB] rounded-md text-xs text-[#1F2937] focus:outline-none focus:border-[#2F5D50]">
       </div>
 
       <div>
-        <label class="block text-[11px] font-bold text-[#B4532A] mb-1">Alasan Urgent Revisi Admin IT (Wajib Diisi) *</label>
+        <label class="block text-[11px] font-bold text-[#2B3A9F] mb-1">Alasan Urgent Revisi Admin IT (Wajib Diisi) *</label>
         <input type="text" id="rev-log-reason" placeholder="Contoh: Kamera HP staf sempat blank / Tugas darurat ekspedisi"
-          class="w-full h-10 px-3 bg-white border-2 border-[#B4532A]/50 rounded-md text-xs font-semibold text-[#1F1A17] focus:outline-none focus:border-[#B4532A]">
-        <p class="text-[10px] text-[#6E655F] mt-1">Alasan ini akan otomatis dicatat sebagai audit trail di log dan Spreadsheet.</p>
+          class="w-full h-10 px-3 bg-white border-2 border-[#2B3A9F]/50 rounded-md text-xs font-semibold text-[#1F2937] focus:outline-none focus:border-[#2B3A9F]">
+        <p class="text-[10px] text-[#6B7280] mt-1">Alasan ini akan otomatis dicatat sebagai audit trail di log dan Spreadsheet.</p>
       </div>
 
-      <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#E8E2D9]">
+      <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#E5E7EB]">
         <button type="button" onclick="window.closeModal('modal-revision-attendance')"
-          class="h-10 px-4 bg-[#FAF6F0] hover:bg-[#E8E2D9] text-[#1F1A17] font-semibold text-xs rounded-md transition-all">
+          class="h-10 px-4 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] font-semibold text-xs rounded-md transition-all">
           Batal
         </button>
         <button type="button" onclick="window.saveAttendanceRevision()"
@@ -4990,7 +5006,7 @@
   <!-- ========================================================================= -->
   <div id="modal-manifest-pickup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
     <div class="bg-white rounded-2xl border border-stone-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-200">
-      <div class="p-4 bg-[#B4532A] text-white flex items-center justify-between">
+      <div class="p-4 bg-[#2B3A9F] text-white flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-xl">📦</span>
           <div>
@@ -5049,7 +5065,7 @@
           <button type="button" onclick="window.closeManifestModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition-all">
             Batal
           </button>
-          <button type="submit" class="flex-1 py-2.5 bg-[#B4532A] hover:bg-[#96421F] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5">
+          <button type="submit" class="flex-1 py-2.5 bg-[#2B3A9F] hover:bg-[#96421F] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5">
             <span>Tandatangani &amp; Serahkan Paket</span>
           </button>
         </div>
@@ -5489,12 +5505,12 @@
               {
                 label: 'Omset Kotor',
                 data: [18.5, 22.4, 19.8, 28.2, 35.6, 42.1, 38.4],
-                borderColor: '#B4532A',
+                borderColor: '#2B3A9F',
                 backgroundColor: 'rgba(180, 83, 42, 0.08)',
                 borderWidth: 2.5,
                 tension: 0.35,
                 fill: true,
-                pointBackgroundColor: '#B4532A',
+                pointBackgroundColor: '#2B3A9F',
                 pointBorderColor: '#FFFFFF',
                 pointBorderWidth: 1.5,
                 pointRadius: 4,
@@ -5528,9 +5544,9 @@
                 display: false // Gunakan legend HTML di card header agar bebas duplikasi & rapi
               },
               tooltip: {
-                backgroundColor: '#1F1A17',
-                titleColor: '#FAF6F0',
-                bodyColor: '#FAF6F0',
+                backgroundColor: '#1F2937',
+                titleColor: '#F9FAFB',
+                bodyColor: '#F9FAFB',
                 padding: 10,
                 cornerRadius: 8,
                 titleFont: { family: 'DM Sans', size: 12, weight: 'bold' },
@@ -5579,7 +5595,7 @@
             labels: ['Margin Bersih', 'HPP Modal Spion', 'Fee Admin Platform', 'Biaya Iklan & Ops'],
             datasets: [{
               data: [35.2, 43.1, 11.8, 9.9],
-              backgroundColor: ['#2F5D50', '#B4532A', '#D97706', '#64748B'],
+              backgroundColor: ['#2F5D50', '#2B3A9F', '#D97706', '#64748B'],
               borderWidth: 2,
               borderColor: '#FFFFFF',
               hoverOffset: 4
@@ -5594,9 +5610,9 @@
                 display: false // Menggunakan legend pills di bawah agar presisi dan tidak saling timpa
               },
               tooltip: {
-                backgroundColor: '#1F1A17',
-                titleColor: '#FAF6F0',
-                bodyColor: '#FAF6F0',
+                backgroundColor: '#1F2937',
+                titleColor: '#F9FAFB',
+                bodyColor: '#F9FAFB',
                 padding: 10,
                 cornerRadius: 8,
                 titleFont: { family: 'DM Sans', size: 12, weight: 'bold' },
@@ -5695,14 +5711,14 @@
     window.createMockAvatarSvg = function (name, role, time, coords) {
       var initials = (name || 'Staff').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
       var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">' +
-        '<rect width="320" height="240" fill="#1F1A17"/>' +
-        '<circle cx="160" cy="95" r="48" fill="#B4532A"/>' +
+        '<rect width="320" height="240" fill="#1F2937"/>' +
+        '<circle cx="160" cy="95" r="48" fill="#2B3A9F"/>' +
         '<path d="M70 210 C85 150 235 150 250 210 Z" fill="#2F5D50"/>' +
-        '<text x="160" y="103" fill="#FAF6F0" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">' + initials + '</text>' +
+        '<text x="160" y="103" fill="#F9FAFB" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">' + initials + '</text>' +
         '<rect x="10" y="175" width="300" height="55" rx="6" fill="#000000" opacity="0.88"/>' +
         '<text x="20" y="193" fill="#2F5D50" font-family="monospace" font-size="10" font-weight="bold">&#x25CF; LIVE KAMERA: ' + name + ' (' + role + ')</text>' +
-        '<text x="20" y="208" fill="#FAF6F0" font-family="monospace" font-size="9">' + time + ' | GPS: ' + coords + '</text>' +
-        '<text x="20" y="221" fill="#B4532A" font-family="monospace" font-size="8">WATERMARK RESMI ERP MJA - ANTI-FRAUD</text>' +
+        '<text x="20" y="208" fill="#F9FAFB" font-family="monospace" font-size="9">' + time + ' | GPS: ' + coords + '</text>' +
+        '<text x="20" y="221" fill="#2B3A9F" font-family="monospace" font-size="8">WATERMARK RESMI ERP MJA - ANTI-FRAUD</text>' +
         '</svg>';
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
     };
@@ -6218,7 +6234,7 @@
             '</button>';
         } else {
           var isActive = (item.id === currentSec);
-          var colorClass = isActive ? 'text-[#B4532A] font-bold bg-[#FAF6F0]' : 'text-[#334155]';
+          var colorClass = isActive ? 'text-[#2B3A9F] font-bold bg-[#EAF0FF]' : 'text-[#6B7280]';
           navHtml += '<button onclick="window.navigateTo(\'' + item.id + '\')" id="bnav-' + item.id + '" class="bnav-item flex flex-col items-center justify-start h-auto min-h-[44px] py-1 rounded-lg ' + colorClass + ' active:scale-95 transition-all">' +
             item.icon +
             '<span class="text-[10px] font-semibold leading-none mt-0.5">' + item.label + '</span>' +
@@ -6785,11 +6801,11 @@
       if (video && video.videoWidth) {
         ctx.drawImage(video, 0, 0, w, h);
       } else {
-        ctx.fillStyle = '#1F1A17';
+        ctx.fillStyle = '#1F2937';
         ctx.fillRect(0, 0, w, h);
         ctx.fillStyle = '#2F5D50';
         ctx.fillRect(20, 20, w - 40, h - 40);
-        ctx.fillStyle = '#FAF6F0';
+        ctx.fillStyle = '#F9FAFB';
         ctx.font = 'bold 16px sans-serif';
         ctx.fillText('FOTO BUKTI PACKING FISIK SPION', 50, 100);
       }
@@ -6807,11 +6823,11 @@
       ctx.fillStyle = '#10B981';
       ctx.fillRect(10, h - 75, 4, 65);
 
-      ctx.fillStyle = '#FAF6F0';
+      ctx.fillStyle = '#F9FAFB';
       ctx.font = 'bold 13px sans-serif';
       ctx.fillText('[QC TAHAP 1 PACKING] RESI: ' + resi, 22, h - 53);
 
-      ctx.fillStyle = '#E8E2D9';
+      ctx.fillStyle = '#E5E7EB';
       ctx.font = '10.5px monospace';
       ctx.fillText('Toko: ' + store + ' | Kurir: ' + courier, 22, h - 36);
 
@@ -7250,13 +7266,13 @@
 
       var manifestHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Manifest Serah Terima Kurir - MJA</title>' +
         '<style>' +
-        'body { font-family: sans-serif; padding: 24px; color: #1F1A17; max-width: 800px; margin: 0 auto; }' +
-        'h2 { margin: 0 0 4px 0; color: #B4532A; font-size: 20px; }' +
+        'body { font-family: sans-serif; padding: 24px; color: #1F2937; max-width: 800px; margin: 0 auto; }' +
+        'h2 { margin: 0 0 4px 0; color: #2B3A9F; font-size: 20px; }' +
         'p { margin: 2px 0; font-size: 12px; color: #555; }' +
         '.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; background: #E6F4EA; color: #137333; }' +
         'table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 11px; }' +
         'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }' +
-        'th { background: #FAF6F0; font-weight: bold; }' +
+        'th { background: #F9FAFB; font-weight: bold; }' +
         '.sign-box { margin-top: 32px; display: flex; justify-content: space-between; font-size: 12px; }' +
         '.sign-col { text-align: center; width: 200px; border-top: 1px solid #333; padding-top: 6px; margin-top: 50px; }' +
         '</style></head><body>' +
@@ -7786,21 +7802,22 @@
             '<span>+ Input Sesi Tambahan</span>' +
             '</button>';
         } else {
-          compCard.className = 'p-4 rounded-xl border-2 bg-amber-50 border-amber-400 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm';
-          compCard.innerHTML = '<div class="flex items-center space-x-3">' +
-            '<div class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0 animate-bounce">!</div>' +
-            '<div>' +
-            '<div class="flex items-center space-x-2">' +
-            '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white uppercase tracking-wider">SOP WAJIB PASCA-LIVE</span>' +
-            '<span class="text-xs font-bold text-rose-900">Belum Ada Rekap Live Hari Ini</span>' +
+          compCard.className = 'p-4 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-xs';
+          compCard.innerHTML = '<div class="flex items-start space-x-3 min-w-0 flex-1">' +
+            '<div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm shrink-0">' +
+              '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' +
             '</div>' +
-            '<p class="text-xs text-amber-900 mt-0.5">Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
+            '<div class="min-w-0 flex-1">' +
+              '<div class="flex items-center space-x-2">' +
+                '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">SOP Wajib Pasca-Live</span>' +
+                '<span class="text-[13px] font-semibold text-slate-800">Belum Ada Rekap Live Hari Ini</span>' +
+              '</div>' +
+              '<p class="text-[13px] text-slate-500 mt-1 leading-normal">Host Live wajib menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
             '</div>' +
-            '</div>' +
-            '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl transition-all shadow-md flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">' +
-            '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>' +
-            '<span>🔴 Input Rekap Pasca-Live Sekarang</span>' +
-            '</button>';
+          '</div>' +
+          '<button type="button" onclick="window.openNewLiveModal()" class="w-full sm:w-auto h-11 px-5 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5 shrink-0 cursor-pointer">' +
+            '<span>Input Rekap Pasca-Live</span>' +
+          '</button>';
         }
       }
 
@@ -8697,14 +8714,14 @@
       ctx.fillStyle = '#2F5D50';
       ctx.fillRect(8, h - wmHeight - 5, 4, wmHeight);
 
-      ctx.fillStyle = '#FAF6F0';
+      ctx.fillStyle = '#F9FAFB';
       ctx.font = 'bold 11px sans-serif';
       var user = window.appState.currentUser || { email: 'staff@demo.com' };
       var name = (user.name || user.email.split('@')[0]).toUpperCase();
       var facingLabel = (window.attCameraFacingMode === 'user') ? 'DEP' : 'BLK';
       ctx.fillText('[CAM-' + facingLabel + '] ' + name + ' | ' + (window.appState.currentBranch || 'Cabang 1 (Pusat)'), 18, h - wmHeight + 12);
 
-      ctx.fillStyle = '#E8E2D9';
+      ctx.fillStyle = '#E5E7EB';
       ctx.font = '9.5px monospace';
       var fullStamp = dayStr + ', ' + dateStr + ' ' + timeStr + ' | GPS: ' + window.currentGPS.lat + ', ' + window.currentGPS.lng + ' (Semarang)';
       ctx.fillText(fullStamp, 18, h - wmHeight + 27);
@@ -8901,14 +8918,14 @@
         var dist = window.currentGPS.distance;
         var inRadius = (dist <= radiusLimit);
         elDist.textContent = dist + ' Meter (' + (inRadius ? 'Dalam Radius' : 'Luar Radius') + ')';
-        elDist.className = inRadius ? 'font-bold text-[#2F5D50]' : 'font-bold text-[#B4532A]';
+        elDist.className = inRadius ? 'font-bold text-[#2F5D50]' : 'font-bold text-[#2B3A9F]';
       }
       if (elBadge) {
         if (window.currentGPS.distance <= radiusLimit) {
-          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#2F5D50] border border-[#2F5D50]/40';
+          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#2F5D50] border border-[#2F5D50]/40';
           elBadge.innerHTML = 'RADIUS VALID (&le; ' + radiusLimit + 'M)';
         } else {
-          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#B4532A] border border-[#B4532A]/40';
+          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#2B3A9F] border border-[#2B3A9F]/40';
           elBadge.textContent = 'DI LUAR RADIUS (>' + radiusLimit + 'M)';
         }
       }
@@ -9151,45 +9168,45 @@
       if (countBadge) countBadge.textContent = filtered.length + ' Catatan';
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-[#6E655F]">Belum ada riwayat presensi pribadi pada periode ini.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-[#6B7280]">Belum ada riwayat presensi pribadi pada periode ini.</td></tr>';
         return;
       }
 
       filtered.forEach(function (l, idx) {
         var tr = document.createElement('tr');
-        tr.className = 'hover:bg-[#FAF6F0]/40 transition-colors';
+        tr.className = 'hover:bg-[#F9FAFB]/40 transition-colors';
 
         var typeBadge = l.type === 'courier'
-          ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#1F1A17] border border-[#E8E2D9]">Tugas Luar</span>'
-          : '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#2F5D50] border border-[#2F5D50]/30">Dalam Kantor</span>';
+          ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#1F2937] border border-[#E5E7EB]">Tugas Luar</span>'
+          : '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#2F5D50] border border-[#2F5D50]/30">Dalam Kantor</span>';
 
         var statusBadge = '';
         if (l.status === 'valid') {
           statusBadge = '<span class="text-[#2F5D50] font-bold text-[11px] flex items-center space-x-1"><span>&bull;</span><span>Valid (' + l.distance + 'm)</span></span>';
         } else if (l.status === 'courier') {
-          statusBadge = '<span class="text-[#1F1A17] font-bold text-[11px] flex items-center space-x-1"><span>&bull;</span><span>Kurir Ekspedisi</span></span>';
+          statusBadge = '<span class="text-[#1F2937] font-bold text-[11px] flex items-center space-x-1"><span>&bull;</span><span>Kurir Ekspedisi</span></span>';
         } else {
-          statusBadge = '<span class="text-[#B4532A] font-bold text-[11px] flex items-center space-x-1"><span>&bull;</span><span>Luar Radius (' + l.distance + 'm)</span></span>';
+          statusBadge = '<span class="text-[#2B3A9F] font-bold text-[11px] flex items-center space-x-1"><span>&bull;</span><span>Luar Radius (' + l.distance + 'm)</span></span>';
         }
 
         var photoSrc = l.photo || window.createMockAvatarSvg(l.name, l.role, l.time, l.coords);
 
         tr.innerHTML = '<td class="p-2.5">' +
-          '<div class="relative group cursor-pointer w-10 h-10 rounded-md overflow-hidden border border-[#E8E2D9] shadow-xs" onclick="window.viewAttendancePhotoByIndex(' + idx + ', \'personal\')">' +
+          '<div class="relative group cursor-pointer w-10 h-10 rounded-md overflow-hidden border border-[#E5E7EB] shadow-xs" onclick="window.viewAttendancePhotoByIndex(' + idx + ', \'personal\')">' +
           '<img src="' + photoSrc + '" class="w-full h-full object-cover group-hover:scale-110 transition-transform" alt="Selfie">' +
-          '<div class="absolute inset-0 bg-[#1F1A17]/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-bold transition-opacity">Lihat</div>' +
+          '<div class="absolute inset-0 bg-[#1F2937]/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-bold transition-opacity">Lihat</div>' +
           '</div>' +
           '</td>' +
           '<td class="p-2.5">' +
-          '<span class="font-mono font-bold text-[#1F1A17]">' + (l.time && l.time.split(':').length === 2 ? l.time + ':00' : l.time) + ' WIB</span>' +
-          '<div class="text-[10px] font-semibold text-[#6E655F]">' + (l.date || '2026-11-06') + '</div>' +
+          '<span class="font-mono font-bold text-[#1F2937]">' + (l.time && l.time.split(':').length === 2 ? l.time + ':00' : l.time) + ' WIB</span>' +
+          '<div class="text-[10px] font-semibold text-[#6B7280]">' + (l.date || '2026-11-06') + '</div>' +
           '</td>' +
           '<td class="p-2.5">' +
-          '<span class="font-bold text-[#1F1A17]">' + l.inOut + '</span>' +
-          '<div class="text-[10px] text-[#6E655F] mt-0.5">' + typeBadge + '</div>' +
+          '<span class="font-bold text-[#1F2937]">' + l.inOut + '</span>' +
+          '<div class="text-[10px] text-[#6B7280] mt-0.5">' + typeBadge + '</div>' +
           '</td>' +
-          '<td class="p-2.5 text-[#6E655F] text-[11px]">' + (l.branch ? l.branch.split('(')[0] : 'Cabang 1') + '</td>' +
-          '<td class="p-2.5 font-mono text-[11px] text-[#1F1A17]">' + l.coords + '</td>' +
+          '<td class="p-2.5 text-[#6B7280] text-[11px]">' + (l.branch ? l.branch.split('(')[0] : 'Cabang 1') + '</td>' +
+          '<td class="p-2.5 font-mono text-[11px] text-[#1F2937]">' + l.coords + '</td>' +
           '<td class="p-2.5">' + statusBadge + '</td>';
         tbody.appendChild(tr);
       });
@@ -9240,17 +9257,17 @@
       if (badge) badge.textContent = 'Menampilkan ' + filtered.length + ' Log';
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-[#6E655F]">Tidak ada data presensi yang sesuai kriteria pencarian.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-[#6B7280]">Tidak ada data presensi yang sesuai kriteria pencarian.</td></tr>';
         return;
       }
 
       filtered.forEach(function (l, idx) {
         var tr = document.createElement('tr');
-        tr.className = 'hover:bg-[#FAF6F0]/40 transition-colors';
+        tr.className = 'hover:bg-[#F9FAFB]/40 transition-colors';
 
         var typeBadge = l.type === 'courier'
-          ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#1F1A17] border border-[#E8E2D9]">Tugas Luar (Pengiriman)</span>'
-          : '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#2F5D50] border border-[#2F5D50]/30">Dalam Kantor</span>';
+          ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#1F2937] border border-[#E5E7EB]">Tugas Luar (Pengiriman)</span>'
+          : '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#2F5D50] border border-[#2F5D50]/30">Dalam Kantor</span>';
 
         var statusBadge = '';
         if (l.status === 'valid') {
@@ -9260,7 +9277,7 @@
         } else if (l.status === 'early_leave') {
           statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-orange-50 text-orange-800 border border-orange-300">⚠️ Pulang Cepat</span>';
         } else if (l.status === 'courier') {
-          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF6F0] text-[#1F1A17] border border-[#E8E2D9]">Tugas Ekspedisi</span>';
+          statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#1F2937] border border-[#E5E7EB]">Tugas Ekspedisi</span>';
         } else {
           statusBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-800 border border-rose-300">Di Luar Radius</span>';
         }
@@ -9273,7 +9290,7 @@
           photoCellHtml = '<div class="flex items-center space-x-2.5">' +
             '<div class="relative group cursor-pointer w-12 h-12 rounded-lg overflow-hidden border-2 border-[#2F5D50] shadow-sm flex-shrink-0" onclick="window.viewAttendancePhotoByIndex(' + idx + ', \'all\')">' +
             '<img src="' + photoSrc + '" class="w-full h-full object-cover group-hover:scale-110 transition-transform" alt="Selfie">' +
-            '<div class="absolute inset-0 bg-[#1F1A17]/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-bold transition-opacity">Zoom</div>' +
+            '<div class="absolute inset-0 bg-[#1F2937]/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-bold transition-opacity">Zoom</div>' +
             '</div>' +
             '<div class="flex flex-col">' +
             '<button type="button" onclick="window.viewAttendancePhotoByIndex(' + idx + ', \'all\')" class="inline-flex items-center gap-1 px-2 py-1 rounded bg-[#2F5D50] hover:bg-[#254A40] text-white font-bold text-[10px] shadow-xs transition-all cursor-pointer">' +
@@ -9285,7 +9302,7 @@
             '</div>';
         } else {
           photoCellHtml = '<div class="flex items-center space-x-2.5">' +
-            '<div class="w-12 h-12 rounded-lg overflow-hidden border border-[#E8E2D9] bg-[#FAF6F0] flex-shrink-0">' +
+            '<div class="w-12 h-12 rounded-lg overflow-hidden border border-[#E5E7EB] bg-[#F9FAFB] flex-shrink-0">' +
             '<img src="' + photoSrc + '" class="w-full h-full object-cover" alt="Mock">' +
             '</div>' +
             '<div><span class="inline-block px-1.5 py-0.5 rounded bg-stone-100 border border-stone-200 text-[9px] font-medium text-stone-500">Data Mock</span></div>' +
@@ -9294,27 +9311,27 @@
 
         tr.innerHTML = '<td class="p-3">' + photoCellHtml + '</td>' +
           '<td class="p-3">' +
-          '<span class="font-mono font-bold text-[#1F1A17]">' + (l.date || '2026-11-06') + '</span><br>' +
-          '<span class="text-[11px] text-[#2F5D50] font-mono font-bold">' + timeWithSec + ' WIB</span> <span class="text-[11px] text-[#6E655F]">(' + l.inOut + ')</span>' +
+          '<span class="font-mono font-bold text-[#1F2937]">' + (l.date || '2026-11-06') + '</span><br>' +
+          '<span class="text-[11px] text-[#2F5D50] font-mono font-bold">' + timeWithSec + ' WIB</span> <span class="text-[11px] text-[#6B7280]">(' + l.inOut + ')</span>' +
           '</td>' +
           '<td class="p-3">' +
-          '<span class="font-bold text-[#1F1A17]">' + l.name + '</span><br>' +
-          '<span class="text-[10px] uppercase font-semibold text-[#B4532A]">' + l.role + '</span>' +
+          '<span class="font-bold text-[#1F2937]">' + l.name + '</span><br>' +
+          '<span class="text-[10px] uppercase font-semibold text-[#2B3A9F]">' + l.role + '</span>' +
           '</td>' +
-          '<td class="p-3 text-[11px] text-[#6E655F]">' + (l.branch ? l.branch.split('(')[0] : 'Cabang 1') + '</td>' +
+          '<td class="p-3 text-[11px] text-[#6B7280]">' + (l.branch ? l.branch.split('(')[0] : 'Cabang 1') + '</td>' +
           '<td class="p-3">' +
           typeBadge + '<br>' +
-          '<span class="text-[10px] text-[#6E655F] italic mt-0.5 inline-block">' + (l.notes || '-') + '</span>' +
+          '<span class="text-[10px] text-[#6B7280] italic mt-0.5 inline-block">' + (l.notes || '-') + '</span>' +
           '</td>' +
-          '<td class="p-3 font-mono text-[11px] text-[#1F1A17]">' + l.coords + '</td>' +
-          '<td class="p-3 font-bold text-[11px] ' + (l.distance <= 50 ? 'text-[#2F5D50]' : 'text-[#B4532A]') + '">' +
+          '<td class="p-3 font-mono text-[11px] text-[#1F2937]">' + l.coords + '</td>' +
+          '<td class="p-3 font-bold text-[11px] ' + (l.distance <= 50 ? 'text-[#2F5D50]' : 'text-[#2B3A9F]') + '">' +
           l.distance + ' Meter' +
           '</td>' +
           '<td class="p-3">' + statusBadge + '</td>' +
           '<td class="p-3 text-center">' +
           ((window.appState.currentRole === 'admin' || window.appState.currentRole === 'owner')
             ? '<div class="flex items-center justify-center space-x-1.5">' +
-              '<button type="button" onclick="window.openRevisionModal(\'' + l.id + '\')" class="inline-flex items-center gap-1 px-2 py-1 rounded bg-[#1F1A17] hover:bg-black text-amber-300 font-bold text-[10px] shadow-xs transition-all border border-amber-500/30 cursor-pointer" title="Revisi Jam / Status">' +
+              '<button type="button" onclick="window.openRevisionModal(\'' + l.id + '\')" class="inline-flex items-center gap-1 px-2 py-1 rounded bg-[#1F2937] hover:bg-black text-amber-300 font-bold text-[10px] shadow-xs transition-all border border-amber-500/30 cursor-pointer" title="Revisi Jam / Status">' +
               '<svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>' +
               '<span>Revisi</span>' +
               '</button>' +
@@ -9653,7 +9670,7 @@
         }
         if (btnOut) {
           btnOut.disabled = false;
-          btnOut.className = 'h-11 bg-[#1F1A17] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer ring-2 ring-[#B4532A]/30';
+          btnOut.className = 'h-11 bg-[#1F2937] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer ring-2 ring-[#2B3A9F]/30';
           btnOut.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span>Absen Pulang</span>';
         }
         if (card) {
@@ -9669,11 +9686,11 @@
         }
         if (btnOut) {
           btnOut.disabled = false;
-          btnOut.className = 'h-11 bg-[#1F1A17] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer';
+          btnOut.className = 'h-11 bg-[#1F2937] hover:bg-black text-white font-bold text-xs rounded-md shadow transition-all flex items-center justify-center space-x-1.5 cursor-pointer';
           btnOut.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span>Absen Pulang</span>';
         }
         if (card) {
-          card.className = 'p-2.5 rounded-md border text-xs font-semibold bg-[#FAF6F0] border-[#E8E2D9] text-[#1F1A17] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5';
+          card.className = 'p-2.5 rounded-md border text-xs font-semibold bg-[#F9FAFB] border-[#E5E7EB] text-[#1F2937] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5';
         }
         if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
         if (text) text.innerHTML = '📍 Anda belum Absen Masuk hari ini. Batas waktu masuk: <b>' + (office.maxCheckInTime || '08:30') + ' WIB</b>';
@@ -10669,12 +10686,19 @@
 
       window.currentLiveSoldItems.forEach(function (it, idx) {
         var div = document.createElement('div');
-        div.className = 'flex items-center justify-between p-2 bg-white border border-slate-200 rounded-lg shadow-2xs';
-        div.innerHTML = '<div class="truncate mr-2"><strong class="text-slate-800">' + it.sku + '</strong> x <span class="font-bold text-amber-700">' + it.qty + ' pcs</span> <span class="text-slate-400 text-[10px]">(' + it.name + ')</span></div>' +
-          '<div class="flex items-center space-x-2 flex-shrink-0">' +
-          '<span class="font-bold text-emerald-700">' + window.formatRupiah(it.subtotal) + '</span>' +
-          '<button type="button" onclick="window.removeLiveSoldItem(' + idx + ')" class="text-rose-500 hover:text-rose-700 font-bold px-1" title="Hapus item">&times;</button>' +
-          '</div>';
+        div.className = 'p-2.5 bg-white border border-slate-200 rounded-lg flex items-center justify-between gap-2 shadow-2xs';
+        div.innerHTML = '<div class="min-w-0 flex-1">' +
+          '<div class="flex items-center gap-1.5 text-xs font-semibold text-slate-800">' +
+            '<span class="font-mono text-slate-900">' + it.sku + '</span>' +
+            '<span class="text-slate-300">&bull;</span>' +
+            '<span class="text-[#2B3A9F] font-bold">' + it.qty + ' pcs</span>' +
+          '</div>' +
+          '<div class="text-[11px] text-slate-500 truncate mt-0.5">' + (it.name || it.sku) + '</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-2 shrink-0">' +
+          '<span class="font-bold text-slate-900 text-xs tabular-nums text-right">' + (typeof window.formatRupiah === 'function' ? window.formatRupiah(it.subtotal) : 'Rp ' + it.subtotal) + '</span>' +
+          '<button type="button" onclick="window.removeLiveSoldItem(' + idx + ')" class="w-8 h-8 flex items-center justify-center text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg text-base font-bold transition-all" title="Hapus item">&times;</button>' +
+        '</div>';
         container.appendChild(div);
       });
     };
@@ -14349,21 +14373,22 @@
           '<span>+ Input Sesi Tambahan</span>' +
           '</button>';
       } else {
-        compCard.className = 'p-4 rounded-xl border-2 bg-amber-50 border-amber-400 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm';
-        compCard.innerHTML = '<div class="flex items-center space-x-3">' +
-          '<div class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0 animate-bounce">!</div>' +
-          '<div>' +
-          '<div class="flex items-center space-x-2">' +
-          '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white uppercase tracking-wider">SOP WAJIB PASCA-LIVE</span>' +
-          '<span class="text-xs font-bold text-rose-900">Belum Ada Rekap Live Hari Ini</span>' +
+        compCard.className = 'p-4 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-xs';
+        compCard.innerHTML = '<div class="flex items-start space-x-3 min-w-0 flex-1">' +
+          '<div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm shrink-0">' +
+            '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' +
           '</div>' +
-          '<p class="text-xs text-amber-900 mt-0.5">Host Live <strong>wajib</strong> menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
+          '<div class="min-w-0 flex-1">' +
+            '<div class="flex items-center space-x-2">' +
+              '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">SOP Wajib Pasca-Live</span>' +
+              '<span class="text-[13px] font-semibold text-slate-800">Belum Ada Rekap Live Hari Ini</span>' +
+            '</div>' +
+            '<p class="text-[13px] text-slate-500 mt-1 leading-normal">Host Live wajib menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
           '</div>' +
-          '</div>' +
-          '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl transition-all shadow-md flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">' +
-          '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>' +
-          '<span>🔴 Input Rekap Pasca-Live Sekarang</span>' +
-          '</button>';
+        '</div>' +
+        '<button type="button" onclick="window.openNewLiveModal()" class="w-full sm:w-auto h-11 px-5 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5 shrink-0 cursor-pointer">' +
+          '<span>Input Rekap Pasca-Live</span>' +
+        '</button>';
       }
     }
 
