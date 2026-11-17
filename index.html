@@ -2479,7 +2479,7 @@
                     class="absolute bottom-2 left-2 right-2 z-20 bg-slate-950/85 text-white px-2.5 py-1.5 rounded-md text-[10px] font-mono flex items-center justify-between border border-slate-700">
                     <div>
                       <span class="text-emerald-400 font-bold block" id="att-watermark-time">--:--:-- WIB</span>
-                      <span class="text-slate-300 text-[9px]" id="att-watermark-gps">GPS: -6.9826, 110.4208</span>
+                      <span class="text-slate-300 text-[9px]" id="att-watermark-gps">GPS: Mendeteksi...</span>
                     </div>
                     
                   </div>
@@ -2527,20 +2527,30 @@
               </div>
 
               <!-- GPS Live Verification Status Display -->
-              <div class="p-3.5 rounded-md border border-[#E5E7EB] bg-[#F9FAFB] space-y-2 text-xs">
+              <div class="p-3.5 rounded-xl border border-[#E5E7EB] bg-white space-y-2 text-xs shadow-xs">
+                <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                  <div class="flex items-center space-x-1.5 min-w-0">
+                    <span class="text-slate-500 font-medium">Kantor Tujuan:</span>
+                    <span class="font-bold text-[#1F2937] truncate" id="att-target-branch-name">MJA Pusat (Semarang)</span>
+                  </div>
+                  <button type="button" onclick="window.switchOperationalBranch()"
+                    class="text-[11px] font-semibold text-[#2B3A9F] bg-[#EEF2FF] px-2 py-0.5 rounded-md hover:bg-[#dfe7ff] transition-all cursor-pointer">
+                    Ganti Cabang
+                  </button>
+                </div>
                 <div class="flex items-center justify-between">
                   <span class="text-[#6B7280]">Titik GPS Anda:</span>
-                  <span class="font-mono font-bold text-[#1F2937]" id="att-gps-coords">-6.9826, 110.4208</span>
+                  <span class="font-mono font-bold text-[#1F2937]" id="att-gps-coords">Mendeteksi sinyal GPS HP...</span>
                 </div>
                 <div class="flex items-center justify-between">
                   <span class="text-[#6B7280]">Estimasi Jarak ke Kantor:</span>
-                  <span class="font-bold text-[#2F5D50]" id="att-gps-distance">14 Meter (Dalam Radius)</span>
+                  <span class="font-bold text-slate-500" id="att-gps-distance">Menghitung jarak...</span>
                 </div>
                 <div class="flex items-center justify-between border-t border-[#E5E7EB] pt-2">
-                  <span class="text-[#6B7280]">Batas Radius Semarang:</span>
+                  <span class="text-[#6B7280]" id="att-radius-label">Batas Radius Kantor:</span>
                   <span id="att-gps-badge"
-                    class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                    RADIUS VALID (&le; 50M)
+                    class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600">
+                    MENUNGGU GPS
                   </span>
                 </div>
               </div>
@@ -3902,215 +3912,399 @@
   <div id="modal-mobile-menu"
     class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[10000] hidden flex flex-col justify-end transition-opacity"
     onclick="if(event.target === this) window.closeMobileDrawer()">
-    <div class="bg-white rounded-t-[20px] max-h-[85dvh] w-full p-4 sm:p-5 overflow-y-auto space-y-4 shadow-2xl animate-slide-up"
-      style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);">
+    <div class="bg-[#F8F9FA] rounded-t-[24px] max-h-[88dvh] w-full p-4 overflow-y-auto space-y-3.5 shadow-2xl animate-slide-up border-t border-slate-200"
+      style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 24px);">
       
       <!-- Drag Handle -->
-      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto -mt-1 mb-2"></div>
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto -mt-1 mb-1"></div>
 
       <!-- Header Sheet -->
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-        <h3 class="font-bold text-[18px] text-[#1F2937]">Menu</h3>
+      <div class="flex items-center justify-between pb-2 border-b border-slate-200/80">
+        <h3 class="font-bold text-[18px] text-[#1F2937]">Menu Operasional</h3>
         <button onclick="window.closeMobileDrawer()"
-          class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full font-bold text-lg transition-all"
+          class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-full font-bold text-lg transition-all"
           title="Tutup Menu">&times;</button>
       </div>
 
-      <!-- User Profile Card -->
-      <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between gap-2.5">
+      <!-- User Profile Card (Shopee Account Header Style) -->
+      <div class="p-3 bg-white border border-[#E5E7EB] rounded-2xl flex items-center justify-between gap-2.5 shadow-xs">
         <div class="flex items-center space-x-2.5 min-w-0 flex-1">
-          <div class="w-9 h-9 rounded-full bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center font-bold text-sm shrink-0">
+          <div class="w-10 h-10 rounded-full bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center font-bold text-base shrink-0 border border-[#2B3A9F]/20">
             A
           </div>
           <div class="min-w-0 flex-1 leading-tight">
-            <div class="font-semibold text-xs text-[#1F2937] truncate" id="drawer-user-info">admin@mja.co.id</div>
-            <div class="text-[11px] text-[#6B7280] truncate mt-0.5" id="drawer-user-role-label">Administrator</div>
+            <div class="font-bold text-xs text-[#1F2937] truncate" id="drawer-user-info">admin@mja.co.id</div>
+            <div class="text-[11px] text-[#6B7280] truncate mt-0.5" id="drawer-user-role-label">Administrator Cabang</div>
           </div>
         </div>
         <button onclick="window.switchOperationalBranch()"
-          class="shrink-0 text-[#2B3A9F] font-semibold bg-[#EEF2FF] px-2.5 py-1.5 rounded-lg text-[11px] max-w-[130px] truncate"
-          title="Klik untuk Ganti Cabang Operasional">
-          📍 <span id="drawer-branch-info">MJA Pusat (Semarang)</span>
+          class="shrink-0 text-[#2B3A9F] font-semibold bg-[#EEF2FF] border border-[#2B3A9F]/20 px-2.5 py-1.5 rounded-xl text-[11px] max-w-[140px] truncate flex items-center gap-1 active:scale-95 transition-all"
+          title="Klik untuk Beralih Cabang (Semarang / Bekasi)">
+          <span>📍</span>
+          <span id="drawer-branch-info" class="truncate">MJA Pusat (Semarang)</span>
         </button>
       </div>
 
-      <!-- 3-Column Module Grid (Clean Gojek/Bank Icon Grid) -->
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <!-- 1. Dashboard -->
-        <button id="drawer-item-section-dashboard" onclick="window.navigateFromDrawer('section-dashboard')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
-            </svg>
+      <!-- Dompet / Ringkasan Cepat Operasional (4 Mini Stats Style 'Dompet Saya' Shopee) -->
+      <div class="p-3 bg-white border border-[#E5E7EB] rounded-2xl shadow-xs">
+        <div class="text-[11px] font-bold text-[#1F2937] mb-2 px-0.5 flex items-center justify-between">
+          <span>Ringkasan Hari Ini</span>
+          <span class="text-[10px] text-emerald-600 font-medium">● 100% Realtime Cloud</span>
+        </div>
+        <div class="grid grid-cols-4 gap-1.5 text-center">
+          <div class="p-1.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+            <span class="text-xs">💰</span>
+            <div class="font-bold text-[11px] text-[#1F2937] mt-0.5">Rp 5.75M</div>
+            <div class="text-[9px] text-[#6B7280]">Omset Live</div>
           </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Dashboard</span>
-        </button>
+          <div class="p-1.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+            <span class="text-xs">📦</span>
+            <div class="font-bold text-[11px] text-[#1F2937] mt-0.5">5 Order</div>
+            <div class="text-[9px] text-[#6B7280]">Pesanan</div>
+          </div>
+          <div class="p-1.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+            <span class="text-xs">🪞</span>
+            <div class="font-bold text-[11px] text-[#1F2937] mt-0.5">850 Pcs</div>
+            <div class="text-[9px] text-[#6B7280]">Stok Spion</div>
+          </div>
+          <div class="p-1.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+            <span class="text-xs">📍</span>
+            <div class="font-bold text-[11px] text-[#2B3A9F] mt-0.5">GPS 10M</div>
+            <div class="text-[9px] text-[#6B7280]">Geofence</div>
+          </div>
+        </div>
+      </div>
 
-        <!-- 2. Sesi Live -->
-        <button id="drawer-item-section-live" onclick="window.navigateFromDrawer('section-live')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
+      <!-- Action Banner (Style SPinjam Shopee Banner) -->
+      <div class="p-3 bg-amber-50/80 border border-amber-200/80 rounded-2xl flex items-center justify-between gap-2 shadow-xs">
+        <div class="flex items-center space-x-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center text-base shrink-0 font-bold">
+            ⚡
           </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Rekap Live</span>
+          <div class="min-w-0 flex-1 leading-tight">
+            <div class="font-bold text-xs text-amber-900 truncate">SOP Wajib Presensi Selfie</div>
+            <div class="text-[10px] text-amber-700 truncate mt-0.5">Batas 08:30 WIB dalam radius 10m kantor</div>
+          </div>
+        </div>
+        <button onclick="window.navigateFromDrawer('section-attendance')"
+          class="shrink-0 px-3 py-1.5 bg-[#2B3A9F] hover:bg-[#232f80] active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition-all">
+          Absen
         </button>
+      </div>
 
-        <!-- 3. Stok Spion -->
-        <button id="drawer-item-section-inventory" onclick="window.navigateFromDrawer('section-inventory')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      <!-- Kategori 1: Operasional & Penjualan (Style 'Keuangan' Shopee) -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between px-1">
+          <h4 class="font-bold text-xs text-[#1F2937]">Operasional Penjualan</h4>
+          <span class="text-[11px] font-medium text-[#6B7280] flex items-center gap-0.5">Menu Utama &rsaquo;</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <!-- 1. Dashboard -->
+          <button id="drawer-item-section-dashboard" onclick="window.navigateFromDrawer('section-dashboard')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Dashboard</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Ringkasan Finansial</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Stok Spion</span>
-        </button>
+          </button>
 
-        <!-- 4. Scan QC Validasi -->
-        <button id="drawer-item-section-qc-scan" onclick="window.navigateFromDrawer('section-qc-scan')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          <!-- 2. Sesi Live -->
+          <button id="drawer-item-section-live" onclick="window.navigateFromDrawer('section-live')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Rekap Live</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Input Pasca-Live</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Validasi QC</span>
-        </button>
+          </button>
 
-        <!-- 5. Absensi GPS -->
-        <button id="drawer-item-section-attendance" onclick="window.navigateFromDrawer('section-attendance')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          <!-- 3. Kalkulator Harga -->
+          <button id="drawer-item-section-pricing" onclick="window.navigateFromDrawer('section-pricing')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Kalkulator</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Simulasi Margin</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Absensi GPS</span>
-        </button>
+          </button>
 
-        <!-- 6. Kalkulator Harga -->
-        <button id="drawer-item-section-pricing" onclick="window.navigateFromDrawer('section-pricing')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          <!-- 4. Order & Resi -->
+          <button id="drawer-item-section-orders" onclick="window.navigateFromDrawer('section-orders')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Order &amp; Resi</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Pesanan Multi-Toko</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Kalkulator</span>
-        </button>
+          </button>
 
-        <!-- 7. Order & Resi -->
-        <button id="drawer-item-section-orders" onclick="window.navigateFromDrawer('section-orders')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2" />
+          <!-- 5. Penjualan Detail -->
+          <button id="drawer-item-section-sales-detail" onclick="window.navigateFromDrawer('section-sales-detail')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Penjualan Detail</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Itemized Laporan</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Order &amp; Resi</span>
-        </button>
+          </button>
 
-        <!-- 8. Retur Paket -->
-        <button id="drawer-item-section-returns" onclick="window.navigateFromDrawer('section-returns')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M16 15v-1a4 4 0 00-4-4H4m0 0l4-4m-4 4l4 4" />
+          <!-- 6. Laporan Analitik Live -->
+          <button id="drawer-item-section-live-reports" onclick="window.navigateFromDrawer('section-live-reports')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Laporan Live</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Analitik Host</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Retur Paket</span>
-        </button>
+          </button>
+        </div>
+      </div>
 
-        <!-- 9. Laporan Laba Rugi -->
-        <button id="drawer-item-section-financial" onclick="window.navigateFromDrawer('section-financial')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      <!-- Kategori 2: Logistik & Gudang Spion (Style 'Aktivitas Saya' Shopee) -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between px-1">
+          <h4 class="font-bold text-xs text-[#1F2937]">Logistik &amp; Gudang Spion</h4>
+          <span class="text-[11px] font-medium text-[#6B7280] flex items-center gap-0.5">Fisik Barang &rsaquo;</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <!-- Stok Spion -->
+          <button id="drawer-item-section-inventory" onclick="window.navigateFromDrawer('section-inventory')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Stok Spion</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Katalog &amp; Mutasi</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Laba Rugi</span>
-        </button>
+          </button>
 
-        <!-- 10. Pengguna IT -->
-        <button id="drawer-item-section-users" onclick="window.navigateFromDrawer('section-users')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          <!-- Scan QC Validasi -->
+          <button id="drawer-item-section-qc-scan" onclick="window.navigateFromDrawer('section-qc-scan')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Validasi QC</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Packing &amp; Kurir</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Manajemen IT</span>
-        </button>
+          </button>
 
-        <!-- 11. Rekap Laporan Absensi -->
-        <button id="drawer-item-section-attendance-report" onclick="window.navigateFromDrawer('section-attendance-report')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <!-- Retur Paket -->
+          <button id="drawer-item-section-returns" onclick="window.navigateFromDrawer('section-returns')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full col-span-2">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 15v-1a4 4 0 00-4-4H4m0 0l4-4m-4 4l4 4" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Penerimaan Retur</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Scan Paket Rusak / Batal Kirim</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Rekap Absensi</span>
-        </button>
+          </button>
+        </div>
+      </div>
 
-        <!-- 12. Laporan Penjualan Detail -->
-        <button id="drawer-item-section-sales-detail" onclick="window.navigateFromDrawer('section-sales-detail')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      <!-- Kategori 3: SDM & Finansial -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between px-1">
+          <h4 class="font-bold text-xs text-[#1F2937]">SDM &amp; Finansial Perusahaan</h4>
+          <span class="text-[11px] font-medium text-[#6B7280] flex items-center gap-0.5">Kelola Staf &rsaquo;</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <!-- Absensi GPS -->
+          <button id="drawer-item-section-attendance" onclick="window.navigateFromDrawer('section-attendance')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Absensi Saya</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Selfie &amp; Radius 10M</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Penjualan Detail</span>
-        </button>
+          </button>
 
-        <!-- 13. Laporan Analitik Live -->
-        <button id="drawer-item-section-live-reports" onclick="window.navigateFromDrawer('section-live-reports')"
-          class="p-2 rounded-xl flex flex-col items-center justify-start min-h-[64px] hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer">
-          <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center mb-1.5 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <!-- Rekap Absensi -->
+          <button id="drawer-item-section-attendance-report" onclick="window.navigateFromDrawer('section-attendance-report')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Rekap Absen</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Laporan Presensi Staf</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-          </div>
-          <span class="text-[12px] font-medium text-[#1F2937] leading-tight line-clamp-2">Laporan Live</span>
-        </button>
+          </button>
+
+          <!-- Laba Rugi -->
+          <button id="drawer-item-section-financial" onclick="window.navigateFromDrawer('section-financial')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Laba Rugi</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Finansial &amp; PnL Riil</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Manajemen IT -->
+          <button id="drawer-item-section-users" onclick="window.navigateFromDrawer('section-users')"
+            class="flex items-center justify-between p-2.5 bg-white border border-[#E5E7EB] rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-all text-left shadow-xs cursor-pointer min-h-[58px] w-full">
+            <div class="flex items-center space-x-2 min-w-0 flex-1">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#2B3A9F] flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-xs text-[#1F2937] truncate">Manajemen IT</div>
+                <div class="text-[10px] text-[#6B7280] truncate">Hak Akses &amp; Cabang</div>
+              </div>
+            </div>
+            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Action Footer in Sheet (2 simple list rows) -->
-      <div class="pt-3 border-t border-slate-100 space-y-1">
+      <div class="pt-2 border-t border-slate-200/80 space-y-1">
         <button id="drawer-btn-export" onclick="window.triggerGoogleSheetsExport()"
-          class="w-full py-2.5 px-3 hover:bg-slate-50 rounded-xl text-xs font-semibold text-[#1F2937] flex items-center space-x-2.5 transition-all cursor-pointer">
-          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          class="w-full py-2.5 px-3 bg-white border border-[#E5E7EB] hover:bg-slate-50 rounded-xl text-xs font-semibold text-[#1F2937] flex items-center justify-between transition-all cursor-pointer shadow-xs">
+          <div class="flex items-center space-x-2.5">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Ekspor ke Spreadsheet</span>
+          </div>
+          <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
-          <span>Ekspor ke Spreadsheet</span>
         </button>
         <button onclick="window.handleLogout()"
-          class="w-full py-2.5 px-3 hover:bg-rose-50 rounded-xl text-xs font-semibold text-[#DC2626] flex items-center space-x-2.5 transition-all cursor-pointer">
-          <svg class="w-4 h-4 text-[#DC2626]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+          class="w-full py-2.5 px-3 bg-white border border-rose-200 hover:bg-rose-50 rounded-xl text-xs font-semibold text-[#DC2626] flex items-center justify-between transition-all cursor-pointer shadow-xs">
+          <div class="flex items-center space-x-2.5">
+            <svg class="w-4 h-4 text-[#DC2626]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+            </svg>
+            <span>Keluar Akun (Logout)</span>
+          </div>
+          <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
-          <span>Keluar</span>
         </button>
       </div>
     </div>
@@ -8525,7 +8719,7 @@
     // FEATURE: KAMERA ASLI (FLIP KAMERA DEPAN/BELAKANG) & ABSENSI GPS
     // =========================================================================
     window.attCameraFacingMode = 'user'; // 'user' (depan selfie) atau 'environment' (belakang)
-    window.currentGPS = { lat: -6.9826, lng: 110.4208, accuracy: 8, distance: 14 };
+    window.currentGPS = { lat: null, lng: null, accuracy: null, distance: null, isReal: false };
     window.attCameraStream = null;
     window.capturedAttendancePhoto = null;
     window.currentRenderedPersonalLogs = [];
@@ -8689,7 +8883,13 @@
       var timeEl = document.getElementById('att-watermark-time');
       var gpsEl = document.getElementById('att-watermark-gps');
       if (timeEl) timeEl.textContent = timeStr;
-      if (gpsEl) gpsEl.textContent = 'GPS: ' + window.currentGPS.lat + ', ' + window.currentGPS.lng;
+      if (gpsEl) {
+        if (window.currentGPS && window.currentGPS.lat) {
+          gpsEl.textContent = 'GPS: ' + window.currentGPS.lat + ', ' + window.currentGPS.lng;
+        } else {
+          gpsEl.textContent = 'GPS: Mendeteksi...';
+        }
+      }
     };
 
     // Anti-Fraud Watermark Stamper (Lengkap Hari, Tanggal, Jam WIB, GPS, Nama Staff, Cabang, Status Geofence)
@@ -8723,7 +8923,9 @@
 
       ctx.fillStyle = '#E5E7EB';
       ctx.font = '9.5px monospace';
-      var fullStamp = dayStr + ', ' + dateStr + ' ' + timeStr + ' | GPS: ' + window.currentGPS.lat + ', ' + window.currentGPS.lng + ' (Semarang)';
+      var branchName = (window.appState.currentBranch || 'Semarang').indexOf('Bekasi') !== -1 ? 'Bekasi' : 'Semarang';
+      var coordsStr = (window.currentGPS && window.currentGPS.lat) ? (window.currentGPS.lat + ', ' + window.currentGPS.lng) : 'GPS Not Detected';
+      var fullStamp = dayStr + ', ' + dateStr + ' ' + timeStr + ' | GPS: ' + coordsStr + ' (' + branchName + ')';
       ctx.fillText(fullStamp, 18, h - wmHeight + 27);
 
       if (manualNotes) {
@@ -8870,7 +9072,7 @@
       if (modal) modal.classList.remove('hidden');
     };
 
-    window.fetchCurrentGPS = function () {
+    window.fetchCurrentGPS = function (silent) {
       var spinner = document.getElementById('gps-spinner');
       if (spinner) spinner.classList.add('animate-spin');
 
@@ -8879,53 +9081,105 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           function (pos) {
-            window.currentGPS.lat = parseFloat(pos.coords.latitude.toFixed(4));
-            window.currentGPS.lng = parseFloat(pos.coords.longitude.toFixed(4));
-            window.currentGPS.distance = window.calculateDistanceMeters(window.currentGPS.lat, window.currentGPS.lng, office.lat, office.lng);
+            var lat = parseFloat(pos.coords.latitude.toFixed(6));
+            var lng = parseFloat(pos.coords.longitude.toFixed(6));
+            var acc = Math.round(pos.coords.accuracy || 0);
+            var dist = window.calculateDistanceMeters(lat, lng, office.lat, office.lng);
+            window.currentGPS = {
+              lat: lat,
+              lng: lng,
+              accuracy: acc,
+              distance: dist,
+              isReal: true
+            };
             window.updateGPSUI();
             window.updateAttendanceWatermark();
             if (spinner) spinner.classList.remove('animate-spin');
-            window.showToast('Koordinat GPS berhasil diperbarui!', 'success');
+            if (!silent) window.showToast('Titik GPS HP akurat terdeteksi (±' + acc + 'm)', 'success');
           },
           function (err) {
-            window.currentGPS.lat = office.lat;
-            window.currentGPS.lng = office.lng;
-            window.currentGPS.distance = 14;
-            window.updateGPSUI();
-            window.updateAttendanceWatermark();
             if (spinner) spinner.classList.remove('animate-spin');
-            window.showToast('GPS simulasi kantor Semarang aktif', 'info');
+            window.currentGPS = {
+              lat: null,
+              lng: null,
+              accuracy: null,
+              distance: null,
+              isReal: false
+            };
+            var errText = 'Sinyal GPS belum aktif atau izin browser ditolak';
+            if (err.code === 1) errText = 'Izin akses lokasi GPS ditolak oleh browser HP';
+            else if (err.code === 2) errText = 'Sinyal GPS HP tidak terdeteksi. Aktifkan Lokasi/GPS';
+            else if (err.code === 3) errText = 'Pencarian sinyal GPS HP timeout';
+            window.currentGPS.errorMsg = errText;
+            window.updateGPSUI();
+            if (!silent) window.showToast(errText, 'warning');
           },
-          { enableHighAccuracy: true, timeout: 5000 }
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
       } else {
-        window.currentGPS.distance = 14;
-        window.updateGPSUI();
         if (spinner) spinner.classList.remove('animate-spin');
+        window.currentGPS = {
+          lat: null,
+          lng: null,
+          accuracy: null,
+          distance: null,
+          isReal: false,
+          errorMsg: 'Browser HP tidak mendukung Geolocation'
+        };
+        window.updateGPSUI();
       }
     };
 
     window.updateGPSUI = function () {
-      var office = window.appState.officeSettings || { radius: 50 };
-      var radiusLimit = office.radius || 50;
+      var office = (typeof window.getActiveBranchSettings === 'function') ? window.getActiveBranchSettings() : (window.appState.officeSettings || { lat: -7.006970, lng: 110.340500, radius: 10, name: 'MJA Pusat (Semarang)' });
+      var radiusLimit = office.radius || 10;
+
+      var targetBranchEl = document.getElementById('att-target-branch-name');
+      if (targetBranchEl) targetBranchEl.textContent = office.name;
+
+      var radiusLabelEl = document.getElementById('att-radius-label');
+      if (radiusLabelEl) radiusLabelEl.textContent = 'Batas Radius ' + (office.name.indexOf('Bekasi') !== -1 ? 'Bekasi' : 'Semarang') + ':';
 
       var elCoords = document.getElementById('att-gps-coords');
       var elDist = document.getElementById('att-gps-distance');
       var elBadge = document.getElementById('att-gps-badge');
 
-      if (elCoords) elCoords.textContent = window.currentGPS.lat + ', ' + window.currentGPS.lng;
-      if (elDist) {
-        var dist = window.currentGPS.distance;
-        var inRadius = (dist <= radiusLimit);
-        elDist.textContent = dist + ' Meter (' + (inRadius ? 'Dalam Radius' : 'Luar Radius') + ')';
-        elDist.className = inRadius ? 'font-bold text-[#2F5D50]' : 'font-bold text-[#2B3A9F]';
+      if (!window.currentGPS || !window.currentGPS.isReal || window.currentGPS.lat === null) {
+        if (elCoords) elCoords.textContent = (window.currentGPS && window.currentGPS.errorMsg) ? window.currentGPS.errorMsg : 'Mencari sinyal GPS HP...';
+        if (elDist) {
+          elDist.textContent = 'Menunggu GPS HP aktif';
+          elDist.className = 'font-semibold text-slate-400';
+        }
+        if (elBadge) {
+          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-300';
+          elBadge.textContent = 'GPS BELUM AKTIF';
+        }
+        return;
       }
+
+      // Real GPS coordinates obtained:
+      if (elCoords) elCoords.textContent = window.currentGPS.lat + ', ' + window.currentGPS.lng + ' (±' + (window.currentGPS.accuracy || 0) + 'm)';
+
+      var dist = window.calculateDistanceMeters(window.currentGPS.lat, window.currentGPS.lng, office.lat, office.lng);
+      window.currentGPS.distance = dist;
+      var inRadius = (dist <= radiusLimit);
+
+      if (elDist) {
+        if (dist >= 1000) {
+          var distKm = (dist / 1000).toFixed(1);
+          elDist.textContent = distKm + ' km (' + Math.round(dist).toLocaleString('id-ID') + ' Meter)';
+        } else {
+          elDist.textContent = Math.round(dist) + ' Meter';
+        }
+        elDist.className = inRadius ? 'font-bold text-[#16A34A]' : 'font-bold text-[#DC2626]';
+      }
+
       if (elBadge) {
-        if (window.currentGPS.distance <= radiusLimit) {
-          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#2F5D50] border border-[#2F5D50]/40';
+        if (inRadius) {
+          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-[#16A34A] border border-emerald-300';
           elBadge.innerHTML = 'RADIUS VALID (&le; ' + radiusLimit + 'M)';
         } else {
-          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F9FAFB] text-[#2B3A9F] border border-[#2B3A9F]/40';
+          elBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-[#DC2626] border border-rose-300';
           elBadge.textContent = 'DI LUAR RADIUS (>' + radiusLimit + 'M)';
         }
       }
