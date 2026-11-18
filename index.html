@@ -232,8 +232,32 @@
       }
     }
 
+    /* Mobile View (Max-width 768px) */
+    @media (max-width: 768px) {
+      #desktop-sidebar,
+      aside {
+        display: none !important;
+      }
+    }
+
     /* Desktop View (Min-width 769px: Administrator & Management View) */
     @media (min-width: 769px) {
+      #desktop-sidebar,
+      aside {
+        display: flex !important;
+      }
+      .md\:flex {
+        display: flex !important;
+      }
+      .md\:inline-flex {
+        display: inline-flex !important;
+      }
+      .md\:block {
+        display: block !important;
+      }
+      .md\:hidden {
+        display: none !important;
+      }
       #mobile-bottom-nav {
         display: none !important;
       }
@@ -244,10 +268,8 @@
         padding-bottom: 32px !important;
       }
     }
-      /* GUARANTEED DISPLAY FIX FOR SPA VIEW & MODAL SWITCHING */
-    .hidden {
-      display: none !important;
-    }
+
+    /* SPA VIEW & MODAL SWITCHING GUARANTEE (Without breaking Tailwind responsive classes) */
     [hidden] {
       display: none !important;
     }
@@ -258,6 +280,11 @@
       display: none !important;
     }
     #modal-mobile-menu.hidden {
+      display: none !important;
+    }
+    .modal-overlay.hidden,
+    [id^="modal-"].hidden,
+    [id^="section-"].hidden {
       display: none !important;
     }
   </style>
@@ -476,7 +503,7 @@
   <div id="main-view" class="hidden min-h-screen flex flex-col md:flex-row">
 
     <!-- DESKTOP SIDEBAR -->
-    <aside class="hidden md:flex flex-col w-64 bg-slate-900 text-white shrink-0 border-r border-slate-800">
+    <aside id="desktop-sidebar" class="hidden md:flex flex-col w-64 bg-slate-900 text-white shrink-0 border-r border-slate-800">
       <!-- Brand Header -->
       <div class="p-5 border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -737,13 +764,14 @@
             <span class="hidden sm:inline">Export</span>
           </button>
 
-          <!-- Desktop Logout -->
+          <!-- Desktop Logout Button (Tampil jelas & elegan di header desktop) -->
           <button onclick="window.handleLogout()"
-            class="hidden md:inline-flex h-9 w-9 items-center justify-center text-[#6B7280] hover:text-[#A83220] hover:bg-[#F9FAFB] rounded-md border border-[#E5E7EB] transition-all ml-1"
-            title="Keluar">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+            class="hidden md:inline-flex items-center space-x-1.5 h-9 px-3 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-md transition-all ml-1 cursor-pointer shadow-2xs"
+            title="Keluar dari Akun">
+            <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
+            <span>Keluar</span>
           </button>
         </div>
       </header>
