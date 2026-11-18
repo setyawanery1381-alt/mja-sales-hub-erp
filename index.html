@@ -3287,8 +3287,21 @@
               <input type="date" id="lr-custom-end" onchange="window.handleLiveReportFilterChange()" class="h-8 px-2 bg-slate-50 border border-slate-200 rounded-md font-semibold text-slate-800">
             </div>
 
-            <!-- Submenu Tabs Bar -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-1.5 scrollbar-none text-xs border-t border-slate-100 pt-2.5 -mx-1 px-1">
+            <!-- Submenu Tabs Bar / Pilihan Laporan Live -->
+            <!-- 1. Mode Dropdown Kebawah Khusus Mobile / HP (Mencegah Teks Menumpuk Sesuai Permintaan) -->
+            <div class="block md:hidden border-t border-slate-100 pt-2.5">
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Pilihan Menu Laporan Live</label>
+              <select id="lr-tab-select" onchange="window.switchLiveReportTab(this.value)" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-bold text-xs text-slate-800 focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none cursor-pointer">
+                <option value="tab-lr-executive">1. Ringkasan Eksekutif &amp; Target</option>
+                <option value="tab-lr-sessions">2. Laporan Per Sesi Live</option>
+                <option value="tab-lr-hosts">3. Performa Host Live</option>
+                <option value="tab-lr-ads">4. Iklan &amp; Profitabilitas</option>
+                <option value="tab-lr-products">5. Produk Terjual</option>
+              </select>
+            </div>
+
+            <!-- 2. Mode Tab Horisontal (Desktop / Tablet Layar Lebar) -->
+            <div class="hidden md:flex items-center space-x-2 overflow-x-auto pb-1.5 scrollbar-none text-xs border-t border-slate-100 pt-2.5 -mx-1 px-1 flex-nowrap">
               <button type="button" onclick="window.switchLiveReportTab('tab-lr-executive')" id="btn-tab-lr-executive" class="lr-tab-btn shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-bold bg-slate-900 text-white shadow-xs cursor-pointer">
                 1. Ringkasan Eksekutif
               </button>
@@ -12147,9 +12160,15 @@
 
   // Switcher Tab Submenu
   window.switchLiveReportTab = function (tabId) {
-    window.activeLiveReportTab = tabId;
+    var baseId = tabId.replace('btn-', '').replace('content-', '');
+    if (!baseId.startsWith('tab-lr-')) {
+      baseId = 'tab-lr-' + baseId.replace('lr-tab-', '');
+    }
+    window.activeLiveReportTab = baseId;
+    var selEl = document.getElementById('lr-tab-select');
+    if (selEl && selEl.value !== baseId) selEl.value = baseId;
 
-    var tabs = ['lr-tab-executive', 'lr-tab-sessions', 'lr-tab-hosts', 'lr-tab-ads', 'lr-tab-products'];
+    var tabs = ['tab-lr-executive', 'tab-lr-sessions', 'tab-lr-hosts', 'tab-lr-ads', 'tab-lr-products'];
     tabs.forEach(function (t) {
       var btn = document.getElementById('btn-' + t);
       var content = document.getElementById('content-' + t);
@@ -14848,6 +14867,9 @@
       baseId = 'tab-lr-' + baseId.replace('lr-tab-', '');
     }
     window.activeLiveReportTab = baseId;
+
+    var selEl = document.getElementById('lr-tab-select');
+    if (selEl && selEl.value !== baseId) selEl.value = baseId;
 
     var tabList = ['tab-lr-executive', 'tab-lr-sessions', 'tab-lr-hosts', 'tab-lr-ads', 'tab-lr-products'];
     tabList.forEach(function (t) {
