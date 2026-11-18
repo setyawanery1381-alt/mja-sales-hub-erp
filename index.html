@@ -10,6 +10,26 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+    <!-- Aggressive Cache-Buster for Android WebView & Mobile Browsers -->
+  <script>
+    (function () {
+      var APP_BUILD_VER = '20261118_v7';
+      try {
+        var localVer = localStorage.getItem('mja_app_build_version');
+        if (localVer !== APP_BUILD_VER) {
+          localStorage.setItem('mja_app_build_version', APP_BUILD_VER);
+          if (window.caches && typeof caches.keys === 'function') {
+            caches.keys().then(function (names) {
+              names.forEach(function (name) { caches.delete(name); });
+            });
+          }
+          if (localVer && !window.location.search.includes('v=' + APP_BUILD_VER)) {
+            window.location.replace(window.location.pathname + '?v=' + APP_BUILD_VER + '&t=' + Date.now());
+          }
+        }
+      } catch (e) { }
+    })();
+  </script>
   <title>MJA Sales Hub — Multi-Store ERP & Financials</title>
     <!-- SheetJS / XLSX for Real Excel Upload & Export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -340,6 +360,28 @@
     div.fixed[id^="modal-"].hidden,
     [id^="section-"].hidden {
       display: none !important;
+    }
+
+    /* JAMINAN MUTLAK SEMUA INPUT/SELECT/TEXTAREA DI DALAM MODAL TETAP MUNCUL & BISA DIISI */
+    div.fixed[id^="modal-"] input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+    div.fixed[id^="modal-"] select,
+    div.fixed[id^="modal-"] textarea,
+    #modal-live-session input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+    #modal-live-session select,
+    #modal-live-session textarea {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    div.fixed[id^="modal-"] input[type="checkbox"],
+    div.fixed[id^="modal-"] input[type="radio"],
+    #modal-live-session input[type="checkbox"],
+    #modal-live-session input[type="radio"] {
+      display: inline-block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
     }
   </style>
 </head>
@@ -773,6 +815,13 @@
 
           <!-- Elemen 3: [1 Tombol Aksi] (Ikon Saja di HP, Area Sentuh >= 44px) -->
           <div class="flex items-center space-x-1.5 flex-shrink-0">
+            <button onclick="window.hardRefreshApp()"
+              class="h-11 w-11 flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md border border-[#E5E7EB] active:scale-95 transition-all cursor-pointer mr-1"
+              title="Segarkan / Update Tampilan Aplikasi">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
             <button onclick="window.handleLogout()"
               class="md:hidden h-11 w-11 flex items-center justify-center text-[#6B7280] hover:text-[#A83220] hover:bg-[#F9FAFB] rounded-md border border-[#E5E7EB] active:scale-95 transition-all"
               title="Keluar Akun">
@@ -14535,6 +14584,24 @@
   };
 
   window.authenticateSuccess = function (userOrEmail, fallbackRole) {
+    try {
+      var allM = document.querySelectorAll('div.fixed[id^="modal-"]');
+      for (var mi = 0; mi < allM.length; mi++) {
+        allM[mi].classList.add('hidden');
+        allM[mi].style.removeProperty('display');
+      }
+      var childControls = document.querySelectorAll('div.fixed[id^="modal-"] input:not([type="file"]):not([type="hidden"]), div.fixed[id^="modal-"] select, div.fixed[id^="modal-"] textarea');
+      for (var ci = 0; ci < childControls.length; ci++) {
+        childControls[ci].classList.remove('hidden');
+        childControls[ci].style.removeProperty('display');
+        childControls[ci].style.removeProperty('visibility');
+        childControls[ci].style.removeProperty('opacity');
+        if (childControls[ci].id !== 'modal-live-qty') {
+          childControls[ci].removeAttribute('readonly');
+        }
+        childControls[ci].removeAttribute('disabled');
+      }
+    } catch (eM) { }
     window.appState.isAuth = true;
 
     var userObj = null;
@@ -14919,6 +14986,22 @@
   };
 
   // 5. CARA UBAH TARGET OMSET 150.000.000 (MODAL & REALTIME UPDATE)
+  
+  window.hardRefreshApp = function () {
+    try {
+      localStorage.removeItem('mja_app_build_version');
+      if (window.caches && typeof caches.keys === 'function') {
+        caches.keys().then(function (names) {
+          names.forEach(function (name) { caches.delete(name); });
+        });
+      }
+    } catch (e) { }
+    window.showToast('Memperbarui aplikasi...', 'info');
+    setTimeout(function () {
+      window.location.replace(window.location.pathname + '?v=fresh_' + Date.now());
+    }, 200);
+  };
+
   window.openModal = function (id) {
     var el = document.getElementById(id);
     if (el) {
@@ -14928,6 +15011,19 @@
       el.style.setProperty('display', 'flex', 'important');
       var form = el.querySelector('form');
       if (form) form.scrollTop = 0;
+
+      // Pastikan semua form control (input, select, textarea) tidak tersembunyi & bisa diketik manual
+      var controls = el.querySelectorAll('input:not([type="file"]):not([type="hidden"]), select, textarea');
+      for (var ci = 0; ci < controls.length; ci++) {
+        controls[ci].classList.remove('hidden');
+        controls[ci].style.removeProperty('display');
+        controls[ci].style.removeProperty('visibility');
+        controls[ci].style.removeProperty('opacity');
+        if (controls[ci].id !== 'modal-live-qty') {
+          controls[ci].removeAttribute('readonly');
+        }
+        controls[ci].removeAttribute('disabled');
+      }
     }
     document.body.classList.add('modal-open');
     var bnav = document.getElementById('mobile-bottom-nav');
