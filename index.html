@@ -4294,7 +4294,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
-        <button onclick="window.handleLogout()"
+        <button onclick="window.closeMobileDrawer(); window.handleLogout();"
           class="w-full py-2.5 px-3 bg-white border border-rose-200 hover:bg-rose-50 rounded-xl text-xs font-semibold text-[#DC2626] flex items-center justify-between transition-all cursor-pointer shadow-xs">
           <div class="flex items-center space-x-2.5">
             <svg class="w-4 h-4 text-[#DC2626]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -6264,20 +6264,29 @@
     };
 
     window.handleLogout = function () {
-    // 1. Tutup drawer menu mobile dan sembunyikan semua modal yang sedang terbuka
-    if (typeof window.closeMobileDrawer === 'function') {
-      try { window.closeMobileDrawer(); } catch (e) { }
-    }
+    // 1. Force close and hide mobile drawer immediately
+    try {
+      if (typeof window.closeMobileDrawer === 'function') {
+        window.closeMobileDrawer();
+      }
+    } catch (e) { }
+
     var drawerEl = document.getElementById('modal-mobile-menu');
     if (drawerEl) {
       drawerEl.classList.add('hidden');
+      drawerEl.style.display = 'none';
     }
 
     // Tutup semua modal overlay lain yang berada di luar main-view
-    var allModals = document.querySelectorAll('[id^="modal-"]');
-    for (var m = 0; m < allModals.length; m++) {
-      allModals[m].classList.add('hidden');
-    }
+    try {
+      var allModals = document.querySelectorAll('[id^="modal-"]');
+      for (var m = 0; m < allModals.length; m++) {
+        allModals[m].classList.add('hidden');
+        allModals[m].style.display = 'none';
+      }
+    } catch (eModals) { }
+
+    document.body.classList.remove('overflow-hidden');
 
     // 2. Matikan seluruh stream kamera perangkat (Kamera Selfie Absensi, Kamera Retur, Barcode)
     if (window.attCameraStream) {
@@ -6301,15 +6310,23 @@
     } catch (e) { }
 
     // 4. Reset status otentikasi di state aplikasi
-    window.appState.isAuth = false;
-    window.appState.currentUser = null;
+    if (window.appState) {
+      window.appState.isAuth = false;
+      window.appState.currentUser = null;
+    }
 
     // 5. Sembunyikan main-view (dashboard SPA) dan tampilkan login-view secara langsung
     var mv = document.getElementById('main-view');
-    if (mv) mv.classList.add('hidden');
+    if (mv) {
+      mv.classList.add('hidden');
+      mv.style.display = 'none';
+    }
 
     var lv = document.getElementById('login-view');
-    if (lv) lv.classList.remove('hidden');
+    if (lv) {
+      lv.classList.remove('hidden');
+      lv.style.display = 'flex';
+    }
 
     // 6. Pastikan tab form yang aktif adalah tab "Masuk" (bukan form pendaftaran)
     if (typeof window.switchAuthTab === 'function') {
@@ -6734,20 +6751,26 @@
   window.toggleMobileDrawer = function () {
       var d = document.getElementById('modal-mobile-menu');
       if (!d) return;
-      if (d.classList.contains('hidden')) {
+      var isHidden = d.classList.contains('hidden') || d.style.display === 'none';
+      if (isHidden) {
         var uEl = document.getElementById('drawer-user-info');
-        if (uEl && window.appState.currentUser) uEl.textContent = window.appState.currentUser.email;
+        if (uEl && window.appState && window.appState.currentUser) uEl.textContent = window.appState.currentUser.email;
         var bEl = document.getElementById('drawer-branch-info');
-        if (bEl) bEl.textContent = (window.appState.currentBranch || 'Cabang 1').indexOf('Cabang 2') !== -1 ? 'Cabang 2 (Hub)' : 'Cabang 1 (Pusat)';
+        if (bEl) bEl.textContent = ((window.appState && window.appState.currentBranch) || 'Cabang 1').indexOf('Cabang 2') !== -1 ? 'Cabang 2 (Hub)' : 'Cabang 1 (Pusat)';
         d.classList.remove('hidden');
+        d.style.display = 'flex';
       } else {
         d.classList.add('hidden');
+        d.style.display = 'none';
       }
     };
 
     window.closeMobileDrawer = function () {
       var d = document.getElementById('modal-mobile-menu');
-      if (d) d.classList.add('hidden');
+      if (d) {
+        d.classList.add('hidden');
+        d.style.display = 'none';
+      }
     };
 
     window.navigateFromDrawer = function (secId) {
@@ -16451,20 +16474,29 @@ window.handleSaveLiveSession = function (e) {
 
 
   window.handleLogout = function () {
-    // 1. Tutup drawer menu mobile dan sembunyikan semua modal yang sedang terbuka
-    if (typeof window.closeMobileDrawer === 'function') {
-      try { window.closeMobileDrawer(); } catch (e) { }
-    }
+    // 1. Force close and hide mobile drawer immediately
+    try {
+      if (typeof window.closeMobileDrawer === 'function') {
+        window.closeMobileDrawer();
+      }
+    } catch (e) { }
+
     var drawerEl = document.getElementById('modal-mobile-menu');
     if (drawerEl) {
       drawerEl.classList.add('hidden');
+      drawerEl.style.display = 'none';
     }
 
     // Tutup semua modal overlay lain yang berada di luar main-view
-    var allModals = document.querySelectorAll('[id^="modal-"]');
-    for (var m = 0; m < allModals.length; m++) {
-      allModals[m].classList.add('hidden');
-    }
+    try {
+      var allModals = document.querySelectorAll('[id^="modal-"]');
+      for (var m = 0; m < allModals.length; m++) {
+        allModals[m].classList.add('hidden');
+        allModals[m].style.display = 'none';
+      }
+    } catch (eModals) { }
+
+    document.body.classList.remove('overflow-hidden');
 
     // 2. Matikan seluruh stream kamera perangkat (Kamera Selfie Absensi, Kamera Retur, Barcode)
     if (window.attCameraStream) {
@@ -16488,15 +16520,23 @@ window.handleSaveLiveSession = function (e) {
     } catch (e) { }
 
     // 4. Reset status otentikasi di state aplikasi
-    window.appState.isAuth = false;
-    window.appState.currentUser = null;
+    if (window.appState) {
+      window.appState.isAuth = false;
+      window.appState.currentUser = null;
+    }
 
     // 5. Sembunyikan main-view (dashboard SPA) dan tampilkan login-view secara langsung
     var mv = document.getElementById('main-view');
-    if (mv) mv.classList.add('hidden');
+    if (mv) {
+      mv.classList.add('hidden');
+      mv.style.display = 'none';
+    }
 
     var lv = document.getElementById('login-view');
-    if (lv) lv.classList.remove('hidden');
+    if (lv) {
+      lv.classList.remove('hidden');
+      lv.style.display = 'flex';
+    }
 
     // 6. Pastikan tab form yang aktif adalah tab "Masuk" (bukan form pendaftaran)
     if (typeof window.switchAuthTab === 'function') {
