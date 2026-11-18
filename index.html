@@ -191,7 +191,16 @@
       /* Anti-overlap & layout protection */
       .flex > *, .grid > * {
         min-width: 0;
-        overflow-wrap: anywhere;
+        overflow-wrap: break-word;
+      }
+      .whitespace-nowrap,
+      [class*="whitespace-nowrap"] {
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        white-space: nowrap !important;
+      }
+      button, .badge, [class*="rounded-"] {
+        word-break: normal;
       }
 
       /* Viewport height with 100dvh support */
@@ -2192,46 +2201,46 @@
               <input type="file" id="inventory-excel-file" accept=".csv,.xlsx,.xls,.txt"
                 onchange="window.handleInventoryExcelUpload(event)" class="hidden">
               <button type="button" onclick="window.downloadInventoryExcelTemplate()"
-                class="py-2 px-3 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs transition-all"
+                class="py-2 px-3 shrink-0 whitespace-nowrap bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs transition-all cursor-pointer"
                 title="Unduh Format Template Kolom Excel/CSV">
-                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                <span>Unduh Format Excel</span>
+                <span class="whitespace-nowrap">Unduh Format Excel</span>
               </button>
               <button type="button" onclick="document.getElementById('inventory-excel-file').click()"
-                class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs transition-all"
+                class="py-2 px-3 shrink-0 whitespace-nowrap bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs transition-all cursor-pointer"
                 title="Upload Stok Sekaligus via File Excel/CSV">
-                <svg class="w-3.5 h-3.5 text-emerald-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-3.5 h-3.5 text-emerald-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12" />
                 </svg>
-                <span>Upload Excel Stok</span>
+                <span class="whitespace-nowrap">Upload Excel Stok</span>
               </button>
 
               <button onclick="window.openAddGroupModal()"
-                class="py-2 px-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all">
-                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="py-2 px-3 shrink-0 whitespace-nowrap bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                <span class="truncate">Tambah Group</span>
+                <span class="whitespace-nowrap">+ Tambah Group</span>
               </button>
               <button onclick="window.openAddProductModal()"
-                class="py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all">
-                <svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor"
+                class="py-2 px-3 shrink-0 whitespace-nowrap bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer">
+                <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor"
                   viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                <span class="truncate">Tambah Produk</span>
+                <span class="whitespace-nowrap">+ Tambah Produk</span>
               </button>
               <button onclick="window.openTransferStockModal()"
-                class="py-2 px-3 bg-[#2B3A9F] hover:bg-[#96421F] text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all">
-                <svg class="w-3.5 h-3.5 text-orange-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="py-2 px-3 shrink-0 whitespace-nowrap bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer">
+                <svg class="w-3.5 h-3.5 text-blue-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
-                <span class="truncate">Transfer Cabang A ⇄ B</span>
+                <span class="whitespace-nowrap">Transfer Cabang A ⇄ B</span>
               </button>
             </div>
           </div>
@@ -2971,48 +2980,48 @@
 
             <!-- Financial Table Structure -->
             <div
-              class="max-w-3xl mx-auto font-mono text-xs divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-              <div class="p-3 bg-slate-900 text-white flex justify-between font-bold">
+              class="max-w-3xl mx-auto font-mono text-xs divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-xs">
+              <div class="p-3 bg-slate-900 text-white flex justify-between items-center font-bold">
                 <span>KOMPONEN KEUANGAN</span>
-                <span>NILAI (IDR)</span>
+                <span class="whitespace-nowrap shrink-0 ml-2">NILAI (IDR)</span>
               </div>
-              <div class="p-3 bg-white flex justify-between font-bold text-slate-900">
+              <div class="p-3 bg-white flex justify-between items-center font-bold text-slate-900">
                 <span>(+) PENDAPATAN KOTOR (GROSS REVENUE)</span>
-                <span id="pl-gross">Rp 0</span>
+                <span id="pl-gross" class="whitespace-nowrap tabular-nums text-right ml-2 shrink-0">Rp 0</span>
               </div>
-              <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
+              <div class="p-3 bg-slate-50/50 flex justify-between items-center text-slate-600 pl-4 sm:pl-6">
                 <span>- Potongan Biaya Admin 5 Toko Shopee</span>
-                <span class="text-rose-600" id="pl-admin-shopee">Rp 0</span>
+                <span class="text-rose-600 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-admin-shopee">Rp 0</span>
               </div>
-              <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
+              <div class="p-3 bg-slate-50/50 flex justify-between items-center text-slate-600 pl-4 sm:pl-6">
                 <span>- Potongan Komisi TikTok Shop Live</span>
-                <span class="text-rose-600" id="pl-admin-tiktok">Rp 0</span>
+                <span class="text-rose-600 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-admin-tiktok">Rp 0</span>
               </div>
-              <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
+              <div class="p-3 bg-slate-50/50 flex justify-between items-center text-slate-600 pl-4 sm:pl-6">
                 <span>- Biaya Voucher Diskon Toko</span>
-                <span class="text-rose-600" id="pl-voucher">Rp 0</span>
+                <span class="text-rose-600 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-voucher">Rp 0</span>
               </div>
-              <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
+              <div class="p-3 bg-slate-50/50 flex justify-between items-center text-slate-600 pl-4 sm:pl-6">
                 <span>- Pembatalan Omset dari Paket Retur</span>
-                <span class="text-rose-600" id="pl-returns">Rp 0</span>
+                <span class="text-rose-600 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-returns">Rp 0</span>
               </div>
-              <div class="p-3 bg-white flex justify-between font-bold text-slate-900">
+              <div class="p-3 bg-white flex justify-between items-center font-bold text-slate-900 border-t border-slate-200">
                 <span>(=) PENDAPATAN BERSIH SETELAH MARKETPLACE</span>
-                <span id="pl-net-marketplace">Rp 0</span>
+                <span id="pl-net-marketplace" class="whitespace-nowrap tabular-nums text-right ml-2 shrink-0">Rp 0</span>
               </div>
-              <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
+              <div class="p-3 bg-slate-50/50 flex justify-between items-center text-slate-600 pl-4 sm:pl-6">
                 <span>- Total Harga Pokok Penjualan (HPP / COGS)</span>
-                <span class="text-rose-600" id="pl-cogs">Rp 0</span>
+                <span class="text-rose-600 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-cogs">Rp 0</span>
               </div>
-              <div class="p-3 bg-slate-50/50 flex justify-between text-slate-600 pl-6">
+              <div class="p-3 bg-slate-50/50 flex justify-between items-center text-slate-600 pl-4 sm:pl-6">
                 <span>- Biaya Iklan (Shopee Ads + TikTok Live Ads)</span>
-                <span class="text-rose-600" id="pl-ads">Rp 0</span>
+                <span class="text-rose-600 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-ads">Rp 0</span>
               </div>
-              <div
-                class="p-4 bg-emerald-50 flex justify-between text-sm font-extrabold text-emerald-800 border-t-2 border-emerald-500">
+              <div class="p-4 bg-emerald-50 text-emerald-950 flex justify-between items-center font-extrabold text-sm border-t-2 border-emerald-500">
                 <span>(=) LABA BERSIH OPERASIONAL RIIL</span>
-                <span id="pl-final-margin">Rp 0 (0.0%)</span>
+                <span class="text-emerald-700 whitespace-nowrap tabular-nums text-right ml-2 shrink-0" id="pl-final-margin">Rp 0 (0.0%)</span>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -3034,26 +3043,26 @@
                 <h3 class="font-heading font-black text-slate-900 text-sm sm:text-base">Pusat Analitik & Laporan Live Stream</h3>
                 <span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">Khusus Manajemen</span>
               </div>
-              <div class="flex items-center space-x-2 text-xs">
-                <span class="text-slate-400 text-[11px]" id="lr-last-sync-time">Sinkronisasi Realtime</span>
+              <div class="flex flex-wrap items-center gap-2 text-xs w-full sm:w-auto mt-2 sm:mt-0">
+                <span class="text-slate-400 text-[11px] hidden sm:inline" id="lr-last-sync-time">Sinkronisasi Realtime</span>
                 <button type="button" onclick="window.refreshLiveReportsData(this)"
-                  class="h-8 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg shadow-2xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                  class="h-8 px-3 shrink-0 whitespace-nowrap bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg shadow-2xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
                   title="Segarkan data laporan live & transaksi terbaru dari Google Sheets">
-                  <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-3.5 h-3.5 text-slate-950 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
-                  <span>Segarkan Data</span>
+                  <span class="whitespace-nowrap">Segarkan Data</span>
                 </button>
-                <button type="button" onclick="window.openLiveTargetModal()" class="h-8 px-2.5 bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold rounded-lg border border-amber-300 transition-colors flex items-center space-x-1 cursor-pointer" title="Ubah Pengaturan Target Omset Live">
-                  <span>🎯 Ubah Target</span>
+                <button type="button" onclick="window.openLiveTargetModal()" class="h-8 px-2.5 shrink-0 whitespace-nowrap bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold rounded-lg border border-amber-300 transition-colors flex items-center space-x-1 cursor-pointer" title="Ubah Pengaturan Target Omset Live">
+                  <span class="whitespace-nowrap">🎯 Ubah Target</span>
                 </button>
-                <button type="button" onclick="window.exportLiveReportExcel()" class="px-2.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Unduh File CSV / Excel">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                  <span>Excel</span>
+                <button type="button" onclick="window.exportLiveReportExcel()" class="h-8 px-2.5 shrink-0 whitespace-nowrap bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Unduh File CSV / Excel">
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  <span class="whitespace-nowrap">Excel</span>
                 </button>
-                <button type="button" onclick="window.exportLiveReportPDF()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Cetak / Simpan PDF">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                  <span>PDF</span>
+                <button type="button" onclick="window.exportLiveReportPDF()" class="h-8 px-2.5 shrink-0 whitespace-nowrap bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-bold flex items-center space-x-1 shadow-xs cursor-pointer" title="Cetak Format PDF Resmi">
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                  <span class="whitespace-nowrap">PDF</span>
                 </button>
               </div>
             </div>
@@ -3109,20 +3118,20 @@
             </div>
 
             <!-- Submenu Tabs Bar -->
-            <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-none text-xs border-t border-slate-100 pt-2">
-              <button type="button" onclick="window.switchLiveReportTab('tab-lr-executive')" id="btn-tab-lr-executive" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-slate-900 text-white whitespace-nowrap shadow-xs cursor-pointer">
+            <div class="flex items-center space-x-2 overflow-x-auto pb-1.5 scrollbar-none text-xs border-t border-slate-100 pt-2.5 -mx-1 px-1">
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-executive')" id="btn-tab-lr-executive" class="lr-tab-btn shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-bold bg-slate-900 text-white shadow-xs cursor-pointer">
                 1. Ringkasan Eksekutif
               </button>
-              <button type="button" onclick="window.switchLiveReportTab('tab-lr-sessions')" id="btn-tab-lr-sessions" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-sessions')" id="btn-tab-lr-sessions" class="lr-tab-btn shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">
                 2. Laporan Per Sesi
               </button>
-              <button type="button" onclick="window.switchLiveReportTab('tab-lr-hosts')" id="btn-tab-lr-hosts" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-hosts')" id="btn-tab-lr-hosts" class="lr-tab-btn shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">
                 3. Performa Host
               </button>
-              <button type="button" onclick="window.switchLiveReportTab('tab-lr-ads')" id="btn-tab-lr-ads" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-ads')" id="btn-tab-lr-ads" class="lr-tab-btn shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">
                 4. Iklan &amp; Profitabilitas
               </button>
-              <button type="button" onclick="window.switchLiveReportTab('tab-lr-products')" id="btn-tab-lr-products" class="lr-tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap cursor-pointer">
+              <button type="button" onclick="window.switchLiveReportTab('tab-lr-products')" id="btn-tab-lr-products" class="lr-tab-btn shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">
                 5. Produk Terjual
               </button>
             </div>
@@ -3139,15 +3148,15 @@
                   <span class="text-[10px] font-black uppercase tracking-wider text-amber-800">Target vs Realisasi Periode Ini</span>
                   <h4 class="font-bold text-sm text-slate-900" id="lr-target-summary-title">Target Omset Bulan Ini</h4>
                 </div>
-                <div class="text-right flex items-center space-x-2">
-                  <span class="text-xs font-semibold text-slate-500">Realisasi: <strong class="text-slate-900" id="lr-target-actual-val">Rp 0</strong></span>
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1 sm:mt-0">
+                  <span class="text-xs font-semibold text-slate-600 whitespace-nowrap tabular-nums">Realisasi: <strong class="text-slate-900" id="lr-target-actual-val">Rp 0</strong></span>
                   <span class="text-xs font-semibold text-slate-400">/</span>
-                  <span class="text-xs font-bold text-amber-900" id="lr-target-target-val">Rp 150.000.000</span>
-                  <span class="px-2 py-0.5 rounded font-black text-xs" id="lr-target-pct-badge">0%</span>
+                  <span class="text-xs font-bold text-amber-900 whitespace-nowrap tabular-nums" id="lr-target-target-val">Rp 150.000.000</span>
+                  <span class="px-2 py-0.5 rounded font-black text-xs shrink-0 whitespace-nowrap" id="lr-target-pct-badge">0%</span>
                   <button type="button" onclick="window.openLiveTargetModal()"
-                    class="ml-1 sm:ml-2 px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-black shadow-xs transition-all flex items-center space-x-1 cursor-pointer active:scale-95"
+                    class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-black shadow-xs transition-all flex items-center space-x-1 cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
                     title="Klik untuk mengubah nominal target omset live">
-                    <span>✏️ Ubah Target Omset</span>
+                    <span>✏️ Ubah Target</span>
                   </button>
                 </div>
               </div>
@@ -3256,7 +3265,7 @@
                     <h4 class="font-bold text-xs sm:text-sm text-slate-900">Distribusi Omset per Platform</h4>
                     <p class="text-[11px] text-slate-400">Perbandingan performa Shopee Live vs TikTok Shop</p>
                   </div>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">Platform</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 shrink-0 whitespace-nowrap">Platform</span>
                 </div>
                 <div class="h-64 relative w-full">
                   <canvas id="lr-platform-chart"></canvas>
@@ -3273,7 +3282,7 @@
                   <h4 class="font-bold text-xs sm:text-sm text-slate-900">Top 5 Sesi Live Terbaik (Omset &amp; Margin)</h4>
                 </div>
                 <div class="overflow-x-auto">
-                  <table class="w-full text-left text-xs">
+                  <table class="min-w-[480px] w-full text-left text-xs">
                     <thead>
                       <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
                         <th class="pb-2">Toko &amp; Host</th>
@@ -3296,7 +3305,7 @@
                   <h4 class="font-bold text-xs sm:text-sm text-slate-900">5 Sesi Terendah / Perlu Evaluasi</h4>
                 </div>
                 <div class="overflow-x-auto">
-                  <table class="w-full text-left text-xs">
+                  <table class="min-w-[480px] w-full text-left text-xs">
                     <thead>
                       <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase">
                         <th class="pb-2">Toko &amp; Host</th>
@@ -12544,14 +12553,27 @@
         var omset = Number(s.omset) || 0;
         var margin = Number(s.margin) || 0;
         var mPct = omset > 0 ? ((margin / omset) * 100).toFixed(0) : '0';
+        var cleanDate = window.cleanWibDate ? window.cleanWibDate(s.date) : (s.date || '-');
         return '<tr class="hover:bg-slate-50 cursor-pointer transition-colors" onclick="window.openLiveSessionDetail(\'' + s.id + '\')">' +
-          '<td class="p-2.5 font-bold text-slate-800 flex items-center space-x-1.5">' +
-            '<span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ' + (isTop ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600') + '">' + (idx + 1) + '</span>' +
-            '<div class="truncate max-w-[120px]">' + (s.store || '-') + '<span class="block text-[10px] text-slate-400 font-normal">' + (s.date || '-') + '</span></div>' +
+          '<td class="p-2.5 font-bold text-slate-800">' +
+            '<div class="flex items-center space-x-2">' +
+              '<span class="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-black ' + (isTop ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600') + '">' + (idx + 1) + '</span>' +
+              '<div class="truncate max-w-[150px] leading-tight">' +
+                '<span class="font-bold text-slate-800 text-xs block truncate">' + (s.store || '-') + '</span>' +
+                '<span class="text-[10px] text-slate-400 font-mono font-medium block truncate">' + (s.id || '') + '</span>' +
+              '</div>' +
+            '</div>' +
           '</td>' +
-          '<td class="p-2.5 font-semibold text-slate-700">' + (s.host || '-') + '</td>' +
-          '<td class="p-2.5 text-right font-black text-slate-900">' + window.formatRupiah(omset) + '</td>' +
-          '<td class="p-2.5 text-right font-bold ' + (margin < 0 ? 'text-rose-600' : 'text-emerald-600') + '">' + window.formatRupiah(margin) + ' (' + mPct + '%)</td>' +
+          '<td class="p-2.5 text-xs text-slate-700 whitespace-nowrap">' +
+            '<span class="font-bold text-slate-800 block">' + (s.host || '-') + '</span>' +
+            '<span class="text-[10px] text-slate-400 font-mono block">' + cleanDate + '</span>' +
+          '</td>' +
+          '<td class="p-2.5 text-right font-black text-slate-900 whitespace-nowrap tabular-nums text-xs">' +
+            window.formatRupiah(omset) +
+          '</td>' +
+          '<td class="p-2.5 text-right font-bold whitespace-nowrap tabular-nums text-xs ' + (margin < 0 ? 'text-rose-600' : 'text-emerald-600') + '">' +
+            window.formatRupiah(margin) + ' <span class="text-[10px] text-slate-500 font-normal">(' + mPct + '%)</span>' +
+          '</td>' +
         '</tr>';
       }).join('');
     };
