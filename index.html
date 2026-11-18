@@ -13490,14 +13490,21 @@
             if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
           }
 
-          // Hanya ambil sesi live yang diinput SETELAH reset terakhir (bersih dari data lama)
-          // Ambil seluruh sesi live operasional yang valid (abaikan marker sistem reset)
-          var remoteSessions = rawSessions.filter(function(s) {
-            return s && s.store !== 'SYSTEM_RESET' && (!s.id || s.id.indexOf('RESET_MARKER') === -1);
-          });
-          // Jika kosong di remote tapi ada sesi lokal yang tersimpan, jangan buang sesi lokal
-          if (remoteSessions.length === 0 && window.appState.data.liveSessions && window.appState.data.liveSessions.length > 0) {
-            remoteSessions = window.appState.data.liveSessions;
+          // Hanya ambil sesi live yang diinput SETELAH reset terakhir (bersih dari data dummy lama)
+          var remoteSessions = [];
+          if (lastResetIdx !== -1) {
+            for (var k = lastResetIdx + 1; k < rawSessions.length; k++) {
+              var sCand = rawSessions[k];
+              if (sCand && sCand.store !== 'SYSTEM_RESET' && (!sCand.id || sCand.id.indexOf('RESET_MARKER') === -1)) {
+                remoteSessions.push(sCand);
+              }
+            }
+          } else if (localStorage.getItem('mja_system_was_reset') === 'true') {
+            remoteSessions = [];
+          } else {
+            remoteSessions = rawSessions.filter(function(s) {
+              return s && s.store !== 'SYSTEM_RESET' && (!s.id || s.id.indexOf('RESET_MARKER') === -1);
+            });
           }
 
           // Parse soldProducts dari kolom notes jika tersedia
@@ -13556,6 +13563,7 @@
           if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
           if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
           if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
+          if (typeof window.updateResetStats === 'function') window.updateResetStats();
 
           if (isManual) {
             window.showToast('✅ Berhasil tersinkron (' + remoteSessions.length + ' Sesi Live aktif)!', 'success');
@@ -16355,6 +16363,7 @@ window.handleSaveLiveSession = function (e) {
     if (typeof window.renderReturnsHistory === 'function') window.renderReturnsHistory();
     if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
     if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
+    if (typeof window.updateResetStats === 'function') window.updateResetStats();
 
     window.showToast('✅ Seluruh data yang dipilih berhasil direset bersih ke NOL (0)!', 'success');
   };
@@ -16470,8 +16479,54 @@ window.handleSaveLiveSession = function (e) {
       return true;
     });
 
-    // Jika filter spesifik tidak menemukan sesi live baru, gunakan data performa 5 Toko Shopee + TikTok
-    // sehingga angka ringkasan finansial (Rp 148.500.000) TETAP STABIL dan TIDAK PERNAH JADI NOL
+    var isSystemResetActive = (localStorage.getItem('mja_system_was_reset') === 'true') ||
+                              (window.appState && window.appState.data && window.appState.data.isResetMetrics) ||
+                              (localStorage.getItem('mja_metrics_is_reset') === 'true');
+
+    // JIKA SISTEM SUDAH DIRESET DAN BELUM ADA TRANSAKSI BARU, DASHBOARD WAJIB NOL (GO-LIVE BERSIH)
+    if (filteredSessions.length === 0 && filteredOrders.length === 0 && isSystemResetActive) {
+      if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = 'Rp 0';
+      if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = 'Rp 0';
+      if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = 'Rp 0';
+      if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = '0.0%';
+      if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = '0 Order';
+      if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = '0.0% (0 Paket)';
+      if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = 'Rp 0';
+      if (document.getElementById('pl-admin-shopee')) document.getElementById('pl-admin-shopee').textContent = 'Rp 0';
+      if (document.getElementById('pl-admin-tiktok')) document.getElementById('pl-admin-tiktok').textContent = 'Rp 0';
+      if (document.getElementById('pl-voucher')) document.getElementById('pl-voucher').textContent = 'Rp 0';
+      if (document.getElementById('pl-returns')) document.getElementById('pl-returns').textContent = 'Rp 0';
+      if (document.getElementById('pl-net-marketplace')) document.getElementById('pl-net-marketplace').textContent = 'Rp 0';
+      if (document.getElementById('pl-cogs')) document.getElementById('pl-cogs').textContent = 'Rp 0';
+      if (document.getElementById('pl-ads')) document.getElementById('pl-ads').textContent = 'Rp 0';
+      if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = 'Rp 0 (0.0%)';
+
+      var tbodyReset = document.getElementById('table-store-performance');
+      if (tbodyReset) {
+        tbodyReset.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400 italic text-xs">Data bersih pasca-reset sistem (Go-Live). Belum ada transaksi baru yang diinput.</td></tr>';
+      }
+
+      try {
+        if (window.trendChartInstance && window.trendChartInstance.data) {
+          window.trendChartInstance.data.datasets[0].data = [0, 0, 0, 0, 0, 0, 0];
+          if (window.trendChartInstance.data.datasets[1]) {
+            window.trendChartInstance.data.datasets[1].data = [0, 0, 0, 0, 0, 0, 0];
+          }
+          window.trendChartInstance.update();
+        }
+        if (window.costChartInstance && window.costChartInstance.data) {
+          window.costChartInstance.data.datasets[0].data = [0, 0, 0, 0];
+          window.costChartInstance.update();
+        }
+        var donutLabel = document.getElementById('donut-center-label');
+        if (donutLabel) {
+          donutLabel.innerHTML = '<span class="text-xl font-bold text-slate-800">0.0%</span><br><span class="text-[10px] text-slate-400">LABA BERSIH</span>';
+        }
+      } catch (eC) {}
+      return;
+    }
+
+    // Jika filter spesifik tidak menemukan sesi live baru dan sistem BELUM di-reset, gunakan baseline demo
     if (filteredSessions.length === 0 && filteredOrders.length === 0) {
       var baseStores = (window.appState && window.appState.data && window.appState.data.stores) || [];
       var baseGross = 148500000;
