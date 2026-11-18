@@ -3820,7 +3820,7 @@
                 <p class="text-[11px] text-rose-700 mt-0.5">Tindakan ini akan mengosongkan riwayat pesanan, log QC packing, presensi, sesi live, dan mutasi stok agar bersih siap pakai.</p>
               </div>
               <div class="flex items-center space-x-2 shrink-0">
-                <button type="button" onclick="window.openResetConfirmationModal()" class="h-10 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5 active:scale-95">
+                <button type="button" onclick="var m=document.getElementById('modal-confirm-reset'); if(m){m.classList.remove('hidden'); m.style.setProperty('display','flex','important');} window.openResetConfirmationModal();" class="h-10 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5 active:scale-95 cursor-pointer">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   <span>Reset Sistem ke Nol (Mulai Awal)</span>
                 </button>
@@ -4930,7 +4930,7 @@
   </div>
   
   <!-- MODAL: KONFIRMASI RESET SISTEM (GO-LIVE DARI AWAL) -->
-  <div id="modal-confirm-reset" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="modal-confirm-reset" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-[100000] hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-rose-200">
       <div class="p-4 bg-rose-600 text-white flex items-center justify-between">
         <div class="flex items-center space-x-2">
@@ -7948,9 +7948,26 @@
     window.openResetConfirmationModal = function () {
       var txt = document.getElementById('confirm-reset-text');
       if (txt) txt.value = '';
-      window.updateResetStats();
-      var modal = document.getElementById('modal-confirm-reset');
-      if (modal) modal.classList.remove('hidden');
+      if (typeof window.updateResetStats === 'function') window.updateResetStats();
+
+      // Pastikan semua pilihan checklist data siap dan tercentang default
+      var checkIds = ['chk-reset-qc', 'chk-reset-att', 'chk-reset-orders', 'chk-reset-live', 'chk-reset-stocklogs', 'chk-reset-metrics'];
+      checkIds.forEach(function (cid) {
+        var chk = document.getElementById(cid);
+        if (chk) chk.checked = true;
+      });
+
+      if (typeof window.openModal === 'function') {
+        window.openModal('modal-confirm-reset');
+      } else {
+        var modal = document.getElementById('modal-confirm-reset');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.style.removeProperty('display');
+          modal.style.display = 'flex';
+          modal.style.setProperty('display', 'flex', 'important');
+        }
+      }
     };
 
     window.executeSystemReset = function () {
@@ -7963,53 +7980,79 @@
       var resetEpoch = Date.now();
       var resetMarkerId = 'RESET_MARKER_' + resetEpoch;
 
-      window.appState.data.qcLogs = [];
-      window.appState.data.attendanceLogs = [];
-      window.appState.data.orders = [];
-      window.appState.data.returns = [];
-      window.appState.data.liveSessions = [];
-      window.appState.data.stockLogs = [];
-      window.appState.data.isResetMetrics = true;
+      var chkQC = document.getElementById('chk-reset-qc') ? document.getElementById('chk-reset-qc').checked : true;
+      var chkAtt = document.getElementById('chk-reset-att') ? document.getElementById('chk-reset-att').checked : true;
+      var chkOrders = document.getElementById('chk-reset-orders') ? document.getElementById('chk-reset-orders').checked : true;
+      var chkLive = document.getElementById('chk-reset-live') ? document.getElementById('chk-reset-live').checked : true;
+      var chkStock = document.getElementById('chk-reset-stocklogs') ? document.getElementById('chk-reset-stocklogs').checked : true;
+      var chkMetrics = document.getElementById('chk-reset-metrics') ? document.getElementById('chk-reset-metrics').checked : true;
 
-      // Simpan flag reset lokal
-      try {
-        localStorage.setItem('mja_system_was_reset', 'true');
-        localStorage.setItem('mja_metrics_is_reset', 'true');
-        localStorage.setItem('mja_last_applied_reset_marker', resetEpoch.toString());
-        localStorage.setItem('mja_clean_qcLogs', '[]');
-        localStorage.setItem('mja_clean_attendanceLogs', '[]');
-        localStorage.setItem('mja_persistent_attendanceLogs', '[]');
-        localStorage.setItem('mja_clean_orders', '[]');
-        localStorage.setItem('mja_clean_returns', '[]');
-        localStorage.setItem('mja_clean_liveSessions', '[]');
-        localStorage.setItem('mja_clean_stockLogs', '[]');
-      } catch (e) {}
+      if (chkQC) {
+        window.appState.data.qcLogs = [];
+        try { localStorage.setItem('mja_clean_qcLogs', '[]'); } catch (e) {}
+      }
+      if (chkAtt) {
+        window.appState.data.attendanceLogs = [];
+        try {
+          localStorage.setItem('mja_clean_attendanceLogs', '[]');
+          localStorage.setItem('mja_persistent_attendanceLogs', '[]');
+        } catch (e) {}
+      }
+      if (chkOrders) {
+        window.appState.data.orders = [];
+        window.appState.data.returns = [];
+        try {
+          localStorage.setItem('mja_clean_orders', '[]');
+          localStorage.setItem('mja_clean_returns', '[]');
+        } catch (e) {}
+      }
+      if (chkLive) {
+        window.appState.data.liveSessions = [];
+        try {
+          localStorage.setItem('mja_clean_liveSessions', '[]');
+          localStorage.setItem('mja_live_sessions', '[]');
+        } catch (e) {}
+      }
+      if (chkStock) {
+        window.appState.data.stockLogs = [];
+        try { localStorage.setItem('mja_clean_stockLogs', '[]'); } catch (e) {}
+      }
+      if (chkMetrics) {
+        window.appState.data.isResetMetrics = true;
+        try {
+          localStorage.setItem('mja_system_was_reset', 'true');
+          localStorage.setItem('mja_metrics_is_reset', 'true');
+          localStorage.setItem('mja_last_applied_reset_marker', resetEpoch.toString());
+        } catch (e) {}
+      }
 
-      // KIRIM MARKER RESET KE GOOGLE SHEETS CLOUD (Agar HP karyawan otomatis ter-reset dalam hitungan detik)
+      // KIRIM MARKER RESET KE GOOGLE SHEETS CLOUD (Agar sinkronisasi antar device berjalan)
       if (window.GAS_ENDPOINT_URL) {
-        // 1. Simpan marker reset di sheet Live_Sessions
-        var resetUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
-          'action=saveLiveSession&id=' + encodeURIComponent(resetMarkerId) +
-          '&store=SYSTEM_RESET&host=SYSTEM&omset=0&fee=0&ads=0&cogs=0&margin=0&items=0' +
-          '&notes=' + encodeURIComponent('SYSTEM_RESET_' + resetEpoch) +
-          '&t=' + resetEpoch;
-        fetch(resetUrl).catch(function(err){ console.warn('Reset live marker error:', err); });
+        if (chkLive) {
+          var resetUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
+            'action=saveLiveSession&id=' + encodeURIComponent(resetMarkerId) +
+            '&store=SYSTEM_RESET&host=SYSTEM&omset=0&fee=0&ads=0&cogs=0&margin=0&items=0' +
+            '&notes=' + encodeURIComponent('SYSTEM_RESET_' + resetEpoch) +
+            '&t=' + resetEpoch;
+          fetch(resetUrl).catch(function(err){ console.warn('Reset live marker error:', err); });
+        }
 
-        // 2. Kosongkan seluruh riwayat presensi di Google Sheets
-        var resetAttUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
-          'action=resetAttendance&scope=all&t=' + resetEpoch;
-        fetch(resetAttUrl).catch(function(err){ console.warn('Reset attendance error:', err); });
+        if (chkAtt) {
+          var resetAttUrl = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') +
+            'action=resetAttendance&scope=all&t=' + resetEpoch;
+          fetch(resetAttUrl).catch(function(err){ console.warn('Reset attendance error:', err); });
+        }
       }
 
       window.closeModal('modal-confirm-reset');
 
       // Refresh seluruh tampilan & tabel
-      window.renderAllData();
+      if (typeof window.renderAllData === 'function') window.renderAllData();
       if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport();
       if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
-      window.updateResetStats();
+      if (typeof window.updateResetStats === 'function') window.updateResetStats();
 
-      window.showToast('SISTEM BERHASIL DI-RESET KE AWAL! Seluruh HP karyawan otomatis ter-reset.', 'success');
+      window.showToast('Data terpilih berhasil di-reset ke titik awal!', 'success');
     };
 
     window.restoreDemoData = function () {
