@@ -337,7 +337,7 @@
       display: none !important;
     }
     .modal-overlay.hidden,
-    [id^="modal-"].hidden,
+    div.fixed[id^="modal-"].hidden,
     [id^="section-"].hidden {
       display: none !important;
     }
@@ -6456,12 +6456,17 @@
     };
 
     window.authenticateSuccess = function (email, role) {
-    // Reset all modal inline display styles so they can be opened instantly
+    // Reset all modal dialog overlays (hanya div dialog fixed, jangan sentuh input di dalamnya)
     try {
-      var allM = document.querySelectorAll('[id^="modal-"]');
+      var allM = document.querySelectorAll('div.fixed[id^="modal-"]');
       for (var mi = 0; mi < allM.length; mi++) {
         allM[mi].classList.add('hidden');
         allM[mi].style.removeProperty('display');
+      }
+      var childControls = document.querySelectorAll('div.fixed[id^="modal-"] input:not([type="file"]):not([type="hidden"]), div.fixed[id^="modal-"] select, div.fixed[id^="modal-"] textarea');
+      for (var ci = 0; ci < childControls.length; ci++) {
+        childControls[ci].classList.remove('hidden');
+        childControls[ci].style.removeProperty('display');
       }
     } catch (eM) { }
 
@@ -6546,9 +6551,9 @@
       drawerEl.style.setProperty('display', 'none', 'important');
     }
 
-    // Tutup semua modal overlay lain yang berada di luar main-view
+    // Tutup hanya modal dialog overlay tingkat atas (class div.fixed[id^="modal-"])
     try {
-      var allModals = document.querySelectorAll('[id^="modal-"]');
+      var allModals = document.querySelectorAll('div.fixed[id^="modal-"]');
       for (var m = 0; m < allModals.length; m++) {
         allModals[m].classList.add('hidden');
         allModals[m].style.display = 'none';
@@ -11219,9 +11224,18 @@
 
     window.openNewLiveModal = function () {
       // Validasi ketat peran Host Live
-      if (window.appState.currentRole !== 'host') {
+      if (window.appState.currentRole !== 'host' && window.appState.currentRole !== 'admin') {
         window.showToast('Akses Ditolak: Hanya user Host Live yang berhak menginput Rekap Sesi Live!', 'error');
         return;
+      }
+
+      var modalEl = document.getElementById('modal-live-session');
+      if (modalEl) {
+        var controls = modalEl.querySelectorAll('input:not([type="file"]):not([type="hidden"]), select, textarea');
+        for (var cidx = 0; cidx < controls.length; cidx++) {
+          controls[cidx].classList.remove('hidden');
+          controls[cidx].style.removeProperty('display');
+        }
       }
 
       window.currentLiveSoldItems = [];
@@ -15777,6 +15791,15 @@
       return;
     }
 
+    var modalEl = document.getElementById('modal-live-session');
+    if (modalEl) {
+      var controls = modalEl.querySelectorAll('input:not([type="file"]):not([type="hidden"]), select, textarea');
+      for (var cidx = 0; cidx < controls.length; cidx++) {
+        controls[cidx].classList.remove('hidden');
+        controls[cidx].style.removeProperty('display');
+      }
+    }
+
     var hostInput = document.getElementById('modal-live-host');
     if (hostInput) {
       var user = (window.appState && window.appState.currentUser) || { name: 'Bambang Santoso' };
@@ -16959,9 +16982,9 @@ window.handleSaveLiveSession = function (e) {
       drawerEl.style.setProperty('display', 'none', 'important');
     }
 
-    // Tutup semua modal overlay lain yang berada di luar main-view
+    // Tutup hanya modal dialog overlay tingkat atas (class div.fixed[id^="modal-"])
     try {
-      var allModals = document.querySelectorAll('[id^="modal-"]');
+      var allModals = document.querySelectorAll('div.fixed[id^="modal-"]');
       for (var m = 0; m < allModals.length; m++) {
         allModals[m].classList.add('hidden');
         allModals[m].style.display = 'none';
