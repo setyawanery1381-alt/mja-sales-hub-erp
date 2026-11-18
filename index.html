@@ -241,6 +241,22 @@
         padding-bottom: 32px !important;
       }
     }
+      /* GUARANTEED DISPLAY FIX FOR SPA VIEW & MODAL SWITCHING */
+    .hidden {
+      display: none !important;
+    }
+    [hidden] {
+      display: none !important;
+    }
+    #login-view.hidden {
+      display: none !important;
+    }
+    #main-view.hidden {
+      display: none !important;
+    }
+    #modal-mobile-menu.hidden {
+      display: none !important;
+    }
   </style>
 </head>
 
@@ -6224,8 +6240,28 @@
       window.appState.currentUser = { email: email, role: role, branch: branch };
       window.appState.currentRole = role;
 
-      document.getElementById('login-view').classList.add('hidden');
-      document.getElementById('main-view').classList.remove('hidden');
+          var lv = document.getElementById('login-view');
+    if (lv) {
+      lv.classList.add('hidden');
+      lv.style.display = 'none';
+      lv.style.setProperty('display', 'none', 'important');
+    }
+    var mv = document.getElementById('main-view');
+    if (mv) {
+      mv.classList.remove('hidden');
+      mv.style.removeProperty('display');
+      mv.style.display = 'flex';
+      mv.style.setProperty('display', 'flex', 'important');
+    }
+    var drawerEl = document.getElementById('modal-mobile-menu');
+    if (drawerEl) {
+      drawerEl.classList.add('hidden');
+      drawerEl.style.display = 'none';
+      drawerEl.style.setProperty('display', 'none', 'important');
+    }
+    if (typeof window.closeMobileDrawer === 'function') {
+      try { window.closeMobileDrawer(); } catch (e) { }
+    }
 
       document.getElementById('user-display-name').textContent = email.split('@')[0];
       document.getElementById('user-display-role').textContent = role;
@@ -6275,6 +6311,7 @@
     if (drawerEl) {
       drawerEl.classList.add('hidden');
       drawerEl.style.display = 'none';
+      drawerEl.style.setProperty('display', 'none', 'important');
     }
 
     // Tutup semua modal overlay lain yang berada di luar main-view
@@ -6283,6 +6320,7 @@
       for (var m = 0; m < allModals.length; m++) {
         allModals[m].classList.add('hidden');
         allModals[m].style.display = 'none';
+        allModals[m].style.setProperty('display', 'none', 'important');
       }
     } catch (eModals) { }
 
@@ -6770,7 +6808,9 @@
       if (d) {
         d.classList.add('hidden');
         d.style.display = 'none';
+        d.style.setProperty('display', 'none', 'important');
       }
+      document.body.classList.remove('modal-open', 'overflow-hidden');
     };
 
     window.navigateFromDrawer = function (secId) {
@@ -14220,8 +14260,28 @@
     if (topbarRoleBadge) topbarRoleBadge.textContent = roleDisplay + ' • ' + (userObj.branch ? userObj.branch.split(' ')[0] : 'Cabang 1');
     if (topbarAvatar) topbarAvatar.textContent = (userObj.name || userObj.email).charAt(0).toUpperCase();
 
-    if (document.getElementById('login-view')) document.getElementById('login-view').classList.add('hidden');
-    if (document.getElementById('main-view')) document.getElementById('main-view').classList.remove('hidden');
+        var lv = document.getElementById('login-view');
+    if (lv) {
+      lv.classList.add('hidden');
+      lv.style.display = 'none';
+      lv.style.setProperty('display', 'none', 'important');
+    }
+    var mv = document.getElementById('main-view');
+    if (mv) {
+      mv.classList.remove('hidden');
+      mv.style.removeProperty('display');
+      mv.style.display = 'flex';
+      mv.style.setProperty('display', 'flex', 'important');
+    }
+    var drawerEl = document.getElementById('modal-mobile-menu');
+    if (drawerEl) {
+      drawerEl.classList.add('hidden');
+      drawerEl.style.display = 'none';
+      drawerEl.style.setProperty('display', 'none', 'important');
+    }
+    if (typeof window.closeMobileDrawer === 'function') {
+      try { window.closeMobileDrawer(); } catch (e) { }
+    }
 
     window.applyRolePermissions(userObj.role);
     window.showToast('Selamat datang, ' + (userObj.name || userObj.email) + ' (' + roleDisplay + ')', 'success');
@@ -16485,6 +16545,7 @@ window.handleSaveLiveSession = function (e) {
     if (drawerEl) {
       drawerEl.classList.add('hidden');
       drawerEl.style.display = 'none';
+      drawerEl.style.setProperty('display', 'none', 'important');
     }
 
     // Tutup semua modal overlay lain yang berada di luar main-view
@@ -16493,6 +16554,7 @@ window.handleSaveLiveSession = function (e) {
       for (var m = 0; m < allModals.length; m++) {
         allModals[m].classList.add('hidden');
         allModals[m].style.display = 'none';
+        allModals[m].style.setProperty('display', 'none', 'important');
       }
     } catch (eModals) { }
 
