@@ -6264,22 +6264,74 @@
     };
 
     window.handleLogout = function () {
-      if (window.attCameraStream) {
-        try {
-          window.attCameraStream.getTracks().forEach(function (t) { t.stop(); });
-          window.attCameraStream = null;
-        } catch (e) { }
-      }
-      window.Auth.logout().then(function () {
-        window.appState.isAuth = false;
-        window.appState.currentUser = null;
-        document.getElementById('main-view').classList.add('hidden');
-        document.getElementById('login-view').classList.remove('hidden');
-        window.showToast('Sesi telah diakhiri. Sampai jumpa!', 'info');
-      }).catch(function (err) {
-        window.showToast('Logout: ' + err.message, 'warning');
-      });
-    };
+    // 1. Tutup drawer menu mobile dan sembunyikan semua modal yang sedang terbuka
+    if (typeof window.closeMobileDrawer === 'function') {
+      try { window.closeMobileDrawer(); } catch (e) { }
+    }
+    var drawerEl = document.getElementById('modal-mobile-menu');
+    if (drawerEl) {
+      drawerEl.classList.add('hidden');
+    }
+
+    // Tutup semua modal overlay lain yang berada di luar main-view
+    var allModals = document.querySelectorAll('[id^="modal-"]');
+    for (var m = 0; m < allModals.length; m++) {
+      allModals[m].classList.add('hidden');
+    }
+
+    // 2. Matikan seluruh stream kamera perangkat (Kamera Selfie Absensi, Kamera Retur, Barcode)
+    if (window.attCameraStream) {
+      try { window.attCameraStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.attCameraStream = null;
+    }
+    if (window.returCameraStream) {
+      try { window.returCameraStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.returCameraStream = null;
+    }
+    if (window.qcBarcodeStream) {
+      try { window.qcBarcodeStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.qcBarcodeStream = null;
+    }
+
+    // 3. Hapus data sesi login dari localStorage & sessionStorage
+    try {
+      localStorage.removeItem('mja_auth_user');
+      localStorage.removeItem('mja_current_section');
+      sessionStorage.clear();
+    } catch (e) { }
+
+    // 4. Reset status otentikasi di state aplikasi
+    window.appState.isAuth = false;
+    window.appState.currentUser = null;
+
+    // 5. Sembunyikan main-view (dashboard SPA) dan tampilkan login-view secara langsung
+    var mv = document.getElementById('main-view');
+    if (mv) mv.classList.add('hidden');
+
+    var lv = document.getElementById('login-view');
+    if (lv) lv.classList.remove('hidden');
+
+    // 6. Pastikan tab form yang aktif adalah tab "Masuk" (bukan form pendaftaran)
+    if (typeof window.switchAuthTab === 'function') {
+      try { window.switchAuthTab('login'); } catch (e) { }
+    }
+
+    // 7. Kosongkan input kata sandi
+    var pwdInput = document.getElementById('login-password');
+    if (pwdInput) pwdInput.value = '';
+
+    // 8. Gulir layar langsung ke paling atas
+    window.scrollTo(0, 0);
+
+    // 9. Sign out dari backend jika terhubung (Firebase / Supabase)
+    if (window.Auth && typeof window.Auth.logout === 'function') {
+      try {
+        window.Auth.logout().catch(function () { });
+      } catch (eAuth) { }
+    }
+
+    window.showToast('Sesi telah diakhiri. Silakan masuk kembali.', 'info');
+  };
 
     // Role Allowed Sections Helper
     window.getRoleAllowedSections = function (role) {
@@ -16399,11 +16451,22 @@ window.handleSaveLiveSession = function (e) {
 
 
   window.handleLogout = function () {
-    try {
-      localStorage.removeItem('mja_auth_user');
-      localStorage.removeItem('mja_current_section');
-    } catch (e) { }
+    // 1. Tutup drawer menu mobile dan sembunyikan semua modal yang sedang terbuka
+    if (typeof window.closeMobileDrawer === 'function') {
+      try { window.closeMobileDrawer(); } catch (e) { }
+    }
+    var drawerEl = document.getElementById('modal-mobile-menu');
+    if (drawerEl) {
+      drawerEl.classList.add('hidden');
+    }
 
+    // Tutup semua modal overlay lain yang berada di luar main-view
+    var allModals = document.querySelectorAll('[id^="modal-"]');
+    for (var m = 0; m < allModals.length; m++) {
+      allModals[m].classList.add('hidden');
+    }
+
+    // 2. Matikan seluruh stream kamera perangkat (Kamera Selfie Absensi, Kamera Retur, Barcode)
     if (window.attCameraStream) {
       try { window.attCameraStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
       window.attCameraStream = null;
@@ -16412,16 +16475,49 @@ window.handleSaveLiveSession = function (e) {
       try { window.returCameraStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
       window.returCameraStream = null;
     }
+    if (window.qcBarcodeStream) {
+      try { window.qcBarcodeStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+      window.qcBarcodeStream = null;
+    }
 
+    // 3. Hapus data sesi login dari localStorage & sessionStorage
+    try {
+      localStorage.removeItem('mja_auth_user');
+      localStorage.removeItem('mja_current_section');
+      sessionStorage.clear();
+    } catch (e) { }
+
+    // 4. Reset status otentikasi di state aplikasi
     window.appState.isAuth = false;
     window.appState.currentUser = null;
 
+    // 5. Sembunyikan main-view (dashboard SPA) dan tampilkan login-view secara langsung
     var mv = document.getElementById('main-view');
     if (mv) mv.classList.add('hidden');
+
     var lv = document.getElementById('login-view');
     if (lv) lv.classList.remove('hidden');
 
-    window.showToast('Sesi telah diakhiri. Sampai jumpa!', 'info');
+    // 6. Pastikan tab form yang aktif adalah tab "Masuk" (bukan form pendaftaran)
+    if (typeof window.switchAuthTab === 'function') {
+      try { window.switchAuthTab('login'); } catch (e) { }
+    }
+
+    // 7. Kosongkan input kata sandi
+    var pwdInput = document.getElementById('login-password');
+    if (pwdInput) pwdInput.value = '';
+
+    // 8. Gulir layar langsung ke paling atas
+    window.scrollTo(0, 0);
+
+    // 9. Sign out dari backend jika terhubung (Firebase / Supabase)
+    if (window.Auth && typeof window.Auth.logout === 'function') {
+      try {
+        window.Auth.logout().catch(function () { });
+      } catch (eAuth) { }
+    }
+
+    window.showToast('Sesi telah diakhiri. Silakan masuk kembali.', 'info');
   };
 
 })();
