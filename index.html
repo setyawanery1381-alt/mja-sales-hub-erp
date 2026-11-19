@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -388,6 +388,26 @@
       opacity: 1 !important;
       pointer-events: auto !important;
     }
+  
+    /* LOCK MOBILE SCREEN: 100% FIT SCREEN & ZERO HORIZONTAL SHIFT */
+    html, body {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+      position: relative;
+      -webkit-overflow-scrolling: touch;
+    }
+    #app, #main-view, main, #main-content-scroll {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+      box-sizing: border-box !important;
+    }
+    header {
+      max-width: 100vw !important;
+      box-sizing: border-box !important;
+    }
+
   </style>
 </head>
 
@@ -783,104 +803,91 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50 pb-24 md:pb-8">
 
       <!-- TOP NAVBAR (STRICT MOBILE 3-ELEMENT ROW 1 + SECONDARY ROW 2) -->
-      <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-xs" style="padding-top: calc(env(safe-area-inset-top, 0px) + 8px);">
-        <!-- ROW 1 (Maksimal 3 Elemen di Layar HP: [Logo/Menu] [Judul Singkat] [1 Tombol Aksi]) -->
-        <div class="flex items-center justify-between w-full md:w-auto min-w-0 gap-2">
-          <!-- Elemen 1: [Logo / Menu Drawer Button] (Area sentuh >= 44px) -->
-          <button onclick="window.toggleMobileDrawer()"
-            class="md:hidden h-11 w-11 flex items-center justify-center rounded-md bg-[#F9FAFB] text-[#1F2937] border border-[#E5E7EB] active:scale-95 transition-all flex-shrink-0"
-            title="Buka Menu Modul">
-            <svg class="w-5 h-5 text-[#2B3A9F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div class="hidden md:flex items-center space-x-2 flex-shrink-0">
-            <div
-              class="w-8 h-8 rounded-md bg-[#1F2937] text-[#F9FAFB] flex items-center justify-center font-heading font-bold text-sm">
-              M</div>
-            <span class="font-heading font-bold text-sm tracking-tight text-[#1F2937]">MJA Hub</span>
-          </div>
-
-          <!-- Elemen 2: [Judul Halaman] (Satu Baris, Singkat, Maks 20 Karakter di HP) -->
-          <div class="flex-1 min-w-0 flex items-center justify-between gap-2 px-1">
-            <h2 class="font-heading text-sm sm:text-base font-bold text-[#1F2937] truncate leading-tight tracking-tight" id="topbar-page-title">
-              Dashboard
-            </h2>
-            <!-- USER BADGE ATAS (Muncul Nama Lengkap Pengguna & Role) -->
-            <div id="topbar-user-badge" onclick="window.openChangePasswordModal()"
-              class="inline-flex items-center space-x-2 bg-white/90 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl px-2.5 py-1 text-xs cursor-pointer shadow-2xs transition-all flex-shrink-0"
-              title="Klik untuk Ganti Kata Sandi">
-              <span id="topbar-user-avatar" class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px] flex-shrink-0">A</span>
-              <div class="flex flex-col text-left leading-tight">
-                <span id="topbar-user-fullname" class="font-bold text-slate-800 text-[11px] sm:text-xs truncate max-w-[120px] sm:max-w-[200px]">Ahmad Fauzi</span>
-                <span id="topbar-user-role-badge" class="text-[9px] text-slate-500 font-semibold truncate max-w-[120px] sm:max-w-[200px]">Administrator • Cabang 1</span>
-              </div>
-              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      <!-- TOP NAVBAR (CLEAN RESPONSIVE HEADER - 100% FIT SCREEN, ANTI-SHIFT) -->
+      <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-3 sm:px-4 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-1.5 sm:gap-2 shadow-xs w-full max-w-full overflow-hidden" style="padding-top: calc(env(safe-area-inset-top, 0px) + 8px);">
+        <!-- MAIN ROW: Brand Logo & Title on Left, User & Hamburger Menu on Right (Like Foto 2 Reference) -->
+        <div class="flex items-center justify-between w-full min-w-0 gap-2">
+          <!-- Left: Brand Logo & Module Page Title -->
+          <div class="flex items-center space-x-2 min-w-0 flex-1">
+            <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-heading font-black text-xs shrink-0 shadow-xs">
+              MJA
+            </div>
+            <div class="flex flex-col min-w-0 leading-tight">
+              <span class="font-heading font-bold text-xs text-slate-800 tracking-tight truncate">MJA Sales Hub</span>
+              <span class="text-[11px] font-bold text-indigo-700 truncate" id="topbar-page-title">Rekap Sesi Live</span>
             </div>
           </div>
 
-          <!-- Elemen 3: [1 Tombol Aksi] (Ikon Saja di HP, Area Sentuh >= 44px) -->
-          <div class="flex items-center space-x-1.5 flex-shrink-0">
+          <!-- Right: Profile Pill, Refresh, and Prominent Hamburger (Garis 3) Menu -->
+          <div class="flex items-center space-x-1.5 shrink-0">
+            <!-- User Profile Pill -->
+            <div id="topbar-user-badge" onclick="window.openChangePasswordModal()"
+              class="inline-flex items-center space-x-1.5 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-full py-1 px-2 text-xs cursor-pointer shadow-2xs transition-all shrink-0"
+              title="Profil & Ganti Password">
+              <span id="topbar-user-avatar" class="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px] shrink-0">B</span>
+              <span id="topbar-user-fullname" class="font-bold text-slate-700 text-[11px] truncate max-w-[85px] sm:max-w-[140px]">Bambang</span>
+              <span id="topbar-user-role-badge" class="hidden">Host</span>
+            </div>
+
+            <!-- Refresh Button -->
             <button onclick="window.hardRefreshApp()"
-              class="h-11 w-11 flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md border border-[#E5E7EB] active:scale-95 transition-all cursor-pointer mr-1"
-              title="Segarkan / Update Tampilan Aplikasi">
+              class="h-9 w-9 flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:bg-slate-100 rounded-lg border border-slate-200 active:scale-95 transition-all cursor-pointer shrink-0"
+              title="Segarkan Data">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
             </button>
-            <button onclick="window.handleLogout()"
-              class="md:hidden h-11 w-11 flex items-center justify-center text-[#6B7280] hover:text-[#A83220] hover:bg-[#F9FAFB] rounded-md border border-[#E5E7EB] active:scale-95 transition-all"
-              title="Keluar Akun">
+
+            <!-- Prominent Hamburger Menu Button (Garis 3) - Visible on Mobile & Desktop Trigger -->
+            <button onclick="window.toggleMobileDrawer()"
+              class="md:hidden h-9 w-9 flex items-center justify-center rounded-lg bg-[#2B3A9F] text-white hover:bg-[#1E2B7B] active:scale-95 transition-all shadow-xs shrink-0 cursor-pointer"
+              title="Menu Navigasi (Garis 3)">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
+            </button>
+
+            <!-- Desktop Logout Button -->
+            <button onclick="window.handleLogout()"
+              class="hidden md:inline-flex items-center space-x-1.5 h-9 px-3 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-all ml-1 cursor-pointer shadow-2xs"
+              title="Keluar dari Akun">
+              <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Keluar</span>
             </button>
           </div>
         </div>
 
-        <!-- ROW 2: Elemen Sekunder (Pilihan Cabang, Status Online, Tombol Ekspor) -->
-        <div
-          class="flex items-center justify-between w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-[#E5E7EB] gap-2 min-w-0">
-          <!-- Pilihan Cabang (Truncated, Max Width Terjaga) -->
-          <!-- WIDGET JAM DIGITAL REALTIME (WIB DENGAN DETIK) -->
-          <div id="topbar-live-clock" class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-emerald-400 border border-slate-800 shadow-2xs whitespace-nowrap" title="Waktu Indonesia Barat (GMT+7)">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
+        <!-- SECONDARY STRIP (Jam Digital, Cabang, Status Online) -->
+        <div class="flex items-center justify-between w-full md:w-auto pt-1.5 md:pt-0 border-t md:border-t-0 border-slate-100 gap-1.5 text-[11px] overflow-x-auto no-scrollbar">
+          <div id="topbar-live-clock" class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-900 text-emerald-400 border border-slate-800 shadow-2xs whitespace-nowrap">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1"></span>
             <span class="font-mono font-bold text-white tracking-wider" id="clock-time-val">--:--:-- WIB</span>
           </div>
+
           <button onclick="window.switchOperationalBranch()"
-            class="h-9 px-2.5 bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] border border-[#E5E7EB] rounded-md text-xs font-semibold flex items-center space-x-1 min-w-0 max-w-[145px] sm:max-w-[200px] active:scale-95 transition-all"
-            title="Ganti Cabang">
-            <span class="flex-shrink-0 text-xs">📍</span>
-            <span id="topbar-branch-name" class="truncate font-semibold">MJA Pusat (Semarang)</span>
-            <span class="flex-shrink-0 text-[10px] text-[#6B7280]">▾</span>
+            class="h-7 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-md text-[11px] font-semibold flex items-center space-x-1 shrink-0 truncate max-w-[150px] active:scale-95 transition-all"
+            title="Ganti Cabang Operasional">
+            <span class="shrink-0 text-xs">📍</span>
+            <span id="topbar-branch-name" class="truncate font-semibold">MJA Pusat</span>
+            <span class="shrink-0 text-[9px] text-slate-500">▾</span>
           </button>
 
-          <!-- Status Online (Satu Baris, white-space: nowrap) -->
           <div id="network-status-badge"
-            class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded-md text-[11px] font-semibold bg-[#F9FAFB] text-[#2F5D50] border border-[#2F5D50]/30 whitespace-nowrap">
-            <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-[#2F5D50] animate-pulse"></span>
+            class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+            <span class="w-1.5 h-1.5 mr-1 rounded-full bg-emerald-600 animate-pulse"></span>
             <span id="network-status-text">100% Online</span>
           </div>
 
-          <!-- Tombol Ekspor (Ikon di HP, Teks di Layar Lebar) -->
+          <!-- Topbar Export Button on Desktop -->
           <button id="topbar-btn-export" onclick="window.triggerGoogleSheetsExport()"
-            class="h-9 px-2.5 sm:px-3 bg-[#2F5D50] hover:bg-[#254A40] text-white rounded-md text-xs font-bold shadow-xs whitespace-nowrap flex items-center space-x-1.5 active:scale-95 transition-all flex-shrink-0"
+            class="hidden md:flex h-7 px-2.5 bg-[#2F5D50] hover:bg-[#254A40] text-white rounded-md text-[11px] font-bold shadow-xs whitespace-nowrap items-center space-x-1 active:scale-95 transition-all shrink-0"
             title="Ekspor Google Sheets">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span class="hidden sm:inline">Export</span>
-          </button>
-
-          <!-- Desktop Logout Button (Tampil jelas & elegan di header desktop) -->
-          <button onclick="window.handleLogout()"
-            class="hidden md:inline-flex items-center space-x-1.5 h-9 px-3 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-md transition-all ml-1 cursor-pointer shadow-2xs"
-            title="Keluar dari Akun">
-            <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span>Keluar</span>
+            <span>Export</span>
           </button>
         </div>
       </header>
@@ -8469,7 +8476,7 @@
         if (hasSubmittedToday) {
           compCard.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs';
           compCard.innerHTML = '<div class="flex items-center space-x-3">' +
-            '<div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-lg flex-shrink-0">✓</div>' +
+            '<div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0">✓</div>' +
             '<div>' +
             '<div class="flex items-center space-x-2">' +
             '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-700 text-white uppercase tracking-wider">STATUS SOP HARI INI: LENGKAP</span>' +
@@ -8477,10 +8484,7 @@
             '</div>' +
             '<p class="text-xs text-emerald-800 mt-0.5">Terima kasih! Laporan live hari ini telah mengunci omset dan memotong stok gudang spion secara otomatis.</p>' +
             '</div>' +
-            '</div>' +
-            '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg transition-all flex items-center space-x-1 flex-shrink-0 cursor-pointer">' +
-            '<span>+ Input Sesi Tambahan</span>' +
-            '</button>';
+            '</div>';
         } else {
           compCard.className = 'p-4 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-xs';
           compCard.innerHTML = '<div class="flex items-start space-x-3 min-w-0 flex-1">' +
@@ -8494,10 +8498,7 @@
               '</div>' +
               '<p class="text-[13px] text-slate-500 mt-1 leading-normal">Host Live wajib menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
             '</div>' +
-          '</div>' +
-          '<button type="button" onclick="window.openNewLiveModal()" class="w-full sm:w-auto h-11 px-5 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5 shrink-0 cursor-pointer">' +
-            '<span>Input Rekap Pasca-Live</span>' +
-          '</button>';
+          '</div>';
         }
       }
 
@@ -15404,10 +15405,7 @@
           '</div>' +
           '<p class="text-xs text-emerald-800 mt-0.5">Terima kasih! Laporan live hari ini telah mengunci omset dan memotong stok gudang spion secara otomatis.</p>' +
           '</div>' +
-          '</div>' +
-          '<button type="button" onclick="window.openNewLiveModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg transition-all flex items-center space-x-1 flex-shrink-0 cursor-pointer">' +
-          '<span>+ Input Sesi Tambahan</span>' +
-          '</button>';
+          '</div>';
       } else {
         compCard.className = 'p-4 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-xs';
         compCard.innerHTML = '<div class="flex items-start space-x-3 min-w-0 flex-1">' +
@@ -15421,10 +15419,7 @@
             '</div>' +
             '<p class="text-[13px] text-slate-500 mt-1 leading-normal">Host Live wajib menginput rekapitulasi data penjualan langsung sehabis siaran berakhir sebelum mengakhiri shift / absen pulang.</p>' +
           '</div>' +
-        '</div>' +
-        '<button type="button" onclick="window.openNewLiveModal()" class="w-full sm:w-auto h-11 px-5 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white font-semibold text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5 shrink-0 cursor-pointer">' +
-          '<span>Input Rekap Pasca-Live</span>' +
-        '</button>';
+        '</div>';
       }
     }
 
