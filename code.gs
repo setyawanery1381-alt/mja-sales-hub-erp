@@ -477,6 +477,11 @@ function doGet(e) {
     return jsonResponse_({ success: true, orders: ordList.reverse() });
   }
 
+  // 17. SAVE ORDER (Invoice / Pesanan Baru)
+  if (action === 'saveOrder') {
+    return handleSaveOrder_(ss, e.parameter);
+  }
+
   // DEFAULT PING / STATUS
   return jsonResponse_({
     status: 'ONLINE',
@@ -518,6 +523,9 @@ function doPost(e) {
     }
     if (action === 'saveInventory') {
       return handleSaveInventory_(ss, payload);
+    }
+    if (action === 'saveOrder') {
+      return handleSaveOrder_(ss, payload);
     }
     if (action === 'deleteAttendance') {
       return doGet({ parameter: payload });
@@ -753,6 +761,48 @@ function handleSaveInventory_(ss, payload) {
   }
 
   return jsonResponse_({ success: true, count: items.length, message: items.length + ' produk inventori berhasil disimpan ke Google Sheets' });
+}
+
+function handleSaveOrder_(ss, payload) {
+  var sheet = ss.getSheetByName('Orders');
+  if (!sheet) {
+    sheet = ss.insertSheet('Orders');
+    sheet.appendRow(['Order ID', 'No. Pesanan', 'No. Resi', 'Toko', 'Cabang', 'Platform', 'Kurir', 'Nama Pembeli', 'SKU', 'Qty', 'Total Nilai', 'Status QC', 'Tanggal', 'Rincian Produk']);
+  }
+
+  var id = String(payload.id || payload.orderNo || ('ORD-' + Date.now().toString().slice(-6)));
+  var orderNo = String(payload.orderNo || id);
+  var resi = String(payload.resi || ('MJA-' + Date.now().toString().slice(-6)));
+  var store = String(payload.store || 'Penjualan Langsung');
+  var branch = String(payload.branch || 'Cabang 1 (Pusat)');
+  var platform = String(payload.platform || 'Direct / Manual');
+  var courier = String(payload.courier || 'Kurir Internal / Ambil Sendiri');
+  var buyer = String(payload.buyer || 'Pelanggan');
+  var sku = String(payload.sku || 'SPN-PROD');
+  var qty = Number(payload.qty) || 1;
+  var total = Number(payload.total) || 0;
+  var statusQC = String(payload.statusQC || 'Lolos QC (Invoice Lunas)');
+  var date = String(payload.date || new Date().toISOString().slice(0, 10));
+  var details = String(payload.details || '');
+
+  sheet.appendRow([
+    id,
+    orderNo,
+    resi,
+    store,
+    branch,
+    platform,
+    courier,
+    buyer,
+    sku,
+    qty,
+    total,
+    statusQC,
+    date,
+    details
+  ]);
+
+  return jsonResponse_({ success: true, id: id, orderNo: orderNo, message: 'Pesanan / Invoice ' + orderNo + ' berhasil disimpan ke Google Sheets' });
 }
 
 function jsonResponse_(obj) {
