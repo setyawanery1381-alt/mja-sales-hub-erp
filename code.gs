@@ -759,3 +759,63 @@ function jsonResponse_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
+/**
+ * ============================================================================
+ * FUNGSI OPTIONAL: PERBAIKI HEADER KOLOM LIVE SESSIONS
+ * Jalankan fungsi ini HANYA jika ingin merapikan tabel Live_Sessions yang sudah ada
+ * agar memiliki kolom: Tanggal, Jam Siaran, Nama Host, Nama Barang, Total Omset
+ * AMAN: Fungsi ini TIDAK AKAN menghapus baris data Anda!
+ * ============================================================================
+ */
+function perbaikiHeaderKolomLiveSessions() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Live_Sessions');
+  if (!sheet) {
+    sheet = ss.insertSheet('Live_Sessions');
+  }
+
+  var detailedHeaders = [
+    'Session ID', 'Tanggal', 'Jam Siaran', 'Nama Host', 'Channel Toko',
+    'Nama Barang (Produk Terjual)', 'Total Qty', 'Total Omset',
+    'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih',
+    'Durasi', 'Puncak Viewers', 'Status SOP', 'Catatan / Raw JSON'
+  ];
+
+  sheet.getRange(1, 1, 1, detailedHeaders.length).setValues([detailedHeaders]);
+  sheet.getRange(1, 1, 1, detailedHeaders.length)
+    .setBackground('#1F1A17')
+    .setFontColor('#FFFFFF')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+
+  // Format ulang data yang sudah ada agar Nama Barang terisi otomatis dari catatan JSON
+  var data = sheet.getDataRange().getValues();
+  for (var r = 1; r < data.length; r++) {
+    var row = data[r];
+    var notes = String(row[15] || row[12] || '');
+    var currentProds = String(row[5] || '');
+    if (!currentProds && notes) {
+      try {
+        var parsed = JSON.parse(notes);
+        var prods = parsed.soldProducts || parsed.items || [];
+        if (Array.isArray(prods) && prods.length > 0) {
+          var pText = prods.map(function (p) {
+            return (p.name || p.sku || 'Spion') + ' (' + (p.qty || 1) + ' pcs)';
+          }).join('; ');
+          sheet.getRange(r + 1, 6).setValue(pText);
+        }
+      } catch (e) {}
+    }
+    // Pastikan tanggal diformat YYYY-MM-DD
+    var rawDate = row[1];
+    if (rawDate) {
+      var numD = Number(rawDate);
+      if (!isNaN(numD) && numD >= 40000 && numD <= 60000) {
+        var jDate = new Date(Math.round((numD - 25569) * 86400 * 1000));
+        sheet.getRange(r + 1, 2).setValue("'" + Utilities.formatDate(jDate, 'GMT+7', 'yyyy-MM-dd'));
+      }
+    }
+  }
+}
+
