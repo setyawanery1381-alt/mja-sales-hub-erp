@@ -6297,13 +6297,18 @@
       try {
         if (typeof window.fetchRemoteAttendance === 'function') window.fetchRemoteAttendance(true);
         if (typeof window.syncLiveSessionsFromGAS === 'function') window.syncLiveSessionsFromGAS(false);
+      if (typeof window.syncRemoteInventory === 'function') window.syncRemoteInventory(false);
         if (typeof window.syncRemoteQCLogs === 'function') window.syncRemoteQCLogs(false);
         if (typeof window.syncRemoteReturns === 'function') window.syncRemoteReturns(false);
+        if (typeof window.syncRemoteInventory === 'function') window.syncRemoteInventory(false);
       } catch (ePoll) { }
     }, 20000);
 
     // Google Apps Script Live Gateway for Multi-Device Real-time Database (Google Sheets)
     window.GAS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyYsAdWrghBnmrr-m4_s88Ixfj-o9V_n97x15shaJgwoVaQhRLKD98r3lqofrVm3bfg/exec";
+    setTimeout(function() {
+      if (typeof window.syncRemoteInventory === 'function') window.syncRemoteInventory(false);
+    }, 300);
 
     // Fungsi Sinkronisasi Data Presensi Realtime dari Google Sheets
     window.fetchRemoteAttendance = function (silent) {
@@ -6370,8 +6375,13 @@
       }
     }, 3000);
 
-    // Auto-Purge Old Mock Demo Data (Go-Live Bersih: Mulai dari Awal)
+    // Auto-Purge Old Mock Demo Data & Template Mock Data
     try {
+      var oldInv = localStorage.getItem('mja_inventory_data');
+      if (oldInv && (oldInv.indexOf('SPN-MBL-AVZ') !== -1 || oldInv.indexOf('INV-1') !== -1)) {
+        localStorage.removeItem('mja_inventory_data');
+        if (window.appState && window.appState.data) window.appState.data.inventory = [];
+      }
       var oldLive = localStorage.getItem('mja_clean_liveSessions') || localStorage.getItem('mja_live_sessions');
       if (oldLive && (oldLive.indexOf('LS-01') !== -1 || oldLive.indexOf('LS-02') !== -1 || oldLive.indexOf('LS-03') !== -1 || oldLive.indexOf('Maya') !== -1 || oldLive.indexOf('Sarah') !== -1)) {
         localStorage.setItem('mja_clean_liveSessions', '[]');
@@ -8159,10 +8169,41 @@
       }).catch(function (err) { console.warn('Sync Retur error:', err); });
   };
 
+  // SINKRONISASI INVENTORI STOK SPION REAL-TIME DARI GOOGLE SPREADSHEET (SHEET: Inventory)
+  window.syncRemoteInventory = function (showToast) {
+    if (!window.GAS_ENDPOINT_URL) return;
+    var url = window.GAS_ENDPOINT_URL + (window.GAS_ENDPOINT_URL.indexOf('?') === -1 ? '?' : '&') + 'action=getInventory&t=' + Date.now();
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.success && Array.isArray(data.inventory) && data.inventory.length > 0) {
+          window.appState.data.inventory = data.inventory;
+          try {
+            localStorage.setItem('mja_inventory_data', JSON.stringify(data.inventory));
+            localStorage.setItem('mja_inventory_customized', 'true');
+          } catch (e) { }
+
+          if (typeof window.populateLiveProductSelect === 'function') {
+            window.populateLiveProductSelect();
+          }
+          if (typeof window.renderInventory === 'function') {
+            window.renderInventory();
+          }
+          if (typeof window.populateCalcSKUSelect === 'function') {
+            window.populateCalcSKUSelect();
+          }
+          if (showToast) {
+            window.showToast('✅ Inventori disinkronkan dari Google Spreadsheet (' + data.inventory.length + ' produk)!', 'success');
+          }
+        }
+      }).catch(function (err) { console.warn('Sync Inventory error:', err); });
+  };
+
   window.syncAllQCAndReturns = function (showToast) {
     window.syncRemoteQCStage1(showToast);
     window.syncRemoteQCLogs(showToast);
     window.syncRemoteReturns(showToast);
+    if (typeof window.syncRemoteInventory === 'function') window.syncRemoteInventory(showToast);
   };
 
   // Restore local data immediately on startup
@@ -11314,6 +11355,9 @@
       var proofStatus = document.getElementById('modal-live-proof-status');
       if (proofStatus) proofStatus.textContent = 'Belum ada screenshot terlampir';
 
+      if (typeof window.syncRemoteInventory === 'function') {
+        window.syncRemoteInventory(false);
+      }
       if (typeof window.populateLiveProductSelect === 'function') {
         window.populateLiveProductSelect();
       }
