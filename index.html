@@ -1915,14 +1915,14 @@
                     <option value="TikTok Shop Auto A2 (Pusat)">TikTok Shop Auto A2 (Pusat)</option>
                     <option value="TikTok Clearance A3 (Pusat)">TikTok Clearance A3 (Pusat)</option>
                   </optgroup>
-                  <optgroup label="🏭 CABANG B (HUB EKSPEDISI SOLO)">
-                    <option value="Shopee Official Store B1 (Solo)">Shopee Official Store B1 (Solo)</option>
-                    <option value="Shopee Grosir Store B2 (Solo)">Shopee Grosir Store B2 (Solo)</option>
-                    <option value="Shopee Spion Express B3 (Solo)">Shopee Spion Express B3 (Solo)</option>
-                    <option value="Shopee Sparepart B4 (Solo)">Shopee Sparepart B4 (Solo)</option>
-                    <option value="TikTok Shop Live B1 (Solo)">TikTok Shop Live B1 (Solo)</option>
-                    <option value="TikTok Modifikasi B2 (Solo)">TikTok Modifikasi B2 (Solo)</option>
-                    <option value="TikTok Flash Sale B3 (Solo)">TikTok Flash Sale B3 (Solo)</option>
+                  <optgroup label="🏭 CABANG B (HUB EKSPEDISI BEKASI)">
+                    <option value="Shopee Official Store B1 (Bekasi)">Shopee Official Store B1 (Bekasi)</option>
+                    <option value="Shopee Grosir Store B2 (Bekasi)">Shopee Grosir Store B2 (Bekasi)</option>
+                    <option value="Shopee Spion Express B3 (Bekasi)">Shopee Spion Express B3 (Bekasi)</option>
+                    <option value="Shopee Sparepart B4 (Bekasi)">Shopee Sparepart B4 (Bekasi)</option>
+                    <option value="TikTok Shop Live B1 (Bekasi)">TikTok Shop Live B1 (Bekasi)</option>
+                    <option value="TikTok Modifikasi B2 (Bekasi)">TikTok Modifikasi B2 (Bekasi)</option>
+                    <option value="TikTok Flash Sale B3 (Bekasi)">TikTok Flash Sale B3 (Bekasi)</option>
                   </optgroup>
                 </select>
 
@@ -3642,7 +3642,7 @@
                 <select id="lr-filter-branch" onchange="window.handleLiveReportFilterChange()" class="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
                   <option value="all">Semua Cabang</option>
                   <option value="Cabang 1 (Pusat & Gudang Utama)">Cabang 1 (Pusat)</option>
-                  <option value="Cabang 2 (Gudang Hub Ekspedisi)">Cabang 2 (Hub Solo)</option>
+                  <option value="Cabang 2 (Gudang Hub Ekspedisi)">Cabang 2 (Hub Bekasi)</option>
                 </select>
               </div>
               <div>
@@ -5909,7 +5909,7 @@
           <span class="text-xl">🔄</span>
           <div>
             <h3 class="font-bold text-sm">Transfer Stok Antar-Cabang</h3>
-            <p class="text-[11px] text-emerald-200">Mutasi fisik barang antara Cabang A (Pusat) &amp; Cabang B (Solo)</p>
+            <p class="text-[11px] text-emerald-200">Mutasi fisik barang antara Cabang A (Pusat) &amp; Cabang B (Bekasi)</p>
           </div>
         </div>
         <button type="button" onclick="window.closeTransferStockModal()" class="text-white hover:text-emerald-200 text-xl font-bold">&times;</button>
@@ -5921,13 +5921,13 @@
             <label class="block font-semibold text-stone-700 mb-1">Cabang Asal (Kirim) *</label>
             <select id="transfer-from-branch" required class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold">
               <option value="Cabang A (Pusat)">Cabang A (Pusat Semarang)</option>
-              <option value="Cabang B (Solo)">Cabang B (Solo Hub)</option>
+              <option value="Cabang B (Bekasi)">Cabang B (Bekasi Hub)</option>
             </select>
           </div>
           <div>
             <label class="block font-semibold text-stone-700 mb-1">Cabang Tujuan *</label>
             <select id="transfer-to-branch" required class="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold">
-              <option value="Cabang B (Solo)">Cabang B (Solo Hub)</option>
+              <option value="Cabang B (Bekasi)">Cabang B (Bekasi Hub)</option>
               <option value="Cabang A (Pusat)">Cabang A (Pusat Semarang)</option>
             </select>
           </div>
@@ -6196,7 +6196,7 @@
               class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Target Cabang 2 (Solo) Rp</label>
+            <label class="block font-semibold text-slate-700 mb-1">Target Cabang 2 (Bekasi) Rp</label>
             <input type="number" id="lr-target-branch-2" value="50000000"
               class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800">
           </div>
@@ -6599,14 +6599,14 @@
           { id: 'TTK-A2', branch: 'Cabang A (Pusat)', name: 'TikTok Shop Auto A2 (Pusat)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
           { id: 'TTK-A3', branch: 'Cabang A (Pusat)', name: 'TikTok Clearance A3 (Pusat)', platform: 'tiktok', feeAdmin: 7.0, feeOngkir: 3.0, feeService: 1.0 },
 
-          // CABANG B (HUB EKSPEDISI SOLO) - 4 SHOPEE & 3 TIKTOK SHOP
-          { id: 'SHP-B1', branch: 'Cabang B (Solo)', name: 'Shopee Official Store B1 (Solo)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
-          { id: 'SHP-B2', branch: 'Cabang B (Solo)', name: 'Shopee Grosir Store B2 (Solo)', platform: 'shopee', feeAdmin: 6.0, feeOngkir: 3.5, feeService: 1.0 },
-          { id: 'SHP-B3', branch: 'Cabang B (Solo)', name: 'Shopee Spion Express B3 (Solo)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
-          { id: 'SHP-B4', branch: 'Cabang B (Solo)', name: 'Shopee Sparepart B4 (Solo)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
-          { id: 'TTK-B1', branch: 'Cabang B (Solo)', name: 'TikTok Shop Live B1 (Solo)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
-          { id: 'TTK-B2', branch: 'Cabang B (Solo)', name: 'TikTok Modifikasi B2 (Solo)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
-          { id: 'TTK-B3', branch: 'Cabang B (Solo)', name: 'TikTok Flash Sale B3 (Solo)', platform: 'tiktok', feeAdmin: 7.0, feeOngkir: 3.0, feeService: 1.0 }
+          // CABANG B (HUB EKSPEDISI BEKASI) - 4 SHOPEE & 3 TIKTOK SHOP
+          { id: 'SHP-B1', branch: 'Cabang B (Bekasi)', name: 'Shopee Official Store B1 (Bekasi)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'SHP-B2', branch: 'Cabang B (Bekasi)', name: 'Shopee Grosir Store B2 (Bekasi)', platform: 'shopee', feeAdmin: 6.0, feeOngkir: 3.5, feeService: 1.0 },
+          { id: 'SHP-B3', branch: 'Cabang B (Bekasi)', name: 'Shopee Spion Express B3 (Bekasi)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'SHP-B4', branch: 'Cabang B (Bekasi)', name: 'Shopee Sparepart B4 (Bekasi)', platform: 'shopee', feeAdmin: 6.5, feeOngkir: 4.0, feeService: 1.0 },
+          { id: 'TTK-B1', branch: 'Cabang B (Bekasi)', name: 'TikTok Shop Live B1 (Bekasi)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
+          { id: 'TTK-B2', branch: 'Cabang B (Bekasi)', name: 'TikTok Modifikasi B2 (Bekasi)', platform: 'tiktok', feeAdmin: 7.5, feeOngkir: 3.0, feeService: 1.0 },
+          { id: 'TTK-B3', branch: 'Cabang B (Bekasi)', name: 'TikTok Flash Sale B3 (Bekasi)', platform: 'tiktok', feeAdmin: 7.0, feeOngkir: 3.0, feeService: 1.0 }
         ],
         liveSessions: [],
         qcProofPhotos: [],

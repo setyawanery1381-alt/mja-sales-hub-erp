@@ -85,7 +85,7 @@ function setupDatabase() {
     },
     {
       name: 'Inventory',
-      headers: ['SKU Produk', 'Nama Produk Spion', 'Kelompok / Kategori', 'Stok Cabang A (Pusat)', 'Stok Cabang B (Solo)', 'HPP Modal', 'Harga Jual Rekomendasi'],
+      headers: ['SKU Produk', 'Nama Produk Spion', 'Kelompok / Kategori', 'Stok Cabang A (Pusat)', 'Stok Cabang B (Bekasi)', 'HPP Modal', 'Harga Jual Rekomendasi'],
       sampleRows: [
         ['SPN-MBL-001', 'Spion Retract Avanza / Xenia 2022+ (Set)', 'Spion Mobil', 85, 30, 650000, 950000],
         ['SPN-MBL-002', 'Spion Innova Reborn Chrome Electric', 'Spion Mobil', 45, 15, 850000, 1250000],
@@ -106,7 +106,7 @@ function setupDatabase() {
       headers: ['Retur ID', 'Tanggal', 'No. Resi', 'Toko', 'Nama Pembeli', 'Alasan Retur', 'Kondisi Barang', 'Tindakan Stok'],
       sampleRows: [
         ['RET-001', '2026-11-06', 'SPXID029182390', 'Shopee Official 1', 'Doni (Semarang)', 'Salah Pesan Tipe', 'Bagus (Segel Utuh)', 'Restock ke Gudang (+1)'],
-        ['RET-002', '2026-11-05', 'JT9812491209', 'Shopee Mall 2', 'Bambang (Solo)', 'Pecah saat Pengiriman Kurir', 'Pecah / Rusak Fisik', 'Klaim Asuransi Ekspedisi']
+        ['RET-002', '2026-11-05', 'JT9812491209', 'Shopee Mall 2', 'Bambang (Bekasi)', 'Pecah saat Pengiriman Kurir', 'Pecah / Rusak Fisik', 'Klaim Asuransi Ekspedisi']
       ]
     }
   ];

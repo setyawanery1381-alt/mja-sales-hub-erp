@@ -727,7 +727,7 @@ function handleSaveInventory_(ss, payload) {
   var sheet = ss.getSheetByName('Inventory');
   if (!sheet) {
     sheet = ss.insertSheet('Inventory');
-    sheet.appendRow(['SKU Produk', 'Nama Produk Spion', 'Kelompok / Kategori', 'Stok Cabang A (Pusat)', 'Stok Cabang B (Solo)', 'HPP Modal', 'Harga Jual Rekomendasi']);
+    sheet.appendRow(['SKU Produk', 'Nama Produk Spion', 'Kelompok / Kategori', 'Stok Cabang A (Pusat)', 'Stok Cabang B (Bekasi)', 'HPP Modal', 'Harga Jual Rekomendasi']);
   }
 
   // Jika payload membawa items (array) dari upload Excel:
