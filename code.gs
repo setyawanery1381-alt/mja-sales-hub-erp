@@ -1,8 +1,9 @@
 /**
  * ============================================================================
  * GOOGLE APPS SCRIPT WEB API — MJA SALES HUB ERP (SPREADSHEET DATABASE)
- * Endpoint REST API untuk Sinkronisasi Presensi Selfie, QC Scan, & Multi-Perangkat
- * Author: DASarsitek / by @doople
+ * Endpoint REST API Lengkap untuk Multi-Perangkat (PC, Android, iOS)
+ * Mendukung Presensi Selfie, Rekap Sesi Live, QC Scan, Retur, & Inventori Stok
+ * Versi: 3.5-complete-multi-device-erp
  * ============================================================================
  */
 
@@ -10,54 +11,79 @@ function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : 'ping';
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1. GET ATTENDANCE: Ambil seluruh riwayat presensi & foto selfie
+  // 1. GET ATTENDANCE (Presensi)
   if (action === 'getAttendance') {
     var sheet = ss.getSheetByName('Presensi');
-    if (!sheet) {
-      return jsonResponse_({ success: false, message: 'Sheet Presensi belum dibuat. Jalankan setupDatabase() di setup.gs' });
-    }
+    if (!sheet) return jsonResponse_({ success: true, logs: [] });
     
     var range = sheet.getDataRange();
     var data = range.getValues();
     var displayData = range.getDisplayValues();
     var logs = [];
 
-    // Baris 1 adalah Header (index 0)
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       var disp = displayData[i];
       if (row[0]) {
-        // Ambil display value langsung dari sel untuk menghindari konversi timezone 1899 Batavia (+17 menit)
         var dateFormatted = (disp && disp[1]) ? String(disp[1]).trim() : (row[1] instanceof Date ? Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd') : String(row[1]));
         var timeFormatted = (disp && disp[2]) ? String(disp[2]).trim() : (row[2] instanceof Date ? Utilities.formatDate(row[2], 'GMT+7', 'HH:mm:ss') : String(row[2]));
-        
-        // Bersihkan tanda petik awal jika ada
-        if (timeFormatted.charAt(0) === "'") {
-          timeFormatted = timeFormatted.substring(1);
-        }
+        if (timeFormatted.charAt(0) === "'") timeFormatted = timeFormatted.substring(1);
 
         logs.push({
           id: String(row[0]),
           date: dateFormatted,
           time: timeFormatted,
-          name: String(row[3]),
-          email: String(row[4]),
-          role: String(row[5]),
-          branch: String(row[6]),
-          type: String(row[7]),
-          inOut: String(row[8]),
-          coords: String(row[9]),
+          name: String(row[3] || ''),
+          email: String(row[4] || ''),
+          role: String(row[5] || ''),
+          branch: String(row[6] || ''),
+          type: String(row[7] || ''),
+          inOut: String(row[8] || 'Masuk'),
+          coords: String(row[9] || ''),
           distance: Number(row[10]) || 0,
-          status: String(row[11]),
+          status: String(row[11] || 'valid'),
           notes: String(row[12] || ''),
           photo: String(row[13] || '')
         });
       }
     }
-    return jsonResponse_({ success: true, logs: logs.reverse() }); // Terbaru di atas
+    return jsonResponse_({ success: true, logs: logs.reverse() });
   }
 
-  // 2. GET USERS: Ambil daftar karyawan
+  // 2. SAVE ATTENDANCE via GET (Dukungan Multi-Device & Mobile Tanpa CORS Issue)
+  if (action === 'saveAttendance') {
+    return handleSaveAttendance_(ss, e.parameter);
+  }
+
+  // 3. DELETE ATTENDANCE via GET
+  if (action === 'deleteAttendance') {
+    var sheet = ss.getSheetByName('Presensi');
+    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
+    var idToDelete = String(e.parameter.id || '');
+    var data = sheet.getDataRange().getValues();
+    var deleted = false;
+    for (var r = 1; r < data.length; r++) {
+      if (String(data[r][0]) === idToDelete) {
+        sheet.deleteRow(r + 1);
+        deleted = true;
+        break;
+      }
+    }
+    return jsonResponse_({ success: deleted, message: deleted ? 'Presensi ' + idToDelete + ' terhapus' : 'ID tidak ditemukan' });
+  }
+
+  // 4. RESET ATTENDANCE via GET
+  if (action === 'resetAttendance') {
+    var sheet = ss.getSheetByName('Presensi');
+    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
+    var lr = sheet.getLastRow();
+    if (lr > 1) {
+      sheet.deleteRows(2, lr - 1);
+    }
+    return jsonResponse_({ success: true, message: 'Seluruh riwayat presensi berhasil direset' });
+  }
+
+  // 5. GET USERS (Daftar Pengguna / Karyawan)
   if (action === 'getUsers') {
     var uSheet = ss.getSheetByName('Users');
     var uData = uSheet ? uSheet.getDataRange().getValues() : [];
@@ -77,231 +103,76 @@ function doGet(e) {
     return jsonResponse_({ success: true, users: users });
   }
 
-  // 3. DELETE ATTENDANCE via GET (Dukungan CORS penuh dari browser)
-  if (action === 'deleteAttendance') {
-    var sheet = ss.getSheetByName('Presensi');
-    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
-
-    var idToDelete = String(e.parameter.id || '');
-    var data = sheet.getDataRange().getValues();
-    var deleted = false;
-
-    for (var r = 1; r < data.length; r++) {
-      if (String(data[r][0]) === idToDelete) {
-        sheet.deleteRow(r + 1);
-        deleted = true;
-        break;
-      }
-    }
-
-    return jsonResponse_({
-      success: deleted,
-      message: deleted ? 'Presensi ' + idToDelete + ' berhasil dihapus dari Google Sheets' : 'ID tidak ditemukan'
-    });
-  }
-
-  // 4. RESET ATTENDANCE via GET (Dukungan CORS penuh dari browser)
-  if (action === 'resetAttendance') {
-    var sheet = ss.getSheetByName('Presensi');
-    var scope = String(e.parameter.scope || 'all');
-    var deletedCount = 0;
-
-    if (sheet) {
-      var lastRow = sheet.getLastRow();
-      if (lastRow > 1) {
-        if (scope === 'today') {
-          var tz = Session.getScriptTimeZone() || 'Asia/Jakarta';
-          var todayStr = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
-          var data = sheet.getDataRange().getValues();
-          for (var r = data.length - 1; r >= 1; r--) {
-            var rowDate = String(data[r][1] || '').trim();
-            if (rowDate === todayStr) {
-              sheet.deleteRow(r + 1);
-              deletedCount++;
-            }
-          }
-        } else {
-          deletedCount = lastRow - 1;
-          sheet.deleteRows(2, lastRow - 1);
-        }
-      }
-    }
-    return jsonResponse_({
-      success: true,
-      deletedCount: deletedCount,
-      scope: scope,
-      message: 'Presensi di Google Sheets berhasil dibersihkan (' + scope + ', ' + deletedCount + ' baris dihapus)'
-    });
-  }
-
-  // 5. GET LIVE SESSIONS
+  // 6. GET LIVE SESSIONS (Rekap Sesi Live Host)
   if (action === 'getLiveSessions') {
     var sheet = ss.getSheetByName('Live_Sessions');
+    if (!sheet) return jsonResponse_({ success: true, sessions: [] });
+    
+    var range = sheet.getDataRange();
+    var data = range.getValues();
+    var displayData = range.getDisplayValues();
     var sessions = [];
-    if (sheet && sheet.getLastRow() > 1) {
-      var data = sheet.getDataRange().getValues();
-      for (var r = 1; r < data.length; r++) {
+
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      var disp = displayData[i];
+      if (row[0]) {
+        var dateFormatted = (disp && disp[1]) ? String(disp[1]).trim() : (row[1] instanceof Date ? Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd') : String(row[1]));
         sessions.push({
-          id: String(data[r][0] || ''),
-          date: (function() {
-            var raw = data[r][1];
-            if (raw instanceof Date) {
-              return Utilities.formatDate(raw, 'GMT+7', 'yyyy-MM-dd');
-            }
-            var s = String(raw || '').trim();
-            if (s.indexOf('GMT') !== -1 || s.indexOf('T') !== -1) {
-              try {
-                return Utilities.formatDate(new Date(s), 'GMT+7', 'yyyy-MM-dd');
-              } catch (e) { return s; }
-            }
-            return s;
-          })(),
-          store: String(data[r][2] || ''),
-          host: String(data[r][3] || ''),
-          omset: Number(data[r][4] || 0),
-          fee: Number(data[r][5] || 0),
-          ads: Number(data[r][6] || 0),
-          cogs: Number(data[r][7] || 0),
-          margin: Number(data[r][8] || 0),
-          items: Number(data[r][9] || 0),
-          duration: String(data[r][10] || ''),
-          viewers: Number(data[r][11] || 0),
-          notes: String(data[r][12] || ''),
-          liveTime: String(data[r][13] || '')
+          id: String(row[0]),
+          date: dateFormatted,
+          store: String(row[2] || ''),
+          host: String(row[3] || ''),
+          omset: Number(row[4]) || 0,
+          fee: Number(row[5]) || 0,
+          ads: Number(row[6]) || 0,
+          cogs: Number(row[7]) || 0,
+          margin: Number(row[8]) || 0,
+          items: Number(row[9]) || 0,
+          duration: String(row[10] || ''),
+          viewers: Number(row[11]) || 0,
+          notes: String(row[12] || ''),
+          liveTime: String(row[13] || '')
         });
       }
     }
-    return jsonResponse_({ success: true, sessions: sessions });
+    return jsonResponse_({ success: true, sessions: sessions.reverse() });
   }
 
-  // 6. SAVE LIVE SESSION via GET (Dukungan CORS penuh dari browser)
-  // 7. DELETE LIVE SESSION via GET
+  // 7. SAVE LIVE SESSION via GET
+  if (action === 'saveLiveSession') {
+    return handleSaveLiveSession_(ss, e.parameter);
+  }
+
+  // 8. DELETE LIVE SESSION via GET
   if (action === 'deleteLiveSession') {
     var sheet = ss.getSheetByName('Live_Sessions');
     if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Live_Sessions tidak ditemukan' });
-
-    var idToDelete = String(e.parameter.id || '');
+    var idToDel = String(e.parameter.id || '');
     var data = sheet.getDataRange().getValues();
     var deleted = false;
-
     for (var r = 1; r < data.length; r++) {
-      if (String(data[r][0]) === idToDelete) {
+      if (String(data[r][0]) === idToDel) {
         sheet.deleteRow(r + 1);
         deleted = true;
         break;
       }
     }
-
-    return jsonResponse_({
-      success: deleted,
-      message: deleted ? 'Sesi Live ' + idToDelete + ' berhasil dihapus dari Google Sheets' : 'ID tidak ditemukan'
-    });
+    return jsonResponse_({ success: deleted, message: deleted ? 'Sesi live ' + idToDel + ' terhapus' : 'ID tidak ditemukan' });
   }
 
-  // 8. RESET ALL LIVE SESSIONS via GET
+  // 9. RESET LIVE SESSIONS via GET
   if (action === 'resetLiveSessions') {
     var sheet = ss.getSheetByName('Live_Sessions');
-    var deletedCount = 0;
-    if (sheet && sheet.getLastRow() > 1) {
-      deletedCount = sheet.getLastRow() - 1;
-      sheet.deleteRows(2, deletedCount);
+    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Live_Sessions tidak ditemukan' });
+    var lr = sheet.getLastRow();
+    if (lr > 1) {
+      sheet.deleteRows(2, lr - 1);
     }
-    return jsonResponse_({
-      success: true,
-      message: 'Berhasil mengosongkan ' + deletedCount + ' data sesi live dari Google Sheets',
-      deletedCount: deletedCount
-    });
+    return jsonResponse_({ success: true, message: 'Seluruh riwayat sesi live berhasil direset' });
   }
 
-  if (action === 'saveLiveSession') {
-    var sheet = ss.getSheetByName('Live_Sessions');
-    if (!sheet) {
-      sheet = ss.insertSheet('Live_Sessions');
-      sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan', 'Jam Live']);
-    } else {
-      if (sheet.getLastColumn() < 14) {
-        sheet.getRange(1, 11).setValue('Durasi');
-        sheet.getRange(1, 12).setValue('Puncak Viewers');
-        sheet.getRange(1, 13).setValue('Catatan');
-        sheet.getRange(1, 14).setValue('Jam Live');
-      }
-    }
-
-    var id = String(e.parameter.id || ('LS-' + Date.now()));
-    var date = String(e.parameter.date || Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jakarta', 'yyyy-MM-dd'));
-    var store = String(e.parameter.store || 'TikTok Shop Live Official');
-    var host = String(e.parameter.host || 'Host Live');
-    var omset = Number(e.parameter.omset || 0);
-    var fee = Number(e.parameter.fee || 0);
-    var ads = Number(e.parameter.ads || 0);
-    var cogs = Number(e.parameter.cogs || 0);
-    var margin = Number(e.parameter.margin || 0);
-    var items = Number(e.parameter.items || 0);
-    var duration = String(e.parameter.duration || '');
-    var viewers = Number(e.parameter.viewers || 0);
-    var notes = String(e.parameter.notes || '');
-    var liveTime = String(e.parameter.liveTime || '');
-
-    sheet.appendRow([id, date, store, host, omset, fee, ads, cogs, margin, items, duration, viewers, notes, liveTime]);
-
-    return jsonResponse_({
-      success: true,
-      id: id,
-      message: 'Rekap sesi live ' + id + ' (' + store + ') berhasil disimpan ke Google Sheets'
-    });
-  }
-
-  // =========================================================================
-  // 9. GET QC TAHAP 1 (FOTO BUKTI PACKING ANTI-RETUR)
-  // =========================================================================
-  if (action === 'getQCStage1') {
-    var sheet = ss.getSheetByName('QC_Stage1');
-    if (!sheet) return jsonResponse_({ success: true, photos: [] });
-    var data = sheet.getDataRange().getValues();
-    var photos = [];
-    for (var i = 1; i < data.length; i++) {
-      var row = data[i];
-      if (row[0]) {
-        photos.push({
-          id: String(row[0]),
-          date: String(row[1] || ''),
-          time: String(row[2] || ''),
-          resi: String(row[3] || ''),
-          store: String(row[4] || ''),
-          courier: String(row[5] || ''),
-          product: String(row[6] || ''),
-          operator: String(row[7] || ''),
-          photo: String(row[8] || '')
-        });
-      }
-    }
-    return jsonResponse_({ success: true, photos: photos.reverse() });
-  }
-
-  // SAVE QC TAHAP 1 (GET / CORS support)
-  if (action === 'saveQCStage1') {
-    var sheet = ss.getSheetByName('QC_Stage1');
-    if (!sheet) {
-      sheet = ss.insertSheet('QC_Stage1');
-      sheet.appendRow(['ID Bukti', 'Tanggal', 'Jam', 'No. Resi', 'Toko Pengirim', 'Kurir', 'Nama Produk', 'Petugas', 'Foto Bukti']);
-    }
-    var id = String(e.parameter.id || ('PROOF-' + Date.now()));
-    var date = String(e.parameter.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'));
-    var time = String(e.parameter.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss'));
-    var resi = String(e.parameter.resi || '');
-    var store = String(e.parameter.store || 'MJA Semarang');
-    var courier = String(e.parameter.courier || 'Ekspedisi Reguler');
-    var product = String(e.parameter.product || '');
-    var operator = String(e.parameter.operator || 'Gudang');
-    var photo = String(e.parameter.photo || '');
-
-    sheet.appendRow([id, date, "'" + time, resi, store, courier, product, operator, photo]);
-    return jsonResponse_({ success: true, id: id, message: 'Foto bukti packing berhasil disimpan ke Google Sheets' });
-  }
-
-  // =========================================================================
-  // 10. GET QC TAHAP 2 (LOG SCAN AKHIR KURIR ANTI-DOBEL)
-  // =========================================================================
+  // 10. GET QC LOGS (Scan Validasi Kirim)
   if (action === 'getQCLogs') {
     var sheet = ss.getSheetByName('QC_Logs');
     if (!sheet) return jsonResponse_({ success: true, logs: [] });
@@ -324,28 +195,12 @@ function doGet(e) {
     return jsonResponse_({ success: true, logs: qcLogs.reverse() });
   }
 
-  // SAVE QC TAHAP 2 (GET / CORS support)
+  // 11. SAVE QC LOG via GET
   if (action === 'saveQCLog') {
-    var sheet = ss.getSheetByName('QC_Logs');
-    if (!sheet) {
-      sheet = ss.insertSheet('QC_Logs');
-      sheet.appendRow(['Log ID', 'Waktu', 'No. Resi', 'Toko Marketplace', 'Status QC', 'Aksi Logistik', 'Nama Produk']);
-    }
-    var id = String(e.parameter.id || ('QC-' + Date.now()));
-    var time = String(e.parameter.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm'));
-    var resi = String(e.parameter.resi || '');
-    var store = String(e.parameter.store || 'MJA Semarang');
-    var status = String(e.parameter.status || 'valid');
-    var actionDesc = String(e.parameter.actionDesc || '');
-    var product = String(e.parameter.product || '');
-
-    sheet.appendRow([id, "'" + time, resi, store, status, actionDesc, product]);
-    return jsonResponse_({ success: true, id: id, message: 'Log QC Scan berhasil disimpan ke Google Sheets' });
+    return handleSaveQCLog_(ss, e.parameter);
   }
 
-  // =========================================================================
-  // 11. GET RETURNS (PENERIMAAN RETUR & RESTOCK)
-  // =========================================================================
+  // 12. GET RETURNS (Penerimaan Retur)
   if (action === 'getReturns') {
     var sheet = ss.getSheetByName('Returns');
     if (!sheet) return jsonResponse_({ success: true, returns: [] });
@@ -356,46 +211,91 @@ function doGet(e) {
       if (row[0]) {
         returnsList.push({
           id: String(row[0]),
-          time: String(row[1] || ''),
+          date: String(row[1] || ''),
           resi: String(row[2] || ''),
           store: String(row[3] || ''),
           buyer: String(row[4] || ''),
           reason: String(row[5] || ''),
-          condition: String(row[6] || 'layak_jual'),
-          effect: String(row[7] || ''),
-          notes: String(row[8] || '')
+          condition: String(row[6] || 'Bagus'),
+          effect: String(row[7] || '')
         });
       }
     }
     return jsonResponse_({ success: true, returns: returnsList.reverse() });
   }
 
-  // SAVE RETURN (GET / CORS support)
+  // 13. SAVE RETURN via GET
   if (action === 'saveReturn') {
-    var sheet = ss.getSheetByName('Returns');
-    if (!sheet) {
-      sheet = ss.insertSheet('Returns');
-      sheet.appendRow(['Retur ID', 'Waktu', 'No. Resi', 'Toko', 'Nama Pembeli', 'Alasan Retur', 'Kondisi Barang', 'Tindakan Stok', 'Catatan']);
-    }
-    var id = String(e.parameter.id || ('RET-' + Date.now()));
-    var time = String(e.parameter.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm'));
-    var resi = String(e.parameter.resi || '');
-    var store = String(e.parameter.store || 'MJA Semarang');
-    var buyer = String(e.parameter.buyer || 'Pembeli Marketplace');
-    var reason = String(e.parameter.reason || 'Retur');
-    var condition = String(e.parameter.condition || 'layak_jual');
-    var effect = String(e.parameter.effect || '');
-    var notes = String(e.parameter.notes || '-');
-
-    sheet.appendRow([id, "'" + time, resi, store, buyer, reason, condition, effect, notes]);
-    return jsonResponse_({ success: true, id: id, message: 'Data retur berhasil disimpan ke Google Sheets' });
+    return handleSaveReturn_(ss, e.parameter);
   }
 
-  // 7. PING / STATUS
+  // 14. GET INVENTORY (Inventori Stok Spion Gudang)
+  if (action === 'getInventory') {
+    var sheet = ss.getSheetByName('Inventory');
+    if (!sheet) return jsonResponse_({ success: true, inventory: [] });
+    var data = sheet.getDataRange().getValues();
+    var invList = [];
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (row[0]) {
+        var stockA = Number(row[3]) || 0;
+        var stockB = Number(row[4]) || 0;
+        invList.push({
+          id: 'INV-' + i,
+          sku: String(row[0]),
+          name: String(row[1] || ''),
+          group: String(row[2] || 'Spion Mobil'),
+          stockA: stockA,
+          stockB: stockB,
+          stock: stockA + stockB,
+          physicalStock: stockA + stockB,
+          allocatedStock: 0,
+          cogs: Number(row[5]) || 0,
+          price: Number(row[6]) || 0
+        });
+      }
+    }
+    return jsonResponse_({ success: true, inventory: invList });
+  }
+
+  // 15. SAVE / REPLACE INVENTORY via GET (atau POST)
+  if (action === 'saveInventory') {
+    return handleSaveInventory_(ss, e.parameter);
+  }
+
+  // 16. GET ORDERS (Pesanan & Cetak Resi)
+  if (action === 'getOrders') {
+    var sheet = ss.getSheetByName('Orders');
+    if (!sheet) return jsonResponse_({ success: true, orders: [] });
+    var data = sheet.getDataRange().getValues();
+    var ordList = [];
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (row[0]) {
+        ordList.push({
+          id: String(row[0]),
+          orderNo: String(row[1] || ''),
+          resi: String(row[2] || ''),
+          store: String(row[3] || ''),
+          branch: String(row[4] || ''),
+          platform: String(row[5] || ''),
+          courier: String(row[6] || ''),
+          buyer: String(row[7] || ''),
+          sku: String(row[8] || ''),
+          qty: Number(row[9]) || 1,
+          total: Number(row[10]) || 0,
+          statusQC: String(row[11] || 'Belum Scan')
+        });
+      }
+    }
+    return jsonResponse_({ success: true, orders: ordList.reverse() });
+  }
+
+  // DEFAULT PING / STATUS
   return jsonResponse_({
     status: 'ONLINE',
     service: 'MJA Sales Hub ERP — Google Sheets Live Gateway',
-    version: '3.0-qc-returns-multi-device',
+    version: '3.5-complete-multi-device-erp',
     timestamp: new Date().toISOString()
   });
 }
@@ -403,283 +303,209 @@ function doGet(e) {
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var contents = e.postData.contents;
-    var payload = JSON.parse(contents);
-    var action = payload.action || 'saveAttendance';
+    var payload = {};
+    
+    // Smart payload resolver: JSON atau x-www-form-urlencoded
+    if (e && e.postData && e.postData.contents) {
+      try {
+        payload = JSON.parse(e.postData.contents);
+      } catch (errJson) {
+        payload = (e && e.parameter) ? e.parameter : {};
+      }
+    } else if (e && e.parameter) {
+      payload = e.parameter;
+    }
 
-    // 1. SAVE ATTENDANCE: Simpan absensi selfie dari HP
+    var action = payload.action || 'ping';
+
     if (action === 'saveAttendance' || payload.coords) {
-      var sheet = ss.getSheetByName('Presensi');
-      if (!sheet) {
-        // Auto-create jika belum ada
-        setupDatabase();
-        sheet = ss.getSheetByName('Presensi');
-      }
-
-      var newId = payload.id || ('ATT-' + Date.now());
-      var dateVal = payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd');
-      var timeVal = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss');
-
-      // Simpan waktu dengan tanda petik tunggal "'" agar Spreadsheet menyimpannya sebagai teks murni lengkap dengan detik (HH:mm:ss) tanpa konversi tanggal 1899
-      sheet.appendRow([
-        newId,
-        dateVal,
-        "'" + timeVal,
-        payload.name || 'Karyawan',
-        payload.email || '',
-        payload.role || 'warehouse',
-        payload.branch || 'Cabang 1 (Pusat)',
-        payload.type || 'office',
-        payload.inOut || 'Masuk',
-        payload.coords || '',
-        payload.distance || 0,
-        payload.status || 'valid',
-        payload.notes || '',
-        payload.photo || '' // Data URL / Base64 foto selfie bertanda air
-      ]);
-
-      return jsonResponse_({
-        success: true,
-        id: newId,
-        message: 'Presensi selfie berhasil disimpan ke Google Sheets'
-      });
+      return handleSaveAttendance_(ss, payload);
     }
-
-    // 2. UPDATE / REVISI PRESENSI OLEH ADMIN IT (URGENT REVISION)
-    if (action === 'updateAttendance') {
-      var sheet = ss.getSheetByName('Presensi');
-      if (!sheet) {
-        return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
-      }
-
-      var idToUpdate = String(payload.id);
-      var data = sheet.getDataRange().getValues();
-      var foundRow = -1;
-
-      for (var r = 1; r < data.length; r++) {
-        if (String(data[r][0]) === idToUpdate) {
-          foundRow = r + 1; // 1-indexed baris di Spreadsheet
-          break;
-        }
-      }
-
-      if (foundRow === -1) {
-        return jsonResponse_({ success: false, message: 'ID Presensi tidak ditemukan: ' + idToUpdate });
-      }
-
-      // Update sel: Tanggal (kolom 2), Jam (kolom 3), Masuk/Pulang (kolom 9), Status (kolom 12), Catatan (kolom 13)
-      if (payload.date) sheet.getRange(foundRow, 2).setValue(payload.date);
-      if (payload.time) sheet.getRange(foundRow, 3).setValue("'" + payload.time);
-      if (payload.inOut) sheet.getRange(foundRow, 9).setValue(payload.inOut);
-      if (payload.status) sheet.getRange(foundRow, 12).setValue(payload.status);
-      
-      var notesVal = (payload.notes || '');
-      if (payload.revisionReason) {
-        notesVal += ' [REVISI ADMIN IT: ' + payload.revisionReason + ' oleh ' + (payload.revisedBy || 'Admin') + ']';
-      }
-      sheet.getRange(foundRow, 13).setValue(notesVal);
-
-      return jsonResponse_({
-        success: true,
-        id: idToUpdate,
-        message: 'Presensi berhasil direvisi oleh Admin IT di Google Sheets'
-      });
+    if (action === 'saveLiveSession') {
+      return handleSaveLiveSession_(ss, payload);
     }
-
-    // 3. DELETE ATTENDANCE: Hapus satu baris presensi tertentu
-    if (action === 'deleteAttendance') {
-      var sheet = ss.getSheetByName('Presensi');
-      if (!sheet) {
-        return jsonResponse_({ success: false, message: 'Sheet Presensi tidak ditemukan' });
-      }
-
-      var idToDelete = String(payload.id);
-      var data = sheet.getDataRange().getValues();
-      var deleted = false;
-
-      for (var r = 1; r < data.length; r++) {
-        if (String(data[r][0]) === idToDelete) {
-          sheet.deleteRow(r + 1);
-          deleted = true;
-          break;
-        }
-      }
-
-      return jsonResponse_({
-        success: deleted,
-        message: deleted ? 'Presensi ' + idToDelete + ' berhasil dihapus dari Google Sheets' : 'ID presensi tidak ditemukan'
-      });
-    }
-
-    // 4. RESET ATTENDANCE: Kosongkan seluruh riwayat presensi demo untuk persiapan demo klien
-    if (action === 'resetAttendance') {
-      var sheet = ss.getSheetByName('Presensi');
-      var scope = String(payload.scope || 'all');
-      var deletedCount = 0;
-
-      if (sheet) {
-        var lastRow = sheet.getLastRow();
-        if (lastRow > 1) {
-          if (scope === 'today') {
-            var tz = Session.getScriptTimeZone() || 'Asia/Jakarta';
-            var todayStr = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
-            var data = sheet.getDataRange().getValues();
-            for (var r = data.length - 1; r >= 1; r--) {
-              var rowDate = String(data[r][1] || '').trim();
-              if (rowDate === todayStr) {
-                sheet.deleteRow(r + 1);
-                deletedCount++;
-              }
-            }
-          } else {
-            deletedCount = lastRow - 1;
-            sheet.deleteRows(2, lastRow - 1);
-          }
-        }
-      }
-      return jsonResponse_({
-        success: true,
-        deletedCount: deletedCount,
-        scope: scope,
-        message: 'Seluruh riwayat presensi di Google Sheets berhasil direset bersih (' + scope + ')'
-      });
-    }
-
-    // 5. SAVE LIVE SESSION: Simpan laporan rekap pasca-live dari Host Live
-    if (action === 'deleteLiveSession') {
-    var sheet = ss.getSheetByName('Live_Sessions');
-    if (!sheet) return jsonResponse_({ success: false, message: 'Sheet Live_Sessions tidak ditemukan' });
-    var idToDelete = String(payload.id || '');
-    var data = sheet.getDataRange().getValues();
-    var deleted = false;
-    for (var r = 1; r < data.length; r++) {
-      if (String(data[r][0]) === idToDelete) {
-        sheet.deleteRow(r + 1);
-        deleted = true;
-        break;
-      }
-    }
-    return jsonResponse_({ success: deleted, message: deleted ? 'Sesi live terhapus' : 'ID tidak ditemukan' });
-  }
-
-  if (action === 'resetLiveSessions') {
-    var sheet = ss.getSheetByName('Live_Sessions');
-    var deletedCount = 0;
-    if (sheet && sheet.getLastRow() > 1) {
-      deletedCount = sheet.getLastRow() - 1;
-      sheet.deleteRows(2, deletedCount);
-    }
-    return jsonResponse_({ success: true, message: 'Sesi live berhasil dikosongkan', deletedCount: deletedCount });
-  }
-
-  if (action === 'saveLiveSession') {
-      var sheet = ss.getSheetByName('Live_Sessions');
-      if (!sheet) {
-        sheet = ss.insertSheet('Live_Sessions');
-        sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
-      } else if (sheet.getLastColumn() < 13) {
-        sheet.getRange(1, 11).setValue('Durasi');
-        sheet.getRange(1, 12).setValue('Puncak Viewers');
-        sheet.getRange(1, 13).setValue('Catatan');
-      }
-      sheet.appendRow([
-        payload.id || ('LS-' + Date.now()),
-        payload.date || Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jakarta', 'yyyy-MM-dd'),
-        payload.store || 'TikTok Shop Live',
-        payload.host || 'Host Live',
-        Number(payload.omset || 0),
-        Number(payload.fee || 0),
-        Number(payload.ads || 0),
-        Number(payload.cogs || 0),
-        Number(payload.margin || 0),
-        Number(payload.items || 0),
-        String(payload.duration || ''),
-        Number(payload.viewers || 0),
-        String(payload.notes || '')
-      ]);
-      return jsonResponse_({
-        success: true,
-        message: 'Rekap sesi live berhasil disimpan ke Google Sheets'
-      });
-    }
-
-    // 5. SAVE QC STAGE 1 via POST
-    if (action === 'saveQCStage1') {
-      var sheet = ss.getSheetByName('QC_Stage1');
-      if (!sheet) {
-        sheet = ss.insertSheet('QC_Stage1');
-        sheet.appendRow(['ID Bukti', 'Tanggal', 'Jam', 'No. Resi', 'Toko Pengirim', 'Kurir', 'Nama Produk', 'Petugas', 'Foto Bukti']);
-      }
-      var pId = payload.id || ('PROOF-' + Date.now());
-      var pDate = payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd');
-      var pTime = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss');
-      sheet.appendRow([
-        pId,
-        pDate,
-        "'" + pTime,
-        payload.resi || '',
-        payload.store || 'MJA Semarang',
-        payload.courier || 'Ekspedisi Reguler',
-        payload.product || '',
-        payload.operator || 'Gudang',
-        payload.photo || ''
-      ]);
-      return jsonResponse_({ success: true, id: pId, message: 'Foto bukti QC Tahap 1 berhasil disimpan ke Google Sheets' });
-    }
-
-    // 6. SAVE QC STAGE 2 via POST
     if (action === 'saveQCLog') {
-      var sheet = ss.getSheetByName('QC_Logs');
-      if (!sheet) {
-        sheet = ss.insertSheet('QC_Logs');
-        sheet.appendRow(['Log ID', 'Waktu', 'No. Resi', 'Toko Marketplace', 'Status QC', 'Aksi Logistik', 'Nama Produk']);
-      }
-      var lId = payload.id || ('QC-' + Date.now());
-      var lTime = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm');
-      sheet.appendRow([
-        lId,
-        "'" + lTime,
-        payload.resi || '',
-        payload.store || 'MJA Semarang',
-        payload.status || 'valid',
-        payload.actionDesc || payload.action || '',
-        payload.product || ''
-      ]);
-      return jsonResponse_({ success: true, id: lId, message: 'Log QC Scan berhasil disimpan ke Google Sheets' });
+      return handleSaveQCLog_(ss, payload);
     }
-
-    // 7. SAVE RETURN via POST
     if (action === 'saveReturn') {
-      var sheet = ss.getSheetByName('Returns');
-      if (!sheet) {
-        sheet = ss.insertSheet('Returns');
-        sheet.appendRow(['Retur ID', 'Waktu', 'No. Resi', 'Toko', 'Nama Pembeli', 'Alasan Retur', 'Kondisi Barang', 'Tindakan Stok', 'Catatan']);
-      }
-      var rId = payload.id || ('RET-' + Date.now());
-      var rTime = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm');
-      sheet.appendRow([
-        rId,
-        "'" + rTime,
-        payload.resi || '',
-        payload.store || 'MJA Semarang',
-        payload.buyer || 'Pembeli Marketplace',
-        payload.reason || 'Retur',
-        payload.condition || 'layak_jual',
-        payload.effect || '',
-        payload.notes || '-'
-      ]);
-      return jsonResponse_({ success: true, id: rId, message: 'Data retur berhasil disimpan ke Google Sheets' });
+      return handleSaveReturn_(ss, payload);
+    }
+    if (action === 'saveInventory') {
+      return handleSaveInventory_(ss, payload);
+    }
+    if (action === 'deleteAttendance') {
+      return doGet({ parameter: payload });
+    }
+    if (action === 'resetAttendance') {
+      return doGet({ parameter: payload });
+    }
+    if (action === 'deleteLiveSession') {
+      return doGet({ parameter: payload });
+    }
+    if (action === 'resetLiveSessions') {
+      return doGet({ parameter: payload });
     }
 
-    return jsonResponse_({ success: false, message: 'Action tidak dikenali: ' + action });
+    return jsonResponse_({ success: true, action: action, message: 'POST action berhasil diterima' });
   } catch (err) {
-    return jsonResponse_({ success: false, error: err.toString() });
+    return jsonResponse_({
+      success: false,
+      error: err.toString(),
+      message: 'Gagal memproses data: ' + err.message
+    });
   }
 }
 
-/**
- * Helper pembungkus response JSON + Header CORS
- */
+// ============================================================================
+// HELPER FUNCTIONS (MENULIS KE SHEET SESUAI URUTAN KOLOM RESMI)
+// ============================================================================
+
+function handleSaveAttendance_(ss, payload) {
+  var sheet = ss.getSheetByName('Presensi');
+  if (!sheet) {
+    sheet = ss.insertSheet('Presensi');
+    sheet.appendRow([
+      'ID Presensi', 'Tanggal', 'Jam (WIB)', 'Nama Karyawan', 'Email', 
+      'Role / Divisi', 'Cabang', 'Tipe Kehadiran', 'Masuk/Pulang', 
+      'Koordinat GPS', 'Jarak (Meter)', 'Status Verifikasi', 'Catatan / Ekspedisi', 'Foto Selfie'
+    ]);
+  }
+
+  var newId = payload.id || ('ATT-' + Utilities.formatDate(new Date(), 'GMT+7', 'yyyyMMdd-HHmmss'));
+  var dateVal = payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd');
+  var timeVal = payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm:ss');
+
+  sheet.appendRow([
+    newId,
+    dateVal,
+    "'" + timeVal,
+    payload.name || 'Karyawan',
+    payload.email || '',
+    payload.role || 'warehouse',
+    payload.branch || 'Cabang 1 (Pusat & Gudang Utama)',
+    payload.type || 'office',
+    payload.inOut || 'Masuk',
+    payload.coords || '',
+    payload.distance || 0,
+    payload.status || 'valid',
+    payload.notes || '',
+    payload.photo || ''
+  ]);
+
+  return jsonResponse_({
+    success: true,
+    id: newId,
+    message: 'Presensi ' + (payload.name || '') + ' (' + (payload.inOut || 'Masuk') + ') berhasil disimpan ke Google Sheets'
+  });
+}
+
+function handleSaveLiveSession_(ss, payload) {
+  var sheet = ss.getSheetByName('Live_Sessions');
+  if (!sheet) {
+    sheet = ss.insertSheet('Live_Sessions');
+    sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
+  }
+
+  var id = String(payload.id || ('LS-' + Date.now()));
+  var date = String(payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'));
+  var store = String(payload.store || 'TikTok Shop Live Official');
+  var host = String(payload.host || 'Host Live');
+  var omset = Number(payload.omset || 0);
+  var fee = Number(payload.fee || 0);
+  var ads = Number(payload.ads || 0);
+  var cogs = Number(payload.cogs || 0);
+  var margin = Number(payload.margin || 0);
+  var items = Number(payload.items || 0);
+  var duration = String(payload.duration || '');
+  var viewers = Number(payload.viewers || 0);
+  var notes = String(payload.notes || '');
+
+  sheet.appendRow([id, date, store, host, omset, fee, ads, cogs, margin, items, duration, viewers, notes]);
+
+  return jsonResponse_({
+    success: true,
+    id: id,
+    message: 'Rekap sesi live ' + id + ' (' + store + ') berhasil disimpan ke Google Sheets'
+  });
+}
+
+function handleSaveQCLog_(ss, payload) {
+  var sheet = ss.getSheetByName('QC_Logs');
+  if (!sheet) {
+    sheet = ss.insertSheet('QC_Logs');
+    sheet.appendRow(['Log ID', 'Waktu', 'No. Resi', 'Toko Marketplace', 'Status QC', 'Aksi Logistik', 'Nama Produk']);
+  }
+  var id = String(payload.id || ('QC-' + Utilities.formatDate(new Date(), 'GMT+7', 'yyyyMMdd-HHmmss')));
+  var time = String(payload.time || (Utilities.formatDate(new Date(), 'GMT+7', 'HH:mm') + ' WIB'));
+  var resi = String(payload.resi || '');
+  var store = String(payload.store || 'Shopee Official 1');
+  var status = String(payload.status || 'valid');
+  var actionDesc = String(payload.actionDesc || payload.action || 'Lolos QC (Siap Kirim)');
+  var product = String(payload.product || 'Spion');
+
+  sheet.appendRow([id, "'" + time, resi, store, status, actionDesc, product]);
+  return jsonResponse_({ success: true, id: id, message: 'Log QC ' + resi + ' berhasil disimpan ke Google Sheets' });
+}
+
+function handleSaveReturn_(ss, payload) {
+  var sheet = ss.getSheetByName('Returns');
+  if (!sheet) {
+    sheet = ss.insertSheet('Returns');
+    sheet.appendRow(['Retur ID', 'Tanggal', 'No. Resi', 'Toko', 'Nama Pembeli', 'Alasan Retur', 'Kondisi Barang', 'Tindakan Stok']);
+  }
+  var id = String(payload.id || ('RET-' + Utilities.formatDate(new Date(), 'GMT+7', 'yyyyMMdd-HHmmss')));
+  var date = String(payload.date || payload.time || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'));
+  var resi = String(payload.resi || '');
+  var store = String(payload.store || 'Shopee Official 1');
+  var buyer = String(payload.buyer || 'Pembeli Marketplace');
+  var reason = String(payload.reason || 'Salah Pesan Tipe');
+  var condition = String(payload.condition || 'Bagus (Segel Utuh)');
+  var effect = String(payload.effect || 'Restock ke Gudang (+1)');
+
+  sheet.appendRow([id, date, resi, store, buyer, reason, condition, effect]);
+  return jsonResponse_({ success: true, id: id, message: 'Data retur ' + resi + ' berhasil disimpan ke Google Sheets' });
+}
+
+function handleSaveInventory_(ss, payload) {
+  var sheet = ss.getSheetByName('Inventory');
+  if (!sheet) {
+    sheet = ss.insertSheet('Inventory');
+    sheet.appendRow(['SKU Produk', 'Nama Produk Spion', 'Kelompok / Kategori', 'Stok Cabang A (Pusat)', 'Stok Cabang B (Solo)', 'HPP Modal', 'Harga Jual Rekomendasi']);
+  }
+
+  // Jika payload membawa items (array) dari upload Excel:
+  var items = [];
+  if (Array.isArray(payload.items)) {
+    items = payload.items;
+  } else if (payload.itemsJson) {
+    try { items = JSON.parse(payload.itemsJson); } catch (e) { }
+  } else if (payload.sku) {
+    items = [payload];
+  }
+
+  if (items.length > 0) {
+    // Mode overwrite / update inventory
+    if (payload.mode === 'replace') {
+      var lr = sheet.getLastRow();
+      if (lr > 1) sheet.deleteRows(2, lr - 1);
+    }
+    
+    items.forEach(function (it) {
+      sheet.appendRow([
+        String(it.sku || ''),
+        String(it.name || ''),
+        String(it.group || 'Spion Mobil'),
+        Number(it.stockA || it.physicalStock || it.stock || 0),
+        Number(it.stockB || 0),
+        Number(it.cogs || it.hpp || 0),
+        Number(it.price || it.recPrice || 0)
+      ]);
+    });
+  }
+
+  return jsonResponse_({ success: true, count: items.length, message: items.length + ' produk inventori berhasil disimpan ke Google Sheets' });
+}
+
 function jsonResponse_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);

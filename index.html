@@ -6277,19 +6277,7 @@
         stockTransfers: [],
         returns: [],
         productGroups: ['Spion Mobil', 'Spion Motor', 'Aksesoris & Sparepart'],
-        inventory: [
-          { id: 'INV-1', group: 'Spion Mobil', sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia 2022+ Elektrik (Set Kiri-Kanan)', cogs: 650000, price: 1150000, physicalStock: 85, allocatedStock: 2, stock: 83 },
-          { id: 'INV-2', group: 'Spion Mobil', sku: 'SPN-MBL-002', name: 'Spion Innova Reborn / Venturer Chrome Lipat Otomatis', cogs: 850000, price: 1450000, physicalStock: 64, allocatedStock: 1, stock: 63 },
-          { id: 'INV-3', group: 'Spion Mobil', sku: 'SPN-MBL-003', name: 'Kaca Spion Honda Brio / Mobilio Cembung Original (Kanan)', cogs: 95000, price: 185000, physicalStock: 140, allocatedStock: 2, stock: 138 },
-          { id: 'INV-4', group: 'Spion Mobil', sku: 'SPN-MBL-004', name: 'Cover Spion Fortuner VRZ / Hilux Hitam Glossy + Lampu Sein', cogs: 175000, price: 320000, physicalStock: 90, allocatedStock: 1, stock: 89 },
-          { id: 'INV-5', group: 'Spion Motor', sku: 'SPN-MTR-001', name: 'Spion Standar Honda Vario 125/150 / Beat FI Drat Honda', cogs: 25000, price: 55000, physicalStock: 320, allocatedStock: 0, stock: 320 },
-          { id: 'INV-6', group: 'Spion Motor', sku: 'SPN-MTR-002', name: 'Spion Jalu Bar End CNC Universal NMAX / Aerox / PCX', cogs: 45000, price: 98000, physicalStock: 210, allocatedStock: 5, stock: 205 },
-          { id: 'INV-7', group: 'Spion Motor', sku: 'SPN-MTR-003', name: 'Spion Model Circuit Tomok 2.0 Full CNC Universal', cogs: 65000, price: 135000, physicalStock: 175, allocatedStock: 1, stock: 174 },
-          { id: 'INV-8', group: 'Spion Motor', sku: 'SPN-MTR-004', name: 'Kaca Spion Vespa Matic Sprint / Primavera Bulat Chrome', cogs: 85000, price: 175000, physicalStock: 120, allocatedStock: 0, stock: 120 },
-          { id: 'INV-9', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-001', name: 'Modul Auto Retract Spion Lipat Otomatis Universal Mobil', cogs: 75000, price: 165000, physicalStock: 190, allocatedStock: 0, stock: 190 },
-          { id: 'INV-10', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-002', name: 'Blind Spot Mirror Cembung 360 Derajat HD Frameless (Isi 2)', cogs: 12000, price: 35000, physicalStock: 450, allocatedStock: 0, stock: 450 },
-          { id: 'INV-11', group: 'Aksesoris & Sparepart', sku: 'SPN-AKS-003', name: 'Saklar Switch Spion Retract Tombol Lipat Toyota', cogs: 55000, price: 120000, physicalStock: 110, allocatedStock: 0, stock: 110 }
-        ],
+        inventory: [],
         users: [
           { id: '1', name: 'Ahmad Fauzi (IT Admin)', email: 'admin@mja.co.id', role: 'admin', active: true },
           { id: '2', name: 'Owner', email: 'owner@mja.co.id', role: 'owner', active: true },
@@ -6303,6 +6291,16 @@
         attendanceLogs: []
       }
     };
+
+    // Multi-Device Auto-Sync: Polling latar belakang berkala (tiap 20 detik) untuk sinkronisasi otomatis Admin, Finance, Owner & Gudang
+    setInterval(function () {
+      try {
+        if (typeof window.fetchRemoteAttendance === 'function') window.fetchRemoteAttendance(true);
+        if (typeof window.syncLiveSessionsFromGAS === 'function') window.syncLiveSessionsFromGAS(false);
+        if (typeof window.syncRemoteQCLogs === 'function') window.syncRemoteQCLogs(false);
+        if (typeof window.syncRemoteReturns === 'function') window.syncRemoteReturns(false);
+      } catch (ePoll) { }
+    }, 20000);
 
     // Google Apps Script Live Gateway for Multi-Device Real-time Database (Google Sheets)
     window.GAS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyYsAdWrghBnmrr-m4_s88Ixfj-o9V_n97x15shaJgwoVaQhRLKD98r3lqofrVm3bfg/exec";
@@ -10562,9 +10560,14 @@
       var savedInv = localStorage.getItem('mja_inventory_data');
       if (savedInv) {
         var parsedInv = JSON.parse(savedInv);
-        if (Array.isArray(parsedInv) && parsedInv.length > 0) {
+        if (Array.isArray(parsedInv) && parsedInv.length > 0 && !parsedInv.some(function(x) { return x.id === 'INV-1'; })) {
           window.appState.data.inventory = parsedInv;
+        } else {
+          window.appState.data.inventory = [];
+          localStorage.removeItem('mja_inventory_data');
         }
+      } else {
+        window.appState.data.inventory = [];
       }
     } catch (eInv) { }
 
@@ -11320,15 +11323,8 @@
       var proofStatus = document.getElementById('modal-live-proof-status');
       if (proofStatus) proofStatus.textContent = 'Belum ada screenshot terlampir';
 
-      var selectEl = document.getElementById('modal-live-item-select');
-      if (selectEl) {
-        selectEl.innerHTML = '';
-        (window.appState.data.inventory || []).forEach(function (item) {
-          var opt = document.createElement('option');
-          opt.value = item.sku;
-          opt.textContent = item.sku + ' - ' + item.name + ' (Stok: ' + item.stock + ')';
-          selectEl.appendChild(opt);
-        });
+      if (typeof window.populateLiveProductSelect === 'function') {
+        window.populateLiveProductSelect();
       }
       window.renderModalLiveItemsList();
 
@@ -14866,31 +14862,44 @@
     if (sectionId === 'section-dashboard') {
       setTimeout(function () {
         if (typeof window.initCharts === 'function') window.initCharts();
+        if (typeof window.syncLiveSessionsFromGAS === 'function') window.syncLiveSessionsFromGAS(false);
+        if (typeof window.syncRemoteQCLogs === 'function') window.syncRemoteQCLogs(false);
+        if (typeof window.syncRemoteReturns === 'function') window.syncRemoteReturns(false);
+        if (typeof window.fetchRemoteAttendance === 'function') window.fetchRemoteAttendance(true);
       }, 120);
     } else if (sectionId === 'section-live') {
       if (typeof window.renderLiveSessions === 'function') {
         window.renderLiveSessions();
       }
+      if (typeof window.syncLiveSessionsFromGAS === 'function') window.syncLiveSessionsFromGAS(false);
     } else if (sectionId === 'section-live-reports') {
       setTimeout(function () {
         if (typeof window.initLiveReportsDashboard === 'function') {
           window.initLiveReportsDashboard();
         }
+        if (typeof window.syncLiveSessionsFromGAS === 'function') window.syncLiveSessionsFromGAS(false);
       }, 80);
     } else if (sectionId === 'section-sales-detail') {
       setTimeout(function () {
         window.populateSalesDetailFilterOptions();
         window.renderSalesDetailReport();
       }, 80);
-    } else if (sectionId === 'section-attendance') {
+    } else if (sectionId === 'section-attendance' || sectionId === 'section-attendance-report') {
       setTimeout(function () {
-        if (typeof window.startAttendanceCamera === 'function') {
+        if (typeof window.startAttendanceCamera === 'function' && sectionId === 'section-attendance') {
           window.startAttendanceCamera();
         }
         if (typeof window.renderAttendanceLogs === 'function') {
           window.renderAttendanceLogs();
         }
+        if (typeof window.fetchRemoteAttendance === 'function') {
+          window.fetchRemoteAttendance(true);
+        }
       }, 80);
+    } else if (sectionId === 'section-qc-scan') {
+      if (typeof window.syncRemoteQCLogs === 'function') window.syncRemoteQCLogs(false);
+    } else if (sectionId === 'section-returns') {
+      if (typeof window.syncRemoteReturns === 'function') window.syncRemoteReturns(false);
     } else if (sectionId === 'section-users') {
       if (typeof window.updateResetStats === 'function') {
         window.updateResetStats();
@@ -15774,18 +15783,22 @@
     if (!selectEl) return;
     selectEl.innerHTML = '';
 
-    var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [
-      { sku: 'SPN-MBL-001', name: 'Spion Retract All New Avanza / Xenia Chrome', price: 1150000, cogs: 690000, stock: 45 },
-      { sku: 'SPN-MBL-002', name: 'Spion Innova Reborn / Venturer Auto Folding', price: 1450000, cogs: 870000, stock: 32 },
-      { sku: 'SPN-MBL-003', name: 'Kaca Spion Honda Brio / Mobilio Cembung', price: 185000, cogs: 110000, stock: 80 },
-      { sku: 'SPN-MTR-002', name: 'Spion Jalu Bar End CNC Universal NMAX Aerox', price: 98000, cogs: 58000, stock: 120 },
-      { sku: 'SPN-AKS-003', name: 'Saklar Switch Retract Lipat Spion Universal', price: 120000, cogs: 70000, stock: 55 }
-    ];
+    var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
+    if (!inventory || inventory.length === 0) {
+      var opt = document.createElement('option');
+      opt.value = '';
+      opt.disabled = true;
+      opt.selected = true;
+      opt.textContent = '-- Belum ada produk di inventori (Silakan upload di menu Inventori Stok) --';
+      selectEl.appendChild(opt);
+      return;
+    }
 
     inventory.forEach(function (item) {
       var opt = document.createElement('option');
       opt.value = item.sku;
-      opt.textContent = item.sku + ' - ' + item.name + ' (Stok: ' + (item.stock || 10) + ')';
+      var stockVal = (item.stock !== undefined ? item.stock : (item.physicalStock || 0));
+      opt.textContent = item.sku + ' - ' + item.name + ' (Stok: ' + stockVal + ')';
       selectEl.appendChild(opt);
     });
   };
@@ -15846,33 +15859,37 @@
     if (!selectEl || !qtyEl) return;
 
     var sku = selectEl.value;
+    if (!sku) {
+      window.showToast('Pilih produk spion terlebih dahulu (atau upload di menu Inventori Stok)!', 'warning');
+      return;
+    }
     var qty = parseInt(qtyEl.value, 10) || 1;
     if (qty <= 0) qty = 1;
 
     var inventory = (window.appState && window.appState.data && window.appState.data.inventory) || [];
-    var prod = inventory.find(function (it) { return it.sku === sku; }) || {
-      sku: sku,
-      name: 'Spion ' + sku,
-      price: 1150000,
-      cogs: 690000
-    };
+    var prod = inventory.find(function (it) { return it.sku === sku; });
+    if (!prod) {
+      window.showToast('Produk tidak ditemukan di inventori aktif!', 'error');
+      return;
+    }
 
     window.currentLiveSoldItems = window.currentLiveSoldItems || [];
     var existing = window.currentLiveSoldItems.find(function (it) { return it.sku === sku; });
     if (existing) {
       existing.qty += qty;
-      existing.subtotal = existing.qty * (existing.price || 500000);
+      existing.subtotal = existing.qty * (existing.price || prod.price || 0);
     } else {
       window.currentLiveSoldItems.push({
         sku: prod.sku,
         name: prod.name,
         qty: qty,
-        price: prod.price || 1150000,
-        cogs: prod.cogs || 690000,
-        subtotal: (prod.price || 1150000) * qty
+        price: prod.price || 0,
+        cogs: prod.cogs || 0,
+        subtotal: (prod.price || 0) * qty
       });
     }
 
+    qtyEl.value = 1;
     window.renderModalLiveItemsList();
     window.showToast('Item ' + sku + ' (' + qty + ' pcs) ditambahkan ke daftar!', 'success');
   };
@@ -16476,6 +16493,34 @@ window.handleSaveLiveSession = function (e) {
       if (typeof window.renderStockLogs === 'function') window.renderStockLogs();
       if (typeof window.populateCalcSKUSelect === 'function') window.populateCalcSKUSelect();
       if (typeof window.populateGroupDropdowns === 'function') window.populateGroupDropdowns();
+      if (typeof window.populateLiveProductSelect === 'function') window.populateLiveProductSelect();
+
+      // Sinkronisasi inventori baru ke Google Sheets
+      if (window.GAS_ENDPOINT_URL && newInventory.length > 0) {
+        try {
+          var invParams = new URLSearchParams({
+            action: 'saveInventory',
+            mode: 'replace',
+            itemsJson: JSON.stringify(newInventory.map(function (it) {
+              return {
+                sku: it.sku,
+                name: it.name,
+                group: it.group,
+                stockA: it.stock || it.physicalStock || 0,
+                stockB: 0,
+                cogs: it.cogs || 0,
+                price: it.price || 0
+              };
+            }))
+          });
+          fetch(window.GAS_ENDPOINT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: invParams.toString()
+          }).catch(function (e) { console.warn('GAS saveInventory error:', e); });
+        } catch (eInvGas) { }
+      }
 
       // Log ke mutasi stok
       window.appState.data.stockLogs.unshift({
