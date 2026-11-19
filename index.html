@@ -4637,8 +4637,13 @@
       </div>
 
       <form onsubmit="window.handleSaveLiveSession(event)" class="p-4 sm:p-5 space-y-3.5 text-xs overflow-y-auto flex-1 min-h-0">
-        <!-- Channel Toko & Host Info -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Tanggal, Channel Toko & Host Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Tanggal Sesi Live <span class="text-rose-600">*</span></label>
+            <input type="date" id="modal-live-date" required
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+          </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Toko / Channel Live <span class="text-rose-600">*</span></label>
             <select id="modal-live-store" required
@@ -4651,7 +4656,7 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Nama Host Live <span class="text-rose-600">*</span></label>
-            <input type="text" id="modal-live-host" required placeholder="Nama Host Siaran (Dapat Diketik Manual)"
+            <input type="text" id="modal-live-host" required placeholder="Nama Host Siaran"
               class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-amber-500">
           </div>
         </div>
@@ -11324,7 +11329,9 @@
       window.currentLiveSoldItems = [];
       window.currentLiveProofPhoto = '';
 
-      var hostInput = document.getElementById('modal-live-host');
+      var dateInput = document.getElementById('modal-live-date');
+    if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
+    var hostInput = document.getElementById('modal-live-host');
       if (hostInput) {
         var user = window.appState.currentUser || { name: 'Sarah Amanda', email: 'host@demo.com' };
         hostInput.value = user.name || (user.email ? user.email.split('@')[0] : 'Host Live');
@@ -11574,7 +11581,7 @@
         store: store,
         host: host,
         branch: 'Cabang 1 (Pusat)',
-        date: new Date().toISOString().slice(0, 10),
+        date: (document.getElementById('modal-live-date') && document.getElementById('modal-live-date').value) || new Date().toISOString().slice(0, 10),
         startTime: startTime,
         endTime: endTime,
         duration: durationStr,
@@ -13780,8 +13787,9 @@
             return s && s.store !== 'SYSTEM_RESET' && (!s.id || s.id.indexOf('RESET_MARKER') === -1);
           });
 
-          // Parse soldProducts dari kolom notes jika tersedia
+          // Parse soldProducts dan normalisasi format tanggal
           remoteSessions.forEach(function (s) {
+            if (s.date) s.date = window.cleanWibDate(s.date);
             if (s.notes && (s.notes.indexOf('"soldProducts"') !== -1 || s.notes.indexOf('{"') === 0)) {
               try {
                 var parsed = JSON.parse(s.notes);
@@ -14380,13 +14388,26 @@
   window.cleanWibDate = function (dateVal) {
     if (!dateVal) return new Date().toISOString().slice(0, 10);
     var s = String(dateVal).trim();
-    if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    // Deteksi & konversi otomatis Excel serial date (misal 46345 atau 46345-01-01 -> 2026-11-19)
+    var mSerial = s.match(/^(\d{5})(?:-\d{2}-\d{2})?$/);
+    if (mSerial) {
+      var serial = Number(mSerial[1]);
+      if (serial >= 40000 && serial <= 60000) {
+        var dSerial = new Date(Math.round((serial - 25569) * 86400 * 1000));
+        var yS = dSerial.getFullYear();
+        var mS = String(dSerial.getMonth() + 1).padStart(2, '0');
+        var dayS = String(dSerial.getDate()).padStart(2, '0');
+        return yS + '-' + mS + '-' + dayS;
+      }
+    }
+    if (/^20\d{2}-\d{2}-\d{2}/.test(s)) {
       return s.slice(0, 10);
     }
     try {
       var d = new Date(s);
       if (!isNaN(d.getTime())) {
         var y = d.getFullYear();
+        if (y > 2100 || y < 2000) return new Date().toISOString().slice(0, 10);
         var m = String(d.getMonth() + 1).padStart(2, '0');
         var day = String(d.getDate()).padStart(2, '0');
         return y + '-' + m + '-' + day;
@@ -16008,6 +16029,7 @@ window.handleSaveLiveSession = function (e) {
 
     var store = document.getElementById('modal-live-store').value;
     var host = (document.getElementById('modal-live-host') ? document.getElementById('modal-live-host').value : '').trim() || 'Bambang Santoso';
+    var liveDate = (document.getElementById('modal-live-date') && document.getElementById('modal-live-date').value) || new Date().toISOString().slice(0, 10);
     var omset = Number(document.getElementById('modal-live-omset').value) || 0;
 
     var itemsTotalOmset = 0;
@@ -16106,7 +16128,7 @@ window.handleSaveLiveSession = function (e) {
       store: store,
       host: host,
       branch: 'Cabang 1 (Pusat)',
-      date: new Date().toISOString().slice(0, 10),
+      date: liveDate,
       startTime: startTime,
       endTime: endTime,
       liveTime: liveAirTimeStr,

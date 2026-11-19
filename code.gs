@@ -25,7 +25,28 @@ function doGet(e) {
       var row = data[i];
       var disp = displayData[i];
       if (row[0]) {
-        var dateFormatted = (disp && disp[1]) ? String(disp[1]).trim() : (row[1] instanceof Date ? Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd') : String(row[1]));
+        var dateFormatted = '';
+        if (row[1] instanceof Date) {
+          dateFormatted = Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd');
+        } else {
+          var num = Number(row[1]);
+          if (!isNaN(num) && num >= 40000 && num <= 60000) {
+            var jsDate = new Date(Math.round((num - 25569) * 86400 * 1000));
+            dateFormatted = Utilities.formatDate(jsDate, 'GMT+7', 'yyyy-MM-dd');
+          } else {
+            var sVal = (disp && disp[1]) ? String(disp[1]).trim() : String(row[1] || '').trim();
+            var mSerial = sVal.match(/^(\d{5})(?:-\d{2}-\d{2})?$/);
+            if (mSerial) {
+              var sNum = Number(mSerial[1]);
+              if (sNum >= 40000 && sNum <= 60000) {
+                var jsDate2 = new Date(Math.round((sNum - 25569) * 86400 * 1000));
+                dateFormatted = Utilities.formatDate(jsDate2, 'GMT+7', 'yyyy-MM-dd');
+              } else { dateFormatted = sVal; }
+            } else if (/^20\d{2}-\d{2}-\d{2}/.test(sVal)) {
+              dateFormatted = sVal.slice(0, 10);
+            } else { dateFormatted = sVal || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'); }
+          }
+        }
         var timeFormatted = (disp && disp[2]) ? String(disp[2]).trim() : (row[2] instanceof Date ? Utilities.formatDate(row[2], 'GMT+7', 'HH:mm:ss') : String(row[2]));
         if (timeFormatted.charAt(0) === "'") timeFormatted = timeFormatted.substring(1);
 
@@ -437,7 +458,8 @@ function handleSaveLiveSession_(ss, payload) {
   }
 
   var id = String(payload.id || ('LS-' + Date.now()));
-  var date = String(payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'));
+  var rawDate = String(payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd')).trim().replace(/^'+/, '');
+  var date = "'" + rawDate;
   var store = String(payload.store || 'TikTok Shop Live Official');
   var host = String(payload.host || 'Host Live');
   var omset = Number(payload.omset || 0);
