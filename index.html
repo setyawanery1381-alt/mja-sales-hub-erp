@@ -6415,6 +6415,15 @@
     window.showToast = function (msg, type) {
       var container = document.getElementById('toast-container');
       if (!container) return;
+      // Anti-spam deduplication: abaikan jika notifikasi identik masih tampil
+      var existing = container.querySelectorAll('.toast-msg-text');
+      for (var i = 0; i < existing.length; i++) {
+        if (existing[i].textContent.trim() === String(msg).trim()) return;
+      }
+      // Batasi maksimal 3 toast bersamaan di layar agar tidak menutupi UI
+      while (container.children.length >= 3) {
+        container.removeChild(container.firstChild);
+      }
       var el = document.createElement('div');
       var colorClass = 'bg-slate-900 border-slate-700 text-white';
       if (type === 'success') colorClass = 'bg-emerald-600 border-emerald-500 text-white';
@@ -6422,8 +6431,10 @@
       if (type === 'warning') colorClass = 'bg-amber-600 border-amber-500 text-white';
       if (type === 'info') colorClass = 'bg-blue-600 border-blue-500 text-white';
 
-      el.className = 'pointer-events-auto p-3 rounded-xl border shadow-lg text-xs font-semibold flex items-center space-x-2 transition-all transform duration-200 ' + colorClass;
-      el.innerHTML = '<span>' + msg + '</span>';
+      el.className = 'pointer-events-auto p-3 rounded-xl border shadow-lg text-xs font-semibold flex items-center justify-between space-x-2 transition-all transform duration-200 cursor-pointer ' + colorClass;
+      el.title = 'Klik untuk menutup';
+      el.onclick = function() { el.remove(); };
+      el.innerHTML = '<span class="toast-msg-text">' + msg + '</span><span class="text-white/80 hover:text-white ml-2 text-sm font-bold">×</span>';
       container.appendChild(el);
       setTimeout(function () {
         el.style.opacity = '0';
@@ -12085,8 +12096,11 @@
 
     // Guard hak akses: Hanya Admin, Owner, & Finance
     if (role === 'host' || role === 'warehouse') {
-      window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen & Admin!', 'warning');
-      window.navigateTo('section-dashboard');
+      var allowedSecs = (typeof window.getRoleAllowedSections === 'function') ? window.getRoleAllowedSections(role) : ['section-live'];
+      if (window.appState.currentSection === 'section-live-reports') {
+        window.showToast('Akses Terbatas: Menu Laporan Live hanya dapat diakses oleh Manajemen & Admin!', 'warning');
+        window.navigateTo(allowedSecs[0] || 'section-live');
+      }
       return;
     }
 
@@ -13816,15 +13830,22 @@
             }
           }
 
-          // Refresh seluruh UI terkait secara instan tanpa delay
-          if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions();
-          if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
-          if (typeof window.initLiveReportsDashboard === 'function') window.initLiveReportsDashboard();
-          if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
-          if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics();
-          if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
-          if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
-          if (typeof window.updateResetStats === 'function') window.updateResetStats();
+          // Refresh seluruh UI terkait secara aman sesuai menu yang aktif
+          if (typeof window.renderLiveSessions === 'function') {
+            window.renderLiveSessions();
+          }
+          if (typeof window.renderDashboardMetrics === 'function') {
+            window.renderDashboardMetrics();
+          }
+          if (window.appState && window.appState.currentSection === 'section-live-reports') {
+            if (typeof window.handleLiveReportFilterChange === 'function') window.handleLiveReportFilterChange();
+          }
+          if (window.appState && window.appState.currentSection === 'section-sales-detail') {
+            if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport();
+          }
+          if (typeof window.updateResetStats === 'function') {
+            window.updateResetStats();
+          }
 
           if (isManual) {
             window.showToast('✅ Berhasil tersinkron (' + remoteSessions.length + ' Sesi Live aktif)!', 'success');
