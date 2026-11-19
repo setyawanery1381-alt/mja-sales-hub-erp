@@ -200,6 +200,15 @@ function doGet(e) {
     return handleSaveQCLog_(ss, e.parameter);
   }
 
+  // 11.1 RESET QC LOGS via GET
+  if (action === 'resetQCLogs') {
+    var sheet = ss.getSheetByName('QC_Logs');
+    if (sheet && sheet.getLastRow() > 1) {
+      sheet.deleteRows(2, sheet.getLastRow() - 1);
+    }
+    return jsonResponse_({ success: true, message: 'Seluruh riwayat QC Logs berhasil direset' });
+  }
+
   // 12. GET RETURNS (Penerimaan Retur)
   if (action === 'getReturns') {
     var sheet = ss.getSheetByName('Returns');
@@ -227,6 +236,27 @@ function doGet(e) {
   // 13. SAVE RETURN via GET
   if (action === 'saveReturn') {
     return handleSaveReturn_(ss, e.parameter);
+  }
+
+  // 13.1 RESET RETURNS via GET
+  if (action === 'resetReturns') {
+    var sheet = ss.getSheetByName('Returns');
+    if (sheet && sheet.getLastRow() > 1) {
+      sheet.deleteRows(2, sheet.getLastRow() - 1);
+    }
+    return jsonResponse_({ success: true, message: 'Seluruh riwayat Retur berhasil direset' });
+  }
+
+  // 13.2 RESET ALL OPERATIONAL DATA (Go-Live Bersih)
+  if (action === 'resetAllData') {
+    var sheetsToReset = ['Live_Sessions', 'QC_Logs', 'Returns'];
+    sheetsToReset.forEach(function (sName) {
+      var s = ss.getSheetByName(sName);
+      if (s && s.getLastRow() > 1) {
+        s.deleteRows(2, s.getLastRow() - 1);
+      }
+    });
+    return jsonResponse_({ success: true, message: 'Seluruh data operasional berhasil direset (Go-Live Bersih)' });
   }
 
   // 14. GET INVENTORY (Inventori Stok Spion Gudang)
@@ -342,7 +372,7 @@ function doPost(e) {
     if (action === 'deleteLiveSession') {
       return doGet({ parameter: payload });
     }
-    if (action === 'resetLiveSessions') {
+    if (action === 'resetLiveSessions' || action === 'resetQCLogs' || action === 'resetReturns' || action === 'resetAllData') {
       return doGet({ parameter: payload });
     }
 

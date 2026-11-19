@@ -955,9 +955,9 @@
                   </svg>
                 </span>
               </div>
-              <h4 class="text-2xl font-extrabold text-slate-900" id="kpi-gross-revenue">Rp 148.500.000</h4>
-              <p class="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center">
-                <span>↑ 18.2%</span> <span class="text-slate-400 font-normal ml-1">vs minggu lalu</span>
+              <h4 class="text-2xl font-extrabold text-slate-900" id="kpi-gross-revenue">Rp 0</h4>
+              <p class="text-[11px] text-slate-400 font-semibold mt-1 flex items-center">
+                <span>0.0%</span> <span class="text-slate-400 font-normal ml-1">vs minggu lalu</span>
               </p>
             </div>
 
@@ -972,7 +972,7 @@
                   </svg>
                 </span>
               </div>
-              <h4 class="text-2xl font-extrabold text-slate-900" id="kpi-total-deductions">Rp 26.730.000</h4>
+              <h4 class="text-2xl font-extrabold text-slate-900" id="kpi-total-deductions">Rp 0</h4>
               <p class="text-[11px] text-slate-500 mt-1">Admin + Iklan Live + Voucher</p>
             </div>
 
@@ -988,9 +988,9 @@
                   </svg>
                 </span>
               </div>
-              <h4 class="text-2xl font-extrabold text-emerald-600" id="kpi-net-margin">Rp 52.320.000</h4>
+              <h4 class="text-2xl font-extrabold text-emerald-600" id="kpi-net-margin">Rp 0</h4>
               <p class="text-[11px] text-slate-600 font-medium mt-1">
-                Margin Bersih: <span class="font-bold text-emerald-700" id="kpi-net-percent">35.2%</span>
+                Margin Bersih: <span class="font-bold text-emerald-700" id="kpi-net-percent">0.0%</span>
               </p>
             </div>
 
@@ -1005,9 +1005,9 @@
                   </svg>
                 </span>
               </div>
-              <h4 class="text-2xl font-extrabold text-slate-900" id="kpi-orders-count">1.420 Order</h4>
+              <h4 class="text-2xl font-extrabold text-slate-900" id="kpi-orders-count">0 Order</h4>
               <p class="text-[11px] text-slate-500 mt-1">
-                Tingkat Retur: <span class="text-amber-600 font-bold" id="kpi-return-rate">2.3% (32 Paket)</span>
+                Tingkat Retur: <span class="text-amber-600 font-bold" id="kpi-return-rate">0.0% (0 Paket)</span>
               </p>
             </div>
           </div>
@@ -5992,7 +5992,7 @@
             datasets: [
               {
                 label: 'Omset Kotor',
-                data: [18.5, 22.4, 19.8, 28.2, 35.6, 42.1, 38.4],
+                data: [0, 0, 0, 0, 0, 0, 0],
                 borderColor: '#2B3A9F',
                 backgroundColor: 'rgba(180, 83, 42, 0.08)',
                 borderWidth: 2.5,
@@ -6006,7 +6006,7 @@
               },
               {
                 label: 'Margin Bersih',
-                data: [6.8, 8.2, 7.1, 10.4, 13.8, 16.5, 14.2],
+                data: [0, 0, 0, 0, 0, 0, 0],
                 borderColor: '#2F5D50',
                 backgroundColor: 'rgba(47, 93, 80, 0.04)',
                 borderWidth: 2.5,
@@ -6082,7 +6082,7 @@
           data: {
             labels: ['Margin Bersih', 'HPP Modal Spion', 'Fee Admin Platform', 'Biaya Iklan & Ops'],
             datasets: [{
-              data: [35.2, 43.1, 11.8, 9.9],
+              data: [0, 0, 0, 0],
               backgroundColor: ['#2F5D50', '#2B3A9F', '#D97706', '#64748B'],
               borderWidth: 2,
               borderColor: '#FFFFFF',
@@ -6369,6 +6369,28 @@
         }
       }
     }, 3000);
+
+    // Auto-Purge Old Mock Demo Data (Go-Live Bersih: Mulai dari Awal)
+    try {
+      var oldLive = localStorage.getItem('mja_clean_liveSessions') || localStorage.getItem('mja_live_sessions');
+      if (oldLive && (oldLive.indexOf('LS-01') !== -1 || oldLive.indexOf('LS-02') !== -1 || oldLive.indexOf('LS-03') !== -1 || oldLive.indexOf('Maya') !== -1 || oldLive.indexOf('Sarah') !== -1)) {
+        localStorage.setItem('mja_clean_liveSessions', '[]');
+        localStorage.setItem('mja_live_sessions', '[]');
+        if (window.appState && window.appState.data) window.appState.data.liveSessions = [];
+      }
+      var oldQC = localStorage.getItem('mja_qc_logs');
+      if (oldQC && (oldQC.indexOf('QC-001') !== -1 || oldQC.indexOf('QC-002') !== -1 || oldQC.indexOf('QC-003') !== -1)) {
+        localStorage.setItem('mja_qc_logs', '[]');
+        if (window.appState && window.appState.data) window.appState.data.qcLogs = [];
+      }
+      var oldRet = localStorage.getItem('mja_returns_history');
+      if (oldRet && (oldRet.indexOf('RET-001') !== -1 || oldRet.indexOf('RET-002') !== -1)) {
+        localStorage.setItem('mja_returns_history', '[]');
+        if (window.appState && window.appState.data) window.appState.data.returns = [];
+      }
+      localStorage.setItem('mja_system_was_reset', 'true');
+      localStorage.setItem('mja_metrics_is_reset', 'true');
+    } catch (eCleanMock) { }
 
     // Auto-Restore Persistent Attendance Logs from LocalStorage (Permanent History)
     try {
@@ -8344,52 +8366,21 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      var stores = window.appState.data.stores;
-      var totalGross = 0;
-      var totalDeductions = 0;
-      var totalNet = 0;
-      var totalReturnsAll = 0;
+      var liveSessions = (window.appState && window.appState.data && window.appState.data.liveSessions) || [];
+      var orders = (window.appState && window.appState.data && window.appState.data.orders) || [];
 
-      // Hitung total nilai paket retur yang sudah terjadi (Req 6 Klien)
-      if (window.appState.data.returns && window.appState.data.returns.length > 0) {
-        window.appState.data.returns.forEach(function (r) {
-          totalReturnsAll += (r.price || 350000);
-        });
+      if (liveSessions.length === 0 && orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400 italic text-xs">Belum ada transaksi. Mulai dari awal (Go-Live).</td></tr>';
+        if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = 'Rp 0';
+        if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = 'Rp 0';
+        if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = 'Rp 0';
+        if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = '0.0%';
+        if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = '0 Order';
+        if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = '0.0% (0 Paket)';
+        if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = 'Rp 0';
+        if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = 'Rp 0 (0.0%)';
+        return;
       }
-
-      stores.forEach(function (s, idx) {
-        var gross = (idx + 1) * 24500000;
-        var admin = Math.round(gross * (s.fee / 100));
-        var ads = (idx + 1) * 3500000;
-        var returnStore = Math.round((idx + 1) * 620000);
-        // Total penghasilan bersih SUDAH TERMASUK DIPOTONG RETUR (Req 6)
-        var net = gross - admin - ads - returnStore - Math.round(gross * 0.35); // 35% HPP
-
-        totalGross += gross;
-        totalDeductions += (admin + ads + returnStore);
-        totalNet += net;
-
-        var tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition-colors';
-        tr.innerHTML = '<td class="p-3 font-bold text-slate-800">' + s.name + '</td>' +
-          '<td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.platform === 'shopee' ? 'bg-orange-100 text-orange-700' : 'bg-slate-900 text-white') + '">' + s.platform.toUpperCase() + '</span></td>' +
-          '<td class="p-3">' + window.formatRupiah(gross) + '</td>' +
-          '<td class="p-3 text-rose-600">(' + window.formatRupiah(admin) + ')</td>' +
-          '<td class="p-3 text-rose-600">(' + window.formatRupiah(ads) + ')</td>' +
-          '<td class="p-3 text-amber-600">' + window.formatRupiah(returnStore) + '</td>' +
-          '<td class="p-3 text-right font-extrabold text-emerald-600">' + window.formatRupiah(net) + '</td>';
-        tbody.appendChild(tr);
-      });
-
-      document.getElementById('kpi-gross-revenue').textContent = window.formatRupiah(totalGross);
-      document.getElementById('kpi-total-deductions').textContent = window.formatRupiah(totalDeductions);
-      document.getElementById('kpi-net-margin').textContent = window.formatRupiah(totalNet);
-      var netPct = ((totalNet / totalGross) * 100).toFixed(1);
-      document.getElementById('kpi-net-percent').textContent = netPct + '%';
-
-      // Update Financial P&L Table as well
-      document.getElementById('pl-gross').textContent = window.formatRupiah(totalGross);
-      document.getElementById('pl-final-margin').textContent = window.formatRupiah(totalNet) + ' (' + netPct + '%)';
     };
 
     window.renderLiveSessions = function () {
@@ -16849,8 +16840,8 @@ window.handleSaveLiveSession = function (e) {
                               (window.appState && window.appState.data && window.appState.data.isResetMetrics) ||
                               (localStorage.getItem('mja_metrics_is_reset') === 'true');
 
-    // JIKA SISTEM SUDAH DIRESET DAN BELUM ADA TRANSAKSI BARU, DASHBOARD WAJIB NOL (GO-LIVE BERSIH)
-    if (filteredSessions.length === 0 && filteredOrders.length === 0 && isSystemResetActive) {
+    // JIKA BELUM ADA SESI LIVE / TRANSAKSI BARU, DASHBOARD SELALU KOSONG (0) - MULAI DARI AWAL
+    if (filteredSessions.length === 0 && filteredOrders.length === 0) {
       if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = 'Rp 0';
       if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = 'Rp 0';
       if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = 'Rp 0';
@@ -16867,9 +16858,9 @@ window.handleSaveLiveSession = function (e) {
       if (document.getElementById('pl-ads')) document.getElementById('pl-ads').textContent = 'Rp 0';
       if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = 'Rp 0 (0.0%)';
 
-      var tbodyReset = document.getElementById('table-store-performance');
-      if (tbodyReset) {
-        tbodyReset.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400 italic text-xs">Data bersih pasca-reset sistem (Go-Live). Belum ada transaksi baru yang diinput.</td></tr>';
+      var tbodyClean = document.getElementById('table-store-performance');
+      if (tbodyClean) {
+        tbodyClean.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400 italic text-xs">Belum ada transaksi. Mulai dari awal (Go-Live).</td></tr>';
       }
 
       try {
@@ -16889,65 +16880,6 @@ window.handleSaveLiveSession = function (e) {
           donutLabel.innerHTML = '<span class="text-xl font-bold text-slate-800">0.0%</span><br><span class="text-[10px] text-slate-400">LABA BERSIH</span>';
         }
       } catch (eC) {}
-      return;
-    }
-
-    // Jika filter spesifik tidak menemukan sesi live baru dan sistem BELUM di-reset, gunakan baseline demo
-    if (filteredSessions.length === 0 && filteredOrders.length === 0) {
-      var baseStores = (window.appState && window.appState.data && window.appState.data.stores) || [];
-      var baseGross = 148500000;
-      var baseDeductions = 26730000;
-      var baseNet = 52320000;
-      var baseOrders = 1420;
-      var baseNetPct = '35.2%';
-
-      if (document.getElementById('kpi-gross-revenue')) document.getElementById('kpi-gross-revenue').textContent = window.formatRupiah(baseGross);
-      if (document.getElementById('kpi-total-deductions')) document.getElementById('kpi-total-deductions').textContent = window.formatRupiah(baseDeductions);
-      if (document.getElementById('kpi-net-margin')) document.getElementById('kpi-net-margin').textContent = window.formatRupiah(baseNet);
-      if (document.getElementById('kpi-net-percent')) document.getElementById('kpi-net-percent').textContent = baseNetPct;
-      if (document.getElementById('kpi-orders-count')) document.getElementById('kpi-orders-count').textContent = '1.420 Order';
-      if (document.getElementById('kpi-return-rate')) document.getElementById('kpi-return-rate').textContent = '2.3% (32 Paket)';
-      if (document.getElementById('pl-gross')) document.getElementById('pl-gross').textContent = window.formatRupiah(baseGross);
-      if (document.getElementById('pl-final-margin')) document.getElementById('pl-final-margin').textContent = window.formatRupiah(baseNet) + ' (' + baseNetPct + ')';
-
-      var tbody = document.getElementById('table-store-performance');
-      if (tbody && baseStores.length > 0) {
-        tbody.innerHTML = '';
-        baseStores.forEach(function (s, idx) {
-          var gross = (idx + 1) * 24500000;
-          var admin = Math.round(gross * (s.fee / 100));
-          var ads = (idx + 1) * 3500000;
-          var returnStore = Math.round((idx + 1) * 620000);
-          var net = gross - admin - ads - returnStore - Math.round(gross * 0.35);
-
-          var tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-50 transition-colors';
-          tr.innerHTML = '<td class="p-3 font-bold text-slate-800">' + s.name + '</td>' +
-            '<td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.platform === 'shopee' ? 'bg-orange-100 text-orange-700' : 'bg-slate-900 text-white') + '">' + s.platform.toUpperCase() + '</span></td>' +
-            '<td class="p-3">' + window.formatRupiah(gross) + '</td>' +
-            '<td class="p-3 text-rose-600">(' + window.formatRupiah(admin) + ')</td>' +
-            '<td class="p-3 text-rose-600">(' + window.formatRupiah(ads) + ')</td>' +
-            '<td class="p-3 text-amber-600">' + window.formatRupiah(returnStore) + '</td>' +
-            '<td class="p-3 text-right font-extrabold text-emerald-600">' + window.formatRupiah(net) + '</td>';
-          tbody.appendChild(tr);
-        });
-      }
-
-      try {
-        if (window.trendChartInstance && window.trendChartInstance.data) {
-          window.trendChartInstance.data.datasets[0].data = [18.5, 22.4, 19.8, 28.2, 35.6, 42.1, 38.4];
-          window.trendChartInstance.data.datasets[1].data = [6.5, 7.8, 6.9, 9.8, 12.4, 14.7, 13.4];
-          window.trendChartInstance.update();
-        }
-        if (window.costChartInstance && window.costChartInstance.data) {
-          window.costChartInstance.data.datasets[0].data = [35.2, 43.1, 11.8, 9.9];
-          window.costChartInstance.update();
-        }
-        var donutLabel = document.getElementById('donut-center-label');
-        if (donutLabel) {
-          donutLabel.innerHTML = '<span class="text-xl font-bold text-slate-800">35.2%</span><br><span class="text-[10px] text-slate-400">LABA BERSIH</span>';
-        }
-      } catch (eChart) { }
       return;
     }
 
