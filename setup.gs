@@ -77,11 +77,10 @@ function setupDatabase() {
     },
     {
       name: 'Live_Sessions',
-      headers: ['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual'],
+      headers: ['Session ID', 'Tanggal', 'Jam Siaran', 'Nama Host', 'Channel Toko', 'Nama Barang (Produk Terjual)', 'Total Qty', 'Total Omset', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Durasi', 'Puncak Viewers', 'Status SOP', 'Catatan / Raw JSON'],
       sampleRows: [
-        ['LS-01', '2026-11-05', 'TikTok Shop Live Official', 'Rina', 18500000, 1942500, 1500000, 6400000, 8657500, 210],
-        ['LS-02', '2026-11-04', 'Shopee Live Toko 1 (Official)', 'Sarah', 24200000, 2057000, 2200000, 8200000, 11743000, 340],
-        ['LS-03', '2026-11-04', 'Shopee Live Toko 2 (Mall)', 'Maya', 16800000, 1512000, 1200000, 5900000, 8188000, 195]
+        ['LS-01', '2026-11-05', '09:00 - 12:00 WIB', 'Bambang Santoso', 'TikTok Shop Live Official', 'Spion Retract Avanza / Xenia 2022+ (Set) (10 pcs); Spion Innova Reborn (5 pcs)', 15, 18500000, 1942500, 1500000, 6400000, 8657500, '3 Jam 00 Menit', 1250, 'valid', ''],
+        ['LS-02', '2026-11-04', '13:00 - 16:00 WIB', 'Bambang Santoso', 'Shopee Live Toko 1 (Official)', 'Spion Retract Avanza / Xenia 2022+ (Set) (15 pcs); Spion Vario 125/160 (10 pcs)', 25, 24200000, 2057000, 2200000, 8200000, 11743000, '3 Jam 00 Menit', 1850, 'valid', '']
       ]
     },
     {

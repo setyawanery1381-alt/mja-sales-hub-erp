@@ -1227,6 +1227,14 @@
                   </svg>
                   <span>Sinkronkan Spreadsheet</span>
                 </button>
+                <button onclick="window.exportHostLiveToExcel()"
+                  class="w-full sm:w-auto h-11 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs active:scale-95 transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+                  title="Ekspor Rekap Live ke CSV / Excel">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Ekspor Excel (CSV)</span>
+                </button>
                 <button onclick="var m=document.getElementById('modal-live-session'); if(m){m.classList.remove('hidden'); m.style.setProperty('display','flex','important');} window.openNewLiveModal();"
                   class="w-full sm:w-auto h-11 px-5 bg-[#2B3A9F] hover:bg-[#1E2B7B] text-white rounded-lg text-xs font-semibold shadow-xs active:scale-95 transition-all flex items-center justify-center space-x-1.5 cursor-pointer">
                   <span>+ Input Rekap Sesi Live</span>
@@ -11785,8 +11793,139 @@
       if (modal) modal.classList.remove('hidden');
     };
 
-    // 1-Click Google Sheets Exporter
+
+    // 2. EKSPOR DETAIL SESI LIVE HOST KE EXCEL / CSV (User Req: Tanggal, Jam, Host, Nama Barang, Total Omset)
+    window.exportHostLiveToExcel = function () {
+      var rawSessions = window.appState.data.liveSessions || [];
+      var role = (window.appState && window.appState.currentRole) || 'host';
+      var user = (window.appState && window.appState.currentUser) || { name: 'Host Live' };
+
+      // Filter sesi milik host jika user adalah host
+      var sessions = rawSessions;
+      if (role === 'host') {
+        var myName = (user.name || '').toLowerCase().trim();
+        sessions = rawSessions.filter(function (s) {
+          var hName = (s.host || '').toLowerCase().trim();
+          return hName === myName || (myName.indexOf('bambang') !== -1 && hName.indexOf('bambang') !== -1);
+        });
+      }
+
+      if (sessions.length === 0) {
+        window.showToast('Belum ada data sesi live untuk diekspor!', 'warning');
+        return;
+      }
+
+      window.showToast('Menyiapkan berkas Excel (CSV) Rekap Live...', 'info');
+
+      var headers = [
+        'No',
+        'Tanggal',
+        'Jam Siaran',
+        'Nama Host',
+        'Channel Toko',
+        'Nama Barang (Rincian Produk Spion Terjual)',
+        'Total Qty (pcs)',
+        'Total Omset Penjualan (Rp)',
+        'Biaya Admin Platform (Rp)',
+        'Biaya Iklan & Voucher (Rp)',
+        'HPP Spion (Rp)',
+        'Margin Bersih Riil (Rp)',
+        'Durasi Siaran',
+        'Puncak Penonton (Peak Viewers)',
+        'Status Kepatuhan SOP'
+      ];
+
+      var rows = [headers];
+
+      sessions.forEach(function (ls, idx) {
+        var cleanDate = window.cleanWibDate(ls.date);
+        var cleanTime = ls.liveTime || (ls.startTime ? (ls.startTime + ' - ' + (ls.endTime || '') + ' WIB') : (ls.time || '18:33:00 WIB'));
+        var hostName = ls.host || (user.name || 'Bambang Santoso');
+        var storeName = ls.store || 'TikTok Shop Live Official';
+
+        // Rincian nama produk terjual
+        var prodsText = '';
+        if (Array.isArray(ls.soldProducts) && ls.soldProducts.length > 0) {
+          prodsText = ls.soldProducts.map(function (p) {
+            return (p.name || p.sku || 'Spion') + ' (' + (p.qty || 1) + ' pcs)';
+          }).join('; ');
+        } else if (ls.notes) {
+          try {
+            var parsed = JSON.parse(ls.notes);
+            if (parsed.soldProducts && Array.isArray(parsed.soldProducts)) {
+              prodsText = parsed.soldProducts.map(function (p) {
+                return (p.name || p.sku || 'Spion') + ' (' + (p.qty || 1) + ' pcs)';
+              }).join('; ');
+            }
+          } catch (eP) { }
+        }
+        if (!prodsText) {
+          prodsText = 'Spion (' + (ls.items || 1) + ' pcs)';
+        }
+
+        var qty = Number(ls.items) || 0;
+        var omset = Number(ls.omset) || 0;
+        var fee = Number(ls.fee) || 0;
+        var ads = Number(ls.ads) || 0;
+        var cogs = Number(ls.cogs) || 0;
+        var margin = Number(ls.margin) || (omset - fee - ads - cogs);
+        var dur = ls.duration || '-';
+        var viewers = Number(ls.viewers) || 0;
+        var sop = ls.sopStatus === 'late' ? 'Terlambat (>2 Jam)' : 'Tepat Waktu (SOP Valid)';
+
+        rows.push([
+          idx + 1,
+          cleanDate,
+          cleanTime,
+          hostName,
+          storeName,
+          prodsText,
+          qty,
+          omset,
+          fee,
+          ads,
+          cogs,
+          margin,
+          dur,
+          viewers,
+          sop
+        ]);
+      });
+
+      // Escape quotes & delimiter agar rapi di Microsoft Excel & WPS Office
+      var csvRows = rows.map(function (r) {
+        return r.map(function (val) {
+          var s = String(val == null ? '' : val);
+          if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1 || s.indexOf(';') !== -1) {
+            return '"' + s.replace(/"/g, '""') + '"';
+          }
+          return s;
+        }).join(',');
+      });
+
+      // Beri tanda BOM UTF-8 (\uFEFF) agar WPS & Excel otomatis mengenali encoding dengan tepat
+      var csvBlob = new Blob(['\uFEFF' + csvRows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      var blobUrl = URL.createObjectURL(csvBlob);
+      var dlLink = document.createElement('a');
+      dlLink.href = blobUrl;
+      var fileDateStr = window.cleanWibDate(new Date()) || '2026-11-19';
+      dlLink.download = 'Rekap_Sesi_Live_MJA_' + fileDateStr + '.csv';
+      document.body.appendChild(dlLink);
+      dlLink.click();
+      document.body.removeChild(dlLink);
+      URL.revokeObjectURL(blobUrl);
+
+      window.showToast('✅ Berhasil mengunduh Rekap Live (' + sessions.length + ' sesi)!', 'success');
+    };
+
+    // 1-Click Google Sheets Exporter (Auto-Detect Sesuai Menu Aktif)
     window.triggerGoogleSheetsExport = function () {
+      var currentSec = (window.appState && window.appState.currentSection) || 'section-dashboard';
+      var userRole = (window.appState && window.appState.currentRole) || 'admin';
+      if (currentSec === 'section-live' || userRole === 'host') {
+        window.exportHostLiveToExcel();
+        return;
+      }
       window.showToast('Mengekspor laporan ke Google Sheets...', 'info');
 
       var headers = ['No', 'Toko / Channel', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'Laba Bersih Riil'];
@@ -16209,6 +16348,8 @@ window.handleSaveLiveSession = function (e) {
           viewers: newSession.viewers,
           notes: JSON.stringify({ note: newSession.notes || '', soldProducts: window.currentLiveSoldItems || newSession.soldProducts || [] }),
           liveTime: liveAirTimeStr + ' (Input: ' + exactInputTime + ')',
+          productsText: (window.currentLiveSoldItems || []).map(function(p){ return (p.name || p.sku || 'Spion') + ' (' + (p.qty || 1) + ' pcs)'; }).join('; '),
+          sopStatus: newSession.sopStatus,
           t: Date.now()
         });
 

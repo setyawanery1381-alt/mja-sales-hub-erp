@@ -124,7 +124,64 @@ function doGet(e) {
     return jsonResponse_({ success: true, users: users });
   }
 
-  // 6. GET LIVE SESSIONS (Rekap Sesi Live Host)
+  // 6. GET LIVE SESSIONS (Rekap Sesi Live Host dengan Rincian Produk & Jam Siaran)
+  
+  // Action untuk merapikan tabel Live_Sessions yang sudah ada agar memiliki kolom Tanggal, Jam, Host, Barang & Omset
+  if (action === 'migrateLiveSessions' || action === 'formatLiveSessions') {
+    var mSheet = ss.getSheetByName('Live_Sessions');
+    if (!mSheet) return jsonResponse_({ success: false, message: 'Sheet Live_Sessions tidak ditemukan' });
+
+    var dHeaders = [
+      'Session ID', 'Tanggal', 'Jam Siaran', 'Nama Host', 'Channel Toko',
+      'Nama Barang (Produk Terjual)', 'Total Qty', 'Total Omset',
+      'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih',
+      'Durasi', 'Puncak Viewers', 'Status SOP', 'Catatan / Raw JSON'
+    ];
+
+    mSheet.getRange(1, 1, 1, dHeaders.length).setValues([dHeaders]);
+    mSheet.getRange(1, 1, 1, dHeaders.length).setFontWeight('bold').setBackground('#1e293b').setFontColor('#ffffff');
+
+    var mData = mSheet.getDataRange().getValues();
+    var updatedCount = 0;
+
+    for (var r = 1; r < mData.length; r++) {
+      var rowR = mData[r];
+      // Jika kolom F (Nama Barang) kosong atau isi lama bergeser
+      var notesR = String(rowR[15] || rowR[12] || '');
+      var prodsR = String(rowR[5] || '');
+
+      if (!prodsR && notesR) {
+        try {
+          var pR = JSON.parse(notesR);
+          var itms = pR.soldProducts || pR.items || [];
+          if (Array.isArray(itms) && itms.length > 0) {
+            prodsR = itms.map(function(it) {
+              return (it.name || it.sku || 'Spion') + ' (' + (it.qty || 1) + ' pcs)';
+            }).join('; ');
+            mSheet.getRange(r + 1, 6).setValue(prodsR);
+            updatedCount++;
+          }
+        } catch(eM) {}
+      }
+
+      // Pastikan tanggal diformat YYYY-MM-DD
+      var rawDateVal = rowR[1];
+      if (rawDateVal) {
+        var numDVal = Number(rawDateVal);
+        if (!isNaN(numDVal) && numDVal >= 40000 && numDVal <= 60000) {
+          var jDate = new Date(Math.round((numDVal - 25569) * 86400 * 1000));
+          mSheet.getRange(r + 1, 2).setValue("'" + Utilities.formatDate(jDate, 'GMT+7', 'yyyy-MM-dd'));
+        }
+      }
+    }
+
+    return jsonResponse_({
+      success: true,
+      message: 'Sheet Live_Sessions berhasil dirapikan dengan kolom Tanggal, Jam, Nama Host, Nama Barang & Total Omset!',
+      updatedRows: updatedCount
+    });
+  }
+
   if (action === 'getLiveSessions') {
     var sheet = ss.getSheetByName('Live_Sessions');
     if (!sheet) return jsonResponse_({ success: true, sessions: [] });
@@ -133,27 +190,105 @@ function doGet(e) {
     var data = range.getValues();
     var displayData = range.getDisplayValues();
     var sessions = [];
+    if (data.length <= 1) return jsonResponse_({ success: true, sessions: [] });
+
+    // Header index mapping fleksibel
+    var headerRow = data[0].map(function (h) { return String(h || '').toLowerCase().trim(); });
+    var colId = headerRow.indexOf('session id'); if (colId === -1) colId = 0;
+    var colDate = headerRow.indexOf('tanggal'); if (colDate === -1) colDate = 1;
+    var colTime = headerRow.indexOf('jam siaran'); if (colTime === -1) colTime = headerRow.indexOf('jam');
+    var colHost = headerRow.indexOf('nama host'); if (colHost === -1) colHost = headerRow.indexOf('host live');
+    var colStore = headerRow.indexOf('channel toko'); if (colStore === -1) colStore = headerRow.indexOf('toko');
+    var colProducts = headerRow.indexOf('nama barang (produk terjual)'); if (colProducts === -1) colProducts = headerRow.indexOf('nama barang');
+    var colItems = headerRow.indexOf('total qty'); if (colItems === -1) colItems = headerRow.indexOf('item terjual');
+    var colOmset = headerRow.indexOf('total omset'); if (colOmset === -1) colOmset = headerRow.indexOf('omset kotor');
+    var colFee = headerRow.indexOf('biaya admin');
+    var colAds = headerRow.indexOf('biaya iklan');
+    var colCogs = headerRow.indexOf('hpp barang'); if (colCogs === -1) colCogs = headerRow.indexOf('hpp');
+    var colMargin = headerRow.indexOf('margin bersih');
+    var colDur = headerRow.indexOf('durasi');
+    var colViewers = headerRow.indexOf('puncak viewers');
+    var colNotes = headerRow.indexOf('catatan / raw json'); if (colNotes === -1) colNotes = headerRow.indexOf('catatan');
+
+    // Fallbacks untuk struktur tabel lama (13 kolom bawaan)
+    if (colStore === -1) colStore = 2;
+    if (colHost === -1) colHost = 3;
+    if (colOmset === -1) colOmset = 4;
+    if (colFee === -1) colFee = 5;
+    if (colAds === -1) colAds = 6;
+    if (colCogs === -1) colCogs = 7;
+    if (colMargin === -1) colMargin = 8;
+    if (colItems === -1) colItems = 9;
+    if (colDur === -1) colDur = 10;
+    if (colViewers === -1) colViewers = 11;
+    if (colNotes === -1) colNotes = 12;
 
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       var disp = displayData[i];
-      if (row[0]) {
-        var dateFormatted = (disp && disp[1]) ? String(disp[1]).trim() : (row[1] instanceof Date ? Utilities.formatDate(row[1], 'GMT+7', 'yyyy-MM-dd') : String(row[1]));
+      if (row[colId] || row[0]) {
+        // Parse format tanggal akurat (hindari serial number 46345)
+        var rawD = row[colDate];
+        var dispD = disp ? disp[colDate] : '';
+        var dateFormatted = '';
+
+        if (rawD instanceof Date) {
+          dateFormatted = Utilities.formatDate(rawD, 'GMT+7', 'yyyy-MM-dd');
+        } else {
+          var numD = Number(rawD);
+          if (!isNaN(numD) && numD >= 40000 && numD <= 60000) {
+            var jsDate = new Date(Math.round((numD - 25569) * 86400 * 1000));
+            dateFormatted = Utilities.formatDate(jsDate, 'GMT+7', 'yyyy-MM-dd');
+          } else {
+            var sD = String(dispD || rawD || '').trim();
+            var mSerial = sD.match(/^(\d{5})(?:-\d{2}-\d{2})?$/);
+            if (mSerial) {
+              var sNum = Number(mSerial[1]);
+              if (sNum >= 40000 && sNum <= 60000) {
+                var jsDate2 = new Date(Math.round((sNum - 25569) * 86400 * 1000));
+                dateFormatted = Utilities.formatDate(jsDate2, 'GMT+7', 'yyyy-MM-dd');
+              } else { dateFormatted = sD; }
+            } else if (/^20\d{2}-\d{2}-\d{2}/.test(sD)) {
+              dateFormatted = sD.slice(0, 10);
+            } else {
+              dateFormatted = sD || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd');
+            }
+          }
+        }
+
+        var notesVal = String(row[colNotes] || '');
+        var prodsVal = colProducts !== -1 ? String(row[colProducts] || '') : '';
+        var timeVal = colTime !== -1 ? String(row[colTime] || '') : (disp && disp[13] ? String(disp[13]) : '');
+
+        // Ekstrak nama produk terjual dari notes JSON jika kolom produk kosong
+        if (!prodsVal && notesVal) {
+          try {
+            var pObj = JSON.parse(notesVal);
+            var sps = pObj.soldProducts || pObj.items || [];
+            if (Array.isArray(sps) && sps.length > 0) {
+              prodsVal = sps.map(function(p) {
+                return (p.name || p.sku || 'Spion') + ' (' + (p.qty || 1) + ' pcs)';
+              }).join('; ');
+            }
+          } catch(eJ) {}
+        }
+
         sessions.push({
-          id: String(row[0]),
+          id: String(row[colId]),
           date: dateFormatted,
-          store: String(row[2] || ''),
-          host: String(row[3] || ''),
-          omset: Number(row[4]) || 0,
-          fee: Number(row[5]) || 0,
-          ads: Number(row[6]) || 0,
-          cogs: Number(row[7]) || 0,
-          margin: Number(row[8]) || 0,
-          items: Number(row[9]) || 0,
-          duration: String(row[10] || ''),
-          viewers: Number(row[11]) || 0,
-          notes: String(row[12] || ''),
-          liveTime: String(row[13] || '')
+          liveTime: timeVal,
+          store: String(row[colStore] || ''),
+          host: String(row[colHost] || ''),
+          productsText: prodsVal,
+          omset: Number(row[colOmset]) || 0,
+          fee: Number(row[colFee]) || 0,
+          ads: Number(row[colAds]) || 0,
+          cogs: Number(row[colCogs]) || 0,
+          margin: Number(row[colMargin]) || 0,
+          items: Number(row[colItems]) || 0,
+          duration: String(row[colDur] || ''),
+          viewers: Number(row[colViewers]) || 0,
+          notes: notesVal
         });
       }
     }
@@ -452,32 +587,94 @@ function handleSaveAttendance_(ss, payload) {
 
 function handleSaveLiveSession_(ss, payload) {
   var sheet = ss.getSheetByName('Live_Sessions');
+  var detailedHeaders = [
+    'Session ID',
+    'Tanggal',
+    'Jam Siaran',
+    'Nama Host',
+    'Channel Toko',
+    'Nama Barang (Produk Terjual)',
+    'Total Qty',
+    'Total Omset',
+    'Biaya Admin',
+    'Biaya Iklan',
+    'HPP Barang',
+    'Margin Bersih',
+    'Durasi',
+    'Puncak Viewers',
+    'Status SOP',
+    'Catatan / Raw JSON'
+  ];
+
   if (!sheet) {
     sheet = ss.insertSheet('Live_Sessions');
-    sheet.appendRow(['Session ID', 'Tanggal', 'Channel Toko', 'Host Live', 'Omset Kotor', 'Biaya Admin', 'Biaya Iklan', 'HPP Barang', 'Margin Bersih', 'Item Terjual', 'Durasi', 'Puncak Viewers', 'Catatan']);
+    sheet.appendRow(detailedHeaders);
+  } else {
+    // Jika header masih format lama tanpa Nama Barang, upgrade header baris 1
+    var curHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn() || 1).getValues()[0];
+    var hStr = curHeaders.join('|').toLowerCase();
+    if (hStr.indexOf('nama barang') === -1) {
+      sheet.getRange(1, 1, 1, detailedHeaders.length).setValues([detailedHeaders]);
+    }
   }
 
   var id = String(payload.id || ('LS-' + Date.now()));
   var rawDate = String(payload.date || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd')).trim().replace(/^'+/, '');
   var date = "'" + rawDate;
-  var store = String(payload.store || 'TikTok Shop Live Official');
+  var liveTime = String(payload.liveTime || (payload.startTime ? (payload.startTime + ' - ' + (payload.endTime || '') + ' WIB') : (payload.time || '18:33:00 WIB')));
   var host = String(payload.host || 'Host Live');
+  var store = String(payload.store || 'TikTok Shop Live Official');
+  var productsText = String(payload.productsText || payload.productNames || '');
+  var items = Number(payload.items || 0);
   var omset = Number(payload.omset || 0);
   var fee = Number(payload.fee || 0);
   var ads = Number(payload.ads || 0);
   var cogs = Number(payload.cogs || 0);
   var margin = Number(payload.margin || 0);
-  var items = Number(payload.items || 0);
   var duration = String(payload.duration || '');
   var viewers = Number(payload.viewers || 0);
+  var sopStatus = String(payload.sopStatus || 'valid');
   var notes = String(payload.notes || '');
 
-  sheet.appendRow([id, date, store, host, omset, fee, ads, cogs, margin, items, duration, viewers, notes]);
+  // Ekstrak rincian produk dari JSON jika belum ada
+  if (!productsText && notes) {
+    try {
+      var pObj = JSON.parse(notes);
+      var spList = pObj.soldProducts || pObj.items || [];
+      if (Array.isArray(spList) && spList.length > 0) {
+        productsText = spList.map(function(sp) {
+          return (sp.name || sp.sku || 'Spion') + ' (' + (sp.qty || 1) + ' pcs)';
+        }).join('; ');
+      }
+    } catch(eP) {}
+  }
+  if (!productsText) {
+    productsText = 'Spion (' + items + ' pcs)';
+  }
+
+  sheet.appendRow([
+    id,
+    date,
+    liveTime,
+    host,
+    store,
+    productsText,
+    items,
+    omset,
+    fee,
+    ads,
+    cogs,
+    margin,
+    duration,
+    viewers,
+    sopStatus,
+    notes
+  ]);
 
   return jsonResponse_({
     success: true,
     id: id,
-    message: 'Rekap sesi live ' + id + ' (' + store + ') berhasil disimpan ke Google Sheets'
+    message: 'Rekap sesi live ' + id + ' (' + store + ') berhasil disimpan ke Google Sheets dengan rincian produk & omset'
   });
 }
 
