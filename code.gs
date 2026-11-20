@@ -579,7 +579,7 @@ function handleSaveAttendance_(ss, payload) {
     payload.branch || 'Cabang 1 (Pusat & Gudang Utama)',
     payload.type || 'office',
     payload.inOut || 'Masuk',
-    payload.coords || '',
+    (!payload.coords || payload.coords === 'null, null' || payload.coords === 'undefined, undefined') ? 'GPS Tidak Terdeteksi' : payload.coords,
     payload.distance || 0,
     payload.status || 'valid',
     payload.notes || '',

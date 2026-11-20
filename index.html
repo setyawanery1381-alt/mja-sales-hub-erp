@@ -2853,7 +2853,7 @@
                         onchange="window.toggleAttendanceType(this.value)" class="text-[#2F5D50]">
                       <span class="font-bold text-[#2F5D50]">Dalam Kantor</span>
                     </div>
-                    <span class="text-[10px] text-[#6B7280] mt-1">Staf tetap (Maks radius 50m)</span>
+                    <span class="text-[10px] text-[#6B7280] mt-1">Staf tetap (Maks radius 10m Kantor Semarang)</span>
                   </label>
 
                   <label
@@ -7274,11 +7274,17 @@
 
     // Active Branch Settings Resolver
     window.getActiveBranchSettings = function () {
-      var cur = window.appState.currentBranch || 'MJA Pusat (Semarang)';
-      if (cur.indexOf('Bekasi') !== -1 || cur.indexOf('Cabang 1') !== -1) {
-        return window.appState.officeBranches['MJA Cabang 1 (Bekasi)'];
-      }
-      return window.appState.officeBranches['MJA Pusat (Semarang)'];
+      var cfg = (window.appState && window.appState.officeSettings) || {};
+      return {
+        name: 'MJA Pusat (Semarang)',
+        address: cfg.address || 'Maju Jaya Autopart GENUIN PART, Blok E2 No.5, Jl. Kw. Industri Candi Tahap V, Ngaliyan, Kota Semarang 50181',
+        mapsUrl: cfg.mapsUrl || 'https://maps.app.goo.gl/3Zi25tiZWPwCQW5KA?g_st=ic',
+        lat: Number(cfg.lat) || -7.006970,
+        lng: Number(cfg.lng) || 110.340500,
+        radius: Number(cfg.radius) || 10,
+        maxCheckInTime: cfg.maxCheckInTime || '08:30',
+        minCheckOutTime: cfg.minCheckOutTime || '17:00'
+      };
     };
 
     // Branch Switcher (Semarang vs Bekasi)
@@ -7358,6 +7364,13 @@
       } else if (sectionId === 'section-users') {
         if (typeof window.updateResetStats === 'function') {
           window.updateResetStats();
+        }
+      } else if (sectionId === 'section-attendance') {
+        if (typeof window.fetchCurrentGPS === 'function') {
+          window.fetchCurrentGPS(true);
+        }
+        if (typeof window.startAttendanceCamera === 'function') {
+          window.startAttendanceCamera();
         }
       }
 
@@ -10054,18 +10067,39 @@
       var manualText = (manualInput && manualInput.value.trim()) ? manualInput.value.trim() : '';
       var notes = isCourier ? (manualText ? manualText + ' (' + dest + ')' : 'Tugas Kirim: ' + dest) : (inOut === 'in' ? 'Hadir shift kantor' : 'Selesai shift kantor');
 
-      var dist = isCourier ? 0 : (window.currentGPS.distance !== undefined ? window.currentGPS.distance : 0);
-      var radiusLimit = office.radius || 10;
+      // 1. VALIDASI KETAT GPS: WAJIB SUDAH TERDETEKSI & REAL
+      if (!window.currentGPS || !window.currentGPS.isReal || window.currentGPS.lat === null || window.currentGPS.lng === null || typeof window.currentGPS.distance !== 'number' || isNaN(window.currentGPS.distance)) {
+        window.playBeep('error');
+        var gpsErrMsg = (window.currentGPS && window.currentGPS.errorMsg) ? window.currentGPS.errorMsg : 'Sinyal GPS belum terkunci';
+        alert('❌ PRESENSI DITOLAK — GPS HP TIDAK AKTIF / BELUM DIIZINKAN:\n\n' +
+          'Status: ' + gpsErrMsg + '\n\n' +
+          'Sesuai SOP ketat kantor MJA Semarang:\n' +
+          'Presensi WAJIB mendeteksi titik koordinat GPS fisik HP yang valid dalam radius 10 meter dari kantor.\n\n' +
+          'Langkah Verifikasi:\n' +
+          '1. Pastikan fitur Lokasi / GPS di HP Anda sudah AKTIF.\n' +
+          '2. Izinkan akses lokasi browser (klik icon gembok / izin lokasi browser -> Izinkan/Allow).\n' +
+          '3. Klik tombol "Cek GPS" di bawah foto selfie dan tunggu hingga koordinat & jarak terdeteksi.');
+        window.showToast('Gagal: GPS HP belum aktif! Wajib aktifkan GPS & izinkan lokasi.', 'error');
+        if (typeof window.fetchCurrentGPS === 'function') {
+          window.fetchCurrentGPS();
+        }
+        return;
+      }
 
-      // ATURAN MUTLAK USER: "buat radius dari kantor 10 meter baru bisa absen. lebih dari 10 meter ga bisa"
+      // 2. CEK RADIUS KANTOR PUSAT SEMARANG (Kecuali tugas luar kurir ekspedisi)
+      var dist = window.currentGPS.distance;
+      var radiusLimit = Number(office.radius) || 10;
+
       if (!isCourier && dist > radiusLimit) {
         window.playBeep('error');
-        alert('❌ PRESENSI DITOLAK (DI LUAR RADIUS KANTOR):\n\n' +
-          'Cabang: ' + office.name + '\n' +
-          'Jarak Anda: ' + dist + ' Meter\n' +
+        var distDisplay = dist >= 1000 ? ((dist / 1000).toFixed(1) + ' km (' + Math.round(dist).toLocaleString('id-ID') + ' meter)') : (Math.round(dist) + ' Meter');
+        alert('❌ PRESENSI DITOLAK (DI LUAR RADIUS KANTOR MJA SEMARANG):\n\n' +
+          'Lokasi Kantor: ' + office.name + ' (Semarang)\n' +
+          'Jarak Anda Saat Ini: ' + distDisplay + '\n' +
           'Batas Toleransi Maksimal: ' + radiusLimit + ' Meter\n\n' +
-          'Presensi tidak dapat dilakukan karena Anda berada lebih dari 10 meter dari kantor. Silakan mendekat ke lokasi kantor untuk melakukan presensi!');
-        window.showToast('Gagal: Di luar radius kantor (' + dist + 'm > ' + radiusLimit + 'm)!', 'error');
+          'Presensi kantor hanya dapat dilakukan di dalam kantor fisik Semarang dengan jarak maksimal ' + radiusLimit + ' meter.\n' +
+          'Anda terdeteksi berada di luar area kantor (' + distDisplay + '). Presensi dibatalkan!');
+        window.showToast('Gagal: Di luar radius kantor (' + Math.round(dist) + 'm > ' + radiusLimit + 'm)!', 'error');
         return;
       }
 
