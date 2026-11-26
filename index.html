@@ -7,322 +7,11 @@
   <meta http-equiv="Expires" content="0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <style>.hidden { display: none !important; }</style>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <!-- Aggressive Cache-Buster for Android WebView & Mobile Browsers -->
-
-  <!-- MODAL: KASIR & BUAT INVOICE PENJUALAN CEPAT (User Req: Pilih Produk, Otomatis Keluar Harga & Total) -->
-  <div id="modal-create-invoice"
-    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
-    onclick="if(event.target === this) window.closeModal('modal-create-invoice')">
-    <div class="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl animate-scale-up border border-slate-200 my-auto flex flex-col max-h-[92dvh]">
-      <!-- Header -->
-      <div class="bg-slate-900 px-4 sm:px-5 py-3.5 flex items-center justify-between shrink-0">
-        <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base font-bold shrink-0">
-            🧾
-          </div>
-          <div>
-            <h4 class="font-heading font-bold text-sm text-white">Buat Invoice &amp; Pesanan Produk (Kasir)</h4>
-            <p class="text-[11px] text-slate-300">Pilih produk spion &rarr; otomatis kalkulasi harga, subtotal, dan total invoice siap cetak</p>
-          </div>
-        </div>
-        <button onclick="window.closeModal('modal-create-invoice')"
-          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer text-lg font-bold">&times;</button>
-      </div>
-
-      <!-- Scrollable Form Body -->
-      <form onsubmit="window.handleSaveInvoice(event)" class="p-4 sm:p-5 space-y-4 text-xs overflow-y-auto flex-1 min-h-0">
-        <!-- Baris 1: No Invoice, Tanggal, Channel Toko -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">No. Invoice / Pesanan <span class="text-rose-600">*</span></label>
-            <input type="text" id="inv-no" required
-              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Tanggal Transaksi <span class="text-rose-600">*</span></label>
-            <input type="date" id="inv-date" required
-              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Saluran / Toko <span class="text-rose-600">*</span></label>
-            <select id="inv-store" required
-              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
-              <option value="Pesanan Manual / WhatsApp">Pesanan Manual / WhatsApp</option>
-              <option value="Penjualan Langsung (Toko / Offline)">Penjualan Langsung (Toko / Offline)</option>
-              <option value="TikTok Shop Live Official">TikTok Shop Live Official</option>
-              <option value="Shopee Live Toko 1 (Official)">Shopee Live Toko 1 (Official Store)</option>
-              <option value="Shopee Live Toko 2 (Mall)">Shopee Live Toko 2 (Mall Store)</option>
-              <option value="Shopee Live Toko 3 (Grosir)">Shopee Live Toko 3 (Grosir Store)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Baris 2: Nama Pembeli, No HP/WA, Metode Bayar -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Nama Pembeli / Customer <span class="text-rose-600">*</span></label>
-            <input type="text" id="inv-buyer" required placeholder="Contoh: Bpk. Hendra Wijaya"
-              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">No. WhatsApp / HP</label>
-            <input type="text" id="inv-phone" placeholder="Contoh: 081234567890"
-              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Metode Pembayaran</label>
-            <select id="inv-payment"
-              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
-              <option value="Transfer Bank (BCA / Mandiri / BRI)">Transfer Bank (BCA / Mandiri / BRI)</option>
-              <option value="COD (Bayar di Tempat)">COD (Bayar di Tempat)</option>
-              <option value="Tunai / Cash">Tunai / Cash</option>
-              <option value="QRIS">QRIS</option>
-              <option value="Marketplace Escrow">Marketplace Escrow</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- KOTAK PEMILIH PRODUK (The Core Request: Klik Produk -> Keluar Nama & Harga) -->
-        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-emerald-950 text-xs flex items-center gap-1.5">
-              <span>🛒</span>
-              <span>Pilih Produk &amp; Harga (Katalog Master Spion):</span>
-            </span>
-            <span class="text-[10px] text-emerald-700 font-semibold bg-emerald-100/70 px-2 py-0.5 rounded">
-              Stok Gudang Otomatis Sinkron
-            </span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
-            <!-- Selector Produk -->
-            <div class="sm:col-span-6">
-              <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Pilih Produk Spion:</label>
-              <select id="inv-product-select" onchange="window.onInvoiceProductSelected()"
-                class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-800 text-xs focus:outline-none focus:border-emerald-500">
-                <!-- Terisi dinamis -->
-              </select>
-            </div>
-
-            <!-- Harga Satuan (Bisa diedit/diskon) -->
-            <div class="sm:col-span-3">
-              <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Harga Satuan (Rp):</label>
-              <input type="number" id="inv-product-price" min="0" step="500" placeholder="Harga"
-                class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-900 text-xs focus:outline-none focus:border-emerald-500">
-            </div>
-
-            <!-- Qty -->
-            <div class="sm:col-span-1">
-              <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Qty:</label>
-              <input type="number" id="inv-product-qty" min="1" value="1"
-                class="w-full h-10 px-2 bg-white border border-slate-300 rounded-lg font-black text-center text-slate-900 text-xs focus:outline-none focus:border-emerald-500">
-            </div>
-
-            <!-- Tombol Tambah -->
-            <div class="sm:col-span-2">
-              <button type="button" onclick="window.addInvoiceItem()"
-                class="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center space-x-1 shadow-xs cursor-pointer active:scale-95">
-                <span>+ Tambah</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- TABEL ITEM PRODUK TERPILIH (OUTPUT NAMA, HARGA, SUBTOTAL) -->
-        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs">
-          <div class="bg-slate-100 px-3.5 py-2 border-b border-slate-200 flex items-center justify-between">
-            <span class="font-bold text-slate-800 text-xs">Rincian Barang Dalam Invoice</span>
-            <span id="inv-items-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">0 Item</span>
-          </div>
-
-          <div class="overflow-x-auto max-h-52 overflow-y-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[10px] uppercase">
-                <tr>
-                  <th class="py-2 px-3">No</th>
-                  <th class="py-2 px-3">Nama Produk Spion</th>
-                  <th class="py-2 px-3 text-right">Harga Satuan</th>
-                  <th class="py-2 px-3 text-center">Qty</th>
-                  <th class="py-2 px-3 text-right">Subtotal</th>
-                  <th class="py-2 px-3 text-center w-12">Hapus</th>
-                </tr>
-              </thead>
-              <tbody id="inv-items-table-body" class="divide-y divide-slate-100 font-medium">
-                <tr>
-                  <td colspan="6" class="p-6 text-center text-slate-400 italic text-xs">
-                    Belum ada produk dipilih. Silakan pilih produk spion di atas lalu klik tombol "+ Tambah".
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- RINGKASAN BIAYA & GRAND TOTAL -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Catatan Tambahan / Keterangan</label>
-            <textarea id="inv-notes" rows="3" placeholder="Catatan untuk pelanggan, garansi spion, ekspedisi kurir, atau alamat pengiriman..."
-              class="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800"></textarea>
-          </div>
-
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between items-center text-slate-600">
-              <span>Subtotal Produk:</span>
-              <span id="inv-subtotal-display" class="font-bold text-slate-800 font-mono">Rp 0</span>
-            </div>
-            <div class="flex justify-between items-center text-slate-600">
-              <span>Diskon / Potongan (Rp):</span>
-              <input type="number" id="inv-discount" value="0" min="0" oninput="window.calcInvoiceTotals()"
-                class="w-28 h-7 px-2 bg-white border border-slate-200 rounded text-right font-bold text-rose-600 text-xs">
-            </div>
-            <div class="flex justify-between items-center text-slate-600">
-              <span>Biaya Ongkir / Kirim (Rp):</span>
-              <input type="number" id="inv-shipping" value="0" min="0" oninput="window.calcInvoiceTotals()"
-                class="w-28 h-7 px-2 bg-white border border-slate-200 rounded text-right font-bold text-slate-800 text-xs">
-            </div>
-            <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
-              <span class="font-bold text-sm text-slate-900">TOTAL PEMBAYARAN:</span>
-              <span id="inv-grand-total-display" class="font-black text-lg text-emerald-700 font-mono">Rp 0</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Footer -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-2 border-t border-slate-200">
-          <button type="button" onclick="window.closeModal('modal-create-invoice')"
-            class="w-full sm:w-auto h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-all cursor-pointer">
-            Batal
-          </button>
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <button type="submit"
-              class="flex-1 sm:flex-none h-10 px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs">
-              <span>💾 Simpan Pesanan</span>
-            </button>
-            <button type="button" onclick="window.saveAndPrintInvoice()"
-              class="flex-1 sm:flex-none h-10 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm active:scale-95">
-              <span>🖨️ Simpan &amp; Cetak Invoice</span>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: TEMPLATE CETAK INVOICE RESMI (Printable Receipt & PDF) -->
-  <div id="modal-invoice-receipt"
-    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-[60] hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
-    onclick="if(event.target === this) window.closeModal('modal-invoice-receipt')">
-    <div class="bg-white rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl animate-scale-up border border-slate-200 my-auto flex flex-col max-h-[95dvh]">
-      <!-- Header Preview -->
-      <div class="bg-slate-900 px-4 py-3 flex items-center justify-between text-white shrink-0 print:hidden">
-        <span class="font-bold text-xs flex items-center gap-2">
-          <span>🧾</span>
-          <span>Pratinjau Lembar Invoice Resmi</span>
-        </span>
-        <button onclick="window.closeModal('modal-invoice-receipt')"
-          class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 text-lg font-bold cursor-pointer">&times;</button>
-      </div>
-
-      <!-- Printable Area -->
-      <div id="printable-invoice-content" class="p-6 text-slate-800 space-y-4 overflow-y-auto flex-1 bg-white">
-        <!-- Logo & Company Kop -->
-        <div class="flex justify-between items-start border-b-2 border-slate-900 pb-3">
-          <div>
-            <h2 class="text-lg font-black text-slate-900 tracking-tight">MJA SALES HUB</h2>
-            <p class="text-[10px] text-slate-500 font-semibold">Distributor &amp; Spesialis Spion Mobil &amp; Motor</p>
-            <p class="text-[9px] text-slate-400">Pusat &amp; Gudang Utama Semarang &bull; Jawa Tengah</p>
-          </div>
-          <div class="text-right">
-            <span class="px-2.5 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800 uppercase tracking-wider">LUNAS</span>
-            <p class="text-xs font-black font-mono text-slate-800 mt-1" id="print-inv-no">INV-20261119-001</p>
-            <p class="text-[10px] text-slate-500" id="print-inv-date">19 November 2026</p>
-          </div>
-        </div>
-
-        <!-- Info Pembeli -->
-        <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-          <div>
-            <span class="text-[10px] font-bold text-slate-400 block uppercase">Ditujukan Kepada:</span>
-            <p class="font-bold text-slate-800" id="print-inv-buyer">Bpk. Hendra Wijaya</p>
-            <p class="text-slate-500 text-[11px]" id="print-inv-phone">081234567890</p>
-          </div>
-          <div class="text-right">
-            <span class="text-[10px] font-bold text-slate-400 block uppercase">Metode Pembayaran:</span>
-            <p class="font-semibold text-slate-800" id="print-inv-payment">Transfer Bank</p>
-            <p class="text-slate-500 text-[11px]" id="print-inv-store">Pesanan Manual / WhatsApp</p>
-          </div>
-        </div>
-
-        <!-- Tabel Produk -->
-        <table class="w-full text-left text-xs border border-slate-200">
-          <thead class="bg-slate-100 text-slate-700 text-[10px] uppercase font-bold border-b border-slate-200">
-            <tr>
-              <th class="py-1.5 px-2">No</th>
-              <th class="py-1.5 px-2">Nama Produk Spion</th>
-              <th class="py-1.5 px-2 text-right">Harga</th>
-              <th class="py-1.5 px-2 text-center">Qty</th>
-              <th class="py-1.5 px-2 text-right">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody id="print-inv-table-body" class="divide-y divide-slate-100 text-[11px]">
-            <!-- Render items -->
-          </tbody>
-          <tfoot class="border-t-2 border-slate-300 font-bold text-xs bg-slate-50">
-            <tr>
-              <td colspan="4" class="py-1 px-2 text-right text-slate-600">Subtotal:</td>
-              <td class="py-1 px-2 text-right font-mono" id="print-inv-subtotal">Rp 0</td>
-            </tr>
-            <tr>
-              <td colspan="4" class="py-1 px-2 text-right text-slate-600">Diskon / Potongan:</td>
-              <td class="py-1 px-2 text-right font-mono text-rose-600" id="print-inv-discount">- Rp 0</td>
-            </tr>
-            <tr>
-              <td colspan="4" class="py-1 px-2 text-right text-slate-600">Ongkir:</td>
-              <td class="py-1 px-2 text-right font-mono" id="print-inv-shipping">Rp 0</td>
-            </tr>
-            <tr class="bg-slate-200 text-slate-900 font-black text-sm">
-              <td colspan="4" class="py-2 px-2 text-right">TOTAL PEMBAYARAN:</td>
-              <td class="py-2 px-2 text-right font-mono text-emerald-800" id="print-inv-grandtotal">Rp 0</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <!-- Catatan & Tanda Tangan -->
-        <div class="flex justify-between items-end pt-3 text-[11px] text-slate-500">
-          <div class="max-w-[65%]">
-            <span class="font-bold text-slate-700 block">Keterangan:</span>
-            <p id="print-inv-notes" class="italic">Barang telah melalui pemeriksaan Quality Control (QC). Terima kasih atas pesanan Anda.</p>
-          </div>
-          <div class="text-center w-28">
-            <p class="text-[10px] text-slate-400 mb-8">Admin / Kasir</p>
-            <p class="font-bold text-slate-800 border-t border-slate-300 pt-1" id="print-inv-cashier">MJA Staff</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons Preview -->
-      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0 print:hidden">
-        <button onclick="window.closeModal('modal-invoice-receipt')"
-          class="h-9 px-4 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs rounded-lg transition-all cursor-pointer">
-          Tutup
-        </button>
-        <div class="flex items-center gap-2">
-          <button onclick="window.shareInvoiceWhatsApp()"
-            class="h-9 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all">
-            <span>📲 Kirim ke WA</span>
-          </button>
-          <button onclick="window.printInvoiceReceipt()"
-            class="h-9 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all">
-            <span>🖨️ Cetak / Print</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <script>
     (function () {
@@ -14794,6 +14483,319 @@
   <!-- ========================================================================= -->
   <!-- MODAL: GANTI KATA SANDI PENGGUNA -->
   <!-- ========================================================================= -->
+  <!-- MODAL: KASIR & BUAT INVOICE PENJUALAN CEPAT (User Req: Pilih Produk, Otomatis Keluar Harga & Total) -->
+  <div id="modal-create-invoice"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+    onclick="if(event.target === this) window.closeModal('modal-create-invoice')">
+    <div class="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl animate-scale-up border border-slate-200 my-auto flex flex-col max-h-[92dvh]">
+      <!-- Header -->
+      <div class="bg-slate-900 px-4 sm:px-5 py-3.5 flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base font-bold shrink-0">
+            🧾
+          </div>
+          <div>
+            <h4 class="font-heading font-bold text-sm text-white">Buat Invoice &amp; Pesanan Produk (Kasir)</h4>
+            <p class="text-[11px] text-slate-300">Pilih produk spion &rarr; otomatis kalkulasi harga, subtotal, dan total invoice siap cetak</p>
+          </div>
+        </div>
+        <button onclick="window.closeModal('modal-create-invoice')"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer text-lg font-bold">&times;</button>
+      </div>
+
+      <!-- Scrollable Form Body -->
+      <form onsubmit="window.handleSaveInvoice(event)" class="p-4 sm:p-5 space-y-4 text-xs overflow-y-auto flex-1 min-h-0">
+        <!-- Baris 1: No Invoice, Tanggal, Channel Toko -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">No. Invoice / Pesanan <span class="text-rose-600">*</span></label>
+            <input type="text" id="inv-no" required
+              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Tanggal Transaksi <span class="text-rose-600">*</span></label>
+            <input type="date" id="inv-date" required
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Saluran / Toko <span class="text-rose-600">*</span></label>
+            <select id="inv-store" required
+              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
+              <option value="Pesanan Manual / WhatsApp">Pesanan Manual / WhatsApp</option>
+              <option value="Penjualan Langsung (Toko / Offline)">Penjualan Langsung (Toko / Offline)</option>
+              <option value="TikTok Shop Live Official">TikTok Shop Live Official</option>
+              <option value="Shopee Live Toko 1 (Official)">Shopee Live Toko 1 (Official Store)</option>
+              <option value="Shopee Live Toko 2 (Mall)">Shopee Live Toko 2 (Mall Store)</option>
+              <option value="Shopee Live Toko 3 (Grosir)">Shopee Live Toko 3 (Grosir Store)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Baris 2: Nama Pembeli, No HP/WA, Metode Bayar -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nama Pembeli / Customer <span class="text-rose-600">*</span></label>
+            <input type="text" id="inv-buyer" required placeholder="Contoh: Bpk. Hendra Wijaya"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">No. WhatsApp / HP</label>
+            <input type="text" id="inv-phone" placeholder="Contoh: 081234567890"
+              class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Metode Pembayaran</label>
+            <select id="inv-payment"
+              class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
+              <option value="Transfer Bank (BCA / Mandiri / BRI)">Transfer Bank (BCA / Mandiri / BRI)</option>
+              <option value="COD (Bayar di Tempat)">COD (Bayar di Tempat)</option>
+              <option value="Tunai / Cash">Tunai / Cash</option>
+              <option value="QRIS">QRIS</option>
+              <option value="Marketplace Escrow">Marketplace Escrow</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- KOTAK PEMILIH PRODUK (The Core Request: Klik Produk -> Keluar Nama & Harga) -->
+        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-emerald-950 text-xs flex items-center gap-1.5">
+              <span>🛒</span>
+              <span>Pilih Produk &amp; Harga (Katalog Master Spion):</span>
+            </span>
+            <span class="text-[10px] text-emerald-700 font-semibold bg-emerald-100/70 px-2 py-0.5 rounded">
+              Stok Gudang Otomatis Sinkron
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+            <!-- Selector Produk -->
+            <div class="sm:col-span-6">
+              <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Pilih Produk Spion:</label>
+              <select id="inv-product-select" onchange="window.onInvoiceProductSelected()"
+                class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-800 text-xs focus:outline-none focus:border-emerald-500">
+                <!-- Terisi dinamis -->
+              </select>
+            </div>
+
+            <!-- Harga Satuan (Bisa diedit/diskon) -->
+            <div class="sm:col-span-3">
+              <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Harga Satuan (Rp):</label>
+              <input type="number" id="inv-product-price" min="0" step="500" placeholder="Harga"
+                class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg font-bold text-slate-900 text-xs focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <!-- Qty -->
+            <div class="sm:col-span-1">
+              <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Qty:</label>
+              <input type="number" id="inv-product-qty" min="1" value="1"
+                class="w-full h-10 px-2 bg-white border border-slate-300 rounded-lg font-black text-center text-slate-900 text-xs focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <!-- Tombol Tambah -->
+            <div class="sm:col-span-2">
+              <button type="button" onclick="window.addInvoiceItem()"
+                class="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center space-x-1 shadow-xs cursor-pointer active:scale-95">
+                <span>+ Tambah</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABEL ITEM PRODUK TERPILIH (OUTPUT NAMA, HARGA, SUBTOTAL) -->
+        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+          <div class="bg-slate-100 px-3.5 py-2 border-b border-slate-200 flex items-center justify-between">
+            <span class="font-bold text-slate-800 text-xs">Rincian Barang Dalam Invoice</span>
+            <span id="inv-items-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">0 Item</span>
+          </div>
+
+          <div class="overflow-x-auto max-h-52 overflow-y-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[10px] uppercase">
+                <tr>
+                  <th class="py-2 px-3">No</th>
+                  <th class="py-2 px-3">Nama Produk Spion</th>
+                  <th class="py-2 px-3 text-right">Harga Satuan</th>
+                  <th class="py-2 px-3 text-center">Qty</th>
+                  <th class="py-2 px-3 text-right">Subtotal</th>
+                  <th class="py-2 px-3 text-center w-12">Hapus</th>
+                </tr>
+              </thead>
+              <tbody id="inv-items-table-body" class="divide-y divide-slate-100 font-medium">
+                <tr>
+                  <td colspan="6" class="p-6 text-center text-slate-400 italic text-xs">
+                    Belum ada produk dipilih. Silakan pilih produk spion di atas lalu klik tombol "+ Tambah".
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RINGKASAN BIAYA & GRAND TOTAL -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Catatan Tambahan / Keterangan</label>
+            <textarea id="inv-notes" rows="3" placeholder="Catatan untuk pelanggan, garansi spion, ekspedisi kurir, atau alamat pengiriman..."
+              class="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800"></textarea>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between items-center text-slate-600">
+              <span>Subtotal Produk:</span>
+              <span id="inv-subtotal-display" class="font-bold text-slate-800 font-mono">Rp 0</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span>Diskon / Potongan (Rp):</span>
+              <input type="number" id="inv-discount" value="0" min="0" oninput="window.calcInvoiceTotals()"
+                class="w-28 h-7 px-2 bg-white border border-slate-200 rounded text-right font-bold text-rose-600 text-xs">
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span>Biaya Ongkir / Kirim (Rp):</span>
+              <input type="number" id="inv-shipping" value="0" min="0" oninput="window.calcInvoiceTotals()"
+                class="w-28 h-7 px-2 bg-white border border-slate-200 rounded text-right font-bold text-slate-800 text-xs">
+            </div>
+            <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
+              <span class="font-bold text-sm text-slate-900">TOTAL PEMBAYARAN:</span>
+              <span id="inv-grand-total-display" class="font-black text-lg text-emerald-700 font-mono">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Footer -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-2 border-t border-slate-200">
+          <button type="button" onclick="window.closeModal('modal-create-invoice')"
+            class="w-full sm:w-auto h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-all cursor-pointer">
+            Batal
+          </button>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="submit"
+              class="flex-1 sm:flex-none h-10 px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs">
+              <span>💾 Simpan Pesanan</span>
+            </button>
+            <button type="button" onclick="window.saveAndPrintInvoice()"
+              class="flex-1 sm:flex-none h-10 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm active:scale-95">
+              <span>🖨️ Simpan &amp; Cetak Invoice</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: TEMPLATE CETAK INVOICE RESMI (Printable Receipt & PDF) -->
+  <div id="modal-invoice-receipt"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-[60] hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+    onclick="if(event.target === this) window.closeModal('modal-invoice-receipt')">
+    <div class="bg-white rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl animate-scale-up border border-slate-200 my-auto flex flex-col max-h-[95dvh]">
+      <!-- Header Preview -->
+      <div class="bg-slate-900 px-4 py-3 flex items-center justify-between text-white shrink-0 print:hidden">
+        <span class="font-bold text-xs flex items-center gap-2">
+          <span>🧾</span>
+          <span>Pratinjau Lembar Invoice Resmi</span>
+        </span>
+        <button onclick="window.closeModal('modal-invoice-receipt')"
+          class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 text-lg font-bold cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Printable Area -->
+      <div id="printable-invoice-content" class="p-6 text-slate-800 space-y-4 overflow-y-auto flex-1 bg-white">
+        <!-- Logo & Company Kop -->
+        <div class="flex justify-between items-start border-b-2 border-slate-900 pb-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 tracking-tight">MJA SALES HUB</h2>
+            <p class="text-[10px] text-slate-500 font-semibold">Distributor &amp; Spesialis Spion Mobil &amp; Motor</p>
+            <p class="text-[9px] text-slate-400">Pusat &amp; Gudang Utama Semarang &bull; Jawa Tengah</p>
+          </div>
+          <div class="text-right">
+            <span class="px-2.5 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800 uppercase tracking-wider">LUNAS</span>
+            <p class="text-xs font-black font-mono text-slate-800 mt-1" id="print-inv-no">INV-20261119-001</p>
+            <p class="text-[10px] text-slate-500" id="print-inv-date">19 November 2026</p>
+          </div>
+        </div>
+
+        <!-- Info Pembeli -->
+        <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 block uppercase">Ditujukan Kepada:</span>
+            <p class="font-bold text-slate-800" id="print-inv-buyer">Bpk. Hendra Wijaya</p>
+            <p class="text-slate-500 text-[11px]" id="print-inv-phone">081234567890</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold text-slate-400 block uppercase">Metode Pembayaran:</span>
+            <p class="font-semibold text-slate-800" id="print-inv-payment">Transfer Bank</p>
+            <p class="text-slate-500 text-[11px]" id="print-inv-store">Pesanan Manual / WhatsApp</p>
+          </div>
+        </div>
+
+        <!-- Tabel Produk -->
+        <table class="w-full text-left text-xs border border-slate-200">
+          <thead class="bg-slate-100 text-slate-700 text-[10px] uppercase font-bold border-b border-slate-200">
+            <tr>
+              <th class="py-1.5 px-2">No</th>
+              <th class="py-1.5 px-2">Nama Produk Spion</th>
+              <th class="py-1.5 px-2 text-right">Harga</th>
+              <th class="py-1.5 px-2 text-center">Qty</th>
+              <th class="py-1.5 px-2 text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="print-inv-table-body" class="divide-y divide-slate-100 text-[11px]">
+            <!-- Render items -->
+          </tbody>
+          <tfoot class="border-t-2 border-slate-300 font-bold text-xs bg-slate-50">
+            <tr>
+              <td colspan="4" class="py-1 px-2 text-right text-slate-600">Subtotal:</td>
+              <td class="py-1 px-2 text-right font-mono" id="print-inv-subtotal">Rp 0</td>
+            </tr>
+            <tr>
+              <td colspan="4" class="py-1 px-2 text-right text-slate-600">Diskon / Potongan:</td>
+              <td class="py-1 px-2 text-right font-mono text-rose-600" id="print-inv-discount">- Rp 0</td>
+            </tr>
+            <tr>
+              <td colspan="4" class="py-1 px-2 text-right text-slate-600">Ongkir:</td>
+              <td class="py-1 px-2 text-right font-mono" id="print-inv-shipping">Rp 0</td>
+            </tr>
+            <tr class="bg-slate-200 text-slate-900 font-black text-sm">
+              <td colspan="4" class="py-2 px-2 text-right">TOTAL PEMBAYARAN:</td>
+              <td class="py-2 px-2 text-right font-mono text-emerald-800" id="print-inv-grandtotal">Rp 0</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Catatan & Tanda Tangan -->
+        <div class="flex justify-between items-end pt-3 text-[11px] text-slate-500">
+          <div class="max-w-[65%]">
+            <span class="font-bold text-slate-700 block">Keterangan:</span>
+            <p id="print-inv-notes" class="italic">Barang telah melalui pemeriksaan Quality Control (QC). Terima kasih atas pesanan Anda.</p>
+          </div>
+          <div class="text-center w-28">
+            <p class="text-[10px] text-slate-400 mb-8">Admin / Kasir</p>
+            <p class="font-bold text-slate-800 border-t border-slate-300 pt-1" id="print-inv-cashier">MJA Staff</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons Preview -->
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0 print:hidden">
+        <button onclick="window.closeModal('modal-invoice-receipt')"
+          class="h-9 px-4 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs rounded-lg transition-all cursor-pointer">
+          Tutup
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="window.shareInvoiceWhatsApp()"
+            class="h-9 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all">
+            <span>📲 Kirim ke WA</span>
+          </button>
+          <button onclick="window.printInvoiceReceipt()"
+            class="h-9 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all">
+            <span>🖨️ Cetak / Print</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div id="modal-change-password"
     class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-[100000] hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto" style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 52px);">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 my-auto flex flex-col">
