@@ -35,6 +35,8 @@
   <title>MJA Sales Hub — Multi-Store ERP & Financials</title>
     <!-- SheetJS / XLSX for Real Excel Upload & Export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Supabase JS v2 SDK (Real-Time PostgreSQL & Auth) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -18097,6 +18099,619 @@ window.handleSaveLiveSession = function (e) {
       var waUrl = phoneClean ? ('https://api.whatsapp.com/send?phone=' + phoneClean + '&text=' + text) : ('https://api.whatsapp.com/send?text=' + text);
       window.open(waUrl, '_blank');
     };
+
+
+    // =========================================================================
+    // MJA SUPABASE REAL-TIME ENGINE (PostgreSQL + Auth + Realtime + RLS)
+    // =========================================================================
+    (function () {
+      var SUPABASE_URL = 'https://mkdupdflabrmqmflcxfh.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_oWvFrZ81W_c7BhsHx0JUoA_hqG_u96Q';
+
+      if (typeof window.supabase === 'undefined' || typeof window.supabase.createClient !== 'function') {
+        console.warn('Supabase SDK tidak dimuat.');
+        return;
+      }
+
+      var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      window.sbClient = sb;
+
+      var MJA_SB = {
+        client: sb,
+        isConnected: false,
+        realtimeChannel: null,
+        hasLoadedInitial: false,
+
+        // 1. Pastikan user login ke Supabase Auth agar lolos RLS PostgreSQL
+        ensureAuth: async function (userObj) {
+          if (!userObj || !userObj.email) return false;
+          try {
+            var sessionRes = await sb.auth.getSession();
+            if (sessionRes.data && sessionRes.data.session && sessionRes.data.session.user) {
+              var currentEmail = (sessionRes.data.session.user.email || '').toLowerCase();
+              if (currentEmail === userObj.email.toLowerCase()) {
+                this.isConnected = true;
+                return true;
+              }
+            }
+
+            var pwd = userObj.password || '123456';
+            var signInRes = await sb.auth.signInWithPassword({
+              email: userObj.email,
+              password: pwd
+            });
+
+            if (signInRes.data && signInRes.data.session) {
+              this.isConnected = true;
+              console.log('[Supabase Auth] Login sukses:', userObj.email);
+              return true;
+            }
+
+            // Jika user belum ada di Supabase Auth, daftarkan otomatis
+            var signUpRes = await sb.auth.signUp({
+              email: userObj.email,
+              password: pwd,
+              options: {
+                data: {
+                  nama: userObj.name || userObj.email.split('@')[0],
+                  role: userObj.role || 'host',
+                  branch: userObj.branch || 'Cabang 1 (Pusat & Gudang Utama)',
+                  nik: userObj.nik || ''
+                }
+              }
+            });
+
+            if (signUpRes.data && signUpRes.data.session) {
+              this.isConnected = true;
+              console.log('[Supabase Auth] Auto-register & login sukses:', userObj.email);
+              return true;
+            } else {
+              console.warn('[Supabase Auth] Akun dibuat tapi butuh konfirmasi email di Supabase Auth Settings (Confirm Email OFF).');
+              return false;
+            }
+          } catch (err) {
+            console.warn('[Supabase Auth] Error:', err);
+            return false;
+          }
+        },
+
+        // 2. Muat semua data dari Supabase (Single Source of Truth)
+        loadAllFromSupabase: async function () {
+          try {
+            var sess = await sb.auth.getSession();
+            if (!sess.data || !sess.data.session) return false;
+
+            // A. App Settings (Geofence & Targets)
+            var setRes = await sb.from('app_settings').select('*');
+            if (!setRes.error && Array.isArray(setRes.data)) {
+              setRes.data.forEach(function (row) {
+                if (row.key === 'office_geofence' && row.value) {
+                  window.appState.officeSettings = Object.assign({}, window.appState.officeSettings || {}, row.value);
+                  if (typeof window.syncOfficeSettingsToUI === 'function') window.syncOfficeSettingsToUI();
+                } else if (row.key === 'sales_targets' && row.value) {
+                  window.appState.targets = Object.assign({}, window.appState.targets || {}, row.value);
+                }
+              });
+            }
+
+            // B. Inventory Items
+            var invRes = await sb.from('inventory_items').select('*').order('kode', { ascending: true });
+            if (!invRes.error && Array.isArray(invRes.data) && invRes.data.length > 0) {
+              window.appState.data.inventory = invRes.data.map(function (r) {
+                return {
+                  sku: r.kode,
+                  name: r.product_name,
+                  group: r.group_name,
+                  stockA: r.stock_a,
+                  stockB: r.stock_b,
+                  stock: (r.stock_a || 0) + (r.stock_b || 0),
+                  cogs: Number(r.cogs) || 0,
+                  hpp: Number(r.cogs) || 0,
+                  price: Number(r.selling_price) || 0,
+                  recPrice: Number(r.selling_price) || 0
+                };
+              });
+            }
+
+            // C. Live Sessions
+            var liveRes = await sb.from('live_sessions').select('*').order('session_date', { ascending: false }).limit(200);
+            if (!liveRes.error && Array.isArray(liveRes.data) && liveRes.data.length > 0) {
+              window.appState.data.liveSessions = liveRes.data.map(function (r) {
+                return {
+                  id: r.session_code,
+                  date: r.session_date,
+                  startTime: r.start_time,
+                  endTime: r.end_time,
+                  time: (r.start_time || '') + (r.end_time ? ' - ' + r.end_time : ''),
+                  duration: r.duration_text,
+                  store: r.store_name,
+                  host: r.host_name,
+                  viewers: r.peak_viewers,
+                  omset: Number(r.gross_revenue) || 0,
+                  fee: Number(r.platform_fee) || 0,
+                  ads: Number(r.ads_cost) || 0,
+                  voucher: Number(r.store_voucher) || 0,
+                  cogs: Number(r.total_cogs) || 0,
+                  margin: Number(r.net_margin) || 0,
+                  qty: Number(r.total_items_sold) || 0,
+                  items: Array.isArray(r.sold_products) ? r.sold_products : [],
+                  notes: r.notes || '',
+                  proof: r.proof_url || ''
+                };
+              });
+            }
+
+            // D. Sales Orders & Quick POS Invoices
+            var ordRes = await sb.from('sales_orders').select('*').order('created_at', { ascending: false }).limit(250);
+            if (!ordRes.error && Array.isArray(ordRes.data) && ordRes.data.length > 0) {
+              window.appState.data.orders = ordRes.data.map(function (r) {
+                return {
+                  id: r.order_no,
+                  orderNo: r.order_no,
+                  resi: r.resi_no,
+                  store: r.store_name,
+                  branch: r.branch,
+                  platform: r.platform,
+                  courier: r.courier,
+                  buyer: r.customer_name,
+                  phone: r.customer_phone,
+                  payment: r.payment_method,
+                  sku: r.sku,
+                  qty: r.qty,
+                  subtotal: Number(r.subtotal) || 0,
+                  discount: Number(r.discount) || 0,
+                  shipping: Number(r.shipping) || 0,
+                  total: Number(r.total_amount) || 0,
+                  statusQC: r.status_qc,
+                  date: r.order_date,
+                  items: Array.isArray(r.items_json) ? r.items_json : [],
+                  notes: r.notes || '',
+                  cashier: r.cashier_name || ''
+                };
+              });
+            }
+
+            // E. QC Logs
+            var qcRes = await sb.from('qc_logs').select('*').order('created_at', { ascending: false }).limit(250);
+            if (!qcRes.error && Array.isArray(qcRes.data) && qcRes.data.length > 0) {
+              window.appState.data.qcLogs = qcRes.data.map(function (r) {
+                return {
+                  id: r.qc_code,
+                  resi: r.resi_no,
+                  orderNo: r.order_no,
+                  sku: r.sku,
+                  stage: r.stage,
+                  status: r.status,
+                  checker: r.checker_name,
+                  notes: r.notes || '',
+                  time: r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : ''
+                };
+              });
+            }
+
+            // F. Returns
+            var retRes = await sb.from('returns').select('*').order('created_at', { ascending: false }).limit(200);
+            if (!retRes.error && Array.isArray(retRes.data) && retRes.data.length > 0) {
+              window.appState.data.returns = retRes.data.map(function (r) {
+                return {
+                  id: r.return_code,
+                  date: r.return_date,
+                  resi: r.resi_no,
+                  store: r.store_name,
+                  buyer: r.customer_name,
+                  sku: r.sku,
+                  qty: r.qty,
+                  reason: r.reason,
+                  condition: r.condition,
+                  action: r.stock_action,
+                  notes: r.damage_notes || ''
+                };
+              });
+            }
+
+            // G. Attendance Logs
+            var attRes = await sb.from('attendance_logs').select('*').order('created_at', { ascending: false }).limit(250);
+            if (!attRes.error && Array.isArray(attRes.data) && attRes.data.length > 0) {
+              window.appState.data.attendanceLogs = attRes.data.map(function (r) {
+                return {
+                  id: r.att_code,
+                  date: r.att_date,
+                  time: r.att_time,
+                  name: r.staff_name,
+                  email: r.email,
+                  role: r.role,
+                  branch: r.branch,
+                  type: r.att_type,
+                  inOut: r.in_out,
+                  coords: r.coords,
+                  distance: Number(r.distance_meters) || 0,
+                  status: r.status,
+                  notes: r.notes || '',
+                  photo: r.photo_url || ''
+                };
+              });
+            }
+
+            this.hasLoadedInitial = true;
+            this.triggerAllRenders();
+            console.log('[Supabase] Semua modul berhasil dimuat!');
+            return true;
+          } catch (err) {
+            console.warn('[Supabase] Load error:', err);
+            return false;
+          }
+        },
+
+        // 3. Render seluruh UI dengan aman
+        triggerAllRenders: function () {
+          try { if (typeof window.renderInventory === 'function') window.renderInventory(); } catch (e) {}
+          try { if (typeof window.renderLiveSessions === 'function') window.renderLiveSessions(); } catch (e) {}
+          try { if (typeof window.renderOrderTable === 'function') window.renderOrderTable(); } catch (e) {}
+          try { if (typeof window.renderOrdersTable === 'function') window.renderOrdersTable(); } catch (e) {}
+          try { if (typeof window.renderQCStats === 'function') window.renderQCStats(); } catch (e) {}
+          try { if (typeof window.renderQCLogs === 'function') window.renderQCLogs(); } catch (e) {}
+          try { if (typeof window.renderReturnsHistory === 'function') window.renderReturnsHistory(); } catch (e) {}
+          try { if (typeof window.renderAttendanceLogs === 'function') window.renderAttendanceLogs(); } catch (e) {}
+          try { if (typeof window.renderAllAttendanceReport === 'function') window.renderAllAttendanceReport(); } catch (e) {}
+          try { if (typeof window.renderSalesDetailReport === 'function') window.renderSalesDetailReport(); } catch (e) {}
+          try { if (typeof window.renderDashboardMetrics === 'function') window.renderDashboardMetrics(); } catch (e) {}
+        },
+
+        // 4. Subscribe Supabase Realtime WebSocket (Update seketika lintas perangkat!)
+        subscribeRealtime: function () {
+          var self = this;
+          if (this.realtimeChannel) return;
+
+          var tables = ['app_settings', 'inventory_items', 'live_sessions', 'sales_orders', 'qc_logs', 'returns', 'attendance_logs'];
+          var channel = sb.channel('mja-realtime-sync');
+
+          tables.forEach(function (tbl) {
+            channel.on('postgres_changes', { event: '*', schema: 'public', table: tbl }, function (payload) {
+              console.log('[Supabase Realtime] Perubahan pada ' + tbl + ':', payload.eventType);
+              self.loadAllFromSupabase();
+            });
+          });
+
+          channel.subscribe(function (status) {
+            if (status === 'SUBSCRIBED') {
+              console.log('⚡ [Supabase Realtime] Tersambung! Update lintas perangkat aktif seketika.');
+              var badge = document.getElementById('topbar-online-badge') || document.querySelector('[data-online-badge]');
+              if (badge) badge.textContent = '⚡ Realtime Supabase';
+            }
+          });
+
+          this.realtimeChannel = channel;
+        },
+
+        // 5. Migrasi Non-Destruktif Data Existing -> Supabase
+        migrateExistingToSupabase: async function (showAlert) {
+          try {
+            var sess = await sb.auth.getSession();
+            if (!sess.data || !sess.data.session) {
+              if (showAlert) window.showToast('Menunggu sesi Supabase Auth aktif (Pastikan Confirm Email di Supabase sudah OFF).', 'warning');
+              return;
+            }
+            var data = window.appState && window.appState.data;
+            if (!data) return;
+
+            var count = 0;
+
+            // Inventory
+            if (Array.isArray(data.inventory) && data.inventory.length > 0) {
+              var invRows = data.inventory.filter(function (i) { return i.sku; }).map(function (i) {
+                return {
+                  kode: i.sku,
+                  group_name: i.group || 'Spion Mobil',
+                  product_name: i.name || i.sku,
+                  stock_a: Number(i.stockA != null ? i.stockA : (i.stock || 0)),
+                  stock_b: Number(i.stockB || 0),
+                  cogs: Number(i.cogs || i.hpp || 0),
+                  selling_price: Number(i.price || i.recPrice || 0)
+                };
+              });
+              if (invRows.length > 0) {
+                await sb.from('inventory_items').upsert(invRows, { onConflict: 'kode', ignoreDuplicates: true });
+                count += invRows.length;
+              }
+            }
+
+            // Live Sessions
+            if (Array.isArray(data.liveSessions) && data.liveSessions.length > 0) {
+              var liveRows = data.liveSessions.filter(function (l) { return l.id; }).map(function (l) {
+                return {
+                  session_code: String(l.id),
+                  store_name: l.store || 'TikTok Shop Live',
+                  host_name: l.host || 'Host MJA',
+                  session_date: (l.date && /^d{4}-d{2}-d{2}$/.test(l.date)) ? l.date : new Date().toISOString().slice(0, 10),
+                  start_time: l.startTime || '09:00',
+                  end_time: l.endTime || '12:00',
+                  duration_text: l.duration || '2 Jam',
+                  peak_viewers: Number(l.viewers) || 0,
+                  gross_revenue: Number(l.omset) || 0,
+                  platform_fee: Number(l.fee) || 0,
+                  ads_cost: Number(l.ads) || 0,
+                  store_voucher: Number(l.voucher) || 0,
+                  total_cogs: Number(l.cogs) || 0,
+                  net_margin: Number(l.margin) || 0,
+                  total_items_sold: Number(l.qty) || 0,
+                  sold_products: Array.isArray(l.items) ? l.items : [],
+                  notes: l.notes || ''
+                };
+              });
+              if (liveRows.length > 0) {
+                await sb.from('live_sessions').upsert(liveRows, { onConflict: 'session_code', ignoreDuplicates: true });
+                count += liveRows.length;
+              }
+            }
+
+            // Orders
+            if (Array.isArray(data.orders) && data.orders.length > 0) {
+              var ordRows = data.orders.filter(function (o) { return o.orderNo || o.id; }).map(function (o, idx) {
+                return {
+                  order_no: String(o.orderNo || o.id),
+                  resi_no: String(o.resi || ('RESI-' + (o.orderNo || o.id) + '-' + idx)),
+                  store_name: o.store || 'Shopee Official',
+                  branch: o.branch || 'Cabang 1 (Pusat)',
+                  platform: o.platform || 'Shopee',
+                  courier: o.courier || 'J&T',
+                  customer_name: o.buyer || 'Pelanggan',
+                  customer_phone: o.phone || '',
+                  payment_method: o.payment || 'Transfer',
+                  sku: o.sku || '',
+                  qty: Number(o.qty) || 1,
+                  subtotal: Number(o.subtotal || o.total || 0),
+                  discount: Number(o.discount || 0),
+                  shipping: Number(o.shipping || 0),
+                  total_amount: Number(o.total || 0),
+                  items_json: Array.isArray(o.items) ? o.items : [],
+                  status_qc: o.statusQC || 'Belum Scan',
+                  order_date: (o.date && /^d{4}-d{2}-d{2}$/.test(o.date)) ? o.date : new Date().toISOString().slice(0, 10)
+                };
+              });
+              if (ordRows.length > 0) {
+                await sb.from('sales_orders').upsert(ordRows, { onConflict: 'order_no', ignoreDuplicates: true });
+                count += ordRows.length;
+              }
+            }
+
+            // Attendance Logs
+            if (Array.isArray(data.attendanceLogs) && data.attendanceLogs.length > 0) {
+              var attRows = data.attendanceLogs.filter(function (a) { return a.id; }).map(function (a) {
+                return {
+                  att_code: String(a.id),
+                  att_date: (a.date && /^d{4}-d{2}-d{2}$/.test(a.date)) ? a.date : new Date().toISOString().slice(0, 10),
+                  att_time: a.time || '08:00:00',
+                  staff_name: a.name || 'Karyawan',
+                  email: a.email || '',
+                  role: a.role || 'warehouse',
+                  branch: a.branch || 'MJA Pusat (Semarang)',
+                  att_type: (a.type === 'courier') ? 'courier' : 'office',
+                  in_out: (a.inOut === 'Pulang') ? 'Pulang' : 'Masuk',
+                  coords: a.coords || '0, 0',
+                  distance_meters: Number(a.distance) || 0,
+                  status: a.status || 'valid',
+                  notes: a.notes || '',
+                  photo_url: a.photo || ''
+                };
+              });
+              if (attRows.length > 0) {
+                await sb.from('attendance_logs').upsert(attRows, { onConflict: 'att_code', ignoreDuplicates: true });
+                count += attRows.length;
+              }
+            }
+
+            if (showAlert) {
+              window.showToast('✅ Berhasil migrasi & sinkronisasi ' + count + ' data ke Supabase Real-Time!', 'success');
+            }
+          } catch (err) {
+            console.warn('[Supabase Migration] Error:', err);
+            if (showAlert) window.showToast('Gagal migrasi sebagian data: ' + err.message, 'error');
+          }
+        },
+
+        // 6. Write-Through Router (Menyimpan aksi dari modul mana saja ke Supabase)
+        syncAction: async function (action, payload) {
+          try {
+            var sess = await sb.auth.getSession();
+            if (!sess.data || !sess.data.session) return;
+
+            if (action === 'saveAttendance') {
+              await sb.from('attendance_logs').upsert({
+                att_code: String(payload.id || ('ATT-' + Date.now())),
+                att_date: payload.date || new Date().toISOString().slice(0, 10),
+                att_time: payload.time || '08:00:00',
+                staff_name: payload.name || 'Karyawan',
+                email: payload.email || '',
+                role: payload.role || 'warehouse',
+                branch: payload.branch || 'MJA Pusat (Semarang)',
+                att_type: payload.type === 'courier' ? 'courier' : 'office',
+                in_out: payload.inOut === 'Pulang' ? 'Pulang' : 'Masuk',
+                coords: payload.coords || '0, 0',
+                distance_meters: Number(payload.distance) || 0,
+                status: payload.status || 'valid',
+                notes: payload.notes || '',
+                photo_url: payload.photo || ''
+              }, { onConflict: 'att_code' });
+            } else if (action === 'saveLiveSession') {
+              var itemsArr = [];
+              try {
+                itemsArr = typeof payload.items === 'string' ? JSON.parse(payload.items) : (payload.items || []);
+              } catch (e) {}
+              await sb.from('live_sessions').upsert({
+                session_code: String(payload.id || ('LS-' + Date.now())),
+                store_name: payload.store || 'TikTok Shop Live',
+                host_name: payload.host || 'Host MJA',
+                session_date: (payload.date && /^d{4}-d{2}-d{2}$/.test(payload.date)) ? payload.date : new Date().toISOString().slice(0, 10),
+                start_time: payload.startTime || '09:00',
+                end_time: payload.endTime || '12:00',
+                duration_text: payload.duration || '2 Jam',
+                peak_viewers: Number(payload.viewers) || 0,
+                gross_revenue: Number(payload.omset) || 0,
+                platform_fee: Number(payload.fee) || 0,
+                ads_cost: Number(payload.ads) || 0,
+                store_voucher: Number(payload.voucher) || 0,
+                total_cogs: Number(payload.cogs) || 0,
+                net_margin: Number(payload.margin) || 0,
+                total_items_sold: Number(payload.qty) || 0,
+                sold_products: itemsArr,
+                notes: payload.notes || ''
+              }, { onConflict: 'session_code' });
+            } else if (action === 'deleteLiveSession') {
+              await sb.from('live_sessions').delete().eq('session_code', String(payload.id));
+            } else if (action === 'deleteAttendance') {
+              await sb.from('attendance_logs').delete().eq('att_code', String(payload.id));
+            } else if (action === 'saveOrder') {
+              await sb.from('sales_orders').upsert({
+                order_no: String(payload.orderNo || payload.id),
+                resi_no: String(payload.resi || ('RESI-' + Date.now())),
+                store_name: payload.store || 'Penjualan Langsung',
+                branch: payload.branch || 'Cabang 1 (Pusat)',
+                platform: payload.platform || 'Direct / Manual',
+                courier: payload.courier || 'Kurir Internal',
+                customer_name: payload.buyer || 'Pelanggan',
+                sku: payload.sku || '',
+                qty: Number(payload.qty) || 1,
+                total_amount: Number(payload.total) || 0,
+                status_qc: payload.statusQC || 'Lolos QC (Invoice Lunas)',
+                order_date: (payload.date && /^d{4}-d{2}-d{2}$/.test(payload.date)) ? payload.date : new Date().toISOString().slice(0, 10),
+                notes: payload.details || ''
+              }, { onConflict: 'order_no' });
+            } else if (action === 'saveQCLog') {
+              // Gunakan Atomic PostgreSQL RPC untuk mencegah dobel scan resi!
+              var rpcRes = await sb.rpc('rpc_scan_qc_kirim', {
+                p_resi_no: String(payload.resi || ''),
+                p_order_no: String(payload.orderNo || ''),
+                p_sku: String(payload.sku || ''),
+                p_stage: String(payload.stage || 'QC Packing'),
+                p_checker_name: String(payload.checker || 'Gudang'),
+                p_notes: String(payload.notes || '')
+              });
+              if (rpcRes.data && rpcRes.data.duplicate) {
+                window.playBeep && window.playBeep('error');
+                window.showToast(rpcRes.data.message, 'error');
+              }
+            } else if (action === 'saveReturn') {
+              var retRpc = await sb.rpc('rpc_process_return', {
+                p_resi_no: String(payload.resi || ''),
+                p_store_name: String(payload.store || ''),
+                p_customer_name: String(payload.buyer || ''),
+                p_sku: String(payload.sku || ''),
+                p_qty: Number(payload.qty) || 1,
+                p_reason: String(payload.reason || ''),
+                p_condition: String(payload.condition || 'Bagus (Segel Utuh)'),
+                p_stock_action: String(payload.action || 'Restock ke Gudang (+1)'),
+                p_notes: String(payload.notes || ''),
+                p_photo_url: String(payload.photo || '')
+              });
+              if (retRpc.data && retRpc.data.duplicate) {
+                window.showToast(retRpc.data.message, 'warning');
+              }
+            } else if (action === 'saveInventory') {
+              var invItems = [];
+              if (Array.isArray(payload.items)) invItems = payload.items;
+              else if (payload.itemsJson) { try { invItems = JSON.parse(payload.itemsJson); } catch (e) {} }
+              else if (payload.sku) invItems = [payload];
+              if (invItems.length > 0) {
+                var rows = invItems.map(function (i) {
+                  return {
+                    kode: i.sku,
+                    group_name: i.group || 'Spion Mobil',
+                    product_name: i.name || i.sku,
+                    stock_a: Number(i.stockA != null ? i.stockA : (i.stock || 0)),
+                    stock_b: Number(i.stockB || 0),
+                    cogs: Number(i.cogs || i.hpp || 0),
+                    selling_price: Number(i.price || i.recPrice || 0)
+                  };
+                });
+                await sb.from('inventory_items').upsert(rows, { onConflict: 'kode' });
+              }
+            }
+          } catch (err) {
+            console.warn('[Supabase SyncAction] Error on ' + action + ':', err);
+          }
+        }
+      };
+
+      window.MJA_SB = MJA_SB;
+
+      // 7. Auto-Intercept fetch() ke GAS_ENDPOINT_URL untuk otomatis sinkron ke Supabase!
+      var origFetch = window.fetch;
+      window.fetch = function (input, init) {
+        try {
+          var urlStr = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+          if (window.GAS_ENDPOINT_URL && urlStr.indexOf(window.GAS_ENDPOINT_URL) !== -1) {
+            if (init && init.method === 'POST' && init.body && typeof init.body === 'string') {
+              try {
+                var bodyObj = JSON.parse(init.body);
+                if (bodyObj && bodyObj.action && bodyObj.action.indexOf('get') !== 0) {
+                  MJA_SB.syncAction(bodyObj.action, bodyObj);
+                }
+              } catch (eJson) {}
+            } else if (urlStr.indexOf('action=') !== -1) {
+              try {
+                var u = new URL(urlStr);
+                var act = u.searchParams.get('action');
+                if (act && act.indexOf('get') !== 0) {
+                  var pObj = {};
+                  u.searchParams.forEach(function (v, k) { pObj[k] = v; });
+                  MJA_SB.syncAction(act, pObj);
+                }
+              } catch (eUrl) {}
+            }
+          }
+        } catch (eWrap) {}
+        return origFetch.apply(this, arguments);
+      };
+
+      // 8. Hook authenticateSuccess untuk auto-login Supabase & aktifkan Realtime Listener
+      var origAuthSuccess = window.authenticateSuccess;
+      if (typeof origAuthSuccess === 'function') {
+        window.authenticateSuccess = function (userOrEmail, fallbackRole) {
+          var res = origAuthSuccess.apply(this, arguments);
+          var userObj = window.appState && window.appState.currentUser;
+          if (userObj) {
+            MJA_SB.ensureAuth(userObj).then(function (ok) {
+              if (ok) {
+                MJA_SB.loadAllFromSupabase().then(function (loaded) {
+                  // Jika baru pertama kali migrasi dan tabel masih kosong, lakukan migrasi non-destruktif
+                  if (loaded && (!window.appState.data.liveSessions || window.appState.data.liveSessions.length === 0)) {
+                    MJA_SB.migrateExistingToSupabase(false);
+                  }
+                });
+                MJA_SB.subscribeRealtime();
+              }
+            });
+          }
+          return res;
+        };
+      }
+
+      // 9. Hook saveOfficeGeofenceSettings ke app_settings
+      var origSaveGeo = window.saveOfficeGeofenceSettings;
+      if (typeof origSaveGeo === 'function') {
+        window.saveOfficeGeofenceSettings = function () {
+          var r = origSaveGeo.apply(this, arguments);
+          if (window.appState && window.appState.officeSettings) {
+            sb.from('app_settings').upsert({
+              key: 'office_geofence',
+              value: window.appState.officeSettings
+            }, { onConflict: 'key' }).then(function () {
+              console.log('[Supabase] Pengaturan Geofence tersinkron lintas perangkat!');
+            });
+          }
+          return r;
+        };
+      }
+
+      // 10. Cek session aktif saat reload halaman
+      sb.auth.getSession().then(function (res) {
+        if (res.data && res.data.session) {
+          MJA_SB.isConnected = true;
+          MJA_SB.loadAllFromSupabase();
+          MJA_SB.subscribeRealtime();
+        }
+      });
+    })();
 
 </script><!-- END ENGINE-MJA-V8 -->
 </body>
