@@ -7,7 +7,104 @@
   <meta http-equiv="Expires" content="0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <style>.hidden { display: none !important; }</style>
+  <style>.hidden { display: none !important; }
+    /* === SC-EXPENSIVE-WEB-DESIGN + SC-MOBILE-RESPONSIVE + SC-WEB-ANIMATION === */
+    :root {
+      --app-height: 100dvh;
+      --font-fluid-kpi: clamp(1.125rem, 4.2vw, 1.625rem);
+    }
+
+    /* Hairline Borders, Diffused Multi-Layer Shadows & Quiet Luxury Surface */
+    body {
+      background-color: #F7F6F2 !important;
+      color: #18181B !important;
+      min-height: var(--app-height);
+    }
+
+    h1, h2, h3, h4, .font-heading {
+      letter-spacing: -0.025em !important;
+      color: #18181B;
+    }
+
+    /* Tabular numerals for crisp alignment on financial values */
+    .font-mono, [id*="kpi-"], [id*="total-"], [id*="omset"], [id*="margin"] {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Expensive diffused shadow & cubic-bezier hover micro-interactions on cards */
+    .content-section > div > div.bg-white,
+    .content-section .grid > div.bg-white,
+    .kpi-card-premium {
+      border-color: rgba(226, 232, 240, 0.9) !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02), 0 6px 20px -4px rgba(15, 23, 42, 0.04);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (hover: hover) {
+      .content-section .grid > div.bg-white:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), 0 12px 28px -6px rgba(15, 23, 42, 0.07);
+      }
+    }
+
+    /* Tactile button physics */
+    button, .btn, [role="button"] {
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:active:not(:disabled) {
+      transform: scale(0.975);
+    }
+
+    /* Prevent horizontal leak from GSAP slide animations & long text */
+    .content-section {
+      overflow-x: clip !important;
+    }
+    .grid > *, .flex > * {
+      min-width: 0;
+    }
+
+    /* Mobile-First Ergonomics (320px, 360px, 390px, 412px) */
+    @media (max-width: 767px) {
+      /* Prevent iOS Safari auto-zoom on input focus */
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      input[type="tel"],
+      input[type="date"],
+      input[type="time"],
+      select,
+      textarea {
+        font-size: 16px !important;
+        min-height: 44px;
+      }
+
+      /* Safe-area support for notch & home indicator */
+      #auth-screen {
+        min-height: var(--app-height) !important;
+        padding-top: max(1rem, var(--sat)) !important;
+        padding-bottom: max(1rem, var(--sab)) !important;
+      }
+
+      /* Fluid KPI sizing so Rupiah figures never clip on 320px */
+      #kpi-gross-sales, #kpi-net-margin, #kpi-total-deductions, #kpi-total-orders {
+        font-size: var(--font-fluid-kpi) !important;
+        line-height: 1.2 !important;
+      }
+    }
+
+    /* Skeleton loading utility */
+    .skeleton-shimmer {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: mjaShimmer 1.4s infinite;
+    }
+    @keyframes mjaShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+  </style>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -50,14 +147,15 @@
   <!-- Google Fonts: Fraunces (Headings) & DM Sans (Body, Labels, Tabular Numbers) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            heading: ['"Inter"', 'system-ui', 'sans-serif'],
-            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+            heading: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
           },
           colors: {
             brand: {
@@ -106,7 +204,7 @@
       max-width: 100vw;
       overflow-x: hidden;
       font-size: 14px;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
       background-color: #F9FAFB;
       color: #1F2937;
       margin: 0;
@@ -116,7 +214,7 @@
 
     /* Force Inter across all typography, completely eliminating decorative serifs */
     h1, h2, h3, h4, h5, h6, .font-heading, .font-serif {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
       letter-spacing: -0.01em;
     }
 
@@ -413,6 +511,10 @@
     }
 
   </style>
+  <!-- GSAP 3.13 + ScrollTrigger + Lenis Smooth Scroll (sc-web-animation) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 </head>
 
 <body class="min-h-screen bg-[#F9FAFB] text-[#1F2937] antialiased selection:bg-[#2B3A9F] selection:text-white">
@@ -18711,6 +18813,102 @@ window.handleSaveLiveSession = function (e) {
           MJA_SB.subscribeRealtime();
         }
       });
+    })();
+
+
+    // =========================================================================
+    // SC-MOBILE-RESPONSIVE + SC-WEB-ANIMATION ENGINE (GSAP + Lenis + Back Nav)
+    // =========================================================================
+    (function () {
+      // 1. Dynamic --app-height sync (safe for iOS/Android address bar & iframes)
+      function syncAppHeight() {
+        document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+      }
+      window.addEventListener('resize', syncAppHeight, { passive: true });
+      window.addEventListener('orientationchange', syncAppHeight, { passive: true });
+      syncAppHeight();
+
+      // 2. Hardware Back Button handler for Modals & Mobile Drawer (sc-mobile-responsive)
+      var origOpenModal = window.openModal;
+      if (typeof origOpenModal === 'function') {
+        window.openModal = function (modalId) {
+          var res = origOpenModal.apply(this, arguments);
+          try {
+            if (!window.history.state || window.history.state.modalOpen !== modalId) {
+              window.history.pushState({ modalOpen: modalId }, '');
+            }
+          } catch (eHist) {}
+          // Subtle GSAP pop-in animation for modal card
+          try {
+            var mEl = document.getElementById(modalId);
+            if (mEl && typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              var card = mEl.firstElementChild;
+              if (card) {
+                gsap.fromTo(card, { y: 18, scale: 0.97, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.26, ease: 'power3.out', clearProps: 'transform' });
+              }
+            }
+          } catch (eAnim) {}
+          return res;
+        };
+      }
+
+      window.addEventListener('popstate', function () {
+        // Close any open modal or mobile drawer first before leaving app
+        var openModals = document.querySelectorAll('[id^="modal-"]:not(.hidden)');
+        if (openModals.length > 0) {
+          openModals.forEach(function (m) { m.classList.add('hidden'); });
+          document.body.style.overflow = '';
+        }
+      });
+
+      // 3. GSAP + Lenis Smooth Scroll Initialization (Respects prefers-reduced-motion)
+      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced && typeof gsap !== 'undefined') {
+        if (typeof ScrollTrigger !== 'undefined') {
+          gsap.registerPlugin(ScrollTrigger);
+        }
+
+        if (typeof Lenis !== 'undefined' && window.innerWidth >= 768) {
+          try {
+            var lenis = new Lenis({
+              duration: 1.05,
+              easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+              smoothWheel: true
+            });
+            if (typeof ScrollTrigger !== 'undefined') {
+              lenis.on('scroll', ScrollTrigger.update);
+            }
+            gsap.ticker.add(function (time) {
+              lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+            window.mjaLenis = lenis;
+          } catch (eLenis) {}
+        }
+
+        // Animate section cards cleanly whenever navigating between tabs
+        var origNav = window.navigateTo;
+        if (typeof origNav === 'function') {
+          window.navigateTo = function (sectionId) {
+            var r = origNav.apply(this, arguments);
+            try {
+              var sec = document.getElementById(sectionId);
+              if (sec && !sec.classList.contains('hidden')) {
+                var cards = sec.querySelectorAll(':scope > div > div, :scope > div > .grid > div');
+                if (cards && cards.length > 0) {
+                  gsap.killTweensOf(cards);
+                  gsap.fromTo(
+                    cards,
+                    { y: 14, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.36, stagger: 0.035, ease: 'power3.out', clearProps: 'transform,opacity' }
+                  );
+                }
+              }
+            } catch (eSecAnim) {}
+            return r;
+          };
+        }
+      }
     })();
 
 </script><!-- END ENGINE-MJA-V8 -->
